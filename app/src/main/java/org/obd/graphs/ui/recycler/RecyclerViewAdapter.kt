@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,11 +25,11 @@ abstract class RecyclerViewAdapter<T : RecyclerView.ViewHolder>(
     protected val context: Context,
     val data: MutableList<Metric>,
     protected val resourceId: Int,
-    protected val height: Int? = null,
+    protected val height: Int? = null
 ) : RecyclerView.Adapter<T>() {
     fun swapItems(
         fromPosition: Int,
-        toPosition: Int,
+        toPosition: Int
     ) {
         Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)

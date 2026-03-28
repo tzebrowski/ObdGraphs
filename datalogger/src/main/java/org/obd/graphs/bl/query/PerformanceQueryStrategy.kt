@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,10 +29,10 @@ const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC =
 const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_ARBITRARY_METRIC =
     "pref.query.performance.break_boosting.arbitrary_pid"
 
- const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_VEHICLE_SPEED_METRIC =
-     "pref.query.performance.break_boosting.vehicle_speed_pid"
+const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_VEHICLE_SPEED_METRIC =
+    "pref.query.performance.break_boosting.vehicle_speed_pid"
 
- internal class PerformanceQueryStrategy : QueryStrategy() {
+internal class PerformanceQueryStrategy : QueryStrategy() {
     override fun getDefaultPIDs() =
         Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP) +
             Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM) +

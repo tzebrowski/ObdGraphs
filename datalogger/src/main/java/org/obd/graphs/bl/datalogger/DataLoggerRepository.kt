@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -44,7 +44,7 @@ object DataLoggerRepository {
         _workflowOrchestrator = mock
     }
 
-    fun broadcastReceivers(): BroadcastReceiver =  workflowOrchestrator.eventsReceiver
+    fun broadcastReceivers(): BroadcastReceiver = workflowOrchestrator.eventsReceiver
     fun isRunning(): Boolean = workflowOrchestrator.isRunning()
     fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
     fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)

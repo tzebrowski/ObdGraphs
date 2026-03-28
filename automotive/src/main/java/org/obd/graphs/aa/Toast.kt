@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,7 +20,6 @@ import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 
-
 internal val toast = Toast()
 private const val LOG_TAG = "Toast"
 
@@ -33,10 +32,11 @@ internal class Toast {
         try {
             CarToast.makeText(
                 carCtx,
-                msg, CarToast.LENGTH_LONG
+                msg,
+                CarToast.LENGTH_LONG
             ).show()
-        } catch (e: Exception){
-            Log.w(LOG_TAG,"Failed to show toast",e)
+        } catch (e: Exception) {
+            Log.w(LOG_TAG, "Failed to show toast", e)
         }
     }
 }

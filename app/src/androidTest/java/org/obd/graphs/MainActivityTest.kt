@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,7 +30,6 @@ class MainActivityTest {
 
     @Test
     fun connectButtonTest() {
-
         launchActivity<MainActivity>().use {
             val connectButton = Espresso.onView(ViewMatchers.withId(R.id.connect_btn))
             connectButton.check(ViewAssertions.matches(ViewMatchers.isDisplayed()))

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -33,7 +33,7 @@ import java.io.File
 internal class AdjustmentsStrategy {
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
-        preferences: DataLoggerSettings = dataLoggerSettings.instance(),
+        preferences: DataLoggerSettings = dataLoggerSettings.instance()
     ): Adjustments =
         when (strategy) {
             QueryStrategyType.DRAG_RACING_QUERY -> getDragRacingAdjustments(preferences = preferences)
@@ -51,7 +51,7 @@ internal class AdjustmentsStrategy {
                         .builder()
                         .numberOfRetries(preferences.adapter.maxReconnectNum)
                         .reconnectEnabled(preferences.adapter.reconnectWhenError)
-                        .build(),
+                        .build()
                 ).batchPolicy(
                     BatchPolicy
                         .builder()
@@ -59,7 +59,7 @@ internal class AdjustmentsStrategy {
                         .calculateResponseFrames(preferences.adapter.calculateResponseFrames)
                         .mode01BatchSize(preferences.adapter.mode01BatchSize)
                         .otherModesBatchSize(preferences.adapter.otherModesBatchSize)
-                        .build(),
+                        .build()
                 ).collectRawConnectorResponseEnabled(false)
                 .stNxx(
                     STNxxExtensions
@@ -67,7 +67,7 @@ internal class AdjustmentsStrategy {
                         .enabled(dataLoggerSettings.instance().adapter.stnExtensionsEnabled)
                         .promoteSlowGroupsEnabled(false)
                         .promoteAllGroupsEnabled(false)
-                        .build(),
+                        .build()
                 ).vehicleMetadataReadingEnabled(false)
                 .vehicleCapabilitiesReadingEnabled(false)
                 .vehicleDtcReadingEnabled(false)
@@ -76,7 +76,7 @@ internal class AdjustmentsStrategy {
                     CachePolicy
                         .builder()
                         .resultCacheEnabled(false)
-                        .build(),
+                        .build()
                 ).producerPolicy(
                     ProducerPolicy
                         .builder()
@@ -84,7 +84,7 @@ internal class AdjustmentsStrategy {
                         .pidPriority(5, 10) // atm pressure, ambient temp
                         .pidPriority(4, 4) // atm pressure, ambient temp
                         .conditionalSleepEnabled(false)
-                        .build(),
+                        .build()
                 ).adaptiveTimeoutPolicy(
                     AdaptiveTimeoutPolicy
                         .builder()
@@ -92,7 +92,7 @@ internal class AdjustmentsStrategy {
                         .checkInterval(5000)
                         .commandFrequency(preferences.dragRacingCommandFrequency)
                         .minimumTimeout(10)
-                        .build(),
+                        .build()
                 )
 
         if (dataLoggerSettings.instance().adapter.stnExtensionsEnabled) {
@@ -105,7 +105,7 @@ internal class AdjustmentsStrategy {
                     .override(Pid.DYNAMIC_SELECTOR_PID_ID.id, highPriorityOverridePolicy)
                     .override(
                         Pid.ENGINE_TORQUE_PID_ID.id,
-                        PidDefinitionCustomization.builder().priority(4).build(),
+                        PidDefinitionCustomization.builder().priority(4).build()
                     )
         }
 
@@ -119,18 +119,18 @@ internal class AdjustmentsStrategy {
             .debugEnabled(preferences.debugLogging)
             .override(
                 Pid.DISTANCE_PID_ID.id,
-                PidDefinitionCustomization.builder().lastInTheQuery(true).build(),
+                PidDefinitionCustomization.builder().lastInTheQuery(true).build()
             ).formulaExternalParams(
                 FormulaExternalParams
                     .builder()
                     .param("unit_tank_size", preferences.fuelTankSize)
-                    .build(),
+                    .build()
             ).errorsPolicy(
                 ErrorsPolicy
                     .builder()
                     .numberOfRetries(preferences.adapter.maxReconnectNum)
                     .reconnectEnabled(preferences.adapter.reconnectWhenError)
-                    .build(),
+                    .build()
             ).batchPolicy(
                 BatchPolicy
                     .builder()
@@ -139,7 +139,7 @@ internal class AdjustmentsStrategy {
                     .calculateResponseFrames(preferences.adapter.calculateResponseFrames)
                     .mode01BatchSize(preferences.adapter.mode01BatchSize)
                     .otherModesBatchSize(preferences.adapter.otherModesBatchSize)
-                    .build(),
+                    .build()
             ).collectRawConnectorResponseEnabled(preferences.dumpRawConnectorResponse)
             .stNxx(
                 STNxxExtensions
@@ -148,7 +148,7 @@ internal class AdjustmentsStrategy {
                     .stripWhitespaces(dataLoggerSettings.instance().adapter.connectionType != "mock")
                     .promoteAllGroupsEnabled(preferences.adapter.stnIgnorePIDsPriorities)
                     .enabled(preferences.adapter.stnExtensionsEnabled)
-                    .build(),
+                    .build()
             ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)
             .vehicleCapabilitiesReadingEnabled(preferences.adapter.vehicleCapabilitiesReadingEnabled)
             .vehicleDtcReadingEnabled(preferences.adapter.dtcEnabled)
@@ -159,17 +159,17 @@ internal class AdjustmentsStrategy {
                     .resultCacheFilePath(
                         File(
                             getContext()?.cacheDir,
-                            "formula_cache.json",
-                        ).absolutePath,
+                            "formula_cache.json"
+                        ).absolutePath
                     ).storeResultCacheOnDisk(false)
                     .resultCacheEnabled(preferences.adapter.resultsCacheEnabled)
-                    .build(),
+                    .build()
             ).producerPolicy(
                 ProducerPolicy
                     .builder()
                     .conditionalSleepEnabled(preferences.adapter.adaptiveConnectionEnabled)
                     .conditionalSleepSliceSize(10)
-                    .build(),
+                    .build()
             ).adaptiveTimeoutPolicy(
                 AdaptiveTimeoutPolicy
                     .builder()
@@ -177,6 +177,6 @@ internal class AdjustmentsStrategy {
                     .checkInterval(5000)
                     .commandFrequency(preferences.adapter.commandFrequency)
                     .minimumTimeout(10)
-                    .build(),
+                    .build()
             ).build()
 }

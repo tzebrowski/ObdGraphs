@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -81,14 +81,20 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
         // Guard Clauses
         if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) return
-        if (!Permissions.hasLocationPermissions(context)){
-            Notification.sendBasicNotification(context,"Location permissions are not granted." +
-                    "GPS data won't be collected.")
+        if (!Permissions.hasLocationPermissions(context)) {
+            Notification.sendBasicNotification(
+                context,
+                "Location permissions are not granted." +
+                    "GPS data won't be collected."
+            )
             return
         }
         if (!Permissions.isLocationEnabled(context)) {
-            Notification.sendBasicNotification(context,"Location is not enabled. " +
-                    "GPS data won't be collected.")
+            Notification.sendBasicNotification(
+                context,
+                "Location is not enabled. " +
+                    "GPS data won't be collected."
+            )
             return
         }
 
@@ -132,7 +138,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                 MIN_TIME_MS,
                 MIN_DISTANCE_M,
                 listener,
-                thread.looper,
+                thread.looper
             )
 
             // Register GNSS Status Callback (Android N+)
@@ -149,7 +155,6 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     private fun stopGpsUpdates() {
         try {
-
             Log.i(TAG, "Stopping GPS updates")
 
             locationListener?.let { locationManager?.removeUpdates(it) }
@@ -187,7 +192,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
             override fun onStatusChanged(
                 provider: String?,
                 status: Int,
-                extras: Bundle?,
+                extras: Bundle?
             ) {}
         }
 
@@ -214,15 +219,15 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                     "acc" to location.accuracy,
                     "bear" to location.bearing,
                     "lat" to location.latitude,
-                    "lon" to location.longitude,
-                ),
+                    "lon" to location.longitude
+                )
             )
         }
     }
 
     private fun emitMetric(
         command: ObdCommand,
-        value: Any,
+        value: Any
     ) {
         replyObserver?.onNext(
             ObdMetric
@@ -230,7 +235,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                 .command(command)
                 .value(value)
                 .raw(emptyConnectorResponse)
-                .build(),
+                .build()
         )
     }
 }

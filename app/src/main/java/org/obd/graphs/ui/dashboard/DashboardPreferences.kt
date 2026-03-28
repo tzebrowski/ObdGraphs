@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ data class DashboardPreferences(
     val dashboardSelectedMetrics: Pair<String, Set<Long>>,
     val gaugeSelectedMetrics: Pair<String, Set<Long>>,
     val colorsEnabled: Boolean,
-    val blinkEnabled: Boolean,
+    val blinkEnabled: Boolean
 )
 
 private const val SELECTED_DASHBOARD_METRICS = "pref.dash.pids.selected"
@@ -49,6 +49,6 @@ fun getDashboardPreferences(): DashboardPreferences {
         gaugeSelectedMetrics = Pair(SELECTED_GAUGE_METRICS, gaugeSelectedMetrics),
         colorsEnabled = colors,
         blinkEnabled = blink,
-        dragAndDropEnabled = dragAndDropEnabled,
+        dragAndDropEnabled = dragAndDropEnabled
     )
 }

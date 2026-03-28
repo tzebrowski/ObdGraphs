@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,11 +24,11 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import java.util.concurrent.ConcurrentHashMap
 
- class ScreenBehaviorController(
+class ScreenBehaviorController(
     private val context: Context,
     private val metricsCollector: MetricsCollector,
     private val settings: Map<SurfaceRendererType, ScreenSettings>,
-    private val fps: Fps,
+    private val fps: Fps
 ) {
 
     private val behaviorsCache = ConcurrentHashMap<SurfaceRendererType, ScreenBehavior>()

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -46,6 +46,7 @@ import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
 import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
+import org.obd.graphs.SCREEN_LOCK_MSG_EXTRA_PARAM_NAME
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_OFF_EVENT
 import org.obd.graphs.SCREEN_ON_EVENT
@@ -73,7 +74,6 @@ import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_IDLING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_RUNNING
 import org.obd.graphs.getContext
-import org.obd.graphs.getMessageExtraParam
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -103,7 +103,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_SCHEDULED_STOP_EVENT -> {
             Log.d(
                 LOG_TAG,
-                "Stop data logging",
+                "Stop data logging"
             )
             withDataLogger {
                 stop()
@@ -149,11 +149,13 @@ internal fun MainActivity.receive(intent: Intent?) {
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
 
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            var msg = intent.getMessageExtraParam()
+            var msg = intent.extras?.getString(SCREEN_LOCK_MSG_EXTRA_PARAM_NAME)
             if (msg == null || msg.isEmpty()) {
                 msg = getText(R.string.pref_dialog_screen_lock_message) as String
             }
-            screenLockManager.show(msg){
+
+            val showCancel = intent.extras?.getBoolean(SCREEN_LOCK_SHOW_CANCEL_BUTTON_EXTRA_PARAM_NAME)
+            screenLockManager.show(message = msg, showCancelButton = showCancel ?: false) {
                 sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
             }
         }
@@ -172,8 +174,6 @@ internal fun MainActivity.receive(intent: Intent?) {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_attached, usbDevice.productName!!)
         }
-
-
 
         DATA_LOGGER_DTC_AVAILABLE ->
             if (Prefs.isEnabled("pref.dtc.show_notification")) {
@@ -203,6 +203,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_ERROR_CONNECT_EVENT -> toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
 
         DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
+            screenLockManager.dismiss()
             navigateToPreferencesScreen("pref.adapter.connection")
             toast(org.obd.graphs.commons.R.string.main_activity_toast_adapter_is_not_selected)
         }
@@ -217,7 +218,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.backgroundTintList =
                     ContextCompat.getColorStateList(
                         applicationContext,
-                        org.obd.graphs.commons.R.color.cardinal,
+                        org.obd.graphs.commons.R.color.cardinal
                     )
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
@@ -233,7 +234,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.indeterminateDrawable.colorFilter =
                     PorterDuffColorFilter(
                         COLOR_CARDINAL,
-                        PorterDuff.Mode.SRC_IN,
+                        PorterDuff.Mode.SRC_IN
                     )
             }
         }
@@ -252,7 +253,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.indeterminateDrawable.colorFilter =
                     PorterDuffColorFilter(
                         COLOR_PHILIPPINE_GREEN,
-                        PorterDuff.Mode.SRC_IN,
+                        PorterDuff.Mode.SRC_IN
                     )
             }
 
@@ -302,7 +303,7 @@ private fun MainActivity.handleStop() {
         it.backgroundTintList =
             ContextCompat.getColorStateList(
                 applicationContext,
-                org.obd.graphs.commons.R.color.philippine_green,
+                org.obd.graphs.commons.R.color.philippine_green
             )
     }
 
@@ -315,7 +316,7 @@ private fun MainActivity.handleStop() {
 
 internal fun MainActivity.toggleNavigationItem(
     prefKey: String,
-    id: Int,
+    id: Int
 ) {
     bottomAppBar {
         it.menu.findItem(id)?.run {

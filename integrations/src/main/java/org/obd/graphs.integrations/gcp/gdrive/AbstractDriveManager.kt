@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,7 +43,7 @@ private const val TAG = "AbstractDriveManager"
 internal class InputStreamContent(
     type: String?,
     private val content: InputStream,
-    val fileName: String,
+    val fileName: String
 ) : AbstractInputStreamContent(type) {
     override fun getLength(): Long = content.available().toLong()
 
@@ -61,7 +61,7 @@ internal class InputStreamContent(
 internal abstract class AbstractDriveManager(
     webClientId: String,
     activity: Activity,
-    fragment: Fragment?,
+    fragment: Fragment?
 ) : AuthorizationManager(webClientId, activity, fragment) {
     override fun getScopes(): List<Scope> = listOf(Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA))
 
@@ -72,7 +72,7 @@ internal abstract class AbstractDriveManager(
         accessToken: String,
         onFailure: () -> Unit,
         onFinally: () -> Unit,
-        block: suspend (Drive) -> T,
+        block: suspend (Drive) -> T
     ) {
         withContext(Dispatchers.IO) {
             try {
@@ -81,7 +81,7 @@ internal abstract class AbstractDriveManager(
                         .Builder(
                             NetHttpTransport.Builder().build(),
                             GsonFactory(),
-                            credentials(accessToken),
+                            credentials(accessToken)
                         ).setApplicationName(APP_NAME)
                         .build()
 
@@ -110,7 +110,7 @@ internal abstract class AbstractDriveManager(
 
     fun Drive.uploadFile(
         content: InputStreamContent,
-        parentFolderId: String,
+        parentFolderId: String
     ): DriveFile {
         Log.i(TAG, "Uploading file ${content.fileName}")
         val metadata =
@@ -134,7 +134,7 @@ internal abstract class AbstractDriveManager(
         localFile: File,
         fileName: String,
         parentFolderId: String,
-        mimeType: String = "text/plain",
+        mimeType: String = "text/plain"
     ): DriveFile {
         Log.i(TAG, "Uploading file ${localFile.absolutePath} to $fileName")
         val metadata =
@@ -167,7 +167,7 @@ internal abstract class AbstractDriveManager(
     private fun findOrCreateSingleFolder(
         drive: Drive,
         folderName: String,
-        parentId: String,
+        parentId: String
     ): String {
         val query =
             "mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and '$parentId' in parents and trashed = false"

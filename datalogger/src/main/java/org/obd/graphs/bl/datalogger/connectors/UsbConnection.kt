@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,12 +32,12 @@ private const val LOGGER_TAG = "USB_CONNECTION"
 const val IO_TIMEOUT = 35
 
 data class SerialConnectionSettings(
-    val baudRate: Int,
+    val baudRate: Int
 )
 
 internal class UsbConnection(
     val context: Context,
-    private val serialConnectionSettings: SerialConnectionSettings,
+    private val serialConnectionSettings: SerialConnectionSettings
 ) : AdapterConnection {
     private lateinit var port: UsbSerialPort
     private lateinit var inputStream: InputStream
@@ -68,23 +68,23 @@ internal class UsbConnection(
                 serialConnectionSettings.baudRate,
                 UsbSerialPort.DATABITS_8,
                 UsbSerialPort.STOPBITS_1,
-                UsbSerialPort.PARITY_NONE,
+                UsbSerialPort.PARITY_NONE
             )
             val device = port.device
             Log.i(
                 LOGGER_TAG,
                 "Allowed to open USB device ${device.deviceId} ${device.deviceName} ${device.deviceProtocol} ${device.deviceClass} " +
-                    "${device.manufacturerName} ${device.productId} ${device.serialNumber} ${device.productName}",
+                    "${device.manufacturerName} ${device.productId} ${device.serialNumber} ${device.productName}"
             )
 
             Log.i(LOGGER_TAG, "USB device is opened ${port.isOpen}")
             Log.i(
                 LOGGER_TAG,
-                "Read Endpoint,attributes ${port.readEndpoint.attributes}",
+                "Read Endpoint,attributes ${port.readEndpoint.attributes}"
             )
             Log.i(
                 LOGGER_TAG,
-                "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}",
+                "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}"
             )
         } catch (e: SecurityException) {
             Log.e(LOGGER_TAG, "Failed to access device", e)

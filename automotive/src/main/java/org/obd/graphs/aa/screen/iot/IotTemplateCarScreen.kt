@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -74,7 +74,7 @@ private const val LOG_TAG = "IotTemplateCarScreen"
 internal class IotTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
-    metricsCollector: MetricsCollector,
+    metricsCollector: MetricsCollector
 ) : CarScreen(carContext, settings, metricsCollector) {
     private val valueDrawable = ValueDrawable(carContext)
     private val query = Query.instance(QueryStrategyType.INDIVIDUAL_QUERY)
@@ -83,7 +83,7 @@ internal class IotTemplateCarScreen(
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 when (intent?.action) {
                     EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
@@ -247,12 +247,12 @@ internal class IotTemplateCarScreen(
                     createAction(
                         carContext,
                         R.drawable.action_virtual_screen_1,
-                        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor),
+                        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
                     ) {
                         settings.getGiuliaScreenSettings().setVirtualScreen(1)
                         applyMetricsFilter()
                         invalidate()
-                    },
+                    }
                 )
 
             paneBuilder =
@@ -260,12 +260,12 @@ internal class IotTemplateCarScreen(
                     createAction(
                         carContext,
                         R.drawable.action_virtual_screen_2,
-                        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor),
+                        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
                     ) {
                         settings.getGiuliaScreenSettings().setVirtualScreen(2)
                         applyMetricsFilter()
                         invalidate()
-                    },
+                    }
                 )
 
             metricsCollector.getMetrics().forEach {
@@ -274,10 +274,10 @@ internal class IotTemplateCarScreen(
                         .Builder()
                         .setImage(
                             valueDrawable.draw(it.source.format(castToInt = false), settings.getColorTheme().progressColor),
-                            Row.IMAGE_TYPE_LARGE,
+                            Row.IMAGE_TYPE_LARGE
                         ).setMetadata(Metadata.Builder().build())
                         .setTitle(getTitleFor(it))
-                        .build(),
+                        .build()
                 )
             }
 
@@ -303,7 +303,7 @@ internal class IotTemplateCarScreen(
         val title = StringBuilder()
         title.append(
             metric.source.command.pid.description
-                .replace("\n", ""),
+                .replace("\n", "")
         )
         title.append("\n")
         val pid = metric.pid

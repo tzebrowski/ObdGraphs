@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,13 +30,13 @@ internal data class SpeedDialViews(
     val configureViewFab: FloatingActionButton,
     val configurePidsFab: FloatingActionButton,
     val configureViewLabel: TextView,
-    val configurePidsLabel: TextView,
+    val configurePidsLabel: TextView
 )
 
 internal class FabManager(
     private val views: SpeedDialViews,
     private val onConfigureViewClicked: () -> Unit,
-    private val onConfigurePidsClicked: () -> Unit,
+    private val onConfigurePidsClicked: () -> Unit
 ) {
     private var isFabExpanded = false
 
@@ -78,7 +78,7 @@ internal class FabManager(
     fun animateHideShow(
         hide: Boolean,
         barHeight: Float,
-        duration: Long,
+        duration: Long
     ) {
         val fabHeight = barHeight + views.connectFab.height.toFloat()
 
@@ -102,7 +102,7 @@ internal class FabManager(
                 views.configureViewFab,
                 views.configurePidsFab,
                 views.configureViewLabel,
-                views.configurePidsLabel,
+                views.configurePidsLabel
             )
 
         subViews.forEach { view ->
@@ -128,8 +128,8 @@ internal class FabManager(
         views.configureViewLabel.visibility = View.VISIBLE
         views.configurePidsLabel.visibility = View.VISIBLE
 
-        val offset1 = dpToPx(context,OFFSET_1_DP)
-        val offset2 = dpToPx(context,OFFSET_2_DP)
+        val offset1 = dpToPx(context, OFFSET_1_DP)
+        val offset2 = dpToPx(context, OFFSET_2_DP)
 
         views.configureViewFab
             .animate()
@@ -220,7 +220,7 @@ internal object FabButtons {
     fun animateHideShow(
         hide: Boolean,
         barHeight: Float,
-        duration: Long,
+        duration: Long
     ) = manager?.animateHideShow(hide, barHeight, duration)
 
     fun setupSpeedDialView(activity: Activity) {
@@ -234,7 +234,7 @@ internal object FabButtons {
                 },
                 onConfigurePidsClicked = {
                     NavigationRouter.navigateToPIDsPreferences(activity)
-                },
+                }
             )
 
         manager?.setup(activity)
@@ -246,6 +246,6 @@ internal object FabButtons {
             configureViewFab = activity.findViewById(R.id.configure_view_btn),
             configurePidsFab = activity.findViewById(R.id.configure_pids_btn),
             configureViewLabel = activity.findViewById(R.id.configure_view_action_label),
-            configurePidsLabel = activity.findViewById(R.id.configure_pids_action_label),
+            configurePidsLabel = activity.findViewById(R.id.configure_pids_action_label)
         )
 }

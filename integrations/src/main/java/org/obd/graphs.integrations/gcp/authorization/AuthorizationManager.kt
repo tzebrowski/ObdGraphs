@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -57,7 +57,7 @@ private const val DUMMY_WEB_CLIENT_ID = "no_key"
 internal abstract class AuthorizationManager(
     private val webClientId: String,
     protected val activity: Activity,
-    private val fragment: Fragment? = null,
+    private val fragment: Fragment? = null
 ) {
     private var pendingAction: AuthenticatedAction? = null
     private var pendingActionName: String = ""
@@ -69,14 +69,14 @@ internal abstract class AuthorizationManager(
 
     private val authorizationLauncher =
         (fragment ?: (activity as? ComponentActivity))?.registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult(),
+            ActivityResultContracts.StartIntentSenderForResult()
         ) { result ->
             handleActivityResult(result)
         }
 
     protected suspend fun signInAndExecute(
         authenticatedActionName: String,
-        authenticatedAction: AuthenticatedAction,
+        authenticatedAction: AuthenticatedAction
     ) {
         Log.i(TAG, "Start executing action: $authenticatedActionName")
 
@@ -88,7 +88,7 @@ internal abstract class AuthorizationManager(
                 if (DUMMY_WEB_CLIENT_ID == webClientId) {
                     throw Exception(
                         "Application does not use real Google Play WEB CLIENT ID. " +
-                            "Authorization won't work. Please set the `ANDROID_WEB_CLIENT_ID` env variable.",
+                            "Authorization won't work. Please set the `ANDROID_WEB_CLIENT_ID` env variable."
                     )
                 }
 
@@ -141,12 +141,12 @@ internal abstract class AuthorizationManager(
 
     private fun checkPermissionsAndExecuteAction(
         authenticatedActionName: String,
-        authenticatedAction: AuthenticatedAction,
+        authenticatedAction: AuthenticatedAction
     ) {
         val scopes = getScopes()
         Log.i(
             TAG,
-            "Checking permissions for scopes: $scopes and executing action: $authenticatedActionName",
+            "Checking permissions for scopes: $scopes and executing action: $authenticatedActionName"
         )
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
@@ -163,7 +163,7 @@ internal abstract class AuthorizationManager(
                     launchConsentScreen(
                         result.pendingIntent?.intentSender,
                         authenticatedActionName,
-                        authenticatedAction,
+                        authenticatedAction
                     )
                 } else {
                     val token = result.accessToken
@@ -177,7 +177,7 @@ internal abstract class AuthorizationManager(
                     launchConsentScreen(
                         e.status.resolution?.intentSender,
                         authenticatedActionName,
-                        authenticatedAction,
+                        authenticatedAction
                     )
                 } else {
                     Log.e(TAG, "Authorization failed", e)
@@ -189,7 +189,7 @@ internal abstract class AuthorizationManager(
     private fun launchConsentScreen(
         intentSender: IntentSender?,
         authenticatedActionName: String,
-        authenticatedAction: AuthenticatedAction,
+        authenticatedAction: AuthenticatedAction
     ) {
         try {
             Log.i(TAG, "Launching consent screen for $authenticatedActionName")
@@ -199,7 +199,7 @@ internal abstract class AuthorizationManager(
             pendingActionName = authenticatedActionName
 
             authorizationLauncher?.launch(
-                IntentSenderRequest.Builder(intentSender).build(),
+                IntentSenderRequest.Builder(intentSender).build()
             )
         } catch (e: IntentSender.SendIntentException) {
             Log.e(TAG, "Failed to launch consent screen", e)
@@ -227,7 +227,7 @@ internal abstract class AuthorizationManager(
 
     private fun executeActionSafely(
         token: String,
-        authenticatedAction: AuthenticatedAction,
+        authenticatedAction: AuthenticatedAction
     ) {
         sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
         val scope = lifecycleScope

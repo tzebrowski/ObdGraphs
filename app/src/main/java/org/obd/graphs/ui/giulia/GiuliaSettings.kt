@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,9 +22,9 @@ import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.renderer.api.GiuliaScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 
- private const val MAX_VISIBLE_ITEMS = 50
+private const val MAX_VISIBLE_ITEMS = 50
 
- class GiuliaSettings : ScreenSettings {
+class GiuliaSettings : ScreenSettings {
     private val giuliaScreenSettings =
         object : GiuliaScreenSettings() {
             override fun getFontSize(): Int = giuliaVirtualScreenPreferences.getFontSize()

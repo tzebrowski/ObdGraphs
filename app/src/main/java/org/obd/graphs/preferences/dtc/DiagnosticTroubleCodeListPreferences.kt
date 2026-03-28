@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,7 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.DialogPreference
 
- internal class DiagnosticTroubleCodeListPreferences(
+internal class DiagnosticTroubleCodeListPreferences(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : DialogPreference(context, attrs)

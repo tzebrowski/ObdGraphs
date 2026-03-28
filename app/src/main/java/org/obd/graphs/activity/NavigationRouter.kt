@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,7 +50,7 @@ data class NavigationPreferences(
     var graphViewEnabled: Boolean = true,
     var tripInfoViewEnabled: Boolean = true,
     var performanceViewEnabled: Boolean = true,
-    var dragRacingViewEnabled: Boolean = true,
+    var dragRacingViewEnabled: Boolean = true
 )
 
 internal object NavigationRouter {
@@ -71,7 +71,7 @@ internal object NavigationRouter {
 
     fun navigate(
         activity: MainActivity,
-        itemId: Int,
+        itemId: Int
     ): Boolean =
         when (itemId) {
             R.id.navigation_preferences_alerts -> navigateToPreferencesScreen("pref.alerts.settings")
@@ -142,7 +142,7 @@ internal object NavigationRouter {
                         tripVirtualScreenManager.updateReservedVirtualScreen(
                             Prefs
                                 .getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
-                                .toList(),
+                                .toList()
                         )
                         tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
                         navigateToScreen(R.id.nav_graph)
@@ -173,7 +173,7 @@ internal object NavigationRouter {
                 R.id.nav_performance -> "pref.performance"
                 R.id.nav_trip_info -> "pref.trip_info"
                 else -> "pref.root"
-            },
+            }
         )
 
     fun navigateToPIDsPreferences(activity: Activity): Boolean {
@@ -192,7 +192,7 @@ internal object NavigationRouter {
             LOG_TAG,
             "Jumping to preference screen for current screen $screenId  ${
                 getCurrentScreenId(activity)
-            }",
+            }"
         )
         screenId?.apply {
             navigateToPreferencesScreen(this)

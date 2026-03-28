@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -65,9 +65,9 @@ import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 
 private enum class RoutineScreen(
-    private val code: Int,
+    private val code: Int
 ) : Identity {
-    ROUTINES(222),
+    ROUTINES(222)
     ;
 
     override fun id(): Int = this.code
@@ -79,7 +79,7 @@ internal class RoutinesScreen(
     carContext: CarContext,
     settings: CarSettings,
     metricsCollector: MetricsCollector,
-    fps: Fps,
+    fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
     private var routineExecuting = false
     private var routineId = -1L
@@ -90,7 +90,7 @@ internal class RoutinesScreen(
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 Log.i(LOG_TAG, "Received event=${intent?.action}")
                 try {
@@ -135,7 +135,7 @@ internal class RoutinesScreen(
                         DATA_LOGGER_NO_NETWORK_EVENT ->
                             toast.show(
                                 carContext,
-                                org.obd.graphs.commons.R.string.main_activity_toast_connection_no_network,
+                                org.obd.graphs.commons.R.string.main_activity_toast_connection_no_network
                             )
 
                         DATA_LOGGER_ERROR_EVENT -> {
@@ -176,8 +176,8 @@ internal class RoutinesScreen(
                     FeatureDescription(
                         RoutineScreen.ROUTINES,
                         R.drawable.action_features,
-                        carContext.getString(R.string.available_features_routine_screen_title),
-                    ),
+                        carContext.getString(R.string.available_features_routine_screen_title)
+                    )
                 )
             }
         }
@@ -287,9 +287,9 @@ internal class RoutinesScreen(
                             .Builder(
                                 IconCompat.createWithResource(
                                     carContext,
-                                    android.R.drawable.ic_input_add,
-                                ),
-                            ).build(),
+                                    android.R.drawable.ic_input_add
+                                )
+                            ).build()
                     )
                 } else {
                     rowBuilder.setImage(
@@ -297,9 +297,9 @@ internal class RoutinesScreen(
                             .Builder(
                                 IconCompat.createWithResource(
                                     carContext,
-                                    android.R.drawable.ic_delete,
-                                ),
-                            ).build(),
+                                    android.R.drawable.ic_delete
+                                )
+                            ).build()
                     )
                 }
         }
@@ -315,23 +315,23 @@ internal class RoutinesScreen(
                     createAction(
                         carContext,
                         R.drawable.action_disconnect,
-                        mapColor(settings.getColorTheme().actionsBtnDisconnectColor),
+                        mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
                     ) {
                         actionStopDataLogging()
                         toast.show(carContext, R.string.toast_connection_disconnect)
-                    },
+                    }
                 )
             } else {
                 builder.addAction(
                     createAction(
                         carContext,
                         R.drawable.actions_connect,
-                        mapColor(settings.getColorTheme().actionsBtnConnectColor),
+                        mapColor(settings.getColorTheme().actionsBtnConnectColor)
                     ) {
                         withDataLogger {
                             start(query)
                         }
-                    },
+                    }
                 )
             }
 
@@ -344,7 +344,7 @@ internal class RoutinesScreen(
                         Log.i(LOG_TAG, "Exiting the app. Closing the context")
                         carContext.finishCarApp()
                     }
-                },
+                }
             )
 
         return builder.build()

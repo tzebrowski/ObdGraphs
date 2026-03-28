@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -63,8 +63,8 @@ object Permissions {
             .setMessage(
                 HtmlCompat.fromHtml(
                     activity.getString(R.string.permission_onboarding_message),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY,
-                ),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             ).setPositiveButton(R.string.permission_onboarding_btn_positive) { _, _ ->
                 requestAll(activity)
                 if (!isBatteryOptimizationEnabled(activity)) {
@@ -81,12 +81,12 @@ object Permissions {
         val finePermission =
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
         val coarsePermission =
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
 
         val hasFine = finePermission == PackageManager.PERMISSION_GRANTED
@@ -99,7 +99,7 @@ object Permissions {
         ) {
             Log.w(
                 TAG,
-                "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.",
+                "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid."
             )
         }
 
@@ -107,7 +107,7 @@ object Permissions {
         return EasyPermissions.hasPermissions(
             context,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
     }
 
@@ -147,7 +147,7 @@ object Permissions {
             activity,
             "Notification permission is required to run the data logger in the foreground.", // Replace with R.string if available
             NOTIFICATION_REQUEST_CODE,
-            perm,
+            perm
         )
     }
 
@@ -155,7 +155,7 @@ object Permissions {
         val perms =
             arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
 
         if (EasyPermissions.hasPermissions(activity, *perms)) {
@@ -168,7 +168,7 @@ object Permissions {
             activity,
             activity.getString(R.string.permissions_missing_location_msg),
             LOCATION_REQUEST_CODE,
-            *perms,
+            *perms
         )
     }
 
@@ -185,7 +185,7 @@ object Permissions {
             activity,
             activity.getString(R.string.permissions_missing_bt_msg),
             BLUETOOTH_REQUEST_CODE,
-            *perms,
+            *perms
         )
     }
 
@@ -241,7 +241,7 @@ object Permissions {
                 activity,
                 "This app requires Location, Bluetooth, and Notification permissions to function correctly.",
                 1000, // Use a generic ALL_PERMISSIONS_REQUEST_CODE
-                *missingPermissions.toTypedArray(),
+                *missingPermissions.toTypedArray()
             )
         } else {
             Log.v(TAG, "All permissions already granted.")

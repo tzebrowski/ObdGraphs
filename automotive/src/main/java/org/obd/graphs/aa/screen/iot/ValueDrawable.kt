@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,14 +29,14 @@ private const val DEFAULT_TEXT_SIZE = 16
 
 class ValueDrawable(private val carContext: Context) {
     fun draw(value: String, color: Int): CarIcon {
-
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = color
         paint.textAlign = Paint.Align.CENTER
 
         val textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_SP,
-            DEFAULT_TEXT_SIZE.toFloat(), carContext.resources.displayMetrics
+            DEFAULT_TEXT_SIZE.toFloat(),
+            carContext.resources.displayMetrics
         )
 
         paint.textSize = textSize * 1.5f
@@ -51,8 +51,12 @@ class ValueDrawable(private val carContext: Context) {
         bounds[0, canvas.height, canvas.width] = canvas.height
 
         canvas.drawText(
-            value, 0, value.length,
-            bounds.centerX().toFloat(), bounds.centerY().toFloat(), paint
+            value,
+            0,
+            value.length,
+            bounds.centerX().toFloat(),
+            bounds.centerY().toFloat(),
+            paint
         )
 
         return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()

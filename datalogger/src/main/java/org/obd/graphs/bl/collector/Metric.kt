@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -31,7 +31,8 @@ data class Metric(
     var inLowerAlertRisedHist: Boolean = false,
     var inUpperAlertRisedHist: Boolean = false,
     val pid: PidDefinition = source.command.pid,
-    val moduleName: String? = modules.getDefaultModules()[source.command.pid.resourceFile]) {
+    val moduleName: String? = modules.getDefaultModules()[source.command.pid.resourceFile]
+) {
 
     companion object {
         fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =

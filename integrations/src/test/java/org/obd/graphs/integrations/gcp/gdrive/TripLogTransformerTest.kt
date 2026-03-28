@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -48,7 +48,6 @@ class TripLogTransformerTest {
         every { Log.isLoggable(any(), any()) } returns false
     }
 
-
     private fun mockPrefs() {
         mockkStatic("org.obd.graphs.preferences.PreferencesKt")
         every { Prefs } returns sharedPrefs
@@ -67,7 +66,6 @@ class TripLogTransformerTest {
 
     @Test
     fun `read file test`() {
-
         val file = File("src/test/assets/", "trip-profile_1-1765481895809-22.json")
         val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
         val result = transformer.transform(file).readText()
@@ -104,7 +102,7 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v ->
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper = signalMapper) { s, v ->
             if (v is Number) v.toFloat() * 2 else v.toString()
         }
         val meta = mutableMapOf<String, String>()
@@ -184,7 +182,7 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> if (v is Number) v.toFloat() * 2 else v.toString() }
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper = signalMapper) { s, v -> if (v is Number) v.toFloat() * 2 else v.toString() }
         val result = transformer.transform(rawJson).readText()
 
         val expectedJson =

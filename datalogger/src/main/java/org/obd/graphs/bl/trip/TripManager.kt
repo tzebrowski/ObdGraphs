@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,8 +32,8 @@ interface TripManager : MetricsProcessor {
     fun getTripsDirectory(context: Context): String
 
     fun saveCurrentTripAsync(){
-
-        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, getContext()?.getText(R.string.dialog_screen_lock_trip_save_message) as String)
+        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT,
+            mapOf(SCREEN_LOCK_MSG_EXTRA_PARAM_NAME to getContext()?.getText(R.string.dialog_screen_lock_trip_save_message) as String))
 
         runAsync (wait = false) {
             try {
@@ -49,7 +49,10 @@ interface TripManager : MetricsProcessor {
     fun loadTrip(tripName: String)
     fun loadTripAsync(tripName: String){
         if (!DataLoggerRepository.isRunning()) {
-            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, getContext()?.getText(R.string.dialog_screen_lock_trip_load_message) as String)
+            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT,
+                mapOf(SCREEN_LOCK_MSG_EXTRA_PARAM_NAME to getContext()?.getText(R.string.dialog_screen_lock_trip_load_message) as String))
+
+
             runAsync (wait = false) {
                 try {
 

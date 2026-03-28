@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -44,14 +44,14 @@ class PidViewAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
-    private val editModeEnabled: Boolean,
+    private val editModeEnabled: Boolean
 ) : RecyclerView.Adapter<PidViewAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
 
     class CallableTextWatcher(
-        val callable: (pid: PidDefinitionDetails, editable: Editable?) -> Unit,
+        val callable: (pid: PidDefinitionDetails, editable: Editable?) -> Unit
     ) : TextWatcher {
         var pid: PidDefinitionDetails? = null
 
@@ -59,7 +59,7 @@ class PidViewAdapter internal constructor(
             p0: CharSequence?,
             p1: Int,
             p2: Int,
-            p3: Int,
+            p3: Int
         ) {
         }
 
@@ -67,7 +67,7 @@ class PidViewAdapter internal constructor(
             p0: CharSequence?,
             p1: Int,
             p2: Int,
-            p3: Int,
+            p3: Int
         ) {
         }
 
@@ -110,7 +110,7 @@ class PidViewAdapter internal constructor(
 
     fun swapItems(
         fromPosition: Int,
-        toPosition: Int,
+        toPosition: Int
     ) {
         Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
@@ -118,12 +118,12 @@ class PidViewAdapter internal constructor(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder = ViewHolder(inflater.inflate(R.layout.item_pid, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         data.elementAt(position).run {
             holder.module.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
@@ -182,7 +182,7 @@ class PidViewAdapter internal constructor(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder internal constructor(
-        private val binding: View,
+        private val binding: View
     ) : RecyclerView.ViewHolder(binding) {
         val module: TextView = binding.findViewById(R.id.pid_module)
         val description: TextView = binding.findViewById(R.id.pid_description)
@@ -235,7 +235,7 @@ class PidViewAdapter internal constructor(
                             } else {
                                 item.source.alert.lowerThreshold
                                     .toString()
-                            },
+                            }
                         )
 
                         edit.clearFocus()
@@ -252,7 +252,7 @@ class PidViewAdapter internal constructor(
                             } else {
                                 item.source.alert.upperThreshold
                                     .toString()
-                            },
+                            }
                         )
                         edit.clearFocus()
                         upperAlertTextWatcher.pid = item

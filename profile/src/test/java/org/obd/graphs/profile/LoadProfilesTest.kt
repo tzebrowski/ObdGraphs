@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -115,8 +115,6 @@ internal class LoadProfilesTest : TestSetup() {
         verify(exactly = 0) { editor.updatePreference("pref.adapter.connection.type", "bluetooth") }
     }
 
-
-
     @Test
     fun `test loadProfile('profile_3') switches to Alfa settings`() {
         val profileName = "profile_3"
@@ -127,7 +125,7 @@ internal class LoadProfilesTest : TestSetup() {
                 "profile_3.pref.adapter.init.protocol" to "CAN_29",
                 "profile_3.pref.gauge.fps" to "4",
                 "profile_3.pref.pids.generic.high" to "[22, 7002, 13, 15]",
-                "profile_1.pref.some.other" to "ignore_me",
+                "profile_1.pref.some.other" to "ignore_me"
             )
         every { Prefs.all } returns storedPrefs
 

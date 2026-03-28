@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 interface SwappableAdapter {
     fun swapItems(
         fromPosition: Int,
-        toPosition: Int,
+        toPosition: Int
     )
 
     fun deleteItems(fromPosition: Int) {
@@ -36,12 +36,12 @@ internal class DragManageAdapter(
     private var context: Context,
     dragDirs: Int,
     swipeDirs: Int,
-    private var adapter: SwappableAdapter,
+    private var adapter: SwappableAdapter
 ) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
     ): Boolean {
         adapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
         adapter.storePreferences(context)
@@ -50,7 +50,7 @@ internal class DragManageAdapter(
 
     override fun onSwiped(
         viewHolder: RecyclerView.ViewHolder,
-        direction: Int,
+        direction: Int
     ) {
         adapter.deleteItems(viewHolder.adapterPosition)
         adapter.storePreferences(context)

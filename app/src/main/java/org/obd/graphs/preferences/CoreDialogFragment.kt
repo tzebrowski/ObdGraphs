@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,7 +34,7 @@ abstract class CoreDialogFragment : DialogFragment() {
 
     protected fun attachCloseButton(
         root: View,
-        func: () -> Unit = {},
+        func: () -> Unit = {}
     ) {
         root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {

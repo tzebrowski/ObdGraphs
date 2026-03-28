@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,7 +30,7 @@ abstract class ScreenBehavior(
     protected val metricsCollector: MetricsCollector,
     protected val settings: ScreenSettings,
     fps: Fps,
-    surfaceRendererType: SurfaceRendererType,
+    surfaceRendererType: SurfaceRendererType
 ) {
     private val surfaceRenderer =
         SurfaceRenderer.allocate(
@@ -38,7 +38,7 @@ abstract class ScreenBehavior(
             settings,
             metricsCollector,
             fps,
-            surfaceRendererType = surfaceRendererType,
+            surfaceRendererType = surfaceRendererType
         )
 
     protected val query = Query.instance()

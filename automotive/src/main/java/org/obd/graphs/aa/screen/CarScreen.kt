@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -48,7 +48,7 @@ internal abstract class CarScreen(
     carContext: CarContext,
     protected val settings: CarSettings,
     protected val metricsCollector: MetricsCollector,
-    protected val fps: Fps = Fps(),
+    protected val fps: Fps = Fps()
 ) : Screen(carContext),
     DefaultLifecycleObserver {
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
@@ -71,7 +71,7 @@ internal abstract class CarScreen(
             },
             perfFrameRate = {
                 settings.getSurfaceFrameRate()
-            },
+            }
         )
 
     protected fun actionStopDataLogging() {
@@ -85,7 +85,7 @@ internal abstract class CarScreen(
     protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
-        featureListsEnabledSetting: Boolean = true,
+        featureListsEnabledSetting: Boolean = true
     ): ActionStrip {
         var builder = ActionStrip.Builder()
 
@@ -95,21 +95,21 @@ internal abstract class CarScreen(
                     createAction(
                         carContext,
                         R.drawable.action_disconnect,
-                        mapColor(settings.getColorTheme().actionsBtnDisconnectColor),
+                        mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
                     ) {
                         actionStopDataLogging()
                         toast.show(carContext, R.string.toast_connection_disconnect)
-                    },
+                    }
                 )
             } else {
                 builder.addAction(
                     createAction(
                         carContext,
                         R.drawable.actions_connect,
-                        mapColor(settings.getColorTheme().actionsBtnConnectColor),
+                        mapColor(settings.getColorTheme().actionsBtnConnectColor)
                     ) {
                         dataLoggerStart()
-                    },
+                    }
                 )
             }
 
@@ -118,7 +118,7 @@ internal abstract class CarScreen(
                 builder.addAction(
                     createAction(carContext, android.R.drawable.ic_dialog_dialer, CarColor.BLUE) {
                         sendBroadcastEvent(CHANGE_SCREEN_EVENT)
-                    },
+                    }
                 )
         }
 
@@ -128,7 +128,7 @@ internal abstract class CarScreen(
                     createAction(carContext, R.drawable.config, CarColor.BLUE) {
                         sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
                         toast.show(carContext, R.string.pref_aa_get_to_app_conf)
-                    },
+                    }
                 )
         }
 
@@ -142,7 +142,7 @@ internal abstract class CarScreen(
                             Log.i(LOG_TAG, "Exiting the app. Closing the context")
                             carContext.finishCarApp()
                         }
-                    },
+                    }
                 )
         }
 

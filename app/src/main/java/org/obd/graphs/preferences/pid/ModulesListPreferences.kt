@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,7 +34,7 @@ private const val LOG_TAG = "ModulesListPreferences"
 
 class ModulesListPreferences(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : MultiSelectListPreference(context, attrs) {
     init {
         initialize { modules.getExternalModules(context) }

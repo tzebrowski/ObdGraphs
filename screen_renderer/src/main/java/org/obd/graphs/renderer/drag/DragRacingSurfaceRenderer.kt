@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,8 +26,8 @@ import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
+import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 
 internal data class DragRaceDetails(
@@ -36,22 +36,21 @@ internal data class DragRaceDetails(
     var intakePressure: Metric? = null,
     var arbitraryMetric: Metric? = null,
     var gasMetric: Metric? = null,
-    var vehicleSpeedMetric: Metric? = null,
+    var vehicleSpeedMetric: Metric? = null
 )
 
 internal class DragRacingSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
+    private val fps: Fps
 ) : AbstractSurfaceRenderer(context) {
     private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
 
-
     override fun onDraw(
         canvas: Canvas,
-        drawArea: Rect?,
+        drawArea: Rect?
     ) {
         drawArea?.let {
             val dragRaceResults = DragRacingService.registry.getResult()
@@ -76,7 +75,7 @@ internal class DragRacingSurfaceRenderer(
                     left,
                     fps,
                     metricsCollector,
-                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled,
+                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled
                 )
 
                 top += MARGIN_TOP
@@ -93,21 +92,21 @@ internal class DragRacingSurfaceRenderer(
                 pTop = top,
                 dragRacingResults = dragRaceResults,
                 dragRaceDetails =
-                    dragRaceDetails.apply {
-                        gasMetric = metricsCollector.getMetric(Pid.GAS_PID_ID)
-                        ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
-                        atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
-                        arbitraryMetric = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                        intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                        vehicleSpeedMetric =
-                            metricsCollector.getMetric(
-                                if (dataLoggerSettings.instance().gmeExtensionsEnabled) {
-                                    Pid.EXT_VEHICLE_SPEED_PID_ID
-                                } else {
-                                    Pid.VEHICLE_SPEED_PID_ID
-                                },
-                            )
-                    },
+                dragRaceDetails.apply {
+                    gasMetric = metricsCollector.getMetric(Pid.GAS_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
+                    arbitraryMetric = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+                    intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
+                    vehicleSpeedMetric =
+                        metricsCollector.getMetric(
+                            if (dataLoggerSettings.instance().gmeExtensionsEnabled) {
+                                Pid.EXT_VEHICLE_SPEED_PID_ID
+                            } else {
+                                Pid.VEHICLE_SPEED_PID_ID
+                            }
+                        )
+                }
             )
         }
     }
@@ -115,5 +114,4 @@ internal class DragRacingSurfaceRenderer(
     override fun recycle() {
         dragRacingDrawer.recycle()
     }
-
 }

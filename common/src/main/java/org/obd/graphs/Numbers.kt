@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ fun Number.mapRange(
     inMin: Float,
     inMax: Float,
     outMin: Float,
-    outMax: Float,
+    outMax: Float
 ): Float {
     // Safety check: prevent division by zero if min == max
     if (inMin == inMax) return outMin

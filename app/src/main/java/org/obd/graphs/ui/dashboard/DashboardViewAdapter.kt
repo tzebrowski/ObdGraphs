@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,7 +50,7 @@ class DashboardViewAdapter(
     context: Context,
     data: MutableList<Metric>,
     resourceId: Int,
-    height: Int? = null,
+    height: Int? = null
 ) : RecyclerViewAdapter<DashboardViewAdapter.ViewHolder>(context, data, resourceId, height) {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
@@ -62,7 +62,7 @@ class DashboardViewAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         if (height != null) {
@@ -73,7 +73,7 @@ class DashboardViewAdapter(
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         val metric = data.elementAt(position)
 
@@ -95,8 +95,8 @@ class DashboardViewAdapter(
                         listOf(
                             GradientColor(
                                 Prefs.getInt("pref.dash.background_color_1", -1),
-                                Prefs.getInt("pref.dash.background_color_2", -1),
-                            ),
+                                Prefs.getInt("pref.dash.background_color_2", -1)
+                            )
                         )
                 }
             }
@@ -110,8 +110,8 @@ class DashboardViewAdapter(
                                 listOf(
                                     GradientColor(
                                         Prefs.getInt("pref.dash.background_color_1", -1),
-                                        Prefs.getInt("pref.dash.background_color_1", -1),
-                                    ),
+                                        Prefs.getInt("pref.dash.background_color_1", -1)
+                                    )
                                 )
                         }
                     }
@@ -140,7 +140,7 @@ class DashboardViewAdapter(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder internal constructor(
-        itemView: View,
+        itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
         var chart: BarChart = itemView.findViewById(R.id.chart)
         var label: TextView = itemView.findViewById(R.id.dash_label)

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -97,7 +97,7 @@ internal class ProfileServiceTest : TestSetup() {
                 "user_setting_1" to "value1",
                 "profile_2.setting" to "ignore_me",
                 "pref.profile.names.p1" to "ignore_me",
-                "pref.about.build" to "value2",
+                "pref.about.build" to "value2"
             )
         every { sharedPrefs.all } returns mockMap
 
@@ -126,7 +126,7 @@ internal class ProfileServiceTest : TestSetup() {
                 "profile_2.engine_type" to "V8",
                 "profile_2.color" to "Red",
                 "profile_1.engine_type" to "V6",
-                "generic_setting" to "default",
+                "generic_setting" to "default"
             )
         every { sharedPrefs.all } returns mockMap
 
@@ -181,7 +181,7 @@ internal class ProfileServiceTest : TestSetup() {
             mapOf(
                 "pref.adapter.init.protocol" to "CAN_11_MODIFIED", // User changed this
                 "pref.gauge.fps" to "10",
-                "profile_3.pref.original" to "original", // Should be ignored
+                "profile_3.pref.original" to "original" // Should be ignored
             )
         every { Prefs.all } returns currentRootPrefs
 

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -47,7 +47,7 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             Pid.ENGINE_SPEED_PID_ID.id,
             Pid.VEHICLE_SPEED_PID_ID.id,
             Pid.GEAR_ENGAGED_PID_ID.id
-            ).toSet()
+        ).toSet()
 
     override fun getDefaultPIDs() = defaults
 

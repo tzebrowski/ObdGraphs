@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,7 +29,7 @@ const val PROFILE_NAME_CHANGED_EVENT = "profile.name.changed.event"
 
 class ProfileNamePreference(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : EditTextPreference(context, attrs) {
     init {
         onPreferenceChangeListener =
@@ -37,7 +37,7 @@ class ProfileNamePreference(
 
                 Log.v(
                     "ProfileNamePreference",
-                    "Updating profile value: ${profile.getCurrentProfile()}=$newValue",
+                    "Updating profile value: ${profile.getCurrentProfile()}=$newValue"
                 )
 
                 profile.updateCurrentProfileName(newName = newValue.toString())

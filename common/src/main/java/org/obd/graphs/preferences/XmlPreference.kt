@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,5 +23,5 @@ import kotlin.reflect.KClass
 annotation class XmlPreference(
     val key: String,
     val defaultValue: String,
-    val type: KClass<*>,
+    val type: KClass<*>
 )

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,7 +23,7 @@ import java.io.OutputStream
 
 private const val LOGGER_TAG = "USB_CONNECTION"
 
- internal class UsbOutputStream(val port: UsbSerialPort) : OutputStream() {
+internal class UsbOutputStream(val port: UsbSerialPort) : OutputStream() {
     override fun write(p0: Int) {
     }
 

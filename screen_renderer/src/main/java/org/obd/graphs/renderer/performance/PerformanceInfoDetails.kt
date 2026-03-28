@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,5 +20,5 @@ import org.obd.graphs.bl.collector.Metric
 
 data class PerformanceInfoDetails(
     var topMetrics: List<Metric> = emptyList(),
-    var bottomMetrics: List<Metric> = emptyList(),
+    var bottomMetrics: List<Metric> = emptyList()
 )

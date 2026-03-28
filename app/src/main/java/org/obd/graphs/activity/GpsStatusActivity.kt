@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -92,7 +92,7 @@ class GpsStatusActivity : AppCompatActivity() {
                 1000L,
                 0.0f,
                 locationListener,
-                Looper.getMainLooper(),
+                Looper.getMainLooper()
             )
             log("Started requesting GPS_PROVIDER updates...")
 
@@ -166,7 +166,7 @@ class GpsStatusActivity : AppCompatActivity() {
 
     private fun updateSatellites(
         total: Int,
-        used: Int,
+        used: Int
     ) {
         txtSatellites.text = "$total Visible / $used Used"
     }

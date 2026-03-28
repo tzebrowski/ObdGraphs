@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,7 +34,6 @@ fun SharedPreferences.Editor.updatePreference(
     prefName: String,
     value: Any?
 ) {
-
     when (value) {
         is String -> {
             putString(prefName, value)
@@ -92,7 +91,6 @@ fun SharedPreferences.getLongList(
 ): List<Long> {
     return getStringSet(key, defaults)?.map { s -> s.toLong() }?.toList()!!
 }
-
 
 fun SharedPreferences.getStringSet(key: String): MutableSet<String> {
     return getStringSet(key, emptySet())!!

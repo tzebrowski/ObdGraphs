@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,7 +19,6 @@ package org.obd.graphs.ui.performance
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.isEnabled
-import org.obd.graphs.renderer.api.BrakeBoostingSettings
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 

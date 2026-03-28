@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,13 +24,13 @@ private const val NO_DATA = "--"
 
 fun ObdMetric.format(
     castToInt: Boolean = false,
-    precision: Int = 2,
+    precision: Int = 2
 ): String =
     format(
         input = this.value,
         pid = null,
         precision = precision,
-        castToInt = castToInt,
+        castToInt = castToInt
     )
 
 fun ObdMetric.toFloat(): Float =
@@ -70,20 +70,20 @@ fun ObdMetric.toNumber(): Number? =
 fun Number.format(
     pid: PidDefinition,
     precision: Int = 2,
-    castToInt: Boolean = false,
+    castToInt: Boolean = false
 ): String =
     format(
         input = this,
         pid = pid,
         precision = precision,
-        castToInt = castToInt,
+        castToInt = castToInt
     )
 
 private fun format(
     input: Any?,
     pid: PidDefinition? = null,
     precision: Int = 2,
-    castToInt: Boolean = false,
+    castToInt: Boolean = false
 ): String =
 
     if (input == null) {

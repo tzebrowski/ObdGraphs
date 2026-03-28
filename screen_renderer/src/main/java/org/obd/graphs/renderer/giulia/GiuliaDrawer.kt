@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,19 +24,19 @@ import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Shader
+import androidx.core.graphics.toColorInt
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.format
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.renderer.api.ScreenSettings
+import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.toFloat
-import kotlin.math.max
-import androidx.core.graphics.toColorInt
 import org.obd.graphs.toNumber
+import kotlin.math.max
 
- private const val FOOTER_SIZE_RATIO = 1.3f
+private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 private const val METRIC_TOP_NUDGE = 0.02f
 private const val SINGLE_LINE_VALUE_TOP_OFFSET = 0.4f
@@ -52,15 +52,14 @@ private const val PROGRESS_BAR_H_1_COL = 0.28f
 private const val PROGRESS_BAR_H_2_COL = 0.18f
 private const val GLOW_RADIUS = 12f
 
-
- private class GiuliaDrawingCache {
+private class GiuliaDrawingCache {
     val progressGradientColors = IntArray(2)
 }
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaDrawer(
     context: Context,
-    settings: ScreenSettings,
+    settings: ScreenSettings
 ) : AbstractDrawer(context, settings) {
     private val density = context.resources.displayMetrics.density
 
@@ -90,7 +89,7 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         valueLeft: Float,
-        valueCastToInt: Boolean = false,
+        valueCastToInt: Boolean = false
     ) {
         var viewportTop = top + (textSizeBase * METRIC_TOP_NUDGE)
 
@@ -235,7 +234,7 @@ internal class GiuliaDrawer(
 
     private inline fun calculateDividerSpacing(
         textSizeBase: Float,
-        isTwoLines: Boolean,
+        isTwoLines: Boolean
     ): Int {
         val multiplier = if (isTwoLines) TWO_LINE_DIVIDER_GAP else SINGLE_LINE_DIVIDER_GAP
         return when (settings.getMaxColumns()) {
@@ -250,7 +249,7 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         color: Int,
-        textSize: Float,
+        textSize: Float
     ): Float {
         paint.color = color
         paint.textSize = textSize
@@ -265,7 +264,7 @@ internal class GiuliaDrawer(
         top: Float,
         it: Metric,
         color: Int,
-        textSizeBase: Float,
+        textSizeBase: Float
     ) {
         if (it.source.isNumber()) {
             val progress =
@@ -273,7 +272,7 @@ internal class GiuliaDrawer(
                     it.source.command.pid.min.toFloat(),
                     it.source.command.pid.max.toFloat(),
                     left,
-                    left + width - (MARGIN_END * density),
+                    left + width - (MARGIN_END * density)
                 )
 
             val rectLeft = left - (3f * density)
@@ -321,7 +320,7 @@ internal class GiuliaDrawer(
         canvas: Canvas,
         metric: Metric,
         left: Float,
-        top: Float,
+        top: Float
     ) {
         if (settings.isAlertLegendEnabled() &&
             (metric.source.command.pid.alert.lowerThreshold != null || metric.source.command.pid.alert.upperThreshold != null)
@@ -355,7 +354,7 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         textSize: Float,
-        castToInt: Boolean = false,
+        castToInt: Boolean = false
     ): Float {
         valuePaint.color = valueColorScheme(metric)
         val units = metric.source.command.pid.units ?: ""
@@ -385,7 +384,7 @@ internal class GiuliaDrawer(
         metric: Metric,
         left: Float,
         top: Float,
-        textSize: Float,
+        textSize: Float
     ): Float {
         currentSecondLineTop = -1f // Reset for each metric
         val topMargin = max((textSize * 0.22f).toInt(), (8 * density).toInt())

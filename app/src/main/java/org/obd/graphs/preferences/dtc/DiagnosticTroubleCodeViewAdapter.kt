@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -40,7 +40,7 @@ import org.obd.graphs.ui.common.setText
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
-    context: Context?,
+    context: Context?
 ) : ListAdapter<DiagnosticTroubleCode, DiagnosticTroubleCodeViewAdapter.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -48,12 +48,12 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder = ViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         val dtc = getItem(position)
 
@@ -70,7 +70,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         if (finalDescription.isNullOrBlank() ||
             finalDescription.contains(
                 "Unknown DTC Description",
-                ignoreCase = true,
+                ignoreCase = true
             )
         ) {
             isUnknown = true
@@ -78,7 +78,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                 listOfNotNull(
                     dtc.system?.description,
                     dtc.category?.description,
-                    dtc.subsystem?.description,
+                    dtc.subsystem?.description
                 ).filter { it.isNotBlank() }
 
             finalDescription =
@@ -165,13 +165,13 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                 .makeText(
                     holder.itemView.context,
                     "Copied $formattedCode to clipboard",
-                    Toast.LENGTH_SHORT,
+                    Toast.LENGTH_SHORT
                 ).show()
         }
     }
 
     inner class ViewHolder internal constructor(
-        itemView: View,
+        itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
@@ -193,12 +193,12 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             object : DiffUtil.ItemCallback<DiagnosticTroubleCode>() {
                 override fun areItemsTheSame(
                     oldItem: DiagnosticTroubleCode,
-                    newItem: DiagnosticTroubleCode,
+                    newItem: DiagnosticTroubleCode
                 ): Boolean = oldItem.standardCode == newItem.standardCode && oldItem.rawHex == newItem.rawHex
 
                 override fun areContentsTheSame(
                     oldItem: DiagnosticTroubleCode,
-                    newItem: DiagnosticTroubleCode,
+                    newItem: DiagnosticTroubleCode
                 ): Boolean = oldItem == newItem
             }
     }

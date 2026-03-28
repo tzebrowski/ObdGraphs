@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 
 internal class WifiConnection(
-    private val inetSocketAddress: InetSocketAddress,
+    private val inetSocketAddress: InetSocketAddress
 ) : AdapterConnection {
     private lateinit var socket: Socket
     private lateinit var inputStream: InputStream
@@ -70,8 +70,11 @@ internal class WifiConnection(
 
     companion object {
         fun of(): WifiConnection =
-            WifiConnection(InetSocketAddress(
-                dataLoggerSettings.instance().adapter.tcpHost,
-                dataLoggerSettings.instance().adapter.tcpPort))
+            WifiConnection(
+                InetSocketAddress(
+                    dataLoggerSettings.instance().adapter.tcpHost,
+                    dataLoggerSettings.instance().adapter.tcpPort
+                )
+            )
     }
 }

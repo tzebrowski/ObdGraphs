@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -44,7 +44,7 @@ class ViewPreferencesSerializer(private val prefName: String) {
         null
     }
 
-    fun  store(
+    fun store(
         data: List<Long>
     ) {
         try {
@@ -65,8 +65,7 @@ class ViewPreferencesSerializer(private val prefName: String) {
 
     private fun load(): List<ItemPreference>? =
         Prefs.getString(prefName, "")?.let {
-
-            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                 Log.d(LOG_TAG, "Loading JSON from prefs=$prefName")
             }
 
@@ -75,10 +74,15 @@ class ViewPreferencesSerializer(private val prefName: String) {
                     ArrayList::class.java,
                     ItemPreference::class.java
                 )
-            return if (it.isEmpty()) listOf() else mapper.readValue(
-                it, listType
-            )
+            return if (it.isEmpty()) {
+                listOf()
+            } else {
+                mapper.readValue(
+                    it,
+                    listType
+                )
+            }
         }
 
-    private fun  map(m: Long, index: Int): ItemPreference =  ItemPreference(m, index)
+    private fun map(m: Long, index: Int): ItemPreference = ItemPreference(m, index)
 }

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,7 +29,7 @@ interface MetricsCollector {
 
     fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
 
-    fun append(input: ObdMetric?, forceAppend:Boolean = true)
+    fun append(input: ObdMetric?, forceAppend: Boolean = true)
 
     companion object {
         fun instance(): MetricsCollector = InMemoryCarMetricsCollector()

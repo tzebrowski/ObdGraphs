@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,7 @@ private const val TAG = "DataLoggerConnector"
 
 fun withDataLogger(
     context: Context,
-    action: DataLoggerService.() -> Unit,
+    action: DataLoggerService.() -> Unit
 ) {
     DataLoggerConnector.run(context, action)
 }
@@ -41,7 +41,7 @@ internal object DataLoggerConnector {
         object : ServiceConnection {
             override fun onServiceConnected(
                 className: ComponentName,
-                binder: IBinder,
+                binder: IBinder
             ) {
                 Log.i(TAG, "Service connected globally.")
                 val localBinder = binder as DataLoggerService.LocalBinder
@@ -67,7 +67,7 @@ internal object DataLoggerConnector {
      */
     fun run(
         context: Context,
-        action: DataLoggerService.() -> Unit,
+        action: DataLoggerService.() -> Unit
     ) {
         val currentService = service
 

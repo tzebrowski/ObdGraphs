@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -75,8 +75,14 @@ internal class SetupProfilesTest : TestSetup() {
         """.trimIndent()
 
         // Initialize the class
-        profileService.init(1, "profile_1",  SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
+        profileService.init(
+            1,
+            "profile_1",
+            SimpleDateFormat(
+                "yyyyMMdd.HHmm",
+                Locale.getDefault()
+            ).format(Date())
+        )
 
         // Mock Assets to return our test file
         every { assets.list("") } returns arrayOf(testProfileFile)
@@ -102,9 +108,12 @@ internal class SetupProfilesTest : TestSetup() {
 
         // 4. Verify Array/Set parsing
         verify {
-            editor.putStringSet("pref.custom.list", match {
-                it.contains("1") && it.contains("2") && it.contains("3")
-            })
+            editor.putStringSet(
+                "pref.custom.list",
+                match {
+                    it.contains("1") && it.contains("2") && it.contains("3")
+                }
+            )
         }
 
         // 5. Verify Numeric parsing
@@ -120,12 +129,17 @@ internal class SetupProfilesTest : TestSetup() {
         verify(atLeast = 1) { editor.apply() }
     }
 
-
     @Test
     fun `setupProfiles should force reload if forceOverride is true`() {
         // GIVEN
-        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
+        profileService.init(
+            1,
+            "profile_2",
+            SimpleDateFormat(
+                "yyyyMMdd.HHmm",
+                Locale.getDefault()
+            ).format(Date())
+        )
 
         val testProfileFile = "profile_1.properties"
         val profileContent = "pref.some.key=value"
@@ -151,8 +165,14 @@ internal class SetupProfilesTest : TestSetup() {
 
     @Test
     fun `setupProfiles parses 'Alfa 175 TBI' properties correctly`() {
-        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
+        profileService.init(
+            1,
+            "profile_2",
+            SimpleDateFormat(
+                "yyyyMMdd.HHmm",
+                Locale.getDefault()
+            ).format(Date())
+        )
 
         // When
         profileService.setupProfiles(forceOverrideRecommendation = true)
@@ -167,8 +187,14 @@ internal class SetupProfilesTest : TestSetup() {
 
     @Test
     fun `setupProfiles parses 'Alfa 2_0 GME' properties and loads them into preferences`() {
-        profileService.init(1, "profile_3", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
+        profileService.init(
+            1,
+            "profile_3",
+            SimpleDateFormat(
+                "yyyyMMdd.HHmm",
+                Locale.getDefault()
+            ).format(Date())
+        )
 
         // When
         profileService.setupProfiles(forceOverrideRecommendation = true)
@@ -186,8 +212,6 @@ internal class SetupProfilesTest : TestSetup() {
             // profile_3.pref.adapter.power.switch_network_on_off=false
             editor.putBoolean("profile_3.pref.adapter.power.switch_network_on_off", false)
 
-
-
             // 5. Verify Profile Name registration
             // pref.profile.names.profile_3=Alfa 2.0 GME (BT)
 //            editor.updatePreference("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)")
@@ -196,23 +220,28 @@ internal class SetupProfilesTest : TestSetup() {
 
     @Test
     fun `test setupProfiles empty installation key and forceOverrideRecommendation is false`() {
-        //GIVEN
+        // GIVEN
         mockInstallationKey(false)
         mockPropertiesFiles()
 
-        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
+        profileService.init(
+            1,
+            "profile_2",
+            SimpleDateFormat(
+                "yyyyMMdd.HHmm",
+                Locale.getDefault()
+            ).format(Date())
+        )
 
         // Act
         profileService.setupProfiles(forceOverrideRecommendation = false)
 
         // Assert
         // reset profile not called
-        verify (atLeast = 0) { editor.remove( "pref.adapter.connection.type") }
-        verify (atLeast = 0) { editor.remove( "pref.adapter.init.delay") }
-        verify (atLeast = 0) { editor.remove( "pref.pids.generic.high") }
-        verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
-
+        verify(atLeast = 0) { editor.remove("pref.adapter.connection.type") }
+        verify(atLeast = 0) { editor.remove("pref.adapter.init.delay") }
+        verify(atLeast = 0) { editor.remove("pref.pids.generic.high") }
+        verify(atLeast = 0) { editor.remove("pref.profile.names.profile_3") }
 
         // Assert: Verify specific keys from the file were saved
         // 1. Verify boolean parsing
@@ -233,24 +262,29 @@ internal class SetupProfilesTest : TestSetup() {
 
     @Test
     fun `test setupProfiles installation key present and forceOverrideRecommendation is disabled`() {
-        //GIVEN
+        // GIVEN
         mockInstallationKey(true)
         mockPropertiesFiles()
         mockPrefsAll()
 
-        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
+        profileService.init(
+            1,
+            "profile_2",
+            SimpleDateFormat(
+                "yyyyMMdd.HHmm",
+                Locale.getDefault()
+            ).format(Date())
+        )
 
         // Act
         profileService.setupProfiles(forceOverrideRecommendation = false)
 
-
         // Assert
         // reset profile not called
-        verify (atLeast = 0) { editor.remove( "pref.adapter.connection.type") }
-        verify (atLeast = 0) { editor.remove( "pref.adapter.init.delay") }
-        verify (atLeast = 0) { editor.remove( "pref.pids.generic.high") }
-        verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
+        verify(atLeast = 0) { editor.remove("pref.adapter.connection.type") }
+        verify(atLeast = 0) { editor.remove("pref.adapter.init.delay") }
+        verify(atLeast = 0) { editor.remove("pref.pids.generic.high") }
+        verify(atLeast = 0) { editor.remove("pref.profile.names.profile_3") }
 
         // 1. Verify boolean parsing
         verify(atLeast = 0) { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
@@ -271,7 +305,7 @@ internal class SetupProfilesTest : TestSetup() {
 
     @Test
     fun `Fresh Installation (single profile) = empty installation key and forceOverrideRecommendation is true`() {
-        //GIVEN
+        // GIVEN
         mockInstallationKey(false)
         mockPropertiesFiles()
 
@@ -282,71 +316,66 @@ internal class SetupProfilesTest : TestSetup() {
 
         // Assert
         // reset profile
-        verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
+        verify(atLeast = 0) { editor.remove("pref.profile.names.profile_3") }
 
-        //profiles setup
+        // profiles setup
         verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
         verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
-        verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
-        verify { editor.putStringSet("profile_3.pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+        verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf("22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+        verify { editor.putStringSet("profile_3.pref.giulia.pids.selected", setOf("7002", "7003", "6", "7005", "7016", "7018")) }
 
         verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME") }
         verify { editor.putString("pref.profile.id", "profile_3") }
 
-        //profile load
+        // profile load
         verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "false") }
         verify { editor.updatePreference("pref.dash.swipe.to.delete", "false") }
         verify { editor.updatePreference("pref.adapter.init.protocol", "CAN_29") }
-        verify { editor.updatePreference("pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
-        verify { editor.putStringSet("pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
-
+        verify { editor.updatePreference("pref.giulia.pids.selected", setOf("7002", "7003", "6", "7005", "7016", "7018")) }
+        verify { editor.putStringSet("pref.pids.generic.high", setOf("22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
     }
 
+    @Test
+    fun `Fresh Installation (multiple profiles) = empty installation key and forceOverrideRecommendation is true`() {
+        // GIVEN
+        mockInstallationKey(false)
+        mockPropertiesFiles(listOf("alfa_2_0_gme.properties", "default.properties"))
 
-     @Test
-     fun `Fresh Installation (multiple profiles) = empty installation key and forceOverrideRecommendation is true`() {
-         //GIVEN
-         mockInstallationKey(false)
-         mockPropertiesFiles(listOf("alfa_2_0_gme.properties", "default.properties"))
+        profileService.init(86, "profile_1", "20251218.1055")
 
-         profileService.init(86, "profile_1", "20251218.1055")
+        // Act
+        profileService.setupProfiles(forceOverrideRecommendation = true)
 
-         // Act
-         profileService.setupProfiles(forceOverrideRecommendation = true)
+        // Assert
+        // reset profile
+        verify(atLeast = 0) { editor.remove("pref.profile.names.profile_3") }
 
-         // Assert
-         // reset profile
-         verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
+        // profiles setup profile_1
+        verify { editor.updatePreference("profile_1.pref.adapter.power.switch_network_on_off", true) }
+        verify { editor.updatePreference("profile_1.pref.dash.swipe.to.delete", true) }
+        verify { editor.updatePreference("profile_1.pref.adapter.init.protocol", "AUTO") }
+        verify { editor.updatePreference("profile_1.pref.pids.registry.list", setOf("mode01_2.json", "extra.json", "mode01.json")) }
 
-         //profiles setup profile_1
-         verify { editor.updatePreference("profile_1.pref.adapter.power.switch_network_on_off", true) }
-         verify { editor.updatePreference("profile_1.pref.dash.swipe.to.delete", true) }
-         verify { editor.updatePreference("profile_1.pref.adapter.init.protocol", "AUTO") }
-         verify { editor.updatePreference("profile_1.pref.pids.registry.list", setOf( "mode01_2.json","extra.json", "mode01.json"))}
+        // profiles setup profile_3
+        verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
+        verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
+        verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
+        verify { editor.updatePreference("profile_3.pref.pids.generic.high", setOf("22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+        verify { editor.updatePreference("profile_3.pref.giulia.pids.selected", setOf("7002", "7003", "6", "7005", "7016", "7018")) }
+        verify { editor.updatePreference("profile_3.pref.pids.registry.list", setOf("mode01_2.json", "mode01.json", "giulia_2.0_gme.json", "rfhub_module.json", "abs_module.json", "dtcm_module.json", "2.0_gme_ext.json")) }
 
-         //profiles setup profile_3
-         verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
-         verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
-         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
-         verify { editor.updatePreference("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
-         verify { editor.updatePreference("profile_3.pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
-         verify { editor.updatePreference("profile_3.pref.pids.registry.list", setOf( "mode01_2.json", "mode01.json", "giulia_2.0_gme.json", "rfhub_module.json", "abs_module.json","dtcm_module.json", "2.0_gme_ext.json"))}
+        // profile load
+        verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "true") }
+        verify { editor.updatePreference("pref.dash.swipe.to.delete", "true") }
+        verify { editor.updatePreference("pref.adapter.init.protocol", "AUTO") }
 
-         //profile load
-         verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "true") }
-         verify { editor.updatePreference("pref.dash.swipe.to.delete", "true") }
-         verify { editor.updatePreference("pref.adapter.init.protocol", "AUTO") }
-
-         verify { editor.updatePreference("pref.profile.names.profile_1", "Default (BT)") }
-         verify { editor.updatePreference("pref.profile.id", "profile_1") }
+        verify { editor.updatePreference("pref.profile.names.profile_1", "Default (BT)") }
+        verify { editor.updatePreference("pref.profile.id", "profile_1") }
 //         verify { editor.updatePreference("pref.profile.current_name", "profile_1") }
-         verify { editor.updatePreference("pref.about.build_version", "86") }
-     }
-
-
+        verify { editor.updatePreference("pref.about.build_version", "86") }
+    }
 
     private fun mockInstallationKey(keyPresent: Boolean = false) =
         every { Prefs.getBoolean("prefs.installed.profiles.1", false) } returns keyPresent
-
 }

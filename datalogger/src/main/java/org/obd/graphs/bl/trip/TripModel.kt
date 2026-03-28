@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -31,9 +31,8 @@ data class TripFileDesc(
 data class Entry(
     var x: Float = 0f,
     var y: Any = 0f,
-    var data: Long,
+    var data: Long
 )
-
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Metric(

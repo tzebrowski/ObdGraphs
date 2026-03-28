@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,7 @@ private const val MOCK_CONNECTION_TYPE = "mock"
 
 class ConnectionTypeListPreference(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
     init {
         if (BuildConfig.DEBUG) {

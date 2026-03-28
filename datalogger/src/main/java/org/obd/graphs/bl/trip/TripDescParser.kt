@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,7 +30,7 @@ class TripDescParser {
             profileId = profileId,
             profileLabel = profileLabel,
             startTime = p[2],
-            tripTimeSec = p[3],
+            tripTimeSec = p[3]
         )
     }
 

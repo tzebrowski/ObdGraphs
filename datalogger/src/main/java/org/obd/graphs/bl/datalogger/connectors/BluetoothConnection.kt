@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 private const val LOGGER_TAG = "BluetoothConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
- internal class BluetoothConnection(private val deviceAddress: String) : AdapterConnection {
+internal class BluetoothConnection(private val deviceAddress: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null
@@ -51,19 +51,19 @@ private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"
     }
 
     override fun close() {
-
         try {
             input?.close()
-        } catch (_: Throwable){}
+        } catch (_: Throwable) {}
 
         try {
             output?.close()
-        } catch (_: Throwable){}
+        } catch (_: Throwable) {}
 
         try {
-            if (::socket.isInitialized)
+            if (::socket.isInitialized) {
                 socket.close()
-        } catch (_: Throwable){}
+            }
+        } catch (_: Throwable) {}
 
         Log.i(LOGGER_TAG, "Socket for the device: $deviceAddress is closed.")
     }
@@ -105,9 +105,8 @@ private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"
                         "Successfully opened  the sockets to device: ${adapter.name}"
                     )
                 }
-
             }
-        }catch (e: SecurityException){
+        } catch (e: SecurityException) {
             Log.e("BluetoothAdaptersListPreferences", "Failed to obtain BT Permissions", e)
             Network.requestBluetoothPermissions()
         }

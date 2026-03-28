@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -84,7 +84,7 @@ internal class BackupRestoreTest : TestSetup() {
         verify {
             editor.updatePreference(
                 "profile_3.pref.pids.generic.high",
-                setOf("22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007"),
+                setOf("22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")
             )
         }
         verify { editor.updatePreference("profile_3.pref.giulia.pids.selected", setOf("7002", "7003", "6", "7005", "7016", "7018")) }
@@ -98,8 +98,8 @@ internal class BackupRestoreTest : TestSetup() {
                     "rfhub_module.json",
                     "abs_module.json",
                     "dtcm_module.json",
-                    "2.0_gme_ext.json",
-                ),
+                    "2.0_gme_ext.json"
+                )
             )
         }
 

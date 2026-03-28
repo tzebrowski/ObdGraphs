@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -57,14 +57,14 @@ internal class GiuliaSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
+    private val fps: Fps
 ) : AbstractSurfaceRenderer(context) {
     private val giuliaDrawer = GiuliaDrawer(context, settings)
     private val layoutCache = GiuliaLayoutCache()
 
     override fun onDraw(
         canvas: Canvas,
-        drawArea: Rect?,
+        drawArea: Rect?
     ) {
         drawArea?.let { area ->
             if (area.isEmpty) {
@@ -148,7 +148,7 @@ internal class GiuliaSurfaceRenderer(
                             left = colLeft,
                             top = itemTop,
                             valueLeft = valueLeft,
-                            valueCastToInt = false,
+                            valueCastToInt = false
                         )
                     }
                 }
@@ -163,7 +163,7 @@ internal class GiuliaSurfaceRenderer(
                     contentHeight = contentHeight,
                     viewportHeight = viewportHeight,
                     topOffset = viewportTop,
-                    verticalMargin = 10f,
+                    verticalMargin = 10f
                 )
             }
         }

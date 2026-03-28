@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,6 +17,7 @@
 package org.obd.graphs.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
@@ -24,14 +25,19 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.R
-import androidx.core.graphics.drawable.toDrawable
 import org.obd.graphs.ui.common.toast
 
- class ScreenLockManager(
-    private val activity: Activity,
+const val SCREEN_LOCK_SHOW_CANCEL_BUTTON_EXTRA_PARAM_NAME = "cancel_button.extra"
+const val SCREEN_LOCK_CONTEXT_EXTRA_PARAM_NAME = "context.extra"
+
+fun Intent.getContextExtraParam(): String? = extras?.getString(SCREEN_LOCK_CONTEXT_EXTRA_PARAM_NAME)
+
+class ScreenLockManager(
+    private val activity: Activity
 ) : DefaultLifecycleObserver {
     private var lockScreenDialog: AlertDialog? = null
     private var onCancelAction: (() -> Unit)? = null
@@ -39,13 +45,16 @@ import org.obd.graphs.ui.common.toast
     private val handler = Handler(Looper.getMainLooper())
     private var timeoutRunnable: Runnable? = null
 
+    private var cancelButton: Button? = null
+
     fun setup() {
         AlertDialog.Builder(activity).run {
             setCancelable(false)
-            val dialogView: View = activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
-            val cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
+            val dialogView: View =
+                activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
+            cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
 
-            cancelButton.setOnClickListener {
+            cancelButton?.setOnClickListener {
                 onCancelAction?.invoke()
                 dismiss()
             }
@@ -59,10 +68,12 @@ import org.obd.graphs.ui.common.toast
 
     fun show(
         message: String,
-        timeoutMs: Long = 5000L,
-        onCancel: (() -> Unit)? = null,
+        timeoutMs: Long = 10000L,
+        showCancelButton: Boolean = false,
+        onCancel: (() -> Unit)? = null
     ) {
         this.onCancelAction = onCancel
+        this.cancelButton?.visibility = if (showCancelButton) View.VISIBLE else View.GONE
 
         lockScreenDialog?.let { dialog ->
             val dialogTitle = dialog.findViewById<TextView>(R.id.dialog_screen_lock_message_id)

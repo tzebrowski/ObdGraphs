@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,7 +29,7 @@ data class CacheValue(
     val preference: XmlPreference,
     val field: KProperty1<*, *>,
     val obj: Any,
-    val defaultValue: Any?,
+    val defaultValue: Any?
 )
 
 interface PreferencesManager<T> {
@@ -42,7 +42,7 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
     private inner class SharedPreferenceChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
-            key: String?,
+            key: String?
         ) {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "Key to update $key")
@@ -61,7 +61,7 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
 
     protected fun update(
         key: String?,
-        sharedPreferences: SharedPreferences?,
+        sharedPreferences: SharedPreferences?
     ) {
         if (cache.containsKey(key)) {
             val cacheValue = cache[key]!!
@@ -94,7 +94,7 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
 
     protected fun calculateDefaultValue(
         preference: XmlPreference,
-        field: KProperty1<*, *>,
+        field: KProperty1<*, *>
     ): Any? =
         if (preference.type == String::class) {
             preference.defaultValue
@@ -123,7 +123,7 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
     private inline fun normalizeNewValue(
         value: Any?,
         type: KClass<*>,
-        key: String?,
+        key: String?
     ): Any? {
         var newValue = value
 

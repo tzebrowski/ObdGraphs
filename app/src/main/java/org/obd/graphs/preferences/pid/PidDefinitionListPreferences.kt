@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,7 @@ import org.obd.graphs.ui.common.colorize
 
 class PidDefinitionListPreferences(
     context: Context,
-    private val attrs: AttributeSet?,
+    private val attrs: AttributeSet?
 ) : DialogPreference(context, attrs) {
     val source = getAttribute("source")
 

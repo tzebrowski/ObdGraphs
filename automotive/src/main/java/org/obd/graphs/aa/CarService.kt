@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,11 +22,9 @@ import androidx.car.app.R
 import androidx.car.app.Session
 import androidx.car.app.validation.HostValidator
 
-
 internal class CarService : CarAppService() {
     override fun onCreateSession(): Session = CarSession()
     override fun createHostValidator(): HostValidator {
-
         return if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
             HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
         } else {

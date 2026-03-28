@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -58,7 +58,7 @@ internal class QueryStrategyOrchestrator :
     override fun getStrategy(): QueryStrategyType = strategy
 
     override fun setStrategy(queryStrategyType: QueryStrategyType): Query {
-        if (Log.isLoggable(TAG,Log.DEBUG)) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "${currentThread()} Sets new strategy $queryStrategyType")
         }
         this.strategy = queryStrategyType
@@ -66,7 +66,7 @@ internal class QueryStrategyOrchestrator :
     }
 
     override fun update(newPIDs: Set<Long>): Query {
-        if (Log.isLoggable(TAG,Log.DEBUG)) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "${currentThread()} Updating query  for $strategy. New PIDs $newPIDs")
         }
 
@@ -79,16 +79,16 @@ internal class QueryStrategyOrchestrator :
         val selection = Prefs.getLongSet(filter)
         val intersection = selection.intersect(query)
 
-        if (Log.isLoggable(TAG,Log.DEBUG)) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(
                 TAG,
                 "${currentThread()} Individual query enabled:${isIndividualQuerySelected()}, " +
-                        " key:$filter, query=$query,selection=$selection, intersection=$intersection",
+                    " key:$filter, query=$query,selection=$selection, intersection=$intersection"
             )
         }
 
         return if (isIndividualQuerySelected()) {
-            if (Log.isLoggable(TAG,Log.DEBUG)) {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "${currentThread()} Returning selection=$selection")
             }
 

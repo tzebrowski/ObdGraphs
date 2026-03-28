@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,7 +28,7 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.brake_boosting.BrakeBoostingDrawer
 
 internal class PerformanceScreenSettings(
-    original: ScreenSettings,
+    original: ScreenSettings
 ) : ScreenSettings by original {
     override fun isBreakLabelTextEnabled(): Boolean = true
 }
@@ -37,7 +37,7 @@ internal class PerformanceSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
+    private val fps: Fps
 ) : AbstractSurfaceRenderer(context) {
     private val screenSettings = PerformanceScreenSettings(settings)
     private val performanceInfoDetails = PerformanceInfoDetails()
@@ -49,9 +49,8 @@ internal class PerformanceSurfaceRenderer(
 
     override fun onDraw(
         canvas: Canvas,
-        drawArea: Rect?,
+        drawArea: Rect?
     ) {
-
         val performanceScreenSettings = screenSettings.getPerformanceScreenSettings()
         drawArea?.let {
             performanceDrawer.drawBackground(canvas, it)
@@ -67,7 +66,7 @@ internal class PerformanceSurfaceRenderer(
                     left,
                     fps,
                     metricsCollector,
-                    drawContextInfo = true,
+                    drawContextInfo = true
                 )
                 top += MARGIN_TOP
                 performanceDrawer.drawDivider(
@@ -75,7 +74,7 @@ internal class PerformanceSurfaceRenderer(
                     left,
                     area.width().toFloat(),
                     top,
-                    Color.DKGRAY,
+                    Color.DKGRAY
                 )
                 top += 40
             } else {
@@ -88,8 +87,8 @@ internal class PerformanceSurfaceRenderer(
                     brakeBoostingSettings = performanceScreenSettings.brakeBoostingSettings,
                     gasMetric = metricsCache.brakeBoosting.gasMetric,
                     arbitraryMetric = metricsCache.brakeBoosting.arbitraryMetric,
-                    vehicleSpeedMetric = metricsCache.brakeBoosting.vehicleSpeedMetric,
-                    )
+                    vehicleSpeedMetric = metricsCache.brakeBoosting.vehicleSpeedMetric
+                )
             ) {
                 top -= 30f
 
@@ -98,7 +97,7 @@ internal class PerformanceSurfaceRenderer(
                     area,
                     top,
                     gas = metricsCache.brakeBoosting.gasMetric,
-                    torque = metricsCache.brakeBoosting.arbitraryMetric,
+                    torque = metricsCache.brakeBoosting.arbitraryMetric
                 )
             } else {
                 performanceDrawer.drawScreen(
@@ -107,10 +106,10 @@ internal class PerformanceSurfaceRenderer(
                     left = left,
                     top = top,
                     performanceInfoDetails =
-                        performanceInfoDetails.apply {
-                            this.bottomMetrics = metricsCache.bottomMetrics
-                            this.topMetrics = metricsCache.topMetrics
-                        },
+                    performanceInfoDetails.apply {
+                        this.bottomMetrics = metricsCache.bottomMetrics
+                        this.topMetrics = metricsCache.topMetrics
+                    }
                 )
             }
         }

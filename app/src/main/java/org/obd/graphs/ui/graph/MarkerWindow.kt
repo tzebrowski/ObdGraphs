@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -38,12 +38,12 @@ private const val LOG_KEY = "MarkerWindow"
 class MarkerWindow(
     context: Context?,
     layoutResource: Int,
-    private val chart: LineChart,
+    private val chart: LineChart
 ) : MarkerView(context, layoutResource) {
 
     override fun refreshContent(
         e: Entry,
-        highlight: Highlight?,
+        highlight: Highlight?
     ) {
         val metrics = findClosestMetrics(e)
         val adapter = MarkerWindowViewAdapter(context, metrics)
@@ -109,7 +109,7 @@ class MarkerWindow(
 
     private fun buildMetrics(
         id: Long,
-        v: Float,
+        v: Float
     ): ObdMetric {
         val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)

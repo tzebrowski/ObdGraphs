@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -84,7 +84,7 @@ internal class NavTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
     metricsCollector: MetricsCollector,
-    fps: Fps,
+    fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
     private val surfaceRendererScreen = SurfaceRendererScreen(carContext, settings, metricsCollector, fps, parent = this)
 
@@ -92,7 +92,7 @@ internal class NavTemplateCarScreen(
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                     Log.v(LOG_TAG, "Received ${intent?.action} event")
@@ -355,7 +355,7 @@ internal class NavTemplateCarScreen(
                 override fun handleOnBackPressed() {
                     screenManager.pop()
                 }
-            },
+            }
         )
 
         lifecycle.addObserver(this)
@@ -390,7 +390,7 @@ internal class NavTemplateCarScreen(
                         Log.e(LOG_TAG, "Failed to stop DL threads", e)
                     }
                 }
-            },
+            }
         )
     }
 

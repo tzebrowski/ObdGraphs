@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,4 +23,5 @@ import org.obd.graphs.ui.SurfaceRendererFragment
 internal class PerformanceRendererFragment : SurfaceRendererFragment(
     R.layout.fragment_performance,
     SurfaceRendererType.PERFORMANCE,
-    PerformanceSettings())
+    PerformanceSettings()
+)

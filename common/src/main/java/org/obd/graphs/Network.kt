@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -47,7 +47,7 @@ object Network {
     ) : BroadcastReceiver() {
         override fun onReceive(
             context: Context,
-            intent: Intent,
+            intent: Intent
         ) {
             val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
@@ -88,7 +88,7 @@ object Network {
                 adapter?.bondedDevices?.find {
                     it.address.equals(
                         targetMacAddress,
-                        ignoreCase = true,
+                        ignoreCase = true
                     )
                 }
 
@@ -96,10 +96,9 @@ object Network {
                 Log.w(TAG, "Target MAC $targetMacAddress not found in bonded devices.")
                 false
             } else {
-
                 Log.i(
                     TAG,
-                    "Target BT (${device.name}) found in bonded list. Triggering Event.",
+                    "Target BT (${device.name}) found in bonded list. Triggering Event."
                 )
                 func()
                 true
@@ -122,7 +121,7 @@ object Network {
         if (EasyPermissions.hasPermissions(
                 getContext()!!,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
         ) {
             try {
@@ -156,7 +155,7 @@ object Network {
                         object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
                             override fun onCapabilitiesChanged(
                                 network: Network,
-                                networkCapabilities: NetworkCapabilities,
+                                networkCapabilities: NetworkCapabilities
                             ) {
                                 currentSSID = readSSID(networkCapabilities)
                             }
@@ -167,7 +166,7 @@ object Network {
                         object : ConnectivityManager.NetworkCallback() {
                             override fun onCapabilitiesChanged(
                                 network: Network,
-                                networkCapabilities: NetworkCapabilities,
+                                networkCapabilities: NetworkCapabilities
                             ) {
                                 currentSSID = readSSID(networkCapabilities)
                             }

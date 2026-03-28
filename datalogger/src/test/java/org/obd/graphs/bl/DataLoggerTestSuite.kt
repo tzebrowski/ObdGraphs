@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,6 +24,6 @@ import org.obd.graphs.bl.gps.GpsMetricsEmitterTest
 @RunWith(Suite::class)
 @SuiteClasses(
     DataLoggerServiceTest::class,
-    GpsMetricsEmitterTest::class,
+    GpsMetricsEmitterTest::class
 )
 class DataLoggerTestSuite

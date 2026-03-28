@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -80,14 +80,14 @@ class GraphFragment : Fragment() {
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 when (intent?.action) {
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
                             Log.i(
                                 LOG_TAG,
-                                "Auto-connect data logger for=${query().getIDs()}",
+                                "Auto-connect data logger for=${query().getIDs()}"
                             )
                             withDataLogger {
                                 start(query())
@@ -124,7 +124,7 @@ class GraphFragment : Fragment() {
         }
 
     private class ReverseValueFormatter(
-        val pid: PidDefinition,
+        val pid: PidDefinition
     ) : ValueFormatter() {
         override fun getFormattedValue(value: Float): String = pid.scaleToRange(value).toString()
     }
@@ -138,13 +138,13 @@ class GraphFragment : Fragment() {
         object : OnChartGestureListener {
             override fun onChartGestureStart(
                 me: MotionEvent,
-                lastPerformedGesture: ChartGesture,
+                lastPerformedGesture: ChartGesture
             ) {
             }
 
             override fun onChartGestureEnd(
                 me: MotionEvent,
-                lastPerformedGesture: ChartGesture,
+                lastPerformedGesture: ChartGesture
             ) {
                 if (lastPerformedGesture != ChartGesture.SINGLE_TAP) {
                     chart.highlightValues(null)
@@ -161,21 +161,21 @@ class GraphFragment : Fragment() {
                 me1: MotionEvent,
                 me2: MotionEvent,
                 velocityX: Float,
-                velocityY: Float,
+                velocityY: Float
             ) {
             }
 
             override fun onChartScale(
                 me: MotionEvent,
                 scaleX: Float,
-                scaleY: Float,
+                scaleY: Float
             ) {
             }
 
             override fun onChartTranslate(
                 me: MotionEvent,
                 dX: Float,
-                dY: Float,
+                dY: Float
             ) {
             }
         }
@@ -194,7 +194,7 @@ class GraphFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
@@ -222,7 +222,7 @@ class GraphFragment : Fragment() {
     private fun configureRecyclerView(
         id: Int,
         visible: Boolean,
-        weight: Float,
+        weight: Float
     ) {
         val view: View = root.findViewById(id)
         view.visibility = if (visible) View.VISIBLE else View.GONE
@@ -256,7 +256,7 @@ class GraphFragment : Fragment() {
                         metrics = mutableListOf(),
                         min = hist.min,
                         max = hist.max,
-                        mean = hist.mean,
+                        mean = hist.mean
                     )
                 val indexOf = data.indexOf(sensorData)
                 if (indexOf == -1) {
@@ -296,11 +296,11 @@ class GraphFragment : Fragment() {
                                     Log.v(
                                         LOG_TAG,
                                         "Failed to create chart  data-set ${e.message} for PID: ${it.id}",
-                                        e,
+                                        e
                                     )
                                     null
                                 }
-                            }.toList(),
+                            }.toList()
                     )
 
                 Log.i(LOG_TAG, "Created data-set size: ${dataSets.dataSetCount}")
@@ -363,7 +363,7 @@ class GraphFragment : Fragment() {
     private fun LineChart.debug(label: String) {
         Log.i(
             LOG_TAG,
-            "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=$visibleXRange",
+            "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=$visibleXRange"
         )
     }
 
@@ -455,7 +455,7 @@ class GraphFragment : Fragment() {
 
     private fun createDataSetFor(
         pid: PidDefinition,
-        col: Int,
+        col: Int
     ): LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, pid.description)
@@ -485,7 +485,7 @@ class GraphFragment : Fragment() {
     private fun setVirtualViewBtn(
         btnId: Int,
         selection: String,
-        viewId: String,
+        viewId: String
     ) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {

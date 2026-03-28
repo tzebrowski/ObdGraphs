@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,12 +43,12 @@ import java.io.File
 
 data class TripLogDetails(
     val source: TripFileDesc,
-    var checked: Boolean = false,
+    var checked: Boolean = false
 )
 
 class TripLogListDialogFragment(
     private val enableDeleteButtons: Boolean = true,
-    private val enableUploadCloudButton: Boolean = true,
+    private val enableUploadCloudButton: Boolean = true
 ) : CoreDialogFragment() {
     private lateinit var tripLogDriveManager: TripLogDriveManager
 
@@ -61,7 +61,7 @@ class TripLogListDialogFragment(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View? {
         requestWindowFeatures()
 
@@ -70,7 +70,7 @@ class TripLogListDialogFragment(
             TripViewAdapter(
                 context,
                 tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList(),
-                enableDeleteButtons,
+                enableDeleteButtons
             )
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)

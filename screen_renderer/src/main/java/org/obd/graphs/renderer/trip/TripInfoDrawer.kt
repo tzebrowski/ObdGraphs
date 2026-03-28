@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,13 +43,13 @@ internal data class TripMetricConfig(
     val statsEnabled: Boolean = true,
     val unitEnabled: Boolean = true,
     val valueDoublePrecision: Int = 2,
-    val statsDoublePrecision: Int = 2,
+    val statsDoublePrecision: Int = 2
 )
 
 @Suppress("NOTHING_TO_INLINE")
 internal class TripInfoDrawer(
     context: Context,
-    settings: ScreenSettings,
+    settings: ScreenSettings
 ) : AbstractDrawer(context, settings) {
     private val metricBuilder = MetricsBuilder()
 
@@ -60,7 +60,7 @@ internal class TripInfoDrawer(
         area: Rect,
         left: Float,
         top: Float,
-        tripInfo: TripInfoDetails,
+        tripInfo: TripInfoDetails
     ) {
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
@@ -81,7 +81,7 @@ internal class TripInfoDrawer(
                 tripInfo.oilDegradation?.let { TripMetricConfig(it, unitEnabled = false) },
                 tripInfo.engineSpeed?.let { TripMetricConfig(it, unitEnabled = false) },
                 tripInfo.vehicleSpeed?.let { TripMetricConfig(it, unitEnabled = false) },
-                tripInfo.gearEngaged?.let { TripMetricConfig(it, unitEnabled = false) },
+                tripInfo.gearEngaged?.let { TripMetricConfig(it, unitEnabled = false) }
             )
 
         var rowTop = top + (textSizeBase * 0.3f)
@@ -106,7 +106,7 @@ internal class TripInfoDrawer(
                 area = area,
                 valueDoublePrecision = config.valueDoublePrecision,
                 statsDoublePrecision = config.statsDoublePrecision,
-                castToInt = config.castToInt,
+                castToInt = config.castToInt
             )
             colIndex++
         }
@@ -118,7 +118,7 @@ internal class TripInfoDrawer(
             left = left,
             width = area.width().toFloat(),
             top = rowTop - (textSizeBase * 0.8f),
-            color = Color.DKGRAY,
+            color = Color.DKGRAY
         )
 
         rowTop += 6
@@ -127,7 +127,7 @@ internal class TripInfoDrawer(
             listOfNotNull(
                 tripInfo.intakePressure?.let { Pair(it, true) },
                 tripInfo.oilPressure?.let { Pair(it, false) },
-                tripInfo.torque?.let { Pair(it, true) },
+                tripInfo.torque?.let { Pair(it, true) }
             )
 
         if (bottomMetrics.isNotEmpty()) {
@@ -167,7 +167,7 @@ internal class TripInfoDrawer(
         canvas: Canvas,
         rowTextSizeBase: Float,
         valueTextSize: Float,
-        rowTop: Float,
+        rowTop: Float
     ) {
         val metric = paired.first
         val castToInt = paired.second
@@ -188,7 +188,7 @@ internal class TripInfoDrawer(
             left = metricLeft,
             top = rowTop,
             valueLeft = valueLeft,
-            valueCastToInt = castToInt,
+            valueCastToInt = castToInt
         )
     }
 
@@ -206,7 +206,7 @@ internal class TripInfoDrawer(
             CURRENT_MIN,
             CURRENT_MAX,
             NEW_MIN,
-            NEW_MAX,
+            NEW_MAX
         )
 
     private fun drawValue(
@@ -221,7 +221,7 @@ internal class TripInfoDrawer(
         area: Rect,
         valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2,
-        castToInt: Boolean = false,
+        castToInt: Boolean = false
     ) {
         valuePaint.typeface = typeface
         valuePaint.color = valueColorScheme(metric)
@@ -266,7 +266,7 @@ internal class TripInfoDrawer(
                     maxText,
                     (left + textWidth),
                     top - (getTextHeight(minText, valuePaint) * 1.1f),
-                    valuePaint,
+                    valuePaint
                 )
             }
         }
@@ -285,7 +285,7 @@ internal class TripInfoDrawer(
         area: Rect,
         valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2,
-        castToInt: Boolean = false,
+        castToInt: Boolean = false
     ) {
         drawValue(
             canvas,
@@ -299,7 +299,7 @@ internal class TripInfoDrawer(
             area = area,
             valueDoublePrecision = valueDoublePrecision,
             statsDoublePrecision = statsDoublePrecision,
-            castToInt = castToInt,
+            castToInt = castToInt
         )
 
         drawTitle(canvas, metric, left, top + (textSizeBase * 0.40f), textSizeBase * 0.35F)

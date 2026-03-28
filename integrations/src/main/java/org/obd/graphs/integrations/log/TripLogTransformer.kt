@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,8 +25,8 @@ import java.io.InputStreamReader
 import java.io.StringReader
 
 internal interface TripLogTransformer {
-    fun transform(log: String, metadata: Map<String,String> = mapOf()): File
-    fun transform(file: File, metadata: Map<String,String> = mapOf()): File
+    fun transform(log: String, metadata: Map<String, String> = mapOf()): File
+    fun transform(file: File, metadata: Map<String, String> = mapOf()): File
 }
 
 internal enum class OutputType { JSON }
@@ -36,7 +36,7 @@ object TripLog {
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
-        valueMapper: (signal: Int, value: Any) -> Any,
+        valueMapper: (signal: Int, value: Any) -> Any
     ): TripLogTransformer =
         when (outputType) {
             else -> DefaultJSONOutput(signalMapper, valueMapper)
@@ -45,18 +45,18 @@ object TripLog {
 
 private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
-    private val valueMapper: (signal: Int, value: Any) -> Any,
+    private val valueMapper: (signal: Int, value: Any) -> Any
 ) : TripLogTransformer {
 
-    override fun transform(file: File, metadata: Map<String,String>): File =
+    override fun transform(file: File, metadata: Map<String, String>): File =
         file.inputStream().use { input ->
-            process(JsonReader(InputStreamReader(input)),metadata)
+            process(JsonReader(InputStreamReader(input)), metadata)
         }
 
-    override fun transform(log: String, metadata: Map<String,String>): File = process(JsonReader(StringReader(log)), metadata)
+    override fun transform(log: String, metadata: Map<String, String>): File = process(JsonReader(StringReader(log)), metadata)
 
-    private fun process(reader: JsonReader, metadata: Map<String,String>): File {
-        Log.d("DefaultJSONOutput","Received $metadata")
+    private fun process(reader: JsonReader, metadata: Map<String, String>): File {
+        Log.d("DefaultJSONOutput", "Received $metadata")
         val tempFile =
             File.createTempFile("json_buffer_", ".tmp").apply {
                 // Ensures the file is cleaned up if the JVM shuts down
@@ -88,7 +88,7 @@ private class DefaultJSONOutput(
     private fun parseRoot(
         reader: JsonReader,
         writer: JsonWriter,
-        metadata: Map<String, String>,
+        metadata: Map<String, String>
     ) {
         if (metadata.isNotEmpty()) {
             writer.beginObject()
@@ -114,7 +114,7 @@ private class DefaultJSONOutput(
 
     private fun parseEntries(
         reader: JsonReader,
-        writer: JsonWriter,
+        writer: JsonWriter
     ) {
         reader.beginObject() // Start "entries" map
         while (reader.hasNext()) {
@@ -126,7 +126,7 @@ private class DefaultJSONOutput(
 
     private fun parseEntryGroup(
         reader: JsonReader,
-        writer: JsonWriter,
+        writer: JsonWriter
     ) {
         reader.beginObject() // Inside "12": {
         while (reader.hasNext()) {
@@ -141,7 +141,7 @@ private class DefaultJSONOutput(
 
     private fun parseMetricsArray(
         reader: JsonReader,
-        writer: JsonWriter,
+        writer: JsonWriter
     ) {
         reader.beginArray() // [
         while (reader.hasNext()) {
@@ -152,7 +152,7 @@ private class DefaultJSONOutput(
 
     private fun parseSingleMetric(
         reader: JsonReader,
-        writer: JsonWriter,
+        writer: JsonWriter
     ) {
         var ts: Long = 0
         var signal = 0

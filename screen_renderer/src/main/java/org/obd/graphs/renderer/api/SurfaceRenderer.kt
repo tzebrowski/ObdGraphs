@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,13 +21,12 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
-import org.obd.graphs.renderer.performance.PerformanceSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
+import org.obd.graphs.renderer.performance.PerformanceSurfaceRenderer
 import org.obd.graphs.renderer.trip.TripInfoSurfaceRenderer
 
-
- interface SurfaceRenderer {
+interface SurfaceRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
     fun updateScrollOffset(scrollOffset: Float)

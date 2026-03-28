@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ import org.obd.graphs.diagnosticRequestIDMapper
 
 class EditDiagnosticRequestIDKeyPreference(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : EditTextPreference(context, attrs) {
     private val preferenceChangeListener =
         OnPreferenceChangeListener { _, newValue ->

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ private const val DEFAULT_SHIFT_LIGHT_THRESHOLD = 5000
 
 internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
     private data class PreferencesIds(
-        val id: String,
+        val id: String
     ) {
         val best: String = "$PREF_DRAG_RACE_KEY_PREFIX.best.$id"
         val ambientTemp: String = "$PREF_DRAG_RACE_KEY_PREFIX.best.$id.ambient_temp"
@@ -85,7 +85,7 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
     private fun loadEntry(
         entry: DragRacingEntry,
-        ids: PreferencesIds,
+        ids: PreferencesIds
     ) {
         Prefs.getString(ids.best, null)?.let { entry.best = it.toLong() }
         Prefs.getString(ids.ambientTemp, null)?.let { entry.bestAmbientTemp = it.toInt() }
@@ -96,7 +96,7 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
     private fun updateEntry(
         entry: DragRacingEntry,
         ids: PreferencesIds,
-        metric: DragRacingMetric,
+        metric: DragRacingMetric
     ) {
         if (metric.time <= 0L) {
             Log.v(LOG_KEY, "Invalid value=${metric.time}")

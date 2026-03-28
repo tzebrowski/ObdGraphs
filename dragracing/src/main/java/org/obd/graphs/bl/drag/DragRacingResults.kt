@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,7 +24,7 @@ data class DragRacingEntry(
     var best: Long = VALUE_NOT_SET,
     var bestAmbientTemp: Int = VALUE_NOT_SET.toInt(),
     var bestAtmPressure: Int = VALUE_NOT_SET.toInt(),
-    var currentSpeed: Int = VALUE_NOT_SET.toInt(),
+    var currentSpeed: Int = VALUE_NOT_SET.toInt()
 )
 
 data class DragRacingResults(
@@ -36,12 +36,12 @@ data class DragRacingResults(
     var _100_200: DragRacingEntry = DragRacingEntry(),
     var _60_140: DragRacingEntry = DragRacingEntry(),
     var ambientTemp: Int = VALUE_NOT_SET.toInt(),
-    var atmPressure: Int = VALUE_NOT_SET.toInt(),
+    var atmPressure: Int = VALUE_NOT_SET.toInt()
 )
 
 data class DragRacingMetric(
     var time: Long,
     var speed: Int,
     var ambientTemp: Int? = 0,
-    var atmPressure: Int? = 0,
+    var atmPressure: Int? = 0
 )

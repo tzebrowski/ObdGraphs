@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,7 +43,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     override fun getMetric(
         id: Long,
-        enabled: Boolean,
+        enabled: Boolean
     ): Metric? {
         val metric = metrics[id]
         return if (metric != null && metric.enabled == enabled) metric else null
@@ -51,13 +51,13 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     override fun getMetric(
         id: Pid,
-        enabled: Boolean,
-    ): Metric?  = getMetric(id.id,enabled)
+        enabled: Boolean
+    ): Metric? = getMetric(id.id, enabled)
 
     @Synchronized
     override fun applyFilter(
         enabled: Set<Long>,
-        order: Map<Long, Int>?,
+        order: Map<Long, Int>?
     ) {
         Log.i(LOG_TAG, "Updating visible PIDs=$enabled with order=$order")
 
@@ -100,7 +100,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     override fun append(
         input: ObdMetric?,
-        forceAppend: Boolean,
+        forceAppend: Boolean
     ) {
         if (input == null) return
 

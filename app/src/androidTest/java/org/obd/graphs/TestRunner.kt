@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,7 @@ fun tcpTestRunner(
     mockServerPort: Int,
     act: () -> Unit = {},
     assert: () -> Unit = {},
-    arrange: () -> Unit,
+    arrange: () -> Unit
 ) {
     val receiver = CountDownLatchBroadcastReceiver(expectedEventType)
     launchActivity<MainActivity>().use { it ->
@@ -93,7 +93,7 @@ fun tcpTestRunner(
     Assert.assertEquals(
         "Did not receive broadcast event: ${receiver.broadcastEvent}",
         receiver.eventGate.count,
-        0,
+        0
     )
 
     try {

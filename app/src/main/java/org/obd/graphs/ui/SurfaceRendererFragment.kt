@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,11 +39,11 @@ import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_HIDE
 import org.obd.graphs.activity.TOOLBAR_SHOW
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
+import org.obd.graphs.activity.getContextExtraParam
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.getContextExtraParam
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -57,7 +57,7 @@ private const val EVENT_THROTTLE_MS = 350L
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
     protected val surfaceRendererType: SurfaceRendererType,
-    private val screenSettings: ScreenSettings,
+    private val screenSettings: ScreenSettings
 ) : Fragment(),
     View.OnTouchListener {
     private val metricsCollector = MetricsCollector.instance()
@@ -77,7 +77,7 @@ internal abstract class SurfaceRendererFragment(
             },
             perfFrameRate = {
                 screenSettings.getSurfaceFrameRate()
-            },
+            }
         )
 
     private var lastEventTime = 0L
@@ -95,7 +95,7 @@ internal abstract class SurfaceRendererFragment(
                     e1: MotionEvent?,
                     e2: MotionEvent,
                     distanceX: Float,
-                    distanceY: Float,
+                    distanceY: Float
                 ): Boolean {
                     val currentTime = System.currentTimeMillis()
 
@@ -117,19 +117,19 @@ internal abstract class SurfaceRendererFragment(
                 }
 
                 override fun onDown(e: MotionEvent): Boolean = true
-            },
+            }
         )
 
     override fun onTouch(
         v: View,
-        event: MotionEvent,
+        event: MotionEvent
     ): Boolean = gestureDetector.onTouchEvent(event)
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 when (intent?.action) {
                     SCREEN_LOCK_DIALOG_CANCELLED_EVENT -> {
@@ -152,7 +152,7 @@ internal abstract class SurfaceRendererFragment(
 
                             Log.i(
                                 LOG_TAG,
-                                "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}",
+                                "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}"
                             )
                             withDataLogger {
                                 start(query)
@@ -229,7 +229,7 @@ internal abstract class SurfaceRendererFragment(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(fragmentId, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
@@ -239,7 +239,7 @@ internal abstract class SurfaceRendererFragment(
                 requireContext(),
                 metricsCollector,
                 mapOf(surfaceRendererType to screenSettings),
-                Fps(),
+                Fps()
             )
 
         val screenBehavior =

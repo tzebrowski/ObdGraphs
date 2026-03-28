@@ -1,21 +1,23 @@
 spotless {
     kotlin {
         target '**/*.kt'
-        ktlint()
+
+        licenseHeaderFile "$project.rootDir/license-header"
+
+        ktlint("0.50.0")
+
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "standard:package-name"
+        }
+
         suppressLintsFor {
             step = "ktlint"
             shortCode = "standard:no-wildcard-imports"
         }
-
         suppressLintsFor {
             step = "ktlint"
             shortCode = "standard:kdoc-wrapping"
         }
-
-        licenseHeaderFile "$project.rootDir/license-header"
-
-        trimTrailingWhitespace()
-        indentWithSpaces()
-        endWithNewline()
-    }
+   }
 }
