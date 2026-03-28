@@ -49,7 +49,7 @@ jobs:
           if [ "${{ env.HAS_SECRETS }}" == "true" ]; then
             sh ./gradlew check
           else
-            sh ./gradlew lintDebug testDebug
+            sh ./gradlew lintDebug testDebugUnitTest
           fi
 
       - name: Android Integration Tests

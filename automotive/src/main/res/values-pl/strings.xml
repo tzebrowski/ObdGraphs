@@ -3,6 +3,7 @@
     <string name="pref.aa.car_error">Wystąpił błąd podczas wczytywania PID/czujników OBD2</string>
     <string name="pref.aa.get_to_app_conf">Ustawienia AA są otwarte w aplikacji mobilnej\n Przejdź tam, aby edytować ustawienia</string>
     <!-- app_name is set per product flavor -->
+    <string name="app_name">Giulia IOT Monitor</string>
 
     <string name="routine.workflow_is_not_running">Najpierw połącz się z adapterem OBD.</string>
     <string name="routine.unknown_error">Nieznany błąd.</string>
