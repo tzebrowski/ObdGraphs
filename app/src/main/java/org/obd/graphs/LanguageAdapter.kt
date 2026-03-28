@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,17 +24,17 @@ import androidx.recyclerview.widget.RecyclerView
 
 class LanguageAdapter(
     private val items: Array<String>,
-    private val onItemClick: (Int) -> Unit,
+    private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
     class ViewHolder(
-        view: View,
+        view: View
     ) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.language_item_text)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder {
         val view =
             LayoutInflater
@@ -45,7 +45,7 @@ class LanguageAdapter(
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         holder.textView.text = items[position]
         holder.itemView.setOnClickListener {

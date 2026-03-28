@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -49,7 +49,7 @@ internal object LanguageManager {
 
     fun saveLanguage(
         context: Context,
-        localeTag: String,
+        localeTag: String
     ) = context
         .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
         .edit()
@@ -64,7 +64,7 @@ internal object LanguageManager {
 
     fun showLanguageSelectionDialog(
         activity: Activity,
-        onComplete: (localeTag: String) -> Unit,
+        onComplete: (localeTag: String) -> Unit
     ) {
         val names = activity.resources.getStringArray(org.obd.graphs.commons.R.array.language_names)
         val codes = activity.resources.getStringArray(org.obd.graphs.commons.R.array.language_codes)

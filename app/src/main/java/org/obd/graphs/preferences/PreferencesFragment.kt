@@ -201,7 +201,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         registerViewsPreferenceChangeListeners()
     }
 
-
     private fun registerConnectionTypeListener() {
         val bluetooth = "bluetooth"
 
