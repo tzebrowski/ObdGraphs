@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -33,12 +33,12 @@ const val SCREEN_ON_EVENT = "power.screen.on"
 internal class PowerBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(
         context: Context?,
-        intent: Intent,
+        intent: Intent
     ) {
         val powerPreferences: PowerPreferences = Power.getPreferences()
         Log.d(
             LOG_TAG,
-            "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}",
+            "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}"
         )
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
@@ -48,7 +48,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
                 context?.let {
                     AutoConnect.schedule(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
                 }
-           } else {
+            } else {
                 if (powerPreferences.connectOnPower) {
                     context?.let {
                         AutoConnect.schedule(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
@@ -85,7 +85,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
 
     private fun isActivityVisibleOnTheScreen(
         context: Context,
-        activityClass: Class<*>,
+        activityClass: Class<*>
     ): Boolean {
         val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val taskInfo = activityManager.getRunningTasks(1)

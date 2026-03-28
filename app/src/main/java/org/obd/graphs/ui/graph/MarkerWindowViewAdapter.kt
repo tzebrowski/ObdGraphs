@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,13 +30,13 @@ import org.obd.metrics.api.model.ObdMetric
 
 class MarkerWindowViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<ObdMetric>,
+    private var data: MutableCollection<ObdMetric>
 ) : RecyclerView.Adapter<MarkerWindowViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.item_metric, parent, false)
         return ViewHolder(view)
@@ -44,7 +44,7 @@ class MarkerWindowViewAdapter internal constructor(
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         data.elementAt(position).run {
             holder.metricName.setText(command.label, COLOR_PHILIPPINE_GREEN, 1.0f)
@@ -55,7 +55,7 @@ class MarkerWindowViewAdapter internal constructor(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder internal constructor(
-        itemView: View,
+        itemView: View
     ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         val metricName: TextView = itemView.findViewById(R.id.metric_name)

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -37,7 +37,6 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
-import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -47,6 +46,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.renderer.api.SurfaceRendererType
+import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 
 const val GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_1.event.changed"
 const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_2.event.changed"
@@ -57,7 +57,7 @@ private const val AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT = "pref.aa.trip_info.
 private const val AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT = "pref.aa.performance.pids.selected.event.changed"
 
 private enum class DefaultScreen(
-    private val code: Int,
+    private val code: Int
 ) : Identity {
     NOT_SET(-1);
 
@@ -72,7 +72,7 @@ internal class SurfaceRendererScreen(
     settings: CarSettings,
     metricsCollector: MetricsCollector,
     fps: Fps,
-    private val parent: NavTemplateCarScreen,
+    private val parent: NavTemplateCarScreen
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
     private var screenId: Identity = SurfaceRendererType.GIULIA
@@ -80,22 +80,27 @@ internal class SurfaceRendererScreen(
     private val screenBehaviorController = ScreenBehaviorController(
         carContext,
         metricsCollector,
-        mapOf(SurfaceRendererType.GAUGE to settings,
+        mapOf(
+            SurfaceRendererType.GAUGE to settings,
             SurfaceRendererType.GIULIA to settings,
             SurfaceRendererType.TRIP_INFO to settings,
             SurfaceRendererType.DRAG_RACING to settings,
-            SurfaceRendererType.PERFORMANCE to settings),
-        fps)
+            SurfaceRendererType.PERFORMANCE to settings
+        ),
+        fps
+    )
 
-    private val surfaceRendererController = SurfaceRendererController(carContext,
+    private val surfaceRendererController = SurfaceRendererController(
+        carContext,
         settings,
-        screenBehaviorController.getScreenBehavior(SurfaceRendererType.GIULIA)?.getSurfaceRenderer())
+        screenBehaviorController.getScreenBehavior(SurfaceRendererType.GIULIA)?.getSurfaceRenderer()
+    )
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 when (intent?.action) {
                     AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> {
@@ -106,7 +111,7 @@ internal class SurfaceRendererScreen(
                     AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT,
                     AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT,
                     AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT,
-                    LOW_FREQ_PID_SELECTION_CHANGED_EVENT,
+                    LOW_FREQ_PID_SELECTION_CHANGED_EVENT
                     -> {
                         dataLoggerUpdateQuery()
                         renderFrame()
@@ -153,8 +158,7 @@ internal class SurfaceRendererScreen(
     fun switchSurfaceRenderer(newScreenId: Identity) {
         this.screenId = newScreenId
         if (newScreenId is SurfaceRendererType) {
-
-            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                 Log.d(LOG_TAG, "[${Thread.currentThread()}] Switch to new surface renderer screen: ${this.screenId} and updating query...")
             }
 
@@ -191,26 +195,26 @@ internal class SurfaceRendererScreen(
             FeatureDescription(
                 SurfaceRendererType.DRAG_RACING,
                 org.obd.graphs.commons.R.drawable.action_drag_race,
-                carContext.getString(R.string.available_features_drag_race_screen_title),
+                carContext.getString(R.string.available_features_drag_race_screen_title)
             ),
             FeatureDescription(
                 SurfaceRendererType.GAUGE,
                 R.drawable.action_gauge,
-                carContext.getString(R.string.available_features_gauge_screen_title),
+                carContext.getString(R.string.available_features_gauge_screen_title)
             ),
             FeatureDescription(
                 SurfaceRendererType.GIULIA,
                 R.drawable.action_giulia_metics,
-                carContext.getString(R.string.available_features_giulia_screen_title),
-            ),
+                carContext.getString(R.string.available_features_giulia_screen_title)
+            )
         ).apply {
             if (settings.getTripInfoScreenSettings().viewEnabled) {
                 add(
                     FeatureDescription(
                         SurfaceRendererType.TRIP_INFO,
                         R.drawable.action_giulia,
-                        carContext.getString(R.string.available_features_trip_info_screen_title),
-                    ),
+                        carContext.getString(R.string.available_features_trip_info_screen_title)
+                    )
                 )
             }
             if (settings.getPerformanceScreenSettings().viewEnabled) {
@@ -218,8 +222,8 @@ internal class SurfaceRendererScreen(
                     FeatureDescription(
                         SurfaceRendererType.PERFORMANCE,
                         org.obd.graphs.commons.R.drawable.action_drag_race,
-                        carContext.getString(R.string.available_features_performance_screen_title),
-                    ),
+                        carContext.getString(R.string.available_features_performance_screen_title)
+                    )
                 )
             }
         }
@@ -269,7 +273,7 @@ internal class SurfaceRendererScreen(
             it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
         }
 
-        val screenBehavior = screenBehaviorController.getScreenBehavior(screenId)?: return
+        val screenBehavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
         withDataLogger {
             updateQuery(screenBehavior.query())
         }
@@ -288,7 +292,7 @@ internal class SurfaceRendererScreen(
             1 to R.drawable.action_virtual_screen_1,
             2 to R.drawable.action_virtual_screen_2,
             3 to R.drawable.action_virtual_screen_3,
-            4 to R.drawable.action_virtual_screen_4,
+            4 to R.drawable.action_virtual_screen_4
         ).forEach { (k, v) ->
             if (settings.isVirtualScreenEnabled(k)) {
                 added = true
@@ -308,7 +312,7 @@ internal class SurfaceRendererScreen(
                             behavior?.setCurrentVirtualScreen(id = k)
                             dataLoggerUpdateQuery()
                             renderFrame()
-                        },
+                        }
                     )
             }
         }

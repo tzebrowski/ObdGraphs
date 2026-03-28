@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -36,11 +36,11 @@ import org.obd.metrics.transport.AdapterConnection
 import org.obd.metrics.transport.mock.SmartMockConnectionFactory
 import org.obd.metrics.transport.mock.strategy.Strategy
 
- internal object ConnectionManager {
+internal object ConnectionManager {
 
     fun obtain(registry: PidDefinitionRegistry, query: Query, adjustments: Adjustments, init: Init): AdapterConnection? =
         when (dataLoggerSettings.instance().adapter.connectionType) {
-            "mock" -> mockConnection(registry,query,adjustments,init)
+            "mock" -> mockConnection(registry, query, adjustments, init)
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
@@ -86,7 +86,7 @@ import org.obd.metrics.transport.mock.strategy.Strategy
         try {
             Log.i(
                 LOG_TAG,
-                "Creating TCP connection to: ${preferences.adapter.tcpHost}:${preferences.adapter.tcpPort}.",
+                "Creating TCP connection to: ${preferences.adapter.tcpHost}:${preferences.adapter.tcpPort}."
             )
 
             Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${preferences.adapter.wifiSSID}")
@@ -101,7 +101,7 @@ import org.obd.metrics.transport.mock.strategy.Strategy
                 Log.w(
                     LOG_TAG,
                     "Preferences selected WIFI SSID ${preferences.adapter.wifiSSID} " +
-                        "is different than current connected ${Network.currentSSID}",
+                        "is different than current connected ${Network.currentSSID}"
                 )
                 sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)
                 return null

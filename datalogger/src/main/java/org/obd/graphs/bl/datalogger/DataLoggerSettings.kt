@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -109,7 +109,7 @@ data class Adapter(
     var gracefulStop: Boolean = true,
 
     @XmlPreference("pref.adapter.adaptive.enabled", "false", Boolean::class)
-    var adaptiveConnectionEnabled: Boolean = false,
+    var adaptiveConnectionEnabled: Boolean = false
 )
 
 data class DataLoggerSettings(
@@ -131,5 +131,5 @@ data class DataLoggerSettings(
     @XmlPreference("pref.vehicle_settings.disconnect_when_off", "false", Boolean::class)
     var vehicleStatusDisconnectWhenOff: Boolean = false,
     @XmlPreference("pref.profile.2_0_GME_extension.enabled", "false", Boolean::class)
-    var gmeExtensionsEnabled: Boolean = false,
+    var gmeExtensionsEnabled: Boolean = false
 )

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -67,21 +67,21 @@ internal class DefaultTripManager :
                         Metric(
                             entry = newRecord,
                             ts = obdMetric.timestamp,
-                            rawAnswer = obdMetric.raw,
-                        ),
+                            rawAnswer = obdMetric.raw
+                        )
                     )
                 } else {
                     trip.entries[key] =
                         SensorData(
                             id = key,
                             metrics =
-                                mutableListOf(
-                                    Metric(
-                                        entry = newRecord,
-                                        ts = obdMetric.timestamp,
-                                        rawAnswer = obdMetric.raw,
-                                    ),
-                                ),
+                            mutableListOf(
+                                Metric(
+                                    entry = newRecord,
+                                    ts = obdMetric.timestamp,
+                                    rawAnswer = obdMetric.raw
+                                )
+                            )
                         )
                 }
             }
@@ -120,7 +120,7 @@ internal class DefaultTripManager :
                 if (alreadySaved.isNotEmpty()) {
                     Log.e(
                         LOGGER_TAG,
-                        "It seems that Trip which start same date='$filter' is already saved.",
+                        "It seems that Trip which start same date='$filter' is already saved."
                     )
                 } else {
                     try {
@@ -145,12 +145,12 @@ internal class DefaultTripManager :
                             "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$tripStartTs-$tripLength.json"
                         Log.i(
                             LOGGER_TAG,
-                            "Saving the trip to the file: '$fileName'. Length: ${tripLength}s",
+                            "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
                         )
                         writeFile(getContext()!!, fileName, content)
                         Log.i(
                             LOGGER_TAG,
-                            "Trip was written to the file: '$fileName'. Length: ${tripLength}s",
+                            "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
                         )
                     } catch (e: java.lang.Exception) {
                         Log.e(LOGGER_TAG, "Failed to save trip", e)
@@ -216,7 +216,7 @@ internal class DefaultTripManager :
                 tripVirtualScreenManager.updateReservedVirtualScreen(
                     trip.entries.keys
                         .map { it.toString() }
-                        .toList(),
+                        .toList()
                 )
             } catch (e: Throwable) {
                 Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
@@ -228,7 +228,7 @@ internal class DefaultTripManager :
     private fun writeFile(
         context: Context,
         fileName: String,
-        content: String,
+        content: String
     ) {
         var fd: FileOutputStream? = null
         try {
@@ -247,7 +247,7 @@ internal class DefaultTripManager :
 
     private fun getTripFile(
         context: Context,
-        fileName: String,
+        fileName: String
     ): File = File(getTripsDirectory(context), fileName)
 
     private fun updateCache(newTs: Long) {

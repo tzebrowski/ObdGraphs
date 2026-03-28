@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,13 +17,13 @@
 package org.obd.graphs.renderer.api
 
 enum class SurfaceRendererType(
-    private val code: Int,
+    private val code: Int
 ) : Identity {
     GIULIA(0),
     GAUGE(4),
     DRAG_RACING(1),
     TRIP_INFO(3),
-    PERFORMANCE(5),
+    PERFORMANCE(5)
     ;
 
     override fun id(): Int = this.code

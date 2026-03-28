@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,29 +21,29 @@ import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.preferences.Prefs
 
- internal class DragRacingQueryStrategy : QueryStrategy() {
-     override fun getPIDs(): MutableSet<Long> {
-         if (!dataLoggerSettings.instance().gmeExtensionsEnabled) {
-             return mutableSetOf(Pid.VEHICLE_SPEED_PID_ID.id, Pid.ENGINE_SPEED_PID_ID.id)
-         }
+internal class DragRacingQueryStrategy : QueryStrategy() {
+    override fun getPIDs(): MutableSet<Long> {
+        if (!dataLoggerSettings.instance().gmeExtensionsEnabled) {
+            return mutableSetOf(Pid.VEHICLE_SPEED_PID_ID.id, Pid.ENGINE_SPEED_PID_ID.id)
+        }
 
-         val pids = mutableSetOf(
-             Pid.EXT_VEHICLE_SPEED_PID_ID.id,
-             Pid.EXT_ENGINE_SPEED_PID_ID.id,
-             Pid.INTAKE_PRESSURE_PID_ID.id,
-             Pid.ATM_PRESSURE_PID_ID.id,
-             Pid.AMBIENT_TEMP_PID_ID.id,
-         )
+        val pids = mutableSetOf(
+            Pid.EXT_VEHICLE_SPEED_PID_ID.id,
+            Pid.EXT_ENGINE_SPEED_PID_ID.id,
+            Pid.INTAKE_PRESSURE_PID_ID.id,
+            Pid.ATM_PRESSURE_PID_ID.id,
+            Pid.AMBIENT_TEMP_PID_ID.id
+        )
 
-         if (dataLoggerSettings.instance().adapter.stnExtensionsEnabled) {
-             pids.add(Pid.ENGINE_TORQUE_PID_ID.id)
-             pids.add(Pid.GAS_PID_ID.id)
-         }
+        if (dataLoggerSettings.instance().adapter.stnExtensionsEnabled) {
+            pids.add(Pid.ENGINE_TORQUE_PID_ID.id)
+            pids.add(Pid.GAS_PID_ID.id)
+        }
 
-         if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
-             pids.add(Pid.DYNAMIC_SELECTOR_PID_ID.id)
-         }
+        if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
+            pids.add(Pid.DYNAMIC_SELECTOR_PID_ID.id)
+        }
 
-         return pids
-     }
+        return pids
+    }
 }

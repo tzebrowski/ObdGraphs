@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,7 +34,7 @@ private const val TAG = "DriveBackup"
 
 internal class DefaultDriveBackupManager(
     webClientId: String,
-    activity: Activity,
+    activity: Activity
 ) : AbstractDriveManager(webClientId, activity, null),
     DriveBackupManager {
     override suspend fun exportBackup(file: File) =
@@ -42,7 +42,7 @@ internal class DefaultDriveBackupManager(
             executeDriveOperation(
                 accessToken = token,
                 onFailure = { sendBroadcastEvent(BACKUP_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
             ) { drive ->
                 val folderId = drive.findFolderIdRecursive(BACKUP_FOLDER)
                 drive.uploadFile(file, BACKUP_FILE_NAME, folderId)
@@ -55,7 +55,7 @@ internal class DefaultDriveBackupManager(
             executeDriveOperation(
                 accessToken = token,
                 onFailure = { sendBroadcastEvent(BACKUP_RESTORE_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
             ) { drive ->
                 val fileList =
                     drive

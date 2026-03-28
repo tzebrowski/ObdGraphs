@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ private const val TAG = "MetricCache"
 internal class BrakeBoosting(
     var gasMetric: Metric? = null,
     var arbitraryMetric: Metric? = null,
-    var vehicleSpeedMetric: Metric? = null,
+    var vehicleSpeedMetric: Metric? = null
 )
 
 internal class MetricsCache {
@@ -41,7 +41,7 @@ internal class MetricsCache {
 
     fun update(
         settings: PerformanceScreenSettings,
-        metricsCollector: MetricsCollector,
+        metricsCollector: MetricsCollector
     ) {
         val allMetrics = metricsCollector.getMetrics()
 

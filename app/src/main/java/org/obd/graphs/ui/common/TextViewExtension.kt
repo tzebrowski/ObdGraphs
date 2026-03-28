@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,7 +28,7 @@ fun TextView.setText(
     it: String?,
     color: Int,
     typeface: Int,
-    size: Float,
+    size: Float
 ) {
     var valText: String? = it
     if (valText == null) {
@@ -42,7 +42,7 @@ fun TextView.setText(
         ForegroundColorSpan(color),
         0,
         valSpanString.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     text = valSpanString
 }
@@ -50,7 +50,7 @@ fun TextView.setText(
 fun TextView.setText(
     it: String?,
     color: Int,
-    size: Float,
+    size: Float
 ) {
     setText(it, color, Typeface.BOLD, size)
 }
@@ -58,7 +58,7 @@ fun TextView.setText(
 fun TextView.highLightText(
     textToHighlight: String,
     size: Float,
-    color: Int,
+    color: Int
 ) {
     val tvt = text.toString()
     var ofe = tvt.indexOf(textToHighlight, 0)
@@ -73,13 +73,13 @@ fun TextView.highLightText(
                 RelativeSizeSpan(size),
                 ofe,
                 ofe + textToHighlight.length,
-                0,
+                0
             ) // set size
             wordToSpan.setSpan(
                 ForegroundColorSpan(color),
                 ofe,
                 ofe + textToHighlight.length,
-                0,
+                0
             ) // set color
             setText(wordToSpan, TextView.BufferType.SPANNABLE)
         }

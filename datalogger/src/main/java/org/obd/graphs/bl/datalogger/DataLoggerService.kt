@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -59,7 +59,7 @@ class DataLoggerService : Service() {
     override fun onStartCommand(
         intent: Intent?,
         flags: Int,
-        startId: Int,
+        startId: Int
     ): Int {
         Log.i(LOG_TAG, "Starting DataLoggerService in the Foreground Mode")
 
@@ -117,13 +117,13 @@ class DataLoggerService : Service() {
                 if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                     Log.d(
                         LOG_TAG,
-                        "Do not update the query for strategy=${query.getStrategy()}. It is the same query that already running",
+                        "Do not update the query for strategy=${query.getStrategy()}. It is the same query that already running"
                     )
                 }
             } else {
                 Log.i(
                     LOG_TAG,
-                    "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}",
+                    "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}"
                 )
                 enqueueWork(UPDATE_QUERY) { it.putExtra(QUERY, query) }
             }
@@ -148,7 +148,6 @@ class DataLoggerService : Service() {
         enqueueWork(ACTION_DTC_READ)
     }
 
-
     fun stop() {
         enqueueWork(ACTION_STOP)
     }
@@ -165,7 +164,7 @@ class DataLoggerService : Service() {
                 } else {
                     Log.w(
                         LOG_TAG,
-                        "Location permission missing. Starting Service without GPS capabilities.",
+                        "Location permission missing. Starting Service without GPS capabilities."
                     )
                 }
 
@@ -180,7 +179,7 @@ class DataLoggerService : Service() {
                     startForeground(
                         NOTIFICATION_ID,
                         notification,
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
                     )
                 } catch (e2: Exception) {
                     Log.e(LOG_TAG, "CRITICAL: Failed to start FGS even with fallback.", e2)
@@ -193,7 +192,7 @@ class DataLoggerService : Service() {
 
     private fun enqueueWork(
         intentAction: String,
-        func: (p: Intent) -> Unit = {},
+        func: (p: Intent) -> Unit = {}
     ) {
         try {
             val intent =
@@ -221,14 +220,14 @@ class DataLoggerService : Service() {
                     this,
                     0,
                     it,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
 
         return org.obd.graphs.Notification.notification(
             this,
             "Logging OBD data in background...",
-            contentIntent,
+            contentIntent
         )
     }
 
@@ -238,7 +237,7 @@ class DataLoggerService : Service() {
                 NotificationChannel(
                     NOTIFICATION_CHANNEL_ID,
                     "OBD Logger Service",
-                    NotificationManager.IMPORTANCE_LOW,
+                    NotificationManager.IMPORTANCE_LOW
                 )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)

@@ -1,10 +1,10 @@
-# Stop searching parent directories (this creates the sandbox)
 root = true
 
 [*.{kt,kts}]
-# Force standard Kotlin indent size
 indent_size = 4
-
-# Disable trailing commas to match your local machine's preference
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
+max_line_length = off
+
+insert_final_newline = true
+trim_trailing_whitespace = true

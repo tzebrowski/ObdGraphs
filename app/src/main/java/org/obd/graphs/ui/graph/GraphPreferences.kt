@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ data class GraphPreferences(
     val xAxisMinimumShift: Float,
     val cacheEnabled: Boolean,
     val metrics: Set<Long>,
-    val toggleVirtualPanel: Boolean,
+    val toggleVirtualPanel: Boolean
 )
 
 private const val LOG_TAG = "GraphPrefs"
@@ -55,7 +55,7 @@ class GraphPreferencesReader {
                     "xAxisMinimumShiftProp=$xAxisMinimumShift\n" +
                     "cacheEnabledProp=$cacheEnabled\n" +
                     "toggleVirtualPanel=$toggleVirtualPanel\n" +
-                    "metrics=$metrics\n",
+                    "metrics=$metrics\n"
             )
         }
 
@@ -64,7 +64,7 @@ class GraphPreferencesReader {
             xAxisMinimumShift,
             cacheEnabled,
             metrics,
-            toggleVirtualPanel = toggleVirtualPanel,
+            toggleVirtualPanel = toggleVirtualPanel
         )
     }
 }

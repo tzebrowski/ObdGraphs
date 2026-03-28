@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,7 +29,7 @@ import org.obd.metrics.api.model.VehicleCapabilities
 
 class VehicleMetadata(
     var name: String,
-    var value: String,
+    var value: String
 )
 
 private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
@@ -51,18 +51,18 @@ object VehicleCapabilitiesManager {
             Log.i(
                 LOG_TAG,
                 "Property `vehicleCapabilitiesReadingEnabled` is " +
-                    "`${dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled}`",
+                    "`${dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled}`"
             )
             if (dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled) {
                 if (vehicleCapabilities.capabilities.isEmpty()) {
                     Log.i(
                         LOG_TAG,
-                        "Did not receive Vehicle Capabilities. Do not update preferences.",
+                        "Did not receive Vehicle Capabilities. Do not update preferences."
                     )
                 } else {
                     Log.i(
                         LOG_TAG,
-                        "Received Vehicle Capabilities. Updating preferences with=${vehicleCapabilities.capabilities}",
+                        "Received Vehicle Capabilities. Updating preferences with=${vehicleCapabilities.capabilities}"
                     )
                     putStringSet(PREF_VEHICLE_SUPPORTED_PIDS, vehicleCapabilities.capabilities)
                 }
@@ -70,7 +70,7 @@ object VehicleCapabilitiesManager {
 
             putString(
                 PREF_VEHICLE_METADATA,
-                mapper.writeValueAsString(vehicleCapabilities.metadata),
+                mapper.writeValueAsString(vehicleCapabilities.metadata)
             )
             commit()
         }
@@ -86,7 +86,7 @@ object VehicleCapabilitiesManager {
         Prefs.edit().apply {
             Log.i(
                 LOG_TAG,
-                "Updating DTC, size: ${dtc.size}",
+                "Updating DTC, size: ${dtc.size}"
             )
             putString(PREF_DTC, mapper.writeValueAsString(dtc))
             commit()

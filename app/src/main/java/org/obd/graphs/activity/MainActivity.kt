@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -67,7 +67,7 @@ class MainActivity :
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 receive(intent)
             }
@@ -79,7 +79,7 @@ class MainActivity :
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray,
+        grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
@@ -87,13 +87,13 @@ class MainActivity :
 
     override fun onPermissionsGranted(
         requestCode: Int,
-        perms: MutableList<String>,
+        perms: MutableList<String>
     ) {
     }
 
     override fun onPermissionsDenied(
         requestCode: Int,
-        perms: MutableList<String>,
+        perms: MutableList<String>
     ) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             AppSettingsDialog.Builder(this).build().show()
@@ -104,7 +104,7 @@ class MainActivity :
         super.onConfigurationChanged(newConfig)
         if (NavigationRouter.getPreferences().hideToolbarLandscape) {
             val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-            Toolbar.hide(this,hide)
+            Toolbar.hide(this, hide)
         }
     }
 
@@ -192,7 +192,6 @@ class MainActivity :
         sendBroadcastEvent(MAIN_ACTIVITY_EVENT_DESTROYED)
     }
 
-
     private fun setupExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
@@ -202,9 +201,9 @@ class MainActivity :
             setOf(
                 R.id.nav_giulia,
                 R.id.nav_graph,
-                R.id.nav_gauge,
+                R.id.nav_gauge
             ),
-            findViewById<DrawerLayout>(R.id.drawer_layout),
+            findViewById<DrawerLayout>(R.id.drawer_layout)
         )
 
     private fun initCache() {
@@ -219,7 +218,7 @@ class MainActivity :
                     .detectAll()
                     .penaltyLog()
                     .penaltyFlashScreen()
-                    .build(),
+                    .build()
             )
 
             StrictMode.setVmPolicy(
@@ -227,7 +226,7 @@ class MainActivity :
                     .Builder()
                     .detectAll()
                     .penaltyLog()
-                    .build(),
+                    .build()
             )
         }
     }
@@ -236,7 +235,7 @@ class MainActivity :
         profile.init(
             versionCode = BuildConfig.VERSION_CODE,
             defaultProfile = resources.getString(R.string.DEFAULT_PROFILE),
-            versionName = BuildConfig.VERSION_NAME,
+            versionName = BuildConfig.VERSION_NAME
         )
 
         profile.setupProfiles(forceOverrideRecommendation = false)

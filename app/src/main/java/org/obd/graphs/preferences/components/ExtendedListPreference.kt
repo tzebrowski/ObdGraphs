@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 class ExtendedListPreference(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
     init {
         onPreferenceChangeListener =

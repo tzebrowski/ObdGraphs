@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -130,7 +130,7 @@ internal fun MainActivity.setupNavigationBar() {
         NavigationUI.setupWithNavController(
             findViewById(R.id.bottom_app_bar),
             navController,
-            appBarConfiguration,
+            appBarConfiguration
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
@@ -138,7 +138,7 @@ internal fun MainActivity.setupNavigationBar() {
                 it.menu.run {
                     listOf(
                         R.id.ctx_menu_view_configuration,
-                        R.id.ctx_menu_pids_to_display,
+                        R.id.ctx_menu_pids_to_display
                     ).forEach { id ->
                         findItem(id)?.let { item ->
                             item.title =
@@ -179,13 +179,13 @@ internal fun MainActivity.setupNavigationBar() {
 
                             val spanString =
                                 SpannableString(
-                                    "${resources.getString(R.string.pref_graph_view_filters)} (${NavigationRouter.getGraphFilterSource()})",
+                                    "${resources.getString(R.string.pref_graph_view_filters)} (${NavigationRouter.getGraphFilterSource()})"
                                 )
                             spanString.setSpan(
                                 ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
                                 0,
                                 spanString.length,
-                                0,
+                                0
                             )
                             findItem(R.id.ctx_menu_submenu_filters).title = spanString
                         }

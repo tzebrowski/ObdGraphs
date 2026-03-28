@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -72,13 +72,12 @@ internal abstract class AbstractSurfaceRenderer(protected val context: Context) 
         canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
     }
 
-
     fun getDefaultTopMargin(): Float = 20f
 
     protected fun getArea(
         area: Rect,
         canvas: Canvas,
-        margin: Int = 0,
+        margin: Int = 0
     ): Rect =
         if (area.isEmpty) {
             Rect(0 + margin, 0, canvas.width - 1 - margin, canvas.height)

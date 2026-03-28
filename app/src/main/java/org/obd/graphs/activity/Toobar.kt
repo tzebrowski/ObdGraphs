@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,7 @@ object Toolbar {
 
     fun hide(
         activity: Activity,
-        hide: Boolean,
+        hide: Boolean
     ) = toolbar(activity) { bottomAppBar ->
         val currentTime = System.currentTimeMillis()
         val isBarHidden = bottomAppBar.translationY > 0
@@ -48,7 +48,7 @@ object Toolbar {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
                     Log.v(
                         TAG,
-                        "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}",
+                        "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}"
                     )
                 }
                 hide(bottomAppBar, hide)
@@ -59,14 +59,14 @@ object Toolbar {
 
     private fun toolbar(
         activity: Activity,
-        func: (r: BottomAppBar) -> Unit,
+        func: (r: BottomAppBar) -> Unit
     ) {
         func(activity.findViewById(R.id.bottom_app_bar))
     }
 
     private fun hide(
         bottomAppBar: BottomAppBar,
-        hide: Boolean,
+        hide: Boolean
     ) {
         fun runAnim() {
             val duration = 250L

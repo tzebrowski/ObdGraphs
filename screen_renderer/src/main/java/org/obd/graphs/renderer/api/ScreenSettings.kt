@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,8 +19,8 @@ package org.obd.graphs.renderer.api
 import android.content.SharedPreferences
 import android.graphics.Color
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_ARBITRARY_METRIC
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_VEHICLE_SPEED_METRIC
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
@@ -30,11 +30,9 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
-
 private const val PREF_QUERY_PERFORMANCE_HIDDEN = "pref.query.performance.hidden"
 
-
- interface VirtualScreenConfig {
+interface VirtualScreenConfig {
     val selectedPIDs: Set<Long>
 
     fun getPIDsSortOrder(): Map<Long, Int>?
@@ -50,14 +48,14 @@ const val DEFAULT_FONT_SIZE = "32"
 
 enum class GaugeProgressBarType {
     LONG,
-    SHORT,
+    SHORT
 }
 
 enum class DynamicSelectorMode {
     NORMAL,
     ECO,
     SPORT,
-    RACE,
+    RACE
 }
 
 data class ColorTheme(
@@ -71,12 +69,12 @@ data class ColorTheme(
     var currentProfileColor: Int = Color.WHITE,
     var actionsBtnConnectColor: Int = Color.GREEN,
     var actionsBtnDisconnectColor: Int = Color.RED,
-    var actionsBtnVirtualScreensColor: Int = Color.WHITE,
+    var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
 open class GaugeScreenSettings(
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
-    var topOffset: Int = 0,
+    var topOffset: Int = 0
 ) : VirtualScreenConfig {
     private var internalSelectedPIDs: Set<Long> = emptySet()
 
@@ -129,16 +127,16 @@ data class DragRacingScreenSettings(
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var displayMetricsExtendedEnabled: Boolean = false,
     var fontSize: Int = 32,
-    var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings(),
+    var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings()
 )
 
 data class TripInfoScreenSettings(
     var fontSize: Int = 24,
-    var viewEnabled: Boolean = true,
+    var viewEnabled: Boolean = true
 )
 
 data class BrakeBoostingSettings(
-    var viewEnabled: Boolean = true,
+    var viewEnabled: Boolean = true
 ) {
     fun getGasMetric(): Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC, -1).toLong()
 
@@ -153,49 +151,49 @@ data class BrakeBoostingSettings(
             .toLong()
 }
 
- data class PerformanceScreenSettings(
-     var labelCenterYPadding: Float = 22f,
-     var fontSize: Int = 24,
-     var viewEnabled: Boolean = true,
-     var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings(),
- ) : SharedPreferences.OnSharedPreferenceChangeListener {
+data class PerformanceScreenSettings(
+    var labelCenterYPadding: Float = 22f,
+    var fontSize: Int = 24,
+    var viewEnabled: Boolean = true,
+    var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings()
+) : SharedPreferences.OnSharedPreferenceChangeListener {
 
-     val bottomMetrics: MutableList<Long> =
-         Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM).toMutableList()
+    val bottomMetrics: MutableList<Long> =
+        Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM).toMutableList()
 
-     val topMetrics: MutableList<Long> =
-         Prefs.getLongList(PREF_QUERY_PERFORMANCE_TOP).toMutableList()
+    val topMetrics: MutableList<Long> =
+        Prefs.getLongList(PREF_QUERY_PERFORMANCE_TOP).toMutableList()
 
-     val hiddenMetrics: MutableSet<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN)
+    val hiddenMetrics: MutableSet<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN)
 
-     init {
-         Prefs.registerOnSharedPreferenceChangeListener(this)
-     }
+    init {
+        Prefs.registerOnSharedPreferenceChangeListener(this)
+    }
 
-     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-         if (sharedPreferences == null) return
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (sharedPreferences == null) return
 
-         when (key) {
-             PREF_QUERY_PERFORMANCE_BOTTOM -> {
-                 bottomMetrics.clear()
-                 bottomMetrics.addAll(sharedPreferences.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM))
-             }
+        when (key) {
+            PREF_QUERY_PERFORMANCE_BOTTOM -> {
+                bottomMetrics.clear()
+                bottomMetrics.addAll(sharedPreferences.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM))
+            }
 
-             PREF_QUERY_PERFORMANCE_TOP -> {
-                 topMetrics.clear()
-                 topMetrics.addAll(sharedPreferences.getLongList(PREF_QUERY_PERFORMANCE_TOP))
-             }
+            PREF_QUERY_PERFORMANCE_TOP -> {
+                topMetrics.clear()
+                topMetrics.addAll(sharedPreferences.getLongList(PREF_QUERY_PERFORMANCE_TOP))
+            }
 
-             PREF_QUERY_PERFORMANCE_HIDDEN -> {
-                 hiddenMetrics.clear()
-                 hiddenMetrics.addAll(sharedPreferences.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN))
-             }
-         }
-     }
- }
+            PREF_QUERY_PERFORMANCE_HIDDEN -> {
+                hiddenMetrics.clear()
+                hiddenMetrics.addAll(sharedPreferences.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN))
+            }
+        }
+    }
+}
 
 data class RoutinesScreenSettings(
-    var viewEnabled: Boolean = true,
+    var viewEnabled: Boolean = true
 )
 
 interface ScreenSettings {
@@ -227,7 +225,7 @@ interface ScreenSettings {
 
     fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {}
 
-     open fun isBreakLabelTextEnabled(): Boolean = true
+    open fun isBreakLabelTextEnabled(): Boolean = true
 
     fun isBackgroundDrawingEnabled(): Boolean = true
 

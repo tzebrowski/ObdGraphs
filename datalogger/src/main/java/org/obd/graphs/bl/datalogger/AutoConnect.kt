@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -38,7 +38,7 @@ object AutoConnect {
     fun schedule(
         context: Context,
         autoConnectEnabled: Boolean = dataLoggerSettings.instance().adapter.autoConnectEnabled,
-        scheduleDelaySec: Long = SCHEDULE_DELAY_SEC,
+        scheduleDelaySec: Long = SCHEDULE_DELAY_SEC
     ) {
         try {
             val macAddress =
@@ -49,17 +49,17 @@ object AutoConnect {
 
             Log.i(
                 TAG,
-                "Auto connect is enabled=$autoConnectEnabled. MacAddress of device=$macAddress",
+                "Auto connect is enabled=$autoConnectEnabled. MacAddress of device=$macAddress"
             )
 
             if (autoConnectEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
                 Network.startBackgroundBleScanForMac(
                     context,
-                    macAddress,
+                    macAddress
                 ) {
                     Log.i(
                         TAG,
-                        "Found device=$macAddress. Scheduling data logger connection",
+                        "Found device=$macAddress. Scheduling data logger connection"
                     )
 
                     val task =
@@ -72,7 +72,7 @@ object AutoConnect {
                         scheduleService.schedule(
                             task,
                             scheduleDelaySec,
-                            TimeUnit.SECONDS,
+                            TimeUnit.SECONDS
                         )
                 }
             }

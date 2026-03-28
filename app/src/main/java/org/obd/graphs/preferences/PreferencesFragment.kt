@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -98,28 +98,28 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     "dash" -> {
                         openPIDsDialog(
                             "pref.dash.pids.selected",
-                            PREFERENCE_SCREEN_SOURCE_DASHBOARD,
+                            PREFERENCE_SCREEN_SOURCE_DASHBOARD
                         ) { navigateToScreen(R.id.nav_dashboard) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GRAPH -> {
                         openPIDsDialog(
                             tripVirtualScreenManager.getVirtualScreenPrefKey(),
-                            preference.source,
+                            preference.source
                         ) { navigateToScreen(R.id.nav_graph) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GIULIA -> {
                         openPIDsDialog(
                             giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(),
-                            preference.source,
+                            preference.source
                         ) { navigateToScreen(R.id.nav_giulia) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GAUGE -> {
                         openPIDsDialog(
                             gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(),
-                            preference.source,
+                            preference.source
                         ) { navigateToScreen(R.id.nav_gauge) }
                     }
 
@@ -155,7 +155,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(
         savedInstanceState: Bundle?,
-        rootKey: String?,
+        rootKey: String?
     ) {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
@@ -165,7 +165,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
                 setPreferencesFromResource(
                     R.xml.preferences,
-                    it,
+                    it
                 )
                 openPreferenceDialogFor(it)
             }
@@ -175,7 +175,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         sendBroadcastEvent(TOOLBAR_SHOW)
         val root = super.onCreateView(inflater, container, savedInstanceState)
@@ -283,13 +283,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog(
                     "pref.aa.trip_info.pids.selected",
-                    PREFERENCE_SCREEN_SOURCE_TRIP_INFO,
+                    PREFERENCE_SCREEN_SOURCE_TRIP_INFO
                 ) { navigateToScreen(R.id.nav_trip_info) }
 
             PREFERENCE_SCREEN_KEY_PERFORMANCE ->
                 openPIDsDialog(
                     "pref.aa.performance.pids.selected",
-                    PREFERENCE_SCREEN_SOURCE_PERFORMANCE,
+                    PREFERENCE_SCREEN_SOURCE_PERFORMANCE
                 ) { navigateToScreen(R.id.nav_performance) }
 
             PREFERENCE_SCREEN_KEY_DASH ->
@@ -298,7 +298,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             PREFERENCE_SCREEN_KEY_GAUGE ->
                 openPIDsDialog(
                     gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(),
-                    PREFERENCE_SCREEN_SOURCE_GAUGE,
+                    PREFERENCE_SCREEN_SOURCE_GAUGE
                 ) { navigateToScreen(R.id.nav_gauge) }
 
             PREFERENCE_SCREEN_KEY_GIULIA ->
@@ -309,7 +309,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             PREFERENCE_SCREEN_KEY_GRAPH ->
                 openPIDsDialog(
                     tripVirtualScreenManager.getVirtualScreenPrefKey(),
-                    PREFERENCE_SCREEN_SOURCE_GRAPH,
+                    PREFERENCE_SCREEN_SOURCE_GRAPH
                 ) { navigateToScreen(R.id.nav_graph) }
         }
     }
@@ -317,38 +317,38 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPIDsDialog(
         key: String,
         source: String,
-        onDialogCloseListener: (() -> Unit) = {},
+        onDialogCloseListener: (() -> Unit) = {}
     ) {
         PidDefinitionPreferenceDialogFragment(
             key = key,
             source = source,
-            onDialogCloseListener = onDialogCloseListener,
+            onDialogCloseListener = onDialogCloseListener
         ).show(parentFragmentManager, null)
     }
 
     private fun registerViewsPreferenceChangeListeners() {
         registerCheckboxListener(
             GRAPH_VIEW_ID,
-            NOTIFICATION_GRAPH_VIEW_TOGGLE,
+            NOTIFICATION_GRAPH_VIEW_TOGGLE
         )
         registerCheckboxListener(
             GAUGE_VIEW_ID,
-            NOTIFICATION_GAUGE_VIEW_TOGGLE,
+            NOTIFICATION_GAUGE_VIEW_TOGGLE
         )
         registerCheckboxListener(
             DASH_VIEW_ID,
-            NOTIFICATION_DASH_VIEW_TOGGLE,
+            NOTIFICATION_DASH_VIEW_TOGGLE
         )
 
         registerCheckboxListener(
             GIULIA_VIEW_ID,
-            NOTIFICATION_GIULIA_VIEW_TOGGLE,
+            NOTIFICATION_GIULIA_VIEW_TOGGLE
         )
     }
 
     private fun registerCheckboxListener(
         key: String,
-        actionName: String,
+        actionName: String
     ) {
         val preference = findPreference<SwitchPreferenceCompat>(key)
         preference?.onPreferenceChangeListener =

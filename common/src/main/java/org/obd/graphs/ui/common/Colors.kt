@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,8 +26,7 @@ import androidx.core.content.ContextCompat
 import org.obd.graphs.commons.R
 import org.obd.graphs.getContext
 
-fun String.colorize(color: Int, typeface: Int,start: Int, end: Int, size: Float) : SpannableString {
-
+fun String.colorize(color: Int, typeface: Int, start: Int, end: Int, size: Float): SpannableString {
     var valText: String? = this
     if (valText == null) {
         valText = ""
@@ -47,8 +46,7 @@ fun String.colorize(color: Int, typeface: Int,start: Int, end: Int, size: Float)
     return valSpanString
 }
 
-fun String.colorize(color: Int, typeface: Int, size: Float) : SpannableString {
-
+fun String.colorize(color: Int, typeface: Int, size: Float): SpannableString {
     var valText: String? = this
     if (valText == null) {
         valText = ""
@@ -68,7 +66,7 @@ fun String.colorize(color: Int, typeface: Int, size: Float) : SpannableString {
 
 class Colors {
 
-    private val base: IntArray =  mutableListOf<Int>().apply {
+    private val base: IntArray = mutableListOf<Int>().apply {
         val inner = mutableListOf<Int>().apply {
             add(COLOR_CARDINAL)
             add(COLOR_PHILIPPINE_GREEN)
@@ -95,10 +93,9 @@ class Colors {
             add(Color.parseColor("#66BB6A"))
         }
 
-        (1 .. 5).forEach { _ ->
+        (1..5).forEach { _ ->
             addAll(inner)
         }
-
     }.toIntArray()
 
     fun get(): IntIterator {
@@ -117,6 +114,6 @@ val COLOR_DYNAMIC_SELECTOR_ECO: Int = color(R.color.dynamic_selector_eco)
 val COLOR_DYNAMIC_SELECTOR_SPORT: Int = color(R.color.dynamic_selector_sport)
 val COLOR_DYNAMIC_SELECTOR_NORMAL: Int = color(R.color.dynamic_selector_normal)
 
-val COLOR_WHITE: Int  = color(R.color.white)
+val COLOR_WHITE: Int = color(R.color.white)
 
 fun color(id: Int) = ContextCompat.getColor(getContext()!!, id)

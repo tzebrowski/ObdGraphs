@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,7 @@ import java.io.FileInputStream
 import java.lang.ref.WeakReference
 import java.util.Properties
 
- internal abstract class TestSetup {
+internal abstract class TestSetup {
     protected val context = mockk<android.content.ContextWrapper>(relaxed = true)
     protected val sharedPrefs = mockk<SharedPreferences>(relaxed = true)
     protected val editor = mockk<SharedPreferences.Editor>(relaxed = true)
@@ -72,7 +72,6 @@ import java.util.Properties
             it.key.toString() to it.value.toString()
         }
     }
-
 
     protected fun mockPrefsAll() =
         every { Prefs.all } returns mapOf(
@@ -120,7 +119,6 @@ import java.util.Properties
         every { Log.e(any(), any()) } returns 0
         every { Log.isLoggable(any(), any()) } returns false
     }
-
 
     private fun mockAsync() {
         mockkStatic("org.obd.graphs.AsyncKt")

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -35,7 +35,7 @@ internal interface CarScreenFactory {
         ): CarScreen =
             if (settings.getScreenTemplate() == ScreenTemplateType.NAV) {
                 NavTemplateCarScreen(carContext, settings, metricsCollector, fps)
-            } else if  (settings.getScreenTemplate() == ScreenTemplateType.IOT) {
+            } else if (settings.getScreenTemplate() == ScreenTemplateType.IOT) {
                 IotTemplateCarScreen(carContext, settings, metricsCollector)
             } else {
                 NavTemplateCarScreen(carContext, settings, metricsCollector, fps)

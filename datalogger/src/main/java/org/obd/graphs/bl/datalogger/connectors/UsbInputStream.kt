@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ private const val MAX_READ_SIZE = 16 * 1024
 private const val LOGGER_TAG = "USB_CONNECTION"
 
 internal class UsbInputStream(
-    val port: UsbSerialPort,
+    val port: UsbSerialPort
 ) : InputStream() {
     private val buffer =
         ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }

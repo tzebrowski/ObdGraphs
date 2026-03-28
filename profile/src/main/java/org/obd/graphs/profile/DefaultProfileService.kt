@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -70,7 +70,7 @@ internal class DefaultProfileService :
                 "profile_$it" to
                     Prefs.getString(
                         "$PROFILE_NAME_PREFIX.profile_$it",
-                        "Profile $it",
+                        "Profile $it"
                     )
             }.toList()
             .sortedWith(compareBy({ it.second }, { it.first }))
@@ -156,7 +156,7 @@ internal class DefaultProfileService :
 
     override fun onSharedPreferenceChanged(
         ss: SharedPreferences?,
-        pref: String?,
+        pref: String?
     ) {
         if (!bulkActionEnabled) {
             pref?.let {
@@ -189,11 +189,11 @@ internal class DefaultProfileService :
     override fun init(
         versionCode: Int,
         defaultProfile: String,
-        versionName: String,
+        versionName: String
     ) {
         Log.i(
             LOG_TAG,
-            "Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName",
+            "Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName"
         )
         this.versionCode = versionCode
         this.defaultProfile = defaultProfile
@@ -227,7 +227,7 @@ internal class DefaultProfileService :
                 LOG_TAG,
                 "Setup profiles. Installation version='$installationVersion', " +
                     "installationKeyAvailable='$installationVersionAvailable', " +
-                    "forceOverride=$forceOverride",
+                    "forceOverride=$forceOverride"
             )
 
             if (!installationVersionAvailable) {
@@ -298,7 +298,7 @@ internal class DefaultProfileService :
                             if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                                 Log.d(
                                     LOG_TAG,
-                                    "Loading user preference for $profileName,  $pref =  $this = $value",
+                                    "Loading user preference for $profileName,  $pref =  $this = $value"
                                 )
                             }
                             it.updatePreference(this, value)
@@ -383,7 +383,7 @@ internal class DefaultProfileService :
         forceOverride: Boolean,
         files: List<String>?,
         installationKey: String,
-        func: (p: String) -> Properties,
+        func: (p: String) -> Properties
     ) {
         val allPrefs = Prefs.all
 
@@ -404,7 +404,7 @@ internal class DefaultProfileService :
                         !allPrefs.keys.contains(key) ||
                         allowedToOverride().any {
                             key.contains(
-                                it,
+                                it
                             )
                         }
                     ) {
@@ -417,7 +417,7 @@ internal class DefaultProfileService :
                                         key.substring(getCurrentProfile().length + 1, key.length)
                                     Log.i(
                                         LOG_TAG,
-                                        "Updating current profile value $currentProfilePropName=$value",
+                                        "Updating current profile value $currentProfilePropName=$value"
                                     )
                                     editor.putStringSet(currentProfilePropName, value.toStringSet())
                                 }

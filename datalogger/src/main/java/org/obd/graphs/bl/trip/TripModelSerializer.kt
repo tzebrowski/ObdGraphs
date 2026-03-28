@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,7 +32,7 @@ import java.io.IOException
 
 private val EMPTY_CONNECTOR_RESPONSE = ConnectorResponseFactory.wrap(byteArrayOf())
 
-private class ConnectorResponseSerializer:
+private class ConnectorResponseSerializer :
     StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
     @Throws(IOException::class)
@@ -45,7 +45,7 @@ private class ConnectorResponseSerializer:
     }
 }
 
-private class NopeConnectorResponseSerializer:
+private class NopeConnectorResponseSerializer :
     StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
     @Throws(IOException::class)

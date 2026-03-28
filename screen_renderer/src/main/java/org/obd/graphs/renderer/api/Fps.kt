@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,7 +19,6 @@ package org.obd.graphs.renderer.api
 import org.obd.graphs.round
 import java.util.*
 
-
 private const val MAX_SIZE = 100
 private const val NANOS = 1000000000.0
 
@@ -36,7 +35,6 @@ class Fps {
     }
 
     fun get(): Double {
-
         if (times.size == 0) {
             times.clear()
             return 0.0

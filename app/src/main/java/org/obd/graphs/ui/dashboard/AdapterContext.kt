@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,5 +19,5 @@ package org.obd.graphs.ui.dashboard
 data class AdapterContext(
     val layoutId: Int,
     val spanCount: Int,
-    val height: Int? = null,
+    val height: Int? = null
 )

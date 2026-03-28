@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -42,7 +42,7 @@ open class RefreshableFragment : Fragment() {
 
     protected fun refreshRecyclerView(
         metricsCollector: MetricsCollector,
-        recyclerViewId: Int,
+        recyclerViewId: Int
     ) {
         if (::root.isInitialized) {
             val adapter = ((root.findViewById<RecyclerView>(recyclerViewId)!!).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
@@ -72,9 +72,9 @@ open class RefreshableFragment : Fragment() {
             context: Context,
             data: MutableList<Metric>,
             resourceId: Int,
-            height: Int?,
+            height: Int?
         ) -> RecyclerViewAdapter<*>,
-        metricsSerializerPref: String,
+        metricsSerializerPref: String
     ) {
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = query.filterBy(metricsIdsPref)
@@ -93,7 +93,7 @@ open class RefreshableFragment : Fragment() {
             enableDragManager = enableDragManager,
             recyclerView = recyclerView,
             metricsIdsPref = metricsIdsPref,
-            viewPreferences = viewPreferences,
+            viewPreferences = viewPreferences
         )
 
         attachOnTouchListener(enableOnTouchListener, recyclerView)
@@ -105,16 +105,16 @@ open class RefreshableFragment : Fragment() {
         configureChangeEventId: String,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: ViewPreferencesSerializer,
+        viewSerializer: ViewPreferencesSerializer
     ): SwappableAdapter =
         object : SwappableAdapter {
             override fun swapItems(
                 fromPosition: Int,
-                toPosition: Int,
+                toPosition: Int
             ) {
                 adapter(recyclerView).swapItems(
                     fromPosition,
-                    toPosition,
+                    toPosition
                 )
             }
 
@@ -129,7 +129,7 @@ open class RefreshableFragment : Fragment() {
 
                 Prefs.updateLongSet(
                     metricsIdsPref,
-                    data.map { obdMetric -> obdMetric.source.command.pid.id }.toList(),
+                    data.map { obdMetric -> obdMetric.source.command.pid.id }.toList()
                 )
                 sendBroadcastEvent(configureChangeEventId)
             }
@@ -137,13 +137,13 @@ open class RefreshableFragment : Fragment() {
 
     private fun attachOnTouchListener(
         enableOnTouchListener: Boolean,
-        recyclerView: RecyclerView,
+        recyclerView: RecyclerView
     ) {
         if (enableOnTouchListener) {
             recyclerView.addOnItemTouchListener(
                 ToggleToolbarDoubleClickListener(
-                    requireContext(),
-                ),
+                    requireContext()
+                )
             )
         }
     }
@@ -154,7 +154,7 @@ open class RefreshableFragment : Fragment() {
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewPreferences: ViewPreferencesSerializer,
+        viewPreferences: ViewPreferencesSerializer
     ) {
         if (enableDragManager) {
             val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView, metricsIdsPref, viewPreferences)
@@ -165,14 +165,14 @@ open class RefreshableFragment : Fragment() {
                         requireContext(),
                         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
                         ItemTouchHelper.START or ItemTouchHelper.END,
-                        swappableAdapter,
+                        swappableAdapter
                     )
                 } else {
                     DragManageAdapter(
                         requireContext(),
                         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
                         ItemTouchHelper.ACTION_STATE_DRAG,
-                        swappableAdapter,
+                        swappableAdapter
                     )
                 }
 

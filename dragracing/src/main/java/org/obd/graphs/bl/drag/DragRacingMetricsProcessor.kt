@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -35,14 +35,14 @@ val dragRacingMetricsProcessor: MetricsProcessor by lazy {
 }
 
 internal class DragRacingMetricsProcessor(
-    private val registry: DragRacingResultRegistry,
+    private val registry: DragRacingResultRegistry
 ) : MetricsProcessor {
     // Definition of a specific race segment (e.g. 0-100)
     private data class RaceDefinition(
         val startSpeed: Int,
         val endSpeed: Int,
         var enabled: Boolean = true,
-        val updateRegistry: (DragRacingMetric) -> Unit,
+        val updateRegistry: (DragRacingMetric) -> Unit
     )
 
     // Configuration of all supported races
@@ -52,7 +52,7 @@ internal class DragRacingMetricsProcessor(
             RaceDefinition(0, 100) { registry.update0100(it) },
             RaceDefinition(0, 160) { registry.update0160(it) },
             RaceDefinition(60, 140) { registry.update60140(it) },
-            RaceDefinition(100, 200) { registry.update100200(it) },
+            RaceDefinition(100, 200) { registry.update100200(it) }
         )
 
     // Dynamic state
@@ -96,7 +96,7 @@ internal class DragRacingMetricsProcessor(
 
     private fun handleSpeed(
         metric: ObdMetric,
-        speed: Int,
+        speed: Int
     ) {
         // 1. Reset logic: If stopped, reset everything.
         if (speed == 0) {
@@ -143,7 +143,7 @@ internal class DragRacingMetricsProcessor(
                         time = duration,
                         speed = speed,
                         ambientTemp = ambientTemperature,
-                        atmPressure = atmosphericPressure,
+                        atmPressure = atmosphericPressure
                     )
 
                 race.updateRegistry(resultMetric)

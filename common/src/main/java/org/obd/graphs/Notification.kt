@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -38,7 +38,7 @@ object Notification {
     fun sendBasicNotification(
         context: Context,
         contentText: String,
-        pendingIntent: PendingIntent? = null,
+        pendingIntent: PendingIntent? = null
     ) {
         try {
             val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -63,7 +63,7 @@ object Notification {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ActivityCompat.checkSelfPermission(
                         context,
-                        Manifest.permission.POST_NOTIFICATIONS,
+                        Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     notificationManager.notify(NOTIFICATION_ID, notification)
@@ -79,7 +79,7 @@ object Notification {
     fun notification(
         context: Context,
         contentText: String,
-        pendingIntent: PendingIntent? = null,
+        pendingIntent: PendingIntent? = null
     ): Notification =
         NotificationCompat
             .Builder(context, NOTIFICATION_CHANNEL_ID)

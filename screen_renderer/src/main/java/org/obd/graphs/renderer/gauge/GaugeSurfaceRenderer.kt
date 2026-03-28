@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -61,13 +61,13 @@ private class GaugeLayoutCache {
     }
 }
 
- private const val TAG = "cache"
+private const val TAG = "cache"
 
- internal class GaugeSurfaceRenderer(
+internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
+    private val fps: Fps
 ) : AbstractSurfaceRenderer(context) {
     private val layoutCache = GaugeLayoutCache()
 
@@ -75,7 +75,7 @@ private class GaugeLayoutCache {
         GaugeDrawer(
             settings = settings,
             context = context,
-            drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType),
+            drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType)
         )
 
     private val mobileDrawer =
@@ -83,11 +83,11 @@ private class GaugeLayoutCache {
             settings = settings,
             context = context,
             drawerSettings =
-                DrawerSettings(
-                    startAngle = 200f,
-                    sweepAngle = 200f,
-                    gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType,
-                ),
+            DrawerSettings(
+                startAngle = 200f,
+                sweepAngle = 200f,
+                gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType
+            )
         )
 
     override fun getTop(area: Rect): Float =
@@ -99,7 +99,7 @@ private class GaugeLayoutCache {
 
     override fun onDraw(
         canvas: Canvas,
-        drawArea: Rect?,
+        drawArea: Rect?
     ) {
         drawArea?.let { area ->
             if (area.isEmpty) {
@@ -134,7 +134,7 @@ private class GaugeLayoutCache {
         metrics: List<Metric> = metricsCollector.getMetrics(),
         maxItems: Int = settings.getMaxItems(),
         drawScrollbar: Boolean = settings.isScrollbarEnabled(),
-        drawMetricsRate: Boolean = settings.isFpsCounterEnabled(),
+        drawMetricsRate: Boolean = settings.isFpsCounterEnabled()
     ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
@@ -155,7 +155,7 @@ private class GaugeLayoutCache {
                 .coerceAtLeast(0)
         val endRow =
             kotlin.math.floor((scrollOffset + viewportHeight - 1f) / layoutCache.rowHeight).toInt().coerceAtMost(
-                kotlin.math.ceil(count / layoutCache.columns.toDouble()).toInt() - 1,
+                kotlin.math.ceil(count / layoutCache.columns.toDouble()).toInt() - 1
             )
 
         val startIndex = startRow * layoutCache.columns
@@ -182,7 +182,7 @@ private class GaugeLayoutCache {
                 drawBorder = drawBorder,
                 borderArea = layoutCache.borderRects[i],
                 drawModule = !isAA,
-                drawMetricRate = drawMetricsRate,
+                drawMetricRate = drawMetricsRate
             )
         }
 
@@ -195,14 +195,14 @@ private class GaugeLayoutCache {
                 contentHeight = layoutCache.contentHeight,
                 viewportHeight = viewportHeight,
                 topOffset = area.top.toFloat(),
-                verticalMargin = 30f,
+                verticalMargin = 30f
             )
         }
     }
 
     private fun columns(
         isAA: Boolean,
-        count: Int,
+        count: Int
     ): Int =
         if (isAA) {
             when (count) {
@@ -217,7 +217,7 @@ private class GaugeLayoutCache {
     private fun startX(
         area: Rect,
         isAA: Boolean,
-        count: Int,
+        count: Int
     ): Float =
         area.left +
             if (isAA) {
@@ -236,7 +236,7 @@ private class GaugeLayoutCache {
         isLandscape: Boolean,
         columns: Int,
         gaugeWidth: Float,
-        itemMargin: Float,
+        itemMargin: Float
     ): Float =
         if (isAA) {
             availableHeight / 2f
@@ -253,7 +253,7 @@ private class GaugeLayoutCache {
         isLandscape: Boolean,
         columns: Int,
         availableHeight: Float,
-        itemMargin: Float,
+        itemMargin: Float
     ): Float =
         if (isAA) {
             cellWidth * widthScaleRatio(count)
@@ -276,13 +276,11 @@ private class GaugeLayoutCache {
         count: Int,
         isAA: Boolean,
         isLandscape: Boolean,
-        topOffset: Float,
+        topOffset: Float
     ) {
-
         val cacheHit = layoutCache.lastAreaWidth == area.width() &&
-                layoutCache.lastAreaHeight == area.height() &&
-                layoutCache.lastItemCount == count
-
+            layoutCache.lastAreaHeight == area.height() &&
+            layoutCache.lastItemCount == count
 
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             Log.v(TAG, "Layout cache-hit: $cacheHit")
@@ -336,7 +334,7 @@ private class GaugeLayoutCache {
                 centeredLeft,
                 centeredTop,
                 centeredLeft + layoutCache.gaugeWidth,
-                centeredTop + layoutCache.gaugeWidth,
+                centeredTop + layoutCache.gaugeWidth
             )
         }
     }

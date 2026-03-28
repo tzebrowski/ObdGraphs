@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,5 +39,5 @@ data class TripInfoDetails(
     var oilDegradation: Metric? = null,
     var engineSpeed: Metric? = null,
     var vehicleSpeed: Metric? = null,
-    var gearEngaged: Metric? = null,
+    var gearEngaged: Metric? = null
 )

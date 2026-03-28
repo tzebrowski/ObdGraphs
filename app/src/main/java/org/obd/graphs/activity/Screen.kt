@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -45,15 +45,15 @@ internal class Screen {
                         .makeText(
                             activity,
                             "Must enable device administrator",
-                            Toast.LENGTH_LONG,
+                            Toast.LENGTH_LONG
                         ).show()
                     val admin = ComponentName(activity, AdminReceiver::class.java)
                     val intent: Intent =
                         Intent(
-                            DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN,
+                            DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN
                         ).putExtra(
                             DevicePolicyManager.EXTRA_DEVICE_ADMIN,
-                            admin,
+                            admin
                         )
                     activity.startActivity(intent)
                 }
@@ -63,7 +63,7 @@ internal class Screen {
 
     fun changeScreenBrightness(
         activity: Activity,
-        value: Float,
+        value: Float
     ) {
         Log.i(LOG_TAG, "Activating application.")
         if (Power.getPreferences().screenOnOff) {
@@ -71,7 +71,7 @@ internal class Screen {
             val wl =
                 pm.newWakeLock(
                     PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                    "data_logger:wakeLock",
+                    "data_logger:wakeLock"
                 )
             try {
                 wl.acquire(5000) // wait 5s
@@ -98,7 +98,7 @@ internal class Screen {
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
-            )
+                )
     }
 
     fun setupWindowManager(activity: Activity) {

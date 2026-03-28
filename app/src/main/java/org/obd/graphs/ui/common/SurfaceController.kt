@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,7 @@ import org.obd.graphs.renderer.api.SurfaceRenderer
 private const val LOG_KEY = "SurfaceController"
 
 internal class SurfaceController(
-    private val renderer: SurfaceRenderer?,
+    private val renderer: SurfaceRenderer?
 ) : SurfaceHolder.Callback {
     private lateinit var surfaceHolder: SurfaceHolder
     private var surface: Surface? = null
@@ -54,13 +54,13 @@ internal class SurfaceController(
 
     private fun updateVisibleArea(
         width: Int,
-        height: Int,
+        height: Int
     ) {
         visibleArea?.set(
             10,
             10 + topInset,
             width,
-            height,
+            height
         )
     }
 
@@ -80,7 +80,7 @@ internal class SurfaceController(
         holder: SurfaceHolder,
         format: Int,
         width: Int,
-        height: Int,
+        height: Int
     ) {
         surface = surfaceHolder.surface
         updateVisibleArea(width, height)
@@ -102,7 +102,7 @@ internal class SurfaceController(
                     surfaceLocked = true
                     renderer?.onDraw(
                         canvas = canvas,
-                        drawArea = visibleArea,
+                        drawArea = visibleArea
                     )
                 } catch (e: Throwable) {
                     Log.e(LOG_KEY, "Exception was thrown during surface locking.", e)

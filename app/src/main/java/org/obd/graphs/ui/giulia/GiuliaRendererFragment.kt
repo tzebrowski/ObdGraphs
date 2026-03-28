@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,7 @@ internal class GiuliaRendererFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         setupVirtualViewPanel()
@@ -49,7 +49,7 @@ internal class GiuliaRendererFragment :
     private fun setVirtualViewBtn(
         btnId: Int,
         selection: String,
-        viewId: String,
+        viewId: String
     ) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {
@@ -66,7 +66,6 @@ internal class GiuliaRendererFragment :
                 withDataLogger {
                     updateQuery(query)
                 }
-
 
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()

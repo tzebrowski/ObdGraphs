@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.sendBroadcastEvent
 
-
 private class DoubleClickGestureListener : GestureDetector.SimpleOnGestureListener() {
     override fun onDoubleTap(e: MotionEvent): Boolean {
         sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
@@ -33,19 +32,19 @@ private class DoubleClickGestureListener : GestureDetector.SimpleOnGestureListen
 }
 
 open class ToggleToolbarDoubleClickListener(
-    context: Context?,
+    context: Context?
 ) : RecyclerView.OnItemTouchListener {
     private var gestureDetector: GestureDetector =
         GestureDetector(
             context,
             object : GestureDetector.SimpleOnGestureListener() {
                 override fun onDoubleTap(e: MotionEvent): Boolean = true
-            },
+            }
         )
 
     override fun onInterceptTouchEvent(
         view: RecyclerView,
-        e: MotionEvent,
+        e: MotionEvent
     ): Boolean {
         val childView = view.findChildViewUnder(e.x, e.y)
         if (childView != null && gestureDetector.onTouchEvent(e)) {
@@ -58,7 +57,7 @@ open class ToggleToolbarDoubleClickListener(
 
     override fun onTouchEvent(
         view: RecyclerView,
-        motionEvent: MotionEvent,
+        motionEvent: MotionEvent
     ) {}
 }
 
@@ -68,7 +67,7 @@ fun onDoubleClickListener(context: Context): View.OnTouchListener {
         if (event.action == MotionEvent.ACTION_UP) v.performClick()
 
         gestureDetector.onTouchEvent(
-            event,
+            event
         )
     }
 }

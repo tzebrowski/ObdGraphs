@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,7 +23,7 @@ data class PowerPreferences(
     var connectOnPower: Boolean = false,
     var screenOnOff: Boolean = false,
     var switchNetworkOffOn: Boolean = false,
-    var startDataLoggingAfter: Long = 10,
+    var startDataLoggingAfter: Long = 10
 )
 
 object Power {

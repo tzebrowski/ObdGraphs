@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,5 +22,5 @@ import androidx.preference.DialogPreference
 
 class VehicleMetadataListPreferences(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : DialogPreference(context, attrs)

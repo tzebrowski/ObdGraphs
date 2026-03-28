@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,7 @@ private var toast: Toast? = null
 
 fun toast(
     id: Int,
-    vararg formatArgs: String,
+    vararg formatArgs: String
 ) {
     getContext()?.let {
         val text = it.resources.getString(id, *formatArgs)
@@ -41,7 +41,7 @@ fun toast(
             Toast.makeText(
                 it,
                 biggerText,
-                Toast.LENGTH_LONG,
+                Toast.LENGTH_LONG
             )
 
         toast?.run {

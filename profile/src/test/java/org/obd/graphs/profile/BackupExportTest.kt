@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -63,7 +63,7 @@ internal class BackupExportTest : TestSetup() {
             mapOf(
                 "user.pref.1" to "some_value",
                 "user.pref.int" to 123,
-                "user.pref.bool" to true,
+                "user.pref.bool" to true
             )
         every { sharedPrefs.all } returns prefsData
 

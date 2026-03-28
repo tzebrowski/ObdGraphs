@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,7 +43,7 @@ private const val LOGGER_KEY = "TripsViewAdapter"
 class TripViewAdapter internal constructor(
     context: Context?,
     var data: MutableCollection<TripLogDetails>,
-    private val showDeleteButton: Boolean = true,
+    private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val dateFormat: SimpleDateFormat =
@@ -61,19 +61,19 @@ class TripViewAdapter internal constructor(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder = ViewHolder(mInflater.inflate(R.layout.item_trip, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         data.elementAt(position).run {
             holder.vehicleProfile.setText(
                 source.profileLabel,
                 profileColors[source.profileId]!!,
                 Typeface.NORMAL,
-                0.6f,
+                0.6f
             )
             var startTs = source.startTime
             source.startTime.toLongOrNull()?.let {
@@ -106,7 +106,7 @@ class TripViewAdapter internal constructor(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder internal constructor(
-        binding: View,
+        binding: View
     ) : RecyclerView.ViewHolder(binding) {
         val selected: CheckBox = binding.findViewById(R.id.trip_selected)
         val vehicleProfile: TextView = binding.findViewById(R.id.vehicle_profile)

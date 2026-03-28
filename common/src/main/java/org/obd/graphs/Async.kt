@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -18,21 +18,21 @@
 
 package org.obd.graphs
 
- import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.launch
- import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
- private val backgroundScope = kotlinx.coroutines.CoroutineScope(Dispatchers.Default + kotlinx.coroutines.SupervisorJob())
+private val backgroundScope = kotlinx.coroutines.CoroutineScope(Dispatchers.Default + kotlinx.coroutines.SupervisorJob())
 
- fun <T> runAsync(wait: Boolean = false, handler: () -> T): T? {
-     return if (wait) {
-         runBlocking(Dispatchers.Default) {
-             handler()
-         }
-     } else {
-         backgroundScope.launch {
-             handler()
-         }
-         null
-     }
- }
+fun <T> runAsync(wait: Boolean = false, handler: () -> T): T? {
+    return if (wait) {
+        runBlocking(Dispatchers.Default) {
+            handler()
+        }
+    } else {
+        backgroundScope.launch {
+            handler()
+        }
+        null
+    }
+}

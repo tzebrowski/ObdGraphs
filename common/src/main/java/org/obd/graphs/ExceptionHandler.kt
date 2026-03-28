@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -40,7 +40,7 @@ class ExceptionHandler : Thread.UncaughtExceptionHandler {
         var arr = e.stackTrace
         var report = """
                 $e
-                """.trimIndent()
+        """.trimIndent()
         report += "--------- Stack trace ---------\n\n"
         for (i in arr.indices) {
             report += """${arr[i]}"""
@@ -51,7 +51,7 @@ class ExceptionHandler : Thread.UncaughtExceptionHandler {
         if (cause != null) {
             report += """
                     $cause
-                    """.trimIndent()
+            """.trimIndent()
             arr = cause.stackTrace
             for (i in arr.indices) {
                 report += """${arr[i]}"""

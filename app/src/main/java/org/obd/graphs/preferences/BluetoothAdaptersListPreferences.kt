@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,12 +34,12 @@ import java.util.LinkedList
 
 private class Device(
     val address: String,
-    val label: Spanned,
+    val label: Spanned
 )
 
 class BluetoothAdaptersListPreferences(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
     init {
         setOnPreferenceChangeListener { _, _ ->
@@ -89,7 +89,7 @@ class BluetoothAdaptersListPreferences(
         return super.getEntries()
     }
 
-    private fun getDeviceList(handler: (device: Device) -> Unit)  =
+    private fun getDeviceList(handler: (device: Device) -> Unit) =
         try {
             Network.bluetoothAdapter()?.run {
                 bondedDevices
@@ -113,14 +113,14 @@ class BluetoothAdaptersListPreferences(
                     RelativeSizeSpan(0.5f),
                     startIndexOf,
                     endIndexOf,
-                    0,
+                    0
                 )
 
                 setSpan(
                     ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
                     startIndexOf,
                     endIndexOf,
-                    0,
+                    0
                 )
             }
         } catch (e: Throwable) {

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -37,7 +37,7 @@ const val SCREEN_LOCK_CONTEXT_EXTRA_PARAM_NAME = "context.extra"
 fun Intent.getContextExtraParam(): String? = extras?.getString(SCREEN_LOCK_CONTEXT_EXTRA_PARAM_NAME)
 
 class ScreenLockManager(
-    private val activity: Activity,
+    private val activity: Activity
 ) : DefaultLifecycleObserver {
     private var lockScreenDialog: AlertDialog? = null
     private var onCancelAction: (() -> Unit)? = null
@@ -70,7 +70,7 @@ class ScreenLockManager(
         message: String,
         timeoutMs: Long = 10000L,
         showCancelButton: Boolean = false,
-        onCancel: (() -> Unit)? = null,
+        onCancel: (() -> Unit)? = null
     ) {
         this.onCancelAction = onCancel
         this.cancelButton?.visibility = if (showCancelButton) View.VISIBLE else View.GONE

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,8 +32,8 @@ class MetricsBuilder {
                         null
                     } else {
                         metric.max - metric.min
-                    },
-                ).build(),
+                    }
+                ).build()
         )
 
     fun buildFor(obdMetric: ObdMetric): Metric {
@@ -45,7 +45,7 @@ class MetricsBuilder {
             max = histogram?.max ?: 0.0,
             mean = histogram?.mean ?: 0.0,
             value = histogram?.latestValue ?: 0,
-            source = obdMetric,
+            source = obdMetric
         )
     }
 
@@ -53,7 +53,7 @@ class MetricsBuilder {
 
     fun buildFor(
         ids: Set<Long>,
-        sortOrder: Map<Long, Int>?,
+        sortOrder: Map<Long, Int>?
     ): MutableList<Metric> {
         val metrics = buildMetrics(ids)
 
@@ -90,11 +90,11 @@ class MetricsBuilder {
                         mean = histogram?.mean ?: 0.0,
                         value = histogram?.latestValue ?: 0,
                         source =
-                            ObdMetric
-                                .builder()
-                                .command(ObdCommand(pid))
-                                .value(histogram?.latestValue)
-                                .build(),
+                        ObdMetric
+                            .builder()
+                            .command(ObdCommand(pid))
+                            .value(histogram?.latestValue)
+                            .build()
                     )
                 }
             }.toMutableList()

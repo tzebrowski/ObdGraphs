@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,7 +34,7 @@ class Modules {
 
     private val overrides = mapOf(
         "alfa.json" to "Giulietta QV",
-        "giulia_2.0_gme.json" to "Giulia 2.0 GME",
+        "giulia_2.0_gme.json" to "Giulia 2.0 GME"
     )
 
     private var modules = mutableMapOf<String, String>()
@@ -43,59 +43,60 @@ class Modules {
 
     fun isExternalStorageModule(it: String) = it.startsWith(STORAGE_FILE_CODING_KEY)
 
-    fun getDefaultModules(): Map<String,String>  =  modules.apply {
+    fun getDefaultModules(): Map<String, String> = modules.apply {
         putAll(overrides)
     }
 
-    fun updateSettings (allProps: MutableMap<String, Any?>){
+    fun updateSettings(allProps: MutableMap<String, Any?>) {
         val keys = allProps.keys.filter { it.contains(PREF_MODULE_LIST) }.toList()
         val values = keys.map { allProps[it].toString().replace("[", "").replace("]", "").split(",") }.flatten().toSet()
         val resourcesMap = values.map {
             it.replace(" ", "") to
-                    it.replace(".json", "")
-                        .replace("_", " ")
-                        .trim()
-                        .split(" ").joinToString(" ") { it.lowercase(Locale.getDefault())
-                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+                it.replace(".json", "")
+                    .replace("_", " ")
+                    .trim()
+                    .split(" ").joinToString(" ") {
+                        it.lowercase(Locale.getDefault())
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                    }
         }
 
         modules.putAll(resourcesMap)
         Log.i(LOG_TAG, "Registered following resource modules files: $modules")
     }
 
-    fun getExternalModules(context: Context?): MutableMap<String, String>?  = getExternalModules(context) {
-            Prefs.getBoolean(
-                ACCESS_EXTERNAL_STORAGE_ENABLED,
-                false
-            )
-        }
-
+    fun getExternalModules(context: Context?): MutableMap<String, String>? = getExternalModules(context) {
+        Prefs.getBoolean(
+            ACCESS_EXTERNAL_STORAGE_ENABLED,
+            false
+        )
+    }
 
     fun getExternalModules(
         context: Context?,
         isFeatureEnabled: () -> Boolean
-    ): MutableMap<String, String>?  = if (isFeatureEnabled()) {
+    ): MutableMap<String, String>? = if (isFeatureEnabled()) {
         getExternalModulesDirectory(context)?.let { directory ->
-                val files = File(directory).listFiles()
+            val files = File(directory).listFiles()
+            Log.d(
+                LOG_TAG,
+                "Reading directory $directory for available extra PID resource files. " +
+                    "\nFound number of files: ${files?.size}"
+            )
+
+            return files?.associate {
                 Log.d(
                     LOG_TAG,
-                    "Reading directory $directory for available extra PID resource files. " +
-                            "\nFound number of files: ${files?.size}"
+                    "Found file: ${it.absolutePath}." +
+                        "\n Adding to the path."
                 )
-
-                return files?.associate {
-                    Log.d(
-                        LOG_TAG, "Found file: ${it.absolutePath}." +
-                                "\n Adding to the path."
-                    )
-                    "$STORAGE_FILE_CODING_KEY${it.absolutePath}" to it.absolutePath
-                }?.toMutableMap()
-
-            }
-        } else null
-
+                "$STORAGE_FILE_CODING_KEY${it.absolutePath}" to it.absolutePath
+            }?.toMutableMap()
+        }
+    } else {
+        null
+    }
 
     private fun getExternalModulesDirectory(context: Context?): String? =
         context?.getExternalFilesDir("pid")?.absolutePath
-
 }

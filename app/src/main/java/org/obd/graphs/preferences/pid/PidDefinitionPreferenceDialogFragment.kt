@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -64,13 +64,13 @@ private const val LOG_TAG = "PIDsDialog"
 data class PidDefinitionDetails(
     val source: PidDefinition,
     var checked: Boolean = false,
-    var supported: Boolean = true,
+    var supported: Boolean = true
 )
 
 open class PidDefinitionPreferenceDialogFragment(
     private val key: String,
     private val source: String,
-    private val onDialogCloseListener: (() -> Unit) = {},
+    private val onDialogCloseListener: (() -> Unit) = {}
 ) : CoreDialogFragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
@@ -87,7 +87,7 @@ open class PidDefinitionPreferenceDialogFragment(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         requestWindowFeatures()
 
@@ -111,7 +111,7 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun adjustRecyclerViewHeight(
         recyclerView: RecyclerView,
-        orientation: Int,
+        orientation: Int
     ) {
         recyclerView.layoutParams.height =
             if (editableViewEnabled) {
@@ -173,7 +173,7 @@ open class PidDefinitionPreferenceDialogFragment(
                     filterListOfItems(newValue)
                     return false
                 }
-            },
+            }
         )
     }
 
@@ -224,7 +224,7 @@ open class PidDefinitionPreferenceDialogFragment(
             object : SwappableAdapter {
                 override fun swapItems(
                     fromPosition: Int,
-                    toPosition: Int,
+                    toPosition: Int
                 ) {
                     if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                         Log.v(LOG_TAG, "swappableAdapter fromPosition=$fromPosition toPosition=$toPosition")
@@ -247,7 +247,7 @@ open class PidDefinitionPreferenceDialogFragment(
                 requireContext(),
                 ItemTouchHelper.UP or ItemTouchHelper.DOWN,
                 ItemTouchHelper.ACTION_STATE_DRAG,
-                swappableAdapter,
+                swappableAdapter
             )
 
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
@@ -389,7 +389,7 @@ open class PidDefinitionPreferenceDialogFragment(
                         checked.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
                             if (order.containsKey(m1.source.id) &&
                                 order.containsKey(
-                                    m2.source.id,
+                                    m2.source.id
                                 )
                             ) {
                                 order[m1.source.id]!!
@@ -420,7 +420,7 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun findPidDefinitionByPriority(
         source: Collection<PidDefinition>,
-        predicate: (PidDefinition) -> Boolean,
+        predicate: (PidDefinition) -> Boolean
     ): List<PidDefinitionDetails> {
         val ecuSupportedPIDs = VehicleCapabilitiesManager.getSupportedPIDs()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
@@ -438,7 +438,7 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun isSupported(
         ecuSupportedPIDs: MutableList<String>,
-        p: PidDefinition,
+        p: PidDefinition
     ): Boolean =
         if (p.mode == "01") {
             ecuSupportedPIDs.contains(p.pid.lowercase())

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -33,7 +33,7 @@ import java.io.File
 internal open class DefaultTripLogDriveManager(
     webClientId: String,
     activity: Activity,
-    fragment: Fragment?,
+    fragment: Fragment?
 ) : AbstractDriveManager(webClientId, activity, fragment),
     TripLogDriveManager {
     override suspend fun exportTrips(files: List<File>) =
@@ -41,7 +41,7 @@ internal open class DefaultTripLogDriveManager(
             executeDriveOperation(
                 accessToken = token,
                 onFailure = { sendBroadcastEvent(TRIPS_UPLOAD_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
             ) { drive ->
                 if (files.isEmpty()) {
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
@@ -57,12 +57,12 @@ internal open class DefaultTripLogDriveManager(
                             } else {
                                 v
                             }
-                         }
+                        }
 
                     val deviceId = Device.id()
                     files.forEach { inFile ->
 
-                        val metadata = mutableMapOf<String,String>()
+                        val metadata = mutableMapOf<String, String>()
                         val tripDesc = TripDescParser().getTripDesc(inFile.name)
                         metadata["trip.duration"] = tripDesc.tripTimeSec
                         metadata["trip.profileId"] = tripDesc.profileId
@@ -70,14 +70,14 @@ internal open class DefaultTripLogDriveManager(
                         metadata["trip.profileLabel"] = tripDesc.profileLabel
                         metadata["trip.profileId"] = tripDesc.profileId
 
-                        transformer.transform(inFile,metadata).inputStream().use { outFile ->
+                        transformer.transform(inFile, metadata).inputStream().use { outFile ->
                             drive.uploadFile(
                                 InputStreamContent(
                                     "text/plain",
                                     outFile,
-                                    "$deviceId-${inFile.name.removePrefix("trip-profile_")}",
+                                    "$deviceId-${inFile.name.removePrefix("trip-profile_")}"
                                 ),
-                                folderId,
+                                folderId
                             )
                         }
                     }

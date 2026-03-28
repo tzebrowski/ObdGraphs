@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,9 +22,9 @@ import androidx.preference.Preference
 import org.obd.graphs.BACKUP_START
 import org.obd.graphs.sendBroadcastEvent
 
- class ProfileExportAction(
+class ProfileExportAction(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet?
 ) : Preference(context, attrs) {
     init {
         setOnPreferenceClickListener {
@@ -32,4 +32,4 @@ import org.obd.graphs.sendBroadcastEvent
             true
         }
     }
- }
+}

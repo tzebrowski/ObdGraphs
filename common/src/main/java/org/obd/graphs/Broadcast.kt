@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ import android.os.Bundle
 
 fun sendBroadcastEvent(
     actionName: String,
-    extras: Map<String, Any>,
+    extras: Map<String, Any>
 ) {
     getContext()?.run {
         sendBroadcast(
@@ -39,14 +39,14 @@ fun sendBroadcastEvent(
                         else -> putExtra(k, v.toString())
                     }
                 }
-            },
+            }
         )
     }
 }
 
 fun sendBroadcastEvent(
     actionName: String,
-    bundle: Bundle?,
+    bundle: Bundle?
 ) {
     getContext()?.run {
         sendBroadcast(
@@ -55,7 +55,7 @@ fun sendBroadcastEvent(
                 bundle?.let {
                     putExtras(bundle)
                 }
-            },
+            }
         )
     }
 }
@@ -65,7 +65,7 @@ fun sendBroadcastEvent(actionName: String) {
         sendBroadcast(
             Intent().apply {
                 action = actionName
-            },
+            }
         )
     }
 }
@@ -74,7 +74,7 @@ fun registerReceiver(
     context: Context?,
     receiver: BroadcastReceiver,
     exportReceiver: Boolean = true,
-    func: (filter: IntentFilter) -> Unit,
+    func: (filter: IntentFilter) -> Unit
 ) {
     context?.let {
         val intentFilter = IntentFilter()

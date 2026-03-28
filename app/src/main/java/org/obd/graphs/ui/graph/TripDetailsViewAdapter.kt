@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,19 +32,19 @@ import org.obd.graphs.ui.common.setText
 
 class TripDetailsViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<SensorData>,
+    data: MutableCollection<SensorData>
 ) : RecyclerView.Adapter<TripDetailsViewAdapter.ViewHolder>() {
     var mData: MutableCollection<SensorData> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder = ViewHolder(mInflater.inflate(R.layout.item_metric, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         mData.elementAt(position).let { metric ->
             val pid = DataLoggerRepository.getPidDefinitionRegistry().findBy(metric.id)
@@ -53,17 +53,17 @@ class TripDetailsViewAdapter internal constructor(
                 holder.metricMaxValue.setText(
                     max.format(pid),
                     Color.GRAY,
-                    1.0f,
+                    1.0f
                 )
                 holder.metricMinValue.setText(
                     min.format(pid),
                     Color.GRAY,
-                    1.0f,
+                    1.0f
                 )
                 holder.metricMeanValue.setText(
                     mean.format(pid),
                     Color.GRAY,
-                    1.0f,
+                    1.0f
                 )
             }
         }
@@ -72,7 +72,7 @@ class TripDetailsViewAdapter internal constructor(
     override fun getItemCount(): Int = mData.size
 
     inner class ViewHolder internal constructor(
-        itemView: View,
+        itemView: View
     ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         val metricName: TextView = itemView.findViewById(R.id.metric_name)

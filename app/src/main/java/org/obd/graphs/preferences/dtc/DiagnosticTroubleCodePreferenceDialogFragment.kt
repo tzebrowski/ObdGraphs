@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -52,7 +52,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         object : android.content.BroadcastReceiver() {
             override fun onReceive(
                 context: android.content.Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 if (intent?.action == DATA_LOGGER_DTC_ACTION_COMPLETED) {
                     handleDTCChangedNotification()
@@ -63,7 +63,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View? {
         requestWindowFeatures()
 
@@ -85,7 +85,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
     private fun attachButtons(
         root: View,
-        sortedDtcList: List<DiagnosticTroubleCode>,
+        sortedDtcList: List<DiagnosticTroubleCode>
     ) {
         refreshButton = root.findViewById(R.id.action_refresh_dtc)
         shareButton = root.findViewById(R.id.action_share)
@@ -119,7 +119,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 .Builder(requireContext())
                 .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
                 .setMessage(
-                    resources.getString(R.string.pref_dtc_clean_dialog_confirm_message),
+                    resources.getString(R.string.pref_dtc_clean_dialog_confirm_message)
                 ).setPositiveButton("Clear Codes") { dialog, _ ->
                     if (DataLoggerRepository.isRunning()) {
                         setLoadingState(true)
@@ -138,16 +138,19 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
     }
 
-    private fun setLoadingState(isLoading: Boolean)  =
+    private fun setLoadingState(isLoading: Boolean) =
         if (isLoading) {
-            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT,
+            sendBroadcastEvent(
+                SCREEN_LOCK_PROGRESS_EVENT,
                 mapOf(
                     SCREEN_LOCK_SHOW_CANCEL_BUTTON_EXTRA_PARAM_NAME to true,
                     SCREEN_LOCK_MSG_EXTRA_PARAM_NAME to org.obd.graphs.getContext()
-                    ?.getText(R.string.pref_dtc_screen_lock) as String))
+                        ?.getText(R.string.pref_dtc_screen_lock) as String
+                )
+            )
         } else {
             sendBroadcastEvent(
-                SCREEN_UNLOCK_PROGRESS_EVENT,
+                SCREEN_UNLOCK_PROGRESS_EVENT
             )
         }
 
@@ -220,8 +223,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                             null,
                             null,
                             null,
-                            DtcComponent("", ""),
-                        ),
+                            DtcComponent("", "")
+                        )
                     )
                 }
             }.sortedWith(
@@ -231,12 +234,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         desc.isNullOrBlank() ||
                             desc.contains(
                                 "Unknown DTC Description",
-                                ignoreCase = true,
+                                ignoreCase = true
                             )
                     if (isUnknown) 1 else 0
                 }.thenBy { code ->
                     code.standardCode
-                },
+                }
             ).toMutableList()
 
     override fun onResume() {

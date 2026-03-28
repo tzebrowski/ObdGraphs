@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -103,7 +103,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_SCHEDULED_STOP_EVENT -> {
             Log.d(
                 LOG_TAG,
-                "Stop data logging",
+                "Stop data logging"
             )
             withDataLogger {
                 stop()
@@ -155,7 +155,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
 
             val showCancel = intent.extras?.getBoolean(SCREEN_LOCK_SHOW_CANCEL_BUTTON_EXTRA_PARAM_NAME)
-            screenLockManager.show(message = msg, showCancelButton = showCancel ?: false){
+            screenLockManager.show(message = msg, showCancelButton = showCancel ?: false) {
                 sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
             }
         }
@@ -174,8 +174,6 @@ internal fun MainActivity.receive(intent: Intent?) {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_attached, usbDevice.productName!!)
         }
-
-
 
         DATA_LOGGER_DTC_AVAILABLE ->
             if (Prefs.isEnabled("pref.dtc.show_notification")) {
@@ -220,7 +218,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.backgroundTintList =
                     ContextCompat.getColorStateList(
                         applicationContext,
-                        org.obd.graphs.commons.R.color.cardinal,
+                        org.obd.graphs.commons.R.color.cardinal
                     )
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
@@ -236,7 +234,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.indeterminateDrawable.colorFilter =
                     PorterDuffColorFilter(
                         COLOR_CARDINAL,
-                        PorterDuff.Mode.SRC_IN,
+                        PorterDuff.Mode.SRC_IN
                     )
             }
         }
@@ -255,7 +253,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.indeterminateDrawable.colorFilter =
                     PorterDuffColorFilter(
                         COLOR_PHILIPPINE_GREEN,
-                        PorterDuff.Mode.SRC_IN,
+                        PorterDuff.Mode.SRC_IN
                     )
             }
 
@@ -305,7 +303,7 @@ private fun MainActivity.handleStop() {
         it.backgroundTintList =
             ContextCompat.getColorStateList(
                 applicationContext,
-                org.obd.graphs.commons.R.color.philippine_green,
+                org.obd.graphs.commons.R.color.philippine_green
             )
     }
 
@@ -318,7 +316,7 @@ private fun MainActivity.handleStop() {
 
 internal fun MainActivity.toggleNavigationItem(
     prefKey: String,
-    id: Int,
+    id: Int
 ) {
     bottomAppBar {
         it.menu.findItem(id)?.run {

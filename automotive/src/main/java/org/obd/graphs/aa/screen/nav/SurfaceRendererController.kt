@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -37,7 +37,7 @@ private const val LOG_TAG = "SurfaceController"
 class SurfaceRendererController(
     private val carContext: CarContext,
     private val settings: CarSettings,
-    surfaceRenderer: SurfaceRenderer?,
+    surfaceRenderer: SurfaceRenderer?
 ) : DefaultLifecycleObserver {
 
     private var activeSurfaceRenderer: SurfaceRenderer? = surfaceRenderer
@@ -128,7 +128,7 @@ class SurfaceRendererController(
                         surfaceLocked = true
                         activeSurfaceRenderer?.onDraw(
                             canvas = canvas,
-                            drawArea = visibleArea,
+                            drawArea = visibleArea
                         )
                     } catch (e: Throwable) {
                         Log.e(LOG_TAG, "Exception was thrown during surface locking.", e)

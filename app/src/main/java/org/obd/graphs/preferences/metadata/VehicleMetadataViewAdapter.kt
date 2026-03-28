@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -31,18 +31,18 @@ import org.obd.graphs.ui.common.setText
 
 class VehicleMetadataViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<VehicleMetadata>,
+    private var data: MutableCollection<VehicleMetadata>
 ) : RecyclerView.Adapter<VehicleMetadataViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int,
+        viewType: Int
     ): ViewHolder = ViewHolder(mInflater.inflate(R.layout.item_vehicle_metadata, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int,
+        position: Int
     ) {
         data.elementAt(position).run {
             holder.name.setText(name, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.8f)
@@ -53,7 +53,7 @@ class VehicleMetadataViewAdapter internal constructor(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder internal constructor(
-        itemView: View,
+        itemView: View
     ) : RecyclerView.ViewHolder(itemView) {
         var name: TextView = itemView.findViewById(R.id.metadata_name)
         var value: TextView = itemView.findViewById(R.id.metadata_value)

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,7 +28,7 @@ fun PidDefinition.scaleToRange(value: Float): Float =
         NEW_RANGE_MIN_VAL,
         NEW_RANGE_MAX_VAL,
         min.toFloat(),
-        max.toFloat(),
+        max.toFloat()
     )
 
 fun ObdMetric.scaleToRange(): Float =
@@ -36,7 +36,7 @@ fun ObdMetric.scaleToRange(): Float =
         command.pid.min.toFloat(),
         command.pid.max.toFloat(),
         NEW_RANGE_MIN_VAL,
-        NEW_RANGE_MAX_VAL,
+        NEW_RANGE_MAX_VAL
     )
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == Pid.ATM_PRESSURE_PID_ID.id

@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -52,7 +52,7 @@ const val MARGIN_END = 30
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractDrawer(
     protected val context: Context,
-    protected val settings: ScreenSettings,
+    protected val settings: ScreenSettings
 ) {
     private val statusPaint = Paint()
 
@@ -62,8 +62,6 @@ internal abstract class AbstractDrawer(
             style = Paint.Style.FILL
             strokeCap = Paint.Cap.BUTT
         }
-
-
 
     protected fun isLandscape() = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -140,14 +138,14 @@ internal abstract class AbstractDrawer(
 
     inline fun calculateFontSize(
         multiplier: Float,
-        fontSize: Int,
+        fontSize: Int
     ): Float =
         multiplier *
             fontSize.mapRange(
                 CURRENT_MIN,
                 CURRENT_MAX,
                 NEW_MIN,
-                NEW_MAX,
+                NEW_MAX
             )
 
     fun drawDivider(
@@ -155,7 +153,7 @@ internal abstract class AbstractDrawer(
         left: Float,
         width: Float,
         top: Float,
-        color: Int,
+        color: Int
     ) {
         paint.color = color
         paint.strokeWidth = 2f
@@ -164,14 +162,14 @@ internal abstract class AbstractDrawer(
             top + 4,
             left + width - MARGIN_END,
             top + 4,
-            paint,
+            paint
         )
     }
 
     fun drawBackground(
         canvas: Canvas,
         rect: Rect,
-        color: Int = settings.getBackgroundColor(),
+        color: Int = settings.getBackgroundColor()
     ) {
         canvas.drawColor(color)
         if (settings.isBackgroundDrawingEnabled()) {
@@ -194,7 +192,7 @@ internal abstract class AbstractDrawer(
                     rect.left + dx,
                     rect.top + dy,
                     rect.left + dx + scaledWidth,
-                    rect.top + dy + scaledHeight,
+                    rect.top + dy + scaledHeight
                 )
 
             backgroundPaint.alpha = 90
@@ -209,7 +207,7 @@ internal abstract class AbstractDrawer(
         left: Float,
         fps: Fps,
         metricsCollector: MetricsCollector? = null,
-        drawContextInfo: Boolean = false,
+        drawContextInfo: Boolean = false
     ) {
         var text = statusLabel
         var marginLeft = left
@@ -221,7 +219,7 @@ internal abstract class AbstractDrawer(
             top,
             Color.LTGRAY,
             STATUS_KEY_FONT_SIZE,
-            statusPaint,
+            statusPaint
         )
 
         marginLeft += getTextWidth(text, statusPaint) + 2f
@@ -239,7 +237,7 @@ internal abstract class AbstractDrawer(
             top,
             color,
             STATUS_VALUE_FONT_SIZE,
-            statusPaint,
+            statusPaint
         )
 
         marginLeft += getTextWidth(text, statusPaint) + 12F
@@ -252,7 +250,7 @@ internal abstract class AbstractDrawer(
             top,
             Color.LTGRAY,
             STATUS_KEY_FONT_SIZE,
-            statusPaint,
+            statusPaint
         )
 
         marginLeft += getTextWidth(text, statusPaint) + 4F
@@ -265,7 +263,7 @@ internal abstract class AbstractDrawer(
             top,
             colorTheme.currentProfileColor,
             STATUS_VALUE_FONT_SIZE,
-            statusPaint,
+            statusPaint
         )
 
         if (settings.isFpsCounterEnabled()) {
@@ -278,7 +276,7 @@ internal abstract class AbstractDrawer(
                 top,
                 Color.WHITE,
                 STATUS_KEY_FONT_SIZE,
-                statusPaint,
+                statusPaint
             )
 
             marginLeft += getTextWidth(text, statusPaint) + 4F
@@ -289,7 +287,7 @@ internal abstract class AbstractDrawer(
                 top,
                 Color.YELLOW,
                 16f,
-                statusPaint,
+                statusPaint
             )
         }
 
@@ -305,7 +303,7 @@ internal abstract class AbstractDrawer(
                         top,
                         Color.LTGRAY,
                         STATUS_KEY_FONT_SIZE,
-                        statusPaint,
+                        statusPaint
                     )
 
                     marginLeft += getTextWidth(text, statusPaint) + 4F
@@ -316,7 +314,7 @@ internal abstract class AbstractDrawer(
                         top,
                         Color.WHITE,
                         STATUS_VALUE_FONT_SIZE,
-                        statusPaint,
+                        statusPaint
                     )
                 }
 
@@ -330,7 +328,7 @@ internal abstract class AbstractDrawer(
                         top,
                         Color.LTGRAY,
                         STATUS_KEY_FONT_SIZE,
-                        statusPaint,
+                        statusPaint
                     )
 
                     marginLeft += getTextWidth(text, statusPaint) + 4F
@@ -341,7 +339,7 @@ internal abstract class AbstractDrawer(
                         top,
                         Color.WHITE,
                         STATUS_VALUE_FONT_SIZE,
-                        statusPaint,
+                        statusPaint
                     )
                 }
             }
@@ -374,7 +372,7 @@ internal abstract class AbstractDrawer(
         top: Float,
         color: Int,
         textSize: Float,
-        paint1: Paint,
+        paint1: Paint
     ): Float {
         paint1.color = color
         paint1.textSize = textSize
@@ -388,7 +386,7 @@ internal abstract class AbstractDrawer(
         left: Float,
         top: Float,
         textSize: Float,
-        color: Int = Color.WHITE,
+        color: Int = Color.WHITE
     ): Int {
         var top1 = top
         titlePaint.textSize = textSize
@@ -412,7 +410,7 @@ internal abstract class AbstractDrawer(
                     text[0],
                     left,
                     top,
-                    titlePaint,
+                    titlePaint
                 )
                 return titlePaint.textSize.toInt()
             } else {
@@ -424,7 +422,7 @@ internal abstract class AbstractDrawer(
                         it,
                         left,
                         vPos,
-                        titlePaint,
+                        titlePaint
                     )
                     vPos += titlePaint.textSize
                 }
@@ -437,7 +435,7 @@ internal abstract class AbstractDrawer(
                 text,
                 left,
                 top,
-                titlePaint,
+                titlePaint
             )
             return titlePaint.textSize.toInt()
         }
@@ -445,7 +443,7 @@ internal abstract class AbstractDrawer(
 
     protected fun getTextWidth(
         text: String,
-        paint: Paint,
+        paint: Paint
     ): Int {
         val bounds = Rect()
         paint.getTextBounds(text, 0, text.length, bounds)
@@ -454,7 +452,7 @@ internal abstract class AbstractDrawer(
 
     protected fun getTextHeight(
         text: String,
-        paint: Paint,
+        paint: Paint
     ): Int {
         val bounds = Rect()
         paint.getTextBounds(text, 0, text.length, bounds)

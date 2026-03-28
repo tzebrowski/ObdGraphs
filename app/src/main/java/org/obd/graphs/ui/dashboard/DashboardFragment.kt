@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -52,7 +52,7 @@ class DashboardFragment : RefreshableFragment() {
             },
             perfFrameRate = {
                 Prefs.getS("pref.dashboard.fps", "10").toInt()
-            },
+            }
         )
 
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
@@ -60,7 +60,7 @@ class DashboardFragment : RefreshableFragment() {
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 when (intent?.action) {
                     CONFIGURATION_CHANGE_EVENT_DASH -> setupDashboardRecyclerView(false)
@@ -105,7 +105,7 @@ class DashboardFragment : RefreshableFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         setupDashboardRecyclerView(true)
@@ -134,23 +134,23 @@ class DashboardFragment : RefreshableFragment() {
             recyclerView = root.findViewById(R.id.dashboard_recycler_view)!!,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext =
-                AdapterContext(
-                    layoutId = R.layout.item_dashboard,
-                    spanCount = calculateSpanCount(),
-                    height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
-                ),
+            AdapterContext(
+                layoutId = R.layout.item_dashboard,
+                spanCount = calculateSpanCount(),
+                height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
+            ),
             enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = {
-                context: Context,
-                data: MutableList<Metric>,
-                resourceId: Int,
-                height: Int?,
+                    context: Context,
+                    data: MutableList<Metric>,
+                    resourceId: Int,
+                    height: Int?
                 ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = "prefs.dash.pids.settings",
+            metricsSerializerPref = "prefs.dash.pids.settings"
         )
 
         metricsCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second)

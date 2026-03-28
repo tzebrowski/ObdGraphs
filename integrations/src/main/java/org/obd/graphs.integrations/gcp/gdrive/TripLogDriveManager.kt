@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,7 @@ interface TripLogDriveManager {
         fun instance(
             webClientId: String,
             activity: Activity,
-            fragment: Fragment?,
+            fragment: Fragment?
         ): TripLogDriveManager = DefaultTripLogDriveManager(webClientId, activity, fragment)
     }
 }

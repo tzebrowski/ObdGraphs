@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -16,6 +16,6 @@
  */
 package org.obd.graphs.bl.datalogger
 
-enum class WorkflowStatus  {
+enum class WorkflowStatus {
     Connected, Disconnected, Connecting, Stopping
 }

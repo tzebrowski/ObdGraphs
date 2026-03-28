@@ -1,4 +1,4 @@
- /**
+/*
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,14 +24,14 @@ import java.util.concurrent.TimeUnit
 
 class CountDownLatchBroadcastReceiver(
     val broadcastEvent: String,
-    private val timeout: Long = 5,
+    private val timeout: Long = 5
 ) {
     val eventGate = CountDownLatch(1)
     val eventReceiver: BroadcastReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
                 context: Context?,
-                intent: Intent?,
+                intent: Intent?
             ) {
                 when (intent?.action) {
                     broadcastEvent -> {
