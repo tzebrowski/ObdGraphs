@@ -16,38 +16,44 @@
  */
 package org.obd.graphs
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class LanguageAdapter(
     private val items: Array<String>,
+    private val selectedIndex: Int,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
-    class ViewHolder(
-        view: View
-    ) : RecyclerView.ViewHolder(view) {
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.language_item_text)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
-        val view =
-            LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.item_language, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_language, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
-    ) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.text = items[position]
+
+        val context = holder.itemView.context
+
+        if (position == selectedIndex) {
+            holder.textView.setTypeface(null, Typeface.BOLD)
+            holder.textView.setTextColor(ContextCompat.getColor(context, org.obd.graphs.commons.R.color.philippine_green))
+        } else {
+            holder.textView.setTypeface(null, Typeface.NORMAL)
+            holder.textView.setTextColor(ContextCompat.getColor(context, org.obd.graphs.commons.R.color.gray_dark))
+            holder.textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+        }
+
         holder.itemView.setOnClickListener {
             onItemClick(position)
         }
