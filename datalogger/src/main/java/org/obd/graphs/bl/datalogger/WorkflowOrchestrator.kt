@@ -131,14 +131,6 @@ internal class WorkflowOrchestrator internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
         }
 
-        override fun onStopping() {
-            if (!isRunning()){
-                Log.e(LOG_TAG,"Workflow is not running and receiving onStopping event. " +
-                    "Race condition.... Preventively force adapter stop")
-                onStopped()
-            }
-        }
-
         override fun onStopped() {
             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
 
