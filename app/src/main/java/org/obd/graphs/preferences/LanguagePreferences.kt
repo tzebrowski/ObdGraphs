@@ -21,8 +21,8 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.util.AttributeSet
 import androidx.preference.Preference
-import org.obd.graphs.language.LanguageManager
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.language.LanguageManager
 
 internal class LanguagePreferences(
     context: Context,
