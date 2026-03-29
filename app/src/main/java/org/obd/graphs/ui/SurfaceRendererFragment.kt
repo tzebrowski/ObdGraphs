@@ -135,11 +135,9 @@ internal abstract class SurfaceRendererFragment(
                 when (intent?.action) {
                     SCREEN_LOCK_DIALOG_CANCELLED_EVENT -> {
                         if (isFragmentVisibleToTheUser()) {
-                            Log.e(LOG_TAG, "User canceled current activity.  ${intent.getSerializableCompat<ScreenLock>()?.context}")
+                            Log.d(LOG_TAG, "User canceled current activity.")
                             if (intent.getSerializableCompat<ScreenLock>()?.context == "datalogger.connect") {
                                 withDataLogger {
-                                    Log.e(LOG_TAG, "User canceled current activity.!!!!!!!!!!!!!!!!!!" +
-                                        "  ${intent.getSerializableCompat<ScreenLock>()?.context}")
                                     stop()
                                 }
                             }
