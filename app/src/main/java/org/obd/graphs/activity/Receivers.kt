@@ -46,8 +46,9 @@ import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
 import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
-import org.obd.graphs.SCREEN_LOCK_MSG_EXTRA_PARAM_NAME
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_MSG_PARAM
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM
 import org.obd.graphs.SCREEN_OFF_EVENT
 import org.obd.graphs.SCREEN_ON_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
@@ -149,13 +150,16 @@ internal fun MainActivity.receive(intent: Intent?) {
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
 
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            var msg = intent.extras?.getString(SCREEN_LOCK_MSG_EXTRA_PARAM_NAME)
-            if (msg == null || msg.isEmpty()) {
-                msg = getText(R.string.pref_dialog_screen_lock_message) as String
+            val messageId = intent.extras?.getInt(SCREEN_LOCK_PROGRESS_MSG_PARAM)
+
+            val message = if (messageId == null) {
+                getText(R.string.pref_dialog_screen_lock_message) as String
+            } else {
+                this.getString(messageId)
             }
 
-            val showCancel = intent.extras?.getBoolean(SCREEN_LOCK_SHOW_CANCEL_BUTTON_EXTRA_PARAM_NAME)
-            screenLockManager.show(message = msg, showCancelButton = showCancel ?: false) {
+            val showCancel = intent.extras?.getBoolean(SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM)
+            screenLockManager.show(message = message, showCancelButton = showCancel ?: false) {
                 sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
             }
         }

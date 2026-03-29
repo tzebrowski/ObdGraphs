@@ -26,33 +26,38 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.isVisible
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_CONTEXT_PARAM
 import org.obd.graphs.ui.common.toast
 
-const val SCREEN_LOCK_SHOW_CANCEL_BUTTON_EXTRA_PARAM_NAME = "cancel_button.extra"
-const val SCREEN_LOCK_CONTEXT_EXTRA_PARAM_NAME = "context.extra"
-
-fun Intent.getContextExtraParam(): String? = extras?.getString(SCREEN_LOCK_CONTEXT_EXTRA_PARAM_NAME)
+internal fun Intent.getContextExtraParam(): String? = extras?.getString(SCREEN_LOCK_PROGRESS_CONTEXT_PARAM)
 
 class ScreenLockManager(
     private val activity: Activity
 ) : DefaultLifecycleObserver {
+
     private var lockScreenDialog: AlertDialog? = null
     private var onCancelAction: (() -> Unit)? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private var timeoutRunnable: Runnable? = null
 
+    // Cached view references
     private var cancelButton: Button? = null
+    private var messageTextView: TextView? = null
 
     fun setup() {
+        if (lockScreenDialog != null) return
+
         AlertDialog.Builder(activity).run {
             setCancelable(false)
-            val dialogView: View =
-                activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
-            cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
+            val dialogView: View = activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
+
+            cancelButton = dialogView.findViewById(R.id.dialog_screen_lock_cancel_btn)
+            messageTextView = dialogView.findViewById(R.id.dialog_screen_lock_message_id)
 
             cancelButton?.setOnClickListener {
                 onCancelAction?.invoke()
@@ -60,9 +65,9 @@ class ScreenLockManager(
             }
 
             setView(dialogView)
-            lockScreenDialog = create()
-
-            lockScreenDialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+            lockScreenDialog = create().apply {
+                window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+            }
         }
     }
 
@@ -73,27 +78,27 @@ class ScreenLockManager(
         onCancel: (() -> Unit)? = null
     ) {
         this.onCancelAction = onCancel
-        this.cancelButton?.visibility = if (showCancelButton) View.VISIBLE else View.GONE
+        this.cancelButton?.isVisible = showCancelButton
+
+        if (message.isNotEmpty()) {
+            messageTextView?.text = message
+        }
 
         lockScreenDialog?.let { dialog ->
-            val dialogTitle = dialog.findViewById<TextView>(R.id.dialog_screen_lock_message_id)
-            if (dialogTitle != null && message.isNotEmpty()) {
-                dialogTitle.text = message
-            }
-            if (!dialog.isShowing) {
+            if (!dialog.isShowing && !activity.isFinishing) {
                 dialog.show()
             }
         }
 
         timeoutRunnable?.let { handler.removeCallbacks(it) }
+
         if (timeoutMs > 0) {
-            timeoutRunnable =
-                Runnable {
-                    if (lockScreenDialog?.isShowing == true) {
-                        toast(R.string.pref_dialog_screen_lock_timeout_message)
-                        dismiss()
-                    }
+            timeoutRunnable = Runnable {
+                if (lockScreenDialog?.isShowing == true) {
+                    toast(R.string.pref_dialog_screen_lock_timeout_message)
+                    dismiss()
                 }
+            }
             handler.postDelayed(timeoutRunnable!!, timeoutMs)
         }
     }
@@ -109,6 +114,8 @@ class ScreenLockManager(
     override fun onDestroy(owner: LifecycleOwner) {
         dismiss()
         lockScreenDialog = null
+        cancelButton = null
+        messageTextView = null
         super.onDestroy(owner)
     }
 }

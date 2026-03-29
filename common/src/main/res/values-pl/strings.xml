@@ -1,5 +1,6 @@
 <resources>
     <string name="dialog.screen.lock.trip.load.message">Trasa jest wczytywana. To może chwilę potrwać… Proszę zamknąć okno po zakończeniu.</string>
+    <string name="pref.dialog.screen.lock.logger_connect.message">Proszę czekać. Połączenie z adapterem może chwilę potrwać....</string>
 
     <string name="dialog.screen.lock.trip.save.message">Trasa jest zapisywana. To może chwilę potrwać…</string>
     <string name="main_activity.toast.connection.error">Wystąpił błąd podczas połączenia. Spróbuj połączyć się ponownie. Jeśli to nie pomoże, sprawdź ustawienia połączenia.</string>
