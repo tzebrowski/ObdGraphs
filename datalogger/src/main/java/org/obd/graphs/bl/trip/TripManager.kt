@@ -33,7 +33,7 @@ interface TripManager : MetricsProcessor {
 
     fun saveCurrentTripAsync(){
         sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT,
-            mapOf(SCREEN_LOCK_PROGRESS_MSG_PARAM to R.string.dialog_screen_lock_trip_save_message))
+            ScreenLock(message = R.string.dialog_screen_lock_trip_save_message))
 
         runAsync (wait = false) {
             try {
@@ -50,7 +50,8 @@ interface TripManager : MetricsProcessor {
     fun loadTripAsync(tripName: String){
         if (!DataLoggerRepository.isRunning()) {
             sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT,
-                mapOf(SCREEN_LOCK_PROGRESS_MSG_PARAM to R.string.dialog_screen_lock_trip_load_message))
+                ScreenLock(message = R.string.dialog_screen_lock_trip_load_message))
+
 
             runAsync (wait = false) {
                 try {

@@ -26,9 +26,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
-import org.obd.graphs.SCREEN_LOCK_PROGRESS_MSG_PARAM
-import org.obd.graphs.SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.ScreenLock
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_ACTION_COMPLETED
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
@@ -142,10 +141,9 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         if (isLoading) {
             sendBroadcastEvent(
                 SCREEN_LOCK_PROGRESS_EVENT,
-                mapOf(
-                    SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM to true,
-                    SCREEN_LOCK_PROGRESS_MSG_PARAM to org.obd.graphs.getContext()
-                        ?.getText(R.string.pref_dtc_screen_lock) as String
+                ScreenLock(
+                    message = R.string.pref_dtc_screen_lock,
+                    showCancel = true
                 )
             )
         } else {

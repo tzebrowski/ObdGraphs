@@ -17,7 +17,6 @@
 package org.obd.graphs.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
@@ -30,10 +29,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.R
-import org.obd.graphs.SCREEN_LOCK_PROGRESS_CONTEXT_PARAM
+import org.obd.graphs.ScreenLock
 import org.obd.graphs.ui.common.toast
-
-internal fun Intent.getContextExtraParam(): String? = extras?.getString(SCREEN_LOCK_PROGRESS_CONTEXT_PARAM)
 
 class ScreenLockManager(
     private val activity: Activity
@@ -45,7 +42,6 @@ class ScreenLockManager(
     private val handler = Handler(Looper.getMainLooper())
     private var timeoutRunnable: Runnable? = null
 
-    // Cached view references
     private var cancelButton: Button? = null
     private var messageTextView: TextView? = null
 
@@ -72,17 +68,19 @@ class ScreenLockManager(
     }
 
     fun show(
-        message: String,
-        timeoutMs: Long = 10000L,
-        showCancelButton: Boolean = false,
+        screenLock: ScreenLock,
         onCancel: (() -> Unit)? = null
     ) {
         this.onCancelAction = onCancel
-        this.cancelButton?.isVisible = showCancelButton
+        this.cancelButton?.isVisible = screenLock.showCancel
 
-        if (message.isNotEmpty()) {
-            messageTextView?.text = message
+        val message = if (screenLock.message == -1) {
+            activity.getText(R.string.pref_dialog_screen_lock_message) as String
+        } else {
+            activity.getString(screenLock.message)
         }
+
+        messageTextView?.text = message
 
         lockScreenDialog?.let { dialog ->
             if (!dialog.isShowing && !activity.isFinishing) {
@@ -92,14 +90,14 @@ class ScreenLockManager(
 
         timeoutRunnable?.let { handler.removeCallbacks(it) }
 
-        if (timeoutMs > 0) {
+        if (screenLock.timeoutMs > 0) {
             timeoutRunnable = Runnable {
                 if (lockScreenDialog?.isShowing == true) {
                     toast(R.string.pref_dialog_screen_lock_timeout_message)
                     dismiss()
                 }
             }
-            handler.postDelayed(timeoutRunnable!!, timeoutMs)
+            handler.postDelayed(timeoutRunnable!!, screenLock.timeoutMs)
         }
     }
 

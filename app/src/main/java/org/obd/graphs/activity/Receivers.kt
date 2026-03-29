@@ -47,11 +47,10 @@ import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
 import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
-import org.obd.graphs.SCREEN_LOCK_PROGRESS_MSG_PARAM
-import org.obd.graphs.SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM
 import org.obd.graphs.SCREEN_OFF_EVENT
 import org.obd.graphs.SCREEN_ON_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.ScreenLock
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
@@ -75,6 +74,7 @@ import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_IDLING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_RUNNING
 import org.obd.graphs.getContext
+import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -150,17 +150,14 @@ internal fun MainActivity.receive(intent: Intent?) {
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
 
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            val messageId = intent.extras?.getInt(SCREEN_LOCK_PROGRESS_MSG_PARAM)
+            var screenLock: ScreenLock? = intent.getSerializableCompat<ScreenLock>()
 
-            val message = if (messageId == null) {
-                getText(R.string.pref_dialog_screen_lock_message) as String
-            } else {
-                this.getString(messageId)
+            if (screenLock == null) {
+                screenLock = ScreenLock()
             }
 
-            val showCancel = intent.extras?.getBoolean(SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM)
-            screenLockManager.show(message = message, showCancelButton = showCancel ?: false) {
-                sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
+            screenLockManager.show(screenLock = screenLock) {
+                sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, screenLock)
             }
         }
 

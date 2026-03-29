@@ -35,15 +35,16 @@ import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
+import org.obd.graphs.ScreenLock
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_HIDE
 import org.obd.graphs.activity.TOOLBAR_SHOW
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
-import org.obd.graphs.activity.getContextExtraParam
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -134,9 +135,11 @@ internal abstract class SurfaceRendererFragment(
                 when (intent?.action) {
                     SCREEN_LOCK_DIALOG_CANCELLED_EVENT -> {
                         if (isFragmentVisibleToTheUser()) {
-                            Log.d(LOG_TAG, "User canceled current activity.")
-                            if (intent.getContextExtraParam() == "datalogger.connect") {
+                            Log.e(LOG_TAG, "User canceled current activity.  ${intent.getSerializableCompat<ScreenLock>()?.context}")
+                            if (intent.getSerializableCompat<ScreenLock>()?.context == "datalogger.connect") {
                                 withDataLogger {
+                                    Log.e(LOG_TAG, "User canceled current activity.!!!!!!!!!!!!!!!!!!" +
+                                        "  ${intent.getSerializableCompat<ScreenLock>()?.context}")
                                     stop()
                                 }
                             }

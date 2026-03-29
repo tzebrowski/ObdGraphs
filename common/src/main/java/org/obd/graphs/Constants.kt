@@ -16,10 +16,6 @@
  */
 package org.obd.graphs
 
-const val SCREEN_LOCK_PROGRESS_SHOW_CANCEL_BUTTON_PARAM = "screen.lock.dialog.locK.cancel_button.param"
-
-const val SCREEN_LOCK_PROGRESS_CONTEXT_PARAM = "screen.lock.dialog.locK.context.param"
-const val SCREEN_LOCK_PROGRESS_MSG_PARAM = "screen.lock.dialog.locK,message.param"
 const val SCREEN_LOCK_DIALOG_CANCELLED_EVENT = "screen.lock.dialog.cancelled.event"
 const val SCREEN_LOCK_PROGRESS_EVENT = "screen.lock.dialog.locK.event"
 const val SCREEN_UNLOCK_PROGRESS_EVENT = "screen.lock.dialog.unlock.event"

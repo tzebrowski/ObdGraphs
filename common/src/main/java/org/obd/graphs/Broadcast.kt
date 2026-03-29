@@ -22,23 +22,28 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import java.io.Serializable
+
+const val BROADCAST_EXTRAS = "broadcast.event.extras"
+
+inline fun <reified T : Serializable> Intent.getSerializableCompat(): T? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        extras?.getSerializable(BROADCAST_EXTRAS, T::class.java)
+    } else {
+        @Suppress("DEPRECATION")
+        extras?.getSerializable(BROADCAST_EXTRAS) as? T
+    }
+}
 
 fun sendBroadcastEvent(
     actionName: String,
-    extras: Map<String, Any>
+    extras: Serializable
 ) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
                 action = actionName
-                extras.forEach { k, v ->
-                    when (v) {
-                        is String -> putExtra(k, v)
-                        is Boolean -> putExtra(k, v)
-                        is Number -> putExtra(k, v)
-                        else -> putExtra(k, v.toString())
-                    }
-                }
+                putExtra(BROADCAST_EXTRAS, extras)
             }
         )
     }
