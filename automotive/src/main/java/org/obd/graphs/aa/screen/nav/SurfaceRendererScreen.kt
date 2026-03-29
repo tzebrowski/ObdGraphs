@@ -31,6 +31,7 @@ import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
 import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
+import org.obd.graphs.aa.getLocString
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
@@ -195,17 +196,17 @@ internal class SurfaceRendererScreen(
             FeatureDescription(
                 SurfaceRendererType.DRAG_RACING,
                 org.obd.graphs.commons.R.drawable.action_drag_race,
-                carContext.getString(R.string.available_features_drag_race_screen_title)
+                carContext.getLocString(R.string.available_features_drag_race_screen_title)
             ),
             FeatureDescription(
                 SurfaceRendererType.GAUGE,
                 R.drawable.action_gauge,
-                carContext.getString(R.string.available_features_gauge_screen_title)
+                carContext.getLocString(R.string.available_features_gauge_screen_title)
             ),
             FeatureDescription(
                 SurfaceRendererType.GIULIA,
                 R.drawable.action_giulia_metics,
-                carContext.getString(R.string.available_features_giulia_screen_title)
+                carContext.getLocString(R.string.available_features_giulia_screen_title)
             )
         ).apply {
             if (settings.getTripInfoScreenSettings().viewEnabled) {
@@ -213,7 +214,7 @@ internal class SurfaceRendererScreen(
                     FeatureDescription(
                         SurfaceRendererType.TRIP_INFO,
                         R.drawable.action_giulia,
-                        carContext.getString(R.string.available_features_trip_info_screen_title)
+                        carContext.getLocString(R.string.available_features_trip_info_screen_title)
                     )
                 )
             }
@@ -222,7 +223,7 @@ internal class SurfaceRendererScreen(
                     FeatureDescription(
                         SurfaceRendererType.PERFORMANCE,
                         org.obd.graphs.commons.R.drawable.action_drag_race,
-                        carContext.getString(R.string.available_features_performance_screen_title)
+                        carContext.getLocString(R.string.available_features_performance_screen_title)
                     )
                 )
             }

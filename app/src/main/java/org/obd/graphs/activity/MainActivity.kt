@@ -33,7 +33,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
-import org.obd.graphs.LanguageManager
+import org.obd.graphs.language.LanguageManager
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.Network

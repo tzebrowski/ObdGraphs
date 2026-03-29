@@ -18,6 +18,8 @@ package org.obd.graphs.aa
 
 import android.content.Intent
 import android.content.res.Configuration
+import androidx.annotation.StringRes
+import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.Session
 import androidx.car.app.connection.CarConnection
@@ -25,10 +27,25 @@ import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.CarScreenFactory
 import org.obd.graphs.aa.screen.nav.GOTO_LAST_VSITED_SCREEN_EVENT
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.language.LanguageManager
 import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setCarContext
+import java.util.Locale
+
+
+fun CarContext.getLocString(@StringRes resId: Int, vararg formatArgs: Any): String {
+    val myLocale = LanguageManager.getStoredLanguage(this)
+    val config = Configuration(this.resources.configuration)
+    config.setLocale(Locale(myLocale))
+    val localizedContext = this.createConfigurationContext(config)
+    return if (formatArgs.isEmpty()) {
+        localizedContext.getString(resId)
+    } else {
+        localizedContext.getString(resId, *formatArgs)
+    }
+}
 
 internal class CarSession : Session() {
     private val settings by lazy { CarSettings(carContext) }

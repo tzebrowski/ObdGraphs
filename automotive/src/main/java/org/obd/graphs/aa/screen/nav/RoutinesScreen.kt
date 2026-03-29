@@ -35,6 +35,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
+import org.obd.graphs.aa.getLocString
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.createAction
@@ -176,7 +177,7 @@ internal class RoutinesScreen(
                     FeatureDescription(
                         RoutineScreen.ROUTINES,
                         R.drawable.action_features,
-                        carContext.getString(R.string.available_features_routine_screen_title)
+                        carContext.getLocString(R.string.available_features_routine_screen_title)
                     )
                 )
             }
@@ -219,14 +220,14 @@ internal class RoutinesScreen(
                 ListTemplate
                     .Builder()
                     .setLoading(true)
-                    .setTitle(carContext.getString(R.string.routine_execution_start))
+                    .setTitle(carContext.getLocString(R.string.routine_execution_start))
                     .setActionStrip(getHorizontalActionStrip())
                     .build()
             } else if (DataLoggerRepository.status() == WorkflowStatus.Connecting) {
                 ListTemplate
                     .Builder()
                     .setLoading(true)
-                    .setTitle(carContext.getString(R.string.routine_page_connecting))
+                    .setTitle(carContext.getLocString(R.string.routine_page_connecting))
                     .setActionStrip(getHorizontalActionStrip())
                     .build()
             } else {
@@ -243,7 +244,7 @@ internal class RoutinesScreen(
                 ListTemplate
                     .Builder()
                     .setLoading(false)
-                    .setTitle(carContext.getString(R.string.routine_page_title))
+                    .setTitle(carContext.getLocString(R.string.routine_page_title))
                     .setSingleList(items.build())
                     .setHeaderAction(Action.BACK)
                     .setActionStrip(getHorizontalActionStrip())
@@ -254,7 +255,7 @@ internal class RoutinesScreen(
             PaneTemplate
                 .Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(R.string.pref_aa_car_error))
+                .setTitle(carContext.getLocString(R.string.pref_aa_car_error))
                 .build()
         }
 

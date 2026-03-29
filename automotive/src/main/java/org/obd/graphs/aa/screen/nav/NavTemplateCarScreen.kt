@@ -37,6 +37,7 @@ import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.aa.getLocString
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_ECO
 import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_NORMAL
@@ -344,7 +345,7 @@ internal class NavTemplateCarScreen(
             PaneTemplate
                 .Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(org.obd.graphs.aa.R.string.pref_aa_car_error))
+                .setTitle(carContext.getLocString(org.obd.graphs.aa.R.string.pref_aa_car_error))
                 .build()
         }
 

@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs
+package org.obd.graphs.language
 
 import android.app.Activity
 import android.content.Context
@@ -24,13 +24,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.commons.R
 import java.util.Locale
 
 private const val PREFS_FILE = "language_prefs"
 private const val KEY_LANGUAGE = "language"
 private const val KEY_SELECTED = "language_selected"
 
-internal object LanguageManager {
+object LanguageManager {
     fun getLocalizedContext(context: Context): Context {
         val storedLang = getStoredLanguage(context)
         if (storedLang.isEmpty()) return context
@@ -63,8 +64,8 @@ internal object LanguageManager {
             .getBoolean(KEY_SELECTED, false)
 
     fun showLanguageSelectionDialog(activity: Activity, onComplete: (localeTag: String) -> Unit) {
-        val names = activity.resources.getStringArray(org.obd.graphs.commons.R.array.language_names)
-        val codes = activity.resources.getStringArray(org.obd.graphs.commons.R.array.language_codes)
+        val names = activity.resources.getStringArray(R.array.language_names)
+        val codes = activity.resources.getStringArray(R.array.language_codes)
 
         val currentLangCode = getStoredLanguage(activity)
         val selectedIndex = codes.indexOf(currentLangCode).takeIf { it >= 0 } ?: -1

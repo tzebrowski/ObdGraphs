@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs
+package org.obd.graphs.language
 
 import android.graphics.Typeface
 import android.view.LayoutInflater
@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.commons.R
 
 class LanguageAdapter(
     private val items: Array<String>,
@@ -47,10 +48,10 @@ class LanguageAdapter(
 
         if (position == selectedIndex) {
             holder.textView.setTypeface(null, Typeface.BOLD)
-            holder.textView.setTextColor(ContextCompat.getColor(context, org.obd.graphs.commons.R.color.philippine_green))
+            holder.textView.setTextColor(ContextCompat.getColor(context, R.color.philippine_green))
         } else {
             holder.textView.setTypeface(null, Typeface.NORMAL)
-            holder.textView.setTextColor(ContextCompat.getColor(context, org.obd.graphs.commons.R.color.gray_dark))
+            holder.textView.setTextColor(ContextCompat.getColor(context, R.color.gray_dark))
             holder.textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
         }
 
