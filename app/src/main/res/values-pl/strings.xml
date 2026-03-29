@@ -7,7 +7,6 @@
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> górny margines etykiety</string>
     <string name="pref.performance.screen_top_margin">Górny margines</string>
 
-    <string name="pref.dialog.screen.lock.logger_connect.message">Proszę czekać. Połączenie z adapterem może chwilę potrwać....</string>
     <string name="pref.dialog.screen.lock.timeout_message">Przekroczono czas oczekiwania na odpowiedź</string>
     <string name="pref.dialog.screen.lock.message">Proszę czekać. To może chwilę potrwać....</string>
     <string name="pref.experimental_switch_network_enabled">To jest funkcja EKSPERYMENTALNA, kontrolowana przez flagę FF_SWITCH_NETWORK_ENABLED</string>

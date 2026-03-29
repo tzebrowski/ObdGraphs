@@ -5,7 +5,6 @@
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> label top offset</string>
     <string name="pref.performance.screen_top_margin">Top margin</string>
 
-    <string name="pref.dialog.screen.lock.logger_connect.message">Please wait. Adapter connection may take a while....</string>
     <string name="pref.dialog.screen.lock.timeout_message">Timeout waiting for response</string>
     <string name="pref.dialog.screen.lock.message">Please wait. This may take a while....</string>
     <string name="pref.experimental_switch_network_enabled">This is an EXPERIMENTAL feature, controlled by the FF_SWITCH_NETWORK_ENABLED feature flag</string>

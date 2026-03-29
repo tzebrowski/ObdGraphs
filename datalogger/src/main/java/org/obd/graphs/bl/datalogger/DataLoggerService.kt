@@ -33,7 +33,10 @@ import org.obd.graphs.NOTIFICATION_ID
 import org.obd.graphs.Permissions
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.ScreenLock
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.commons.R
 import org.obd.graphs.sendBroadcastEvent
 
 private const val ACTION_DTC_CLEANUP = "org.obd.graphs.logger.DTC.cleanup"
@@ -137,6 +140,7 @@ class DataLoggerService : Service() {
     }
 
     fun start(query: Query) {
+        attemptScreenLock()
         enqueueWork(ACTION_START) { it.putExtra(QUERY, query) }
     }
 
@@ -254,4 +258,14 @@ class DataLoggerService : Service() {
         }
         stopSelf()
     }
+
+    private fun attemptScreenLock() =
+        sendBroadcastEvent(
+            SCREEN_LOCK_PROGRESS_EVENT,
+            ScreenLock(
+                message = R.string.pref_dialog_screen_lock_logger_connect_message,
+                showCancel = true,
+                context = "datalogger.connect"
+            )
+        )
 }
