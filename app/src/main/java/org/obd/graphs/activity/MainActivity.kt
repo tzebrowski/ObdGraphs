@@ -151,19 +151,13 @@ class MainActivity :
         setContentView(R.layout.activity_main)
 
         screen.setupWindowManager(this)
-
         this.appBarConfiguration = getAppBarConfiguration()
 
         setupNavigationBar()
         setupBottomBarNavigation()
         setupNavigationViewNavigation()
         registerReceiver()
-
-        setupExceptionHandler()
-        setupVehicleProfiles()
-
         setupStatusPanel()
-        Network.setupConnectedNetworksCallback()
 
         progressBar {
             it.visibility = View.GONE
@@ -173,18 +167,19 @@ class MainActivity :
         lifecycle.addObserver(screenLockManager)
 
         supportActionBar?.hide()
-        setupMetricsProcessors()
         backupManager = BackupManager(this)
-        displayAppSignature(this)
-
-        navigateToLastVisitedScreen()
         validatePermissions()
+        FabButtons.setupSpeedDialView(this)
 
         if (savedInstanceState == null) {
+            setupExceptionHandler()
+            setupVehicleProfiles()
+            Network.setupConnectedNetworksCallback()
+            setupMetricsProcessors()
+            displayAppSignature(this)
+            navigateToLastVisitedScreen()
             AutoConnect.schedule(this)
         }
-
-        FabButtons.setupSpeedDialView(this)
     }
 
     override fun onResume() {
