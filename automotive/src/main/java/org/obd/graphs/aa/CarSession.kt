@@ -17,6 +17,7 @@
 package org.obd.graphs.aa
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.car.app.Screen
 import androidx.car.app.Session
 import androidx.car.app.connection.CarConnection
@@ -28,7 +29,6 @@ import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setCarContext
-import android.content.res.Configuration
 
 internal class CarSession : Session() {
     private val settings by lazy { CarSettings(carContext) }

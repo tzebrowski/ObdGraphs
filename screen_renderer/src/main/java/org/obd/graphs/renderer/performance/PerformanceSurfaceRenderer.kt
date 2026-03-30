@@ -47,6 +47,11 @@ internal class PerformanceSurfaceRenderer(
 
     private val metricsCache = MetricsCache()
 
+    override fun cacheReset() {
+        metricsCache.cacheReset()
+        performanceDrawer.cacheReset()
+    }
+
     override fun onDraw(
         canvas: Canvas,
         drawArea: Rect?

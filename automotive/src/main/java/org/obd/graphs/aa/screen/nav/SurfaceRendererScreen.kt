@@ -28,6 +28,7 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
+import org.obd.graphs.LANGUAGE_CHANGE_EVENT
 import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
@@ -78,7 +79,7 @@ internal class SurfaceRendererScreen(
 
     private var screenId: Identity = SurfaceRendererType.GIULIA
 
-    private val screenBehaviorController = ScreenBehaviorController(
+    private var screenBehaviorController = ScreenBehaviorController(
         carContext,
         metricsCollector,
         mapOf(
@@ -106,6 +107,18 @@ internal class SurfaceRendererScreen(
                 when (intent?.action) {
                     AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> {
                         switchSurfaceRenderer(getSurfaceRendererType())
+                    }
+
+                    LANGUAGE_CHANGE_EVENT -> {
+                        metricsCollector.cacheReset()
+                        SurfaceRendererType.entries.forEach {
+                            screenBehaviorController.getScreenBehavior(it)?.getSurfaceRenderer()?.cacheReset()
+                        }
+
+                        val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
+                        behavior.syncFilters()
+
+                        renderFrame()
                     }
 
                     SCREEN_REFRESH_EVENT,
@@ -272,6 +285,7 @@ internal class SurfaceRendererScreen(
             it.addAction(GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
             it.addAction(GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            it.addAction(LANGUAGE_CHANGE_EVENT)
         }
 
         val screenBehavior = screenBehaviorController.getScreenBehavior(screenId) ?: return

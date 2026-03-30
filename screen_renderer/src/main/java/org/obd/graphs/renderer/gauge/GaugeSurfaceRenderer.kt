@@ -97,6 +97,11 @@ internal class GaugeSurfaceRenderer(
             area.top.toFloat()
         }
 
+    override fun cacheReset() {
+        gaugeDrawer.cacheReset()
+        mobileDrawer.cacheReset()
+    }
+
     override fun onDraw(
         canvas: Canvas,
         drawArea: Rect?

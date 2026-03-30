@@ -36,8 +36,14 @@ internal class MetricsCache {
     val brakeBoosting: BrakeBoosting = BrakeBoosting()
 
     private val cachedMetrics = mutableListOf<Metric>()
-    private var lastBottomIds: List<Long> = emptyList()
-    private var lastTopIds: List<Long> = emptyList()
+    private var lastBottomIds: List<Long> = mutableListOf()
+    private var lastTopIds: List<Long> = mutableListOf()
+
+    fun cacheReset() {
+        bottomMetrics.clear()
+        topMetrics.clear()
+        cachedMetrics.clear()
+    }
 
     fun update(
         settings: PerformanceScreenSettings,

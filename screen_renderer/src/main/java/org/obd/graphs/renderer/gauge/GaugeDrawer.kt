@@ -171,6 +171,10 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
+    override fun cacheReset() {
+        textCache.clear()
+    }
+
     override fun recycle() {
         super.recycle()
         scaleBitmapCache.values.forEach { it.bitmap.recycle() }

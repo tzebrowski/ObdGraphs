@@ -55,6 +55,11 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
         alpha = 100
     }
 
+    override fun cacheReset() {
+        tripInfoDrawer.cacheReset()
+        gaugeDrawer.cacheReset()
+    }
+
     override fun getBackground(): Bitmap = background
 
     override fun recycle() {

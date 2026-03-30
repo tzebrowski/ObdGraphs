@@ -80,6 +80,10 @@ internal class GiuliaDrawer(
         textCache.clear()
     }
 
+    override fun cacheReset() {
+        textCache.clear()
+    }
+
     inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
@@ -396,10 +400,12 @@ internal class GiuliaDrawer(
             } else {
                 metric.source.command.pid.longDescription
             }
+
         val safeDescription = description ?: ""
 
         if (settings.isBreakLabelTextEnabled()) {
             val text = textCache.labelSplit.getOrPut(metric.pid.id) { safeDescription.split("\n") }
+
             if (text.size == 1) {
                 canvas.drawText(text[0], left, top, titlePaint)
                 return top + topMargin

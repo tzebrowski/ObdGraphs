@@ -109,6 +109,8 @@ internal abstract class AbstractDrawer(
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
+    open fun cacheReset() {}
+
     fun valueColorScheme(metric: Metric) =
         if (settings.isAlertingEnabled() &&
             (metric.source.isUpperAlert || metric.source.isLowerAlert)

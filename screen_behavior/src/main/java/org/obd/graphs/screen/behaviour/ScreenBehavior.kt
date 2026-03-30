@@ -46,7 +46,7 @@ abstract class ScreenBehavior(
     protected abstract fun queryStrategyType(): QueryStrategyType
 
     fun query(): Query {
-        applyFilters()
+        syncFilters()
         return query
     }
 
@@ -60,7 +60,7 @@ abstract class ScreenBehavior(
         query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
     }
 
-    protected open fun applyFilters() {
+    open fun syncFilters() {
         query.setStrategy(queryStrategyType())
         metricsCollector.applyFilter(enabled = query.getIDs())
         syncQueryWithMetrics()
