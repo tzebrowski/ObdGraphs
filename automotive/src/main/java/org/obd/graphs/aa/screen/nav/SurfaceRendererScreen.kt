@@ -33,6 +33,7 @@ import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.getLocString
+import org.obd.graphs.aa.getLocalizedContext
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
@@ -80,7 +81,7 @@ internal class SurfaceRendererScreen(
     private var screenId: Identity = SurfaceRendererType.GIULIA
 
     private var screenBehaviorController = ScreenBehaviorController(
-        carContext,
+        carContext.getLocalizedContext(),
         metricsCollector,
         mapOf(
             SurfaceRendererType.GAUGE to settings,

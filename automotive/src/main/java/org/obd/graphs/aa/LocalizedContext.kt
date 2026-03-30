@@ -27,6 +27,13 @@ import kotlin.collections.set
 
 private val contextCache = WeakHashMap<CarContext, Pair<String, Context>>()
 
+fun CarContext.getLocalizedContext(): Context {
+    val preferredLocale = LanguageManager.getStoredLanguage(this)
+    val configuration = Configuration(this.resources.configuration)
+    configuration.setLocale(Locale(preferredLocale))
+    return this.createConfigurationContext(configuration)
+}
+
 fun CarContext.getLocString(@StringRes resId: Int, vararg formatArgs: Any): String {
     val myLocaleCode = LanguageManager.getStoredLanguage(this)
 
