@@ -84,7 +84,6 @@ internal class DragRacingDrawer(
             )
         )
 
-
     private val brakeBoostingDrawer = BrakeBoostingDrawer(context, settings)
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS

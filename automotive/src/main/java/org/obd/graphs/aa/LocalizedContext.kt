@@ -28,10 +28,19 @@ import kotlin.collections.set
 private val contextCache = WeakHashMap<CarContext, Pair<String, Context>>()
 
 fun CarContext.getLocalizedContext(): Context {
-    val preferredLocale = LanguageManager.getStoredLanguage(this)
-    val configuration = Configuration(this.resources.configuration)
-    configuration.setLocale(Locale(preferredLocale))
-    return this.createConfigurationContext(configuration)
+    val myLocaleCode = LanguageManager.getStoredLanguage(this)
+    var cachedData = contextCache[this]
+
+    if (cachedData == null || cachedData.first != myLocaleCode) {
+        val config = Configuration(this.resources.configuration)
+        config.setLocale(Locale(myLocaleCode))
+        val newLocalizedContext = this.createConfigurationContext(config)
+
+        cachedData = Pair(myLocaleCode, newLocalizedContext)
+        contextCache[this] = cachedData
+    }
+
+    return cachedData.second
 }
 
 fun CarContext.getLocString(@StringRes resId: Int, vararg formatArgs: Any): String {
