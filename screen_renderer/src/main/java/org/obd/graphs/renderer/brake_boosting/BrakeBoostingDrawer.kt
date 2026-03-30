@@ -61,6 +61,10 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
         drawGaugesBrakeBoosting(area, canvas, pTop - 30, gas = gas, arbitraryMetric = torque)
     }
 
+    override fun cacheReset() {
+        gaugeDrawer.cacheReset()
+    }
+
     fun isBrakeBoosting(
         brakeBoostingSettings: BrakeBoostingSettings,
         gasMetric: Metric?,

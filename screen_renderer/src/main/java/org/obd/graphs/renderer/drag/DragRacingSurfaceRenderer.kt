@@ -48,6 +48,10 @@ internal class DragRacingSurfaceRenderer(
     private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
 
+    override fun cacheReset() {
+        dragRacingDrawer.cacheReset()
+    }
+
     override fun onDraw(
         canvas: Canvas,
         drawArea: Rect?

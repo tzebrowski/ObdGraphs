@@ -84,6 +84,7 @@ internal class DragRacingDrawer(
             )
         )
 
+
     private val brakeBoostingDrawer = BrakeBoostingDrawer(context, settings)
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
@@ -92,6 +93,12 @@ internal class DragRacingDrawer(
         BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
 
     override fun getBackground(): Bitmap = background
+
+    override fun cacheReset() {
+        mainGaugeDrawer.cacheReset()
+        smallGaugeDrawer.cacheReset()
+        brakeBoostingDrawer.cacheReset()
+    }
 
     fun drawScreen(
         canvas: Canvas,
