@@ -21,8 +21,8 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
+import org.obd.graphs.LocalizedStringProvider
 import org.obd.graphs.aa.R
-import org.obd.graphs.aa.getLocString
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.api.Identity
@@ -36,13 +36,15 @@ internal class AvailableFeaturesScreen(
     private val screenMapping:  List<FeatureDescription>
 ) : Screen(carContext) {
 
+    private val stringProvider = LocalizedStringProvider(carContext)
+
     override fun onGetTemplate(): Template  = try {
         if (DataLoggerRepository.status() == WorkflowStatus.Connecting) {
              ListTemplate.Builder()
                 .setHeaderAction(Action.BACK)
                 .setActionStrip(getHorizontalActionStrip())
                 .setLoading(true)
-                .setTitle(carContext.getLocString(R.string.available_features_page_title))
+                .setTitle(stringProvider.getString(R.string.available_features_page_title))
                 .build()
         } else {
             listTemplate()
@@ -51,7 +53,7 @@ internal class AvailableFeaturesScreen(
         Log.e(LOG_TAG, "Failed to build template", e)
         PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
             .setHeaderAction(Action.BACK)
-            .setTitle(carContext.getLocString(R.string.pref_aa_car_error))
+            .setTitle(stringProvider.getString(R.string.pref_aa_car_error))
             .build()
     }
     private fun listTemplate(): ListTemplate {
@@ -65,7 +67,7 @@ internal class AvailableFeaturesScreen(
             .setHeaderAction(Action.BACK)
             .setActionStrip(getHorizontalActionStrip())
             .setLoading(false)
-            .setTitle(carContext.getLocString(R.string.available_features_page_title))
+            .setTitle(stringProvider.getString(R.string.available_features_page_title))
             .setSingleList(items)
             .build()
     }

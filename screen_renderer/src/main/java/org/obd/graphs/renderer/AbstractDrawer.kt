@@ -26,6 +26,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
+import org.obd.graphs.LocalizedStringProvider
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -54,6 +55,8 @@ internal abstract class AbstractDrawer(
     protected val context: Context,
     protected val settings: ScreenSettings
 ) {
+    protected val stringProvider = LocalizedStringProvider(context)
+
     private val statusPaint = Paint()
 
     protected val paint =
@@ -73,12 +76,12 @@ internal abstract class AbstractDrawer(
     private val regularFont: Typeface = Typeface.createFromAsset(context.assets, "fonts/Roboto-Regular.ttf")
     private val italicFont = Typeface.createFromAsset(context.assets, "fonts/Roboto-LightItalic.ttf")
 
-    private val statusLabel: String
-    private val profileLabel: String
-    private val fpsLabel: String
+    private var statusLabel: String
+    private var profileLabel: String
+    private var fpsLabel: String
 
-    private val ambientTempLabel: String
-    private val atmPressureLabel: String
+    private var ambientTempLabel: String
+    private var atmPressureLabel: String
 
     private val defaultBackground: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
@@ -101,15 +104,20 @@ internal abstract class AbstractDrawer(
 
         alertingLegendPaint.style = Paint.Style.FILL_AND_STROKE
 
-        profileLabel = context.getString(R.string.status_bar_profile)
-        fpsLabel = context.getString(R.string.status_bar_fps)
-        statusLabel = context.getString(R.string.status_bar_status)
-
-        ambientTempLabel = context.getString(R.string.status_bar_ambient_temp)
-        atmPressureLabel = context.getString(R.string.status_bar_atm_pressure)
+        profileLabel = stringProvider.getString(R.string.status_bar_profile)
+        fpsLabel = stringProvider.getString(R.string.status_bar_fps)
+        statusLabel = stringProvider.getString(R.string.status_bar_status)
+        ambientTempLabel = stringProvider.getString(R.string.status_bar_ambient_temp)
+        atmPressureLabel = stringProvider.getString(R.string.status_bar_atm_pressure)
     }
 
-    open fun cacheReset() {}
+    open fun cacheReset() {
+        profileLabel = stringProvider.getString(R.string.status_bar_profile)
+        fpsLabel = stringProvider.getString(R.string.status_bar_fps)
+        statusLabel = stringProvider.getString(R.string.status_bar_status)
+        ambientTempLabel = stringProvider.getString(R.string.status_bar_ambient_temp)
+        atmPressureLabel = stringProvider.getString(R.string.status_bar_atm_pressure)
+    }
 
     fun valueColorScheme(metric: Metric) =
         if (settings.isAlertingEnabled() &&

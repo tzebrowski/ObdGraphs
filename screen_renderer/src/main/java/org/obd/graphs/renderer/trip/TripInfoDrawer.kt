@@ -56,6 +56,7 @@ internal class TripInfoDrawer(
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun cacheReset() {
+        super.cacheReset()
         giuliaDrawer.cacheReset()
     }
 

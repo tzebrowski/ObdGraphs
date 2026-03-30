@@ -172,6 +172,7 @@ internal class GaugeDrawer(
         }
 
     override fun cacheReset() {
+        super.cacheReset()
         textCache.clear()
     }
 

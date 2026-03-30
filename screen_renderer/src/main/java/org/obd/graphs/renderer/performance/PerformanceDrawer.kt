@@ -56,6 +56,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
     }
 
     override fun cacheReset() {
+        super.cacheReset()
         tripInfoDrawer.cacheReset()
         gaugeDrawer.cacheReset()
     }

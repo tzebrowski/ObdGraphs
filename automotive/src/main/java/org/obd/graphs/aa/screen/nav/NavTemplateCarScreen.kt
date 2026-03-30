@@ -34,11 +34,11 @@ import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.LANGUAGE_CHANGE_EVENT
+import org.obd.graphs.LocalizedStringProvider
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.aa.CarSettings
-import org.obd.graphs.aa.getLocString
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_ECO
 import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_NORMAL
@@ -89,6 +89,8 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
     private val surfaceRendererScreen = SurfaceRendererScreen(carContext, settings, metricsCollector, fps, parent = this)
+
+    private val stringProvider = LocalizedStringProvider(carContext)
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
@@ -347,7 +349,7 @@ internal class NavTemplateCarScreen(
             PaneTemplate
                 .Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getLocString(org.obd.graphs.aa.R.string.pref_aa_car_error))
+                .setTitle(stringProvider.getString(org.obd.graphs.aa.R.string.pref_aa_car_error))
                 .build()
         }
 

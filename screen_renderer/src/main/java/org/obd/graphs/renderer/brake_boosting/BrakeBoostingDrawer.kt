@@ -62,6 +62,7 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
     }
 
     override fun cacheReset() {
+        super.cacheReset()
         gaugeDrawer.cacheReset()
     }
 

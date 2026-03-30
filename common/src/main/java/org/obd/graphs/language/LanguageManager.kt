@@ -32,6 +32,8 @@ private const val KEY_LANGUAGE = "language"
 private const val KEY_SELECTED = "language_selected"
 
 object LanguageManager {
+    private var cachedLanguage: String? = null
+
     fun getLocalizedContext(context: Context): Context {
         val storedLang = getStoredLanguage(context)
         if (storedLang.isEmpty()) return context
@@ -43,21 +45,33 @@ object LanguageManager {
         return context.createConfigurationContext(config)
     }
 
-    fun getStoredLanguage(context: Context): String =
+    fun getStoredLanguage(context: Context): String {
+        cachedLanguage?.let { return it }
+
+        val prefsLanguage = context
+            .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+            .getString(KEY_LANGUAGE, "")
+
+        val finalLanguage = if (prefsLanguage.isNullOrEmpty()) {
+            Locale.getDefault().language
+        } else {
+            prefsLanguage
+        }
+
+        cachedLanguage = finalLanguage
+        return finalLanguage
+    }
+
+    fun saveLanguage(context: Context, localeTag: String) {
+        cachedLanguage = localeTag
+
         context
             .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
-            .getString(KEY_LANGUAGE, "") ?: ""
-
-    fun saveLanguage(
-        context: Context,
-        localeTag: String
-    ) = context
-        .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
-        .edit()
-        .putString(KEY_LANGUAGE, localeTag)
-        .putBoolean(KEY_SELECTED, true)
-        .apply()
-
+            .edit()
+            .putString(KEY_LANGUAGE, localeTag)
+            .putBoolean(KEY_SELECTED, true)
+            .apply()
+    }
     fun isLanguageSelected(context: Context): Boolean =
         context
             .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)

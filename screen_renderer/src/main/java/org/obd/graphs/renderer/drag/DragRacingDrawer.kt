@@ -94,6 +94,7 @@ internal class DragRacingDrawer(
     override fun getBackground(): Bitmap = background
 
     override fun cacheReset() {
+        super.cacheReset()
         mainGaugeDrawer.cacheReset()
         smallGaugeDrawer.cacheReset()
         brakeBoostingDrawer.cacheReset()

@@ -81,6 +81,7 @@ internal class GiuliaDrawer(
     }
 
     override fun cacheReset() {
+        super.cacheReset()
         textCache.clear()
     }
 
