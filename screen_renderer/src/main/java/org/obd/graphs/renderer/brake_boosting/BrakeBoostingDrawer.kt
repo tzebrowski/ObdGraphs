@@ -61,9 +61,9 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
         drawGaugesBrakeBoosting(area, canvas, pTop - 30, gas = gas, arbitraryMetric = torque)
     }
 
-    override fun clearCache() {
-        super.clearCache()
-        gaugeDrawer.clearCache()
+    override fun invalidateCache() {
+        super.invalidateCache()
+        gaugeDrawer.invalidateCache()
     }
 
     fun isBrakeBoosting(

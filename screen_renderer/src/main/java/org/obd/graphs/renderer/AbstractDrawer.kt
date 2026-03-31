@@ -111,7 +111,7 @@ internal abstract class AbstractDrawer(
         atmPressureLabel = stringProvider.getString(R.string.status_bar_atm_pressure)
     }
 
-    open fun clearCache() {
+    open fun invalidateCache() {
         profileLabel = stringProvider.getString(R.string.status_bar_profile)
         fpsLabel = stringProvider.getString(R.string.status_bar_fps)
         statusLabel = stringProvider.getString(R.string.status_bar_status)

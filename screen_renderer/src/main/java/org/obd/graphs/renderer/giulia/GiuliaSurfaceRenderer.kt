@@ -169,8 +169,8 @@ internal class GiuliaSurfaceRenderer(
         }
     }
 
-    override fun clearCache() {
-        giuliaDrawer.clearCache()
+    override fun invalidateCache() {
+        giuliaDrawer.invalidateCache()
     }
 
     override fun recycle() {

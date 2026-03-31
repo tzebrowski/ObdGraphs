@@ -43,7 +43,7 @@ internal abstract class AbstractSurfaceRenderer(protected val context: Context) 
         this.scrollOffset += scrollOffset
     }
 
-    override fun clearCache() {
+    override fun invalidateCache() {
     }
 
     protected fun drawScrollbar(

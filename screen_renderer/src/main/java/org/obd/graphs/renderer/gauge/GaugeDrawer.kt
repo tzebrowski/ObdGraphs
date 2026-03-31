@@ -171,8 +171,8 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
-    override fun clearCache() {
-        super.clearCache()
+    override fun invalidateCache() {
+        super.invalidateCache()
         textCache.clear()
     }
 

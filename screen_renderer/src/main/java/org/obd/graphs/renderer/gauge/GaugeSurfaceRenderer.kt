@@ -97,9 +97,9 @@ internal class GaugeSurfaceRenderer(
             area.top.toFloat()
         }
 
-    override fun clearCache() {
-        gaugeDrawer.clearCache()
-        mobileDrawer.clearCache()
+    override fun invalidateCache() {
+        gaugeDrawer.invalidateCache()
+        mobileDrawer.invalidateCache()
     }
 
     override fun onDraw(
