@@ -36,7 +36,6 @@ import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.Network
-import org.obd.graphs.Permissions
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.AutoConnect
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -167,7 +166,6 @@ class MainActivity :
 
         supportActionBar?.hide()
         backupManager = BackupManager(this)
-        validatePermissions()
         FabButtons.setupSpeedDialView(this)
 
         if (savedInstanceState == null) {
@@ -255,11 +253,5 @@ class MainActivity :
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
             .observe(gpsMetricsEmitter)
-    }
-
-    private fun validatePermissions() {
-        if (Permissions.isAnyPermissionMissing(this)) {
-            Permissions.showPermissionOnboarding(this)
-        }
     }
 }

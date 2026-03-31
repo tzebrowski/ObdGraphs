@@ -22,23 +22,53 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.obd.graphs.Permissions
 import org.obd.graphs.language.LanguageManager
+import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
 
-private const val SPLASH_LOAD_TIME = 300L
+class SplashActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
-class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        runWizardFlow()
+    }
 
-        if (LanguageManager.isLanguageSelected(this)) {
-            lifecycleScope.launch {
-                delay(SPLASH_LOAD_TIME)
-                startMainActivity()
-            }
-        } else {
+    private fun runWizardFlow() {
+        if (!LanguageManager.isLanguageSelected(this)) {
             LanguageManager.showLanguageSelectionDialog(this) {
-                startMainActivity()
+                runWizardFlow()
             }
+            return
+        }
+
+        if (Permissions.isAnyPermissionMissing(this)) {
+            Permissions.showPermissionOnboarding(this, onDeclined = {
+                startMainActivity()
+            })
+            return
+        }
+
+        lifecycleScope.launch {
+            delay(300L)
+            startMainActivity()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        runWizardFlow()
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            AppSettingsDialog.Builder(this).build().show()
+        } else {
+            startMainActivity()
         }
     }
 
