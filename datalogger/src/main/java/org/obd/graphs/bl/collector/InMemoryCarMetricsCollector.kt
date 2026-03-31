@@ -34,7 +34,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     override fun getMetrics(enabled: Boolean): List<Metric> = if (enabled) visibleMetrics else metrics.values.filter { !it.enabled }
 
-    override fun cacheReset() {
+    override fun invalidate() {
         metrics.clear()
         visibleMetrics.clear()
         metricBuilder.buildFor(metrics.keys.toSet()).forEach {

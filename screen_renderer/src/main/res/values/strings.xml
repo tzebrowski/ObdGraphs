@@ -10,9 +10,14 @@
     <string name="main_activity.toast.connection.wifi.incorrect_ssid">Please update WIFI settings.</string>
     <string name="main_activity.toast.connection.wifi.not_connected">Please connect to WIFI network.</string>
 
+
     <string name="status_bar.status">status: </string>
     <string name="status_bar.profile">profile: </string>
     <string name="status_bar.fps">fps: </string>
+    <string name="status_bar.connected">connected</string>
+    <string name="status_bar.disconnected">disconnected</string>
+    <string name="status_bar.connecting">connecting...</string>
+    <string name="status_bar.stopping">stopping...</string>
     <string name="status_bar.ambient_temp">ambient temp: </string>
     <string name="status_bar.atm_pressure">atm pressure: </string>
 

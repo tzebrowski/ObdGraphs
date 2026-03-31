@@ -32,7 +32,6 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.WorkflowStatus
-import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.mapRange
 import org.obd.graphs.profile.profile
@@ -111,7 +110,7 @@ internal abstract class AbstractDrawer(
         atmPressureLabel = stringProvider.getString(R.string.status_bar_atm_pressure)
     }
 
-    open fun invalidateCache() {
+    open fun invalidate() {
         profileLabel = stringProvider.getString(R.string.status_bar_profile)
         fpsLabel = stringProvider.getString(R.string.status_bar_fps)
         statusLabel = stringProvider.getString(R.string.status_bar_status)
@@ -236,7 +235,7 @@ internal abstract class AbstractDrawer(
 
         val color: Int
         val colorTheme = settings.getColorTheme()
-        currentStatusText = DataLoggerRepository.status().name.lowercase()
+        currentStatusText = getStatus()
 
         color = mapStatusColor(colorTheme)
 
@@ -470,4 +469,12 @@ internal abstract class AbstractDrawer(
     }
 
     fun getMarginLeft(left: Float): Float = 10 + left
+
+    private fun getStatus(): String =
+        when (DataLoggerRepository.status()) {
+            WorkflowStatus.Connected -> stringProvider.getString(R.string.status_bar_connected)
+            WorkflowStatus.Disconnected -> stringProvider.getString(R.string.status_bar_disconnected)
+            WorkflowStatus.Connecting -> stringProvider.getString(R.string.status_bar_connecting)
+            WorkflowStatus.Stopping -> stringProvider.getString(R.string.status_bar_stopping)
+        }
 }

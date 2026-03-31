@@ -80,8 +80,8 @@ internal class GiuliaDrawer(
         textCache.clear()
     }
 
-    override fun invalidateCache() {
-        super.invalidateCache()
+    override fun invalidate() {
+        super.invalidate()
         textCache.clear()
     }
 
