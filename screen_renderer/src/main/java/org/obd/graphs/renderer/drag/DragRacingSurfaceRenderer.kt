@@ -48,8 +48,8 @@ internal class DragRacingSurfaceRenderer(
     private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
 
-    override fun invalidateCache() {
-        dragRacingDrawer.invalidateCache()
+    override fun invalidate() {
+        dragRacingDrawer.invalidate()
     }
 
     override fun onDraw(

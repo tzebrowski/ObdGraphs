@@ -24,15 +24,6 @@
     <string name="main_activity.toast.google.signin.failed_restart">Logowanie Google obecnie nie działa. Uruchom ponownie aplikację.</string>
     <string name="main_activity.toast.google.signin.failed">Logowanie Google obecnie nie działa. To może być tymczasowy problem. Spróbuj ponownie za chwilę.</string>
 
-
-    <string name="status_bar.status">status: </string>
-    <string name="status_bar.profile">profil: </string>
-    <string name="status_bar.fps">fps: </string>
-    <string name="status_bar.connected">połączony</string>
-    <string name="status_bar.disconnected">rozłączony</string>
-    <string name="status_bar.ambient_temp">temp. otoczenia: </string>
-    <string name="status_bar.atm_pressure">ciśn. atmosf.: </string>
-
     <string name="permissions.missing.bt_msg">Aby komunikować się z pojazdem, zezwól na dostęp do Bluetooth.</string>
     <string name="permissions.missing.location_msg">Aby korzystać z sieci WIFI, rejestrować trasę i prędkość, zezwól na dostęp do lokalizacji.</string>
     <string name="permission.onboarding_title">Wymagana konfiguracja</string>

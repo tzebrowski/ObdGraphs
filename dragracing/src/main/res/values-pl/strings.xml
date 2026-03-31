@@ -9,10 +9,4 @@
     <string name="main_activity.toast.adapter_is_not_selected">Adapter nie jest wybrany. Wybierz adapter i spróbuj ponownie.</string>
     <string name="main_activity.toast.connection.wifi.incorrect_ssid">Zaktualizuj ustawienia WIFI.</string>
     <string name="main_activity.toast.connection.wifi.not_connected">Połącz się z siecią WIFI.</string>
-
-    <string name="status_bar.status">status: </string>
-    <string name="status_bar.profile">profil: </string>
-    <string name="status_bar.fps">fps: </string>
-    <string name="status_bar.connected">połączony</string>
-    <string name="status_bar.disconnected">rozłączony</string>
 </resources>

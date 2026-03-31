@@ -21,7 +21,7 @@ import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {
     fun alertReset()
-    fun cacheReset()
+    fun invalidate()
     fun getMetric(id: Long, enabled: Boolean = true): Metric?
     fun getMetric(id: Pid, enabled: Boolean = true): Metric?
 

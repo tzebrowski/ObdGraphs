@@ -55,10 +55,10 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
         alpha = 100
     }
 
-    override fun invalidateCache() {
-        super.invalidateCache()
-        tripInfoDrawer.invalidateCache()
-        gaugeDrawer.invalidateCache()
+    override fun invalidate() {
+        super.invalidate()
+        tripInfoDrawer.invalidate()
+        gaugeDrawer.invalidate()
     }
 
     override fun getBackground(): Bitmap = background

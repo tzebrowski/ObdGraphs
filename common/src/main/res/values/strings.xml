@@ -24,15 +24,6 @@
     <string name="main_activity.toast.google.signin.failed_restart">Google sign-in isn"t working at the moment. Please restart application.</string>
     <string name="main_activity.toast.google.signin.failed">Google sign-in isn"t working at the moment. It might be a temporary glitch. Please give it another try shortly.</string>
 
-
-    <string name="status_bar.status">status: </string>
-    <string name="status_bar.profile">profile: </string>
-    <string name="status_bar.fps">fps: </string>
-    <string name="status_bar.connected">connected</string>
-    <string name="status_bar.disconnected">disconnected</string>
-    <string name="status_bar.ambient_temp">ambient temp: </string>
-    <string name="status_bar.atm_pressure">atm pressure: </string>
-
     <string name="permissions.missing.bt_msg">To communicate with your vehicle, please allow Bluetooth access.</string>
     <string name="permissions.missing.location_msg">To access WIFI network, record your trip route and speed, please allow Location access.</string>
     <string name="permission.onboarding_title">Setup Required</string>

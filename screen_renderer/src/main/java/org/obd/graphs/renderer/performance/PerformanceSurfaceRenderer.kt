@@ -47,9 +47,9 @@ internal class PerformanceSurfaceRenderer(
 
     private val metricsCache = MetricsCache()
 
-    override fun invalidateCache() {
+    override fun invalidate() {
         metricsCache.cacheReset()
-        performanceDrawer.invalidateCache()
+        performanceDrawer.invalidate()
     }
 
     override fun onDraw(
