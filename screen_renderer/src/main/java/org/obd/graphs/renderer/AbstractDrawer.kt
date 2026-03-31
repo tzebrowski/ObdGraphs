@@ -471,10 +471,10 @@ internal abstract class AbstractDrawer(
     fun getMarginLeft(left: Float): Float = 10 + left
 
     private fun getStatus(): String =
-        when (DataLoggerRepository.status()){
-            WorkflowStatus.Connected  -> stringProvider.getString(R.string.status_bar_connected)
-            WorkflowStatus.Disconnected  -> stringProvider.getString(R.string.status_bar_disconnected)
-            WorkflowStatus.Connecting  -> stringProvider.getString(R.string.status_bar_connecting)
-            WorkflowStatus.Stopping  -> stringProvider.getString(R.string.status_bar_stopping)
+        when (DataLoggerRepository.status()) {
+            WorkflowStatus.Connected -> stringProvider.getString(R.string.status_bar_connected)
+            WorkflowStatus.Disconnected -> stringProvider.getString(R.string.status_bar_disconnected)
+            WorkflowStatus.Connecting -> stringProvider.getString(R.string.status_bar_connecting)
+            WorkflowStatus.Stopping -> stringProvider.getString(R.string.status_bar_stopping)
         }
 }
