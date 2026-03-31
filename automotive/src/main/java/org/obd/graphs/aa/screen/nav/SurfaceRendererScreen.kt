@@ -114,7 +114,7 @@ internal class SurfaceRendererScreen(
                     LANGUAGE_CHANGE_EVENT -> {
                         metricsCollector.cacheReset()
                         SurfaceRendererType.entries.forEach {
-                            screenBehaviorController.getScreenBehavior(it)?.getSurfaceRenderer()?.cacheReset()
+                            screenBehaviorController.getScreenBehavior(it)?.getSurfaceRenderer()?.clearCache()
                         }
 
                         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return

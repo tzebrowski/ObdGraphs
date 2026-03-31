@@ -37,8 +37,8 @@ internal class TripInfoSurfaceRenderer(
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
 
-    override fun cacheReset() {
-        tripInfoDrawer.cacheReset()
+    override fun clearCache() {
+        tripInfoDrawer.clearCache()
     }
 
     override fun onDraw(
