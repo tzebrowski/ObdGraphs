@@ -45,7 +45,7 @@ abstract class VirtualScreenBehavior(
             QueryStrategyType.SHARED_QUERY
         }
 
-    override fun applyFilters() {
+    override fun syncFilters() {
         val strategy = queryStrategyType()
         query.setStrategy(strategy)
         val selectedPIDs = virtualScreenConfig.selectedPIDs

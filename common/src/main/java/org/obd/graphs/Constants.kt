@@ -16,6 +16,8 @@
  */
 package org.obd.graphs
 
+const val LANGUAGE_CHANGE_EVENT = "lang.change.event"
+
 const val SCREEN_LOCK_DIALOG_CANCELLED_EVENT = "screen.lock.dialog.cancelled.event"
 const val SCREEN_LOCK_PROGRESS_EVENT = "screen.lock.dialog.locK.event"
 const val SCREEN_UNLOCK_PROGRESS_EVENT = "screen.lock.dialog.unlock.event"

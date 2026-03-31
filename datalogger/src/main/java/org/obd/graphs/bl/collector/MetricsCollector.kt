@@ -20,8 +20,8 @@ import org.obd.graphs.bl.datalogger.Pid
 import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {
-    fun reset()
-
+    fun alertReset()
+    fun cacheReset()
     fun getMetric(id: Long, enabled: Boolean = true): Metric?
     fun getMetric(id: Pid, enabled: Boolean = true): Metric?
 

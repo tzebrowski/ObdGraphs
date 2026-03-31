@@ -55,6 +55,11 @@ internal class TripInfoDrawer(
 
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
+    override fun invalidateCache() {
+        super.invalidateCache()
+        giuliaDrawer.invalidateCache()
+    }
+
     inline fun drawScreen(
         canvas: Canvas,
         area: Rect,

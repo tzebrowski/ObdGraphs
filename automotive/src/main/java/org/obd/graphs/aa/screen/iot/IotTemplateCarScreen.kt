@@ -31,6 +31,7 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
+import org.obd.graphs.LocalizedStringProvider
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.SCREEN_REFRESH_EVENT
@@ -78,6 +79,8 @@ internal class IotTemplateCarScreen(
 ) : CarScreen(carContext, settings, metricsCollector) {
     private val valueDrawable = ValueDrawable(carContext)
     private val query = Query.instance(QueryStrategyType.INDIVIDUAL_QUERY)
+
+    private val stringProvider = LocalizedStringProvider(carContext)
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
@@ -142,7 +145,7 @@ internal class IotTemplateCarScreen(
 
                     DATA_LOGGER_CONNECTING_EVENT -> {
                         invalidate()
-                        metricsCollector.reset()
+                        metricsCollector.alertReset()
                     }
 
                     DATA_LOGGER_NO_NETWORK_EVENT -> {
@@ -307,9 +310,9 @@ internal class IotTemplateCarScreen(
         )
         title.append("\n")
         val pid = metric.pid
-        val min = carContext.getString(org.obd.graphs.aa.R.string.aa_stat_min)
+        val min = stringProvider.getString(R.string.aa_stat_min)
         val avg = carContext.getString(org.obd.graphs.aa.R.string.aa_stat_avg)
-        val max = carContext.getString(org.obd.graphs.aa.R.string.aa_stat_max)
+        val max = stringProvider.getString(R.string.aa_stat_max)
         title.append("· $min:${metric.min.format(pid)} $avg: ${metric.mean.format(pid)} $max: ${metric.max.format(pid)}")
         return SpannableString(title)
     }

@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.obd.graphs.LanguageManager
+import org.obd.graphs.language.LanguageManager
 
 private const val SPLASH_LOAD_TIME = 300L
 

@@ -26,6 +26,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
+import org.obd.graphs.LocalizedStringProvider
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -54,6 +55,8 @@ internal abstract class AbstractDrawer(
     protected val context: Context,
     protected val settings: ScreenSettings
 ) {
+    protected val stringProvider = LocalizedStringProvider(context)
+
     private val statusPaint = Paint()
 
     protected val paint =
@@ -73,12 +76,12 @@ internal abstract class AbstractDrawer(
     private val regularFont: Typeface = Typeface.createFromAsset(context.assets, "fonts/Roboto-Regular.ttf")
     private val italicFont = Typeface.createFromAsset(context.assets, "fonts/Roboto-LightItalic.ttf")
 
-    private val statusLabel: String
-    private val profileLabel: String
-    private val fpsLabel: String
+    private var statusLabel: String
+    private var profileLabel: String
+    private var fpsLabel: String
 
-    private val ambientTempLabel: String
-    private val atmPressureLabel: String
+    private var ambientTempLabel: String
+    private var atmPressureLabel: String
 
     private val defaultBackground: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
@@ -101,12 +104,19 @@ internal abstract class AbstractDrawer(
 
         alertingLegendPaint.style = Paint.Style.FILL_AND_STROKE
 
-        profileLabel = context.resources.getString(R.string.status_bar_profile)
-        fpsLabel = context.resources.getString(R.string.status_bar_fps)
-        statusLabel = context.resources.getString(R.string.status_bar_status)
+        profileLabel = stringProvider.getString(R.string.status_bar_profile)
+        fpsLabel = stringProvider.getString(R.string.status_bar_fps)
+        statusLabel = stringProvider.getString(R.string.status_bar_status)
+        ambientTempLabel = stringProvider.getString(R.string.status_bar_ambient_temp)
+        atmPressureLabel = stringProvider.getString(R.string.status_bar_atm_pressure)
+    }
 
-        ambientTempLabel = context.resources.getString(R.string.status_bar_ambient_temp)
-        atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
+    open fun invalidateCache() {
+        profileLabel = stringProvider.getString(R.string.status_bar_profile)
+        fpsLabel = stringProvider.getString(R.string.status_bar_fps)
+        statusLabel = stringProvider.getString(R.string.status_bar_status)
+        ambientTempLabel = stringProvider.getString(R.string.status_bar_ambient_temp)
+        atmPressureLabel = stringProvider.getString(R.string.status_bar_atm_pressure)
     }
 
     fun valueColorScheme(metric: Metric) =
@@ -209,12 +219,12 @@ internal abstract class AbstractDrawer(
         metricsCollector: MetricsCollector? = null,
         drawContextInfo: Boolean = false
     ) {
-        var text = statusLabel
+        var currentStatusText = statusLabel
         var marginLeft = left
 
         drawText(
             canvas,
-            text,
+            currentStatusText,
             marginLeft,
             top,
             Color.LTGRAY,
@@ -222,17 +232,17 @@ internal abstract class AbstractDrawer(
             statusPaint
         )
 
-        marginLeft += getTextWidth(text, statusPaint) + 2f
+        marginLeft += getTextWidth(currentStatusText, statusPaint) + 2f
 
         val color: Int
         val colorTheme = settings.getColorTheme()
-        text = DataLoggerRepository.status().name.lowercase()
+        currentStatusText = DataLoggerRepository.status().name.lowercase()
 
-        color = mapColor(colorTheme)
+        color = mapStatusColor(colorTheme)
 
         drawText(
             canvas,
-            text,
+            currentStatusText,
             marginLeft,
             top,
             color,
@@ -240,12 +250,12 @@ internal abstract class AbstractDrawer(
             statusPaint
         )
 
-        marginLeft += getTextWidth(text, statusPaint) + 12F
+        marginLeft += getTextWidth(currentStatusText, statusPaint) + 12F
 
-        text = profileLabel
+        currentStatusText = profileLabel
         drawText(
             canvas,
-            text,
+            currentStatusText,
             marginLeft,
             top,
             Color.LTGRAY,
@@ -253,12 +263,12 @@ internal abstract class AbstractDrawer(
             statusPaint
         )
 
-        marginLeft += getTextWidth(text, statusPaint) + 4F
-        text = profile.getCurrentProfileName()
+        marginLeft += getTextWidth(currentStatusText, statusPaint) + 4F
+        currentStatusText = profile.getCurrentProfileName()
 
         drawText(
             canvas,
-            text,
+            currentStatusText,
             marginLeft,
             top,
             colorTheme.currentProfileColor,
@@ -267,11 +277,11 @@ internal abstract class AbstractDrawer(
         )
 
         if (settings.isFpsCounterEnabled()) {
-            marginLeft += getTextWidth(text, statusPaint) + 12F
-            text = fpsLabel
+            marginLeft += getTextWidth(currentStatusText, statusPaint) + 12F
+            currentStatusText = fpsLabel
             drawText(
                 canvas,
-                text,
+                currentStatusText,
                 marginLeft,
                 top,
                 Color.WHITE,
@@ -279,7 +289,7 @@ internal abstract class AbstractDrawer(
                 statusPaint
             )
 
-            marginLeft += getTextWidth(text, statusPaint) + 4F
+            marginLeft += getTextWidth(currentStatusText, statusPaint) + 4F
             drawText(
                 canvas,
                 fps.get().toString(),
@@ -294,11 +304,11 @@ internal abstract class AbstractDrawer(
         if (drawContextInfo) {
             metricsCollector?.let {
                 metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)?.let {
-                    marginLeft += getTextWidth(text, statusPaint) + 12F
-                    text = ambientTempLabel
+                    marginLeft += getTextWidth(currentStatusText, statusPaint) + 12F
+                    currentStatusText = ambientTempLabel
                     drawText(
                         canvas,
-                        text,
+                        currentStatusText,
                         marginLeft,
                         top,
                         Color.LTGRAY,
@@ -306,7 +316,7 @@ internal abstract class AbstractDrawer(
                         statusPaint
                     )
 
-                    marginLeft += getTextWidth(text, statusPaint) + 4F
+                    marginLeft += getTextWidth(currentStatusText, statusPaint) + 4F
                     drawText(
                         canvas,
                         "${it.source.format(castToInt = false)}${it.pid.units ?: ""}",
@@ -319,11 +329,11 @@ internal abstract class AbstractDrawer(
                 }
 
                 metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)?.let {
-                    marginLeft += getTextWidth(text, statusPaint) + 12F
-                    text = atmPressureLabel
+                    marginLeft += getTextWidth(currentStatusText, statusPaint) + 12F
+                    currentStatusText = atmPressureLabel
                     drawText(
                         canvas,
-                        text,
+                        currentStatusText,
                         marginLeft,
                         top,
                         Color.LTGRAY,
@@ -331,7 +341,7 @@ internal abstract class AbstractDrawer(
                         statusPaint
                     )
 
-                    marginLeft += getTextWidth(text, statusPaint) + 4F
+                    marginLeft += getTextWidth(currentStatusText, statusPaint) + 4F
                     drawText(
                         canvas,
                         "${it.source.format(castToInt = false)}${it.pid.units ?: ""}",
@@ -346,7 +356,7 @@ internal abstract class AbstractDrawer(
         }
     }
 
-    private fun mapColor(colorTheme: ColorTheme) =
+    private fun mapStatusColor(colorTheme: ColorTheme) =
         when (DataLoggerRepository.status()) {
             WorkflowStatus.Disconnected -> {
                 colorTheme.statusDisconnectedColor

@@ -30,6 +30,7 @@ interface SurfaceRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
     fun updateScrollOffset(scrollOffset: Float)
+    fun invalidateCache()
 
     companion object {
         fun allocate(

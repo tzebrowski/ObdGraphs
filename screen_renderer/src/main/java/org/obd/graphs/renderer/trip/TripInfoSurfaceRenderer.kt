@@ -37,6 +37,10 @@ internal class TripInfoSurfaceRenderer(
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
 
+    override fun invalidateCache() {
+        tripInfoDrawer.invalidateCache()
+    }
+
     override fun onDraw(
         canvas: Canvas,
         drawArea: Rect?

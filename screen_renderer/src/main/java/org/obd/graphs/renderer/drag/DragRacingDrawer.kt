@@ -93,6 +93,13 @@ internal class DragRacingDrawer(
 
     override fun getBackground(): Bitmap = background
 
+    override fun invalidateCache() {
+        super.invalidateCache()
+        mainGaugeDrawer.invalidateCache()
+        smallGaugeDrawer.invalidateCache()
+        brakeBoostingDrawer.invalidateCache()
+    }
+
     fun drawScreen(
         canvas: Canvas,
         area: Rect,

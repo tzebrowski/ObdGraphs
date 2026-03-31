@@ -21,8 +21,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.util.AttributeSet
 import androidx.preference.Preference
-import org.obd.graphs.LanguageManager
+import org.obd.graphs.LANGUAGE_CHANGE_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.language.LanguageManager
+import org.obd.graphs.sendBroadcastEvent
 
 internal class LanguagePreferences(
     context: Context,
@@ -40,6 +42,7 @@ internal class LanguagePreferences(
         LanguageManager.showLanguageSelectionDialog(activity) { localeTag ->
             DataLoggerRepository.updateTranslations(localeTag)
             updateSummary()
+            sendBroadcastEvent(LANGUAGE_CHANGE_EVENT)
             activity.recreate()
         }
     }

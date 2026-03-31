@@ -28,13 +28,40 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
     private val metrics = ConcurrentHashMap<Long, Metric>()
 
     @Volatile
-    private var visibleMetrics: List<Metric> = emptyList()
+    private var visibleMetrics: MutableList<Metric> = mutableListOf()
 
     private val metricBuilder = MetricsBuilder()
 
     override fun getMetrics(enabled: Boolean): List<Metric> = if (enabled) visibleMetrics else metrics.values.filter { !it.enabled }
 
-    override fun reset() {
+    override fun cacheReset() {
+        metrics.clear()
+        visibleMetrics.clear()
+        metricBuilder.buildFor(metrics.keys.toSet()).forEach {
+            metrics[it.pid.id] = it
+        }
+
+        val order = emptyMap<Long, Int>()
+        val comparator =
+            Comparator<Metric> { m1, m2 ->
+
+                val order1 = order[m1.pid.id] ?: Int.MAX_VALUE
+                val order2 = order[m2.pid.id] ?: Int.MAX_VALUE
+
+                if (order1 != Int.MAX_VALUE || order2 != Int.MAX_VALUE) {
+                    return@Comparator order1.compareTo(order2)
+                }
+
+                m1.pid.id.compareTo(m2.pid.id)
+            }
+
+        visibleMetrics =
+            metrics.values
+                .filter { it.enabled }
+                .toMutableList()
+    }
+
+    override fun alertReset() {
         metrics.values.forEach {
             it.inLowerAlertRisedHist = false
             it.inUpperAlertRisedHist = false
@@ -93,7 +120,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
         visibleMetrics =
             metrics.values
                 .filter { it.enabled }
-                .sortedWith(comparator)
+                .sortedWith(comparator).toMutableList()
 
         Log.d(LOG_TAG, "[${Thread.currentThread().id}] Updating visible PIDs: ${visibleMetrics.map { it.pid.id }}")
     }

@@ -33,6 +33,7 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.LocalizedStringProvider
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.mapColor
@@ -85,6 +86,8 @@ internal class RoutinesScreen(
     private var routineId = -1L
     private var routineExecutionSuccessfully = false
     private val query: Query = Query.instance(QueryStrategyType.ROUTINES_QUERY)
+
+    private val stringProvider = LocalizedStringProvider(carContext)
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
@@ -176,7 +179,7 @@ internal class RoutinesScreen(
                     FeatureDescription(
                         RoutineScreen.ROUTINES,
                         R.drawable.action_features,
-                        carContext.getString(R.string.available_features_routine_screen_title)
+                        stringProvider.getString(R.string.available_features_routine_screen_title)
                     )
                 )
             }
@@ -219,14 +222,14 @@ internal class RoutinesScreen(
                 ListTemplate
                     .Builder()
                     .setLoading(true)
-                    .setTitle(carContext.getString(R.string.routine_execution_start))
+                    .setTitle(stringProvider.getString(R.string.routine_execution_start))
                     .setActionStrip(getHorizontalActionStrip())
                     .build()
             } else if (DataLoggerRepository.status() == WorkflowStatus.Connecting) {
                 ListTemplate
                     .Builder()
                     .setLoading(true)
-                    .setTitle(carContext.getString(R.string.routine_page_connecting))
+                    .setTitle(stringProvider.getString(R.string.routine_page_connecting))
                     .setActionStrip(getHorizontalActionStrip())
                     .build()
             } else {
@@ -243,7 +246,7 @@ internal class RoutinesScreen(
                 ListTemplate
                     .Builder()
                     .setLoading(false)
-                    .setTitle(carContext.getString(R.string.routine_page_title))
+                    .setTitle(stringProvider.getString(R.string.routine_page_title))
                     .setSingleList(items.build())
                     .setHeaderAction(Action.BACK)
                     .setActionStrip(getHorizontalActionStrip())
@@ -254,7 +257,7 @@ internal class RoutinesScreen(
             PaneTemplate
                 .Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(R.string.pref_aa_car_error))
+                .setTitle(stringProvider.getString(R.string.pref_aa_car_error))
                 .build()
         }
 
