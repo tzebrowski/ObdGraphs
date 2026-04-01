@@ -25,16 +25,14 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
@@ -48,7 +46,6 @@ import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.cacheManager
 import org.obd.graphs.language.LanguageManager
 import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.profile.profile
@@ -65,8 +62,12 @@ class MainActivity :
     EasyPermissions.PermissionCallbacks {
 
     internal val screenLockManager = ScreenLockManager(this)
-
     internal lateinit var backupManager: BackupManager
+    internal lateinit var appBarConfiguration: AppBarConfiguration
+
+    val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
+
+    private var isAppReady = false
 
     internal var activityBroadcastReceiver =
         object : BroadcastReceiver() {
@@ -78,8 +79,97 @@ class MainActivity :
             }
         }
 
-    private val cache: MutableMap<String, Any> = mutableMapOf()
-    internal lateinit var appBarConfiguration: AppBarConfiguration
+    override fun attachBaseContext(newBase: Context) {
+        val localizedContext = LanguageManager.getLocalizedContext(newBase)
+        super.attachBaseContext(localizedContext)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setupStrictMode()
+        setActivityContext(this)
+        setPreferencesContext(this)
+
+        val splashScreen = installSplashScreen()
+
+        super.onCreate(savedInstanceState)
+
+        splashScreen.setKeepOnScreenCondition { !isAppReady }
+
+        runWizardFlow()
+
+        setContentView(R.layout.activity_main)
+
+        screen.setupWindowManager(this)
+        this.appBarConfiguration = getAppBarConfiguration()
+
+        setupNavigationBar()
+        setupBottomBarNavigation()
+        setupNavigationViewNavigation()
+        setupBackPressHandling()
+        registerReceiver()
+        setupStatusPanel()
+        setupProgressBar()
+
+        screenLockManager.setup()
+        lifecycle.addObserver(screenLockManager)
+
+        supportActionBar?.hide()
+        backupManager = BackupManager(this)
+        FabButtons.setupSpeedDialView(this)
+
+        if (savedInstanceState == null) {
+            setupExceptionHandler()
+            setupVehicleProfiles()
+            Network.setupConnectedNetworksCallback()
+            setupMetricsProcessors()
+            displayAppSignature(this)
+            navigateToLastVisitedScreen()
+            AutoConnect.schedule(this)
+        }
+
+        isAppReady = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        screen.setupWindowManager(this)
+        screen.changeScreenBrightness(this, 1f)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sendBroadcastEvent(MAIN_ACTIVITY_EVENT_PAUSE)
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            screen.hideSystemUI(this)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver()
+        sendBroadcastEvent(MAIN_ACTIVITY_EVENT_DESTROYED)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (NavigationRouter.getPreferences().hideToolbarLandscape) {
+            val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+            Toolbar.hide(this, hide)
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        return NavigationUI.navigateUp(
+            navController,
+            appBarConfiguration
+        ) || super.onSupportNavigateUp()
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -106,117 +196,6 @@ class MainActivity :
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        if (NavigationRouter.getPreferences().hideToolbarLandscape) {
-            val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-            Toolbar.hide(this, hide)
-        }
-    }
-
-    override fun onBackPressed() {
-        val drawer = getDrawer()
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    fun getDrawer() = findViewById<View>(R.id.drawer_layout) as DrawerLayout
-
-    override fun onPause() {
-        super.onPause()
-        sendBroadcastEvent(MAIN_ACTIVITY_EVENT_PAUSE)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-        return NavigationUI.navigateUp(
-            navController,
-            appBarConfiguration
-        ) || super.onSupportNavigateUp()
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        val localizedContext = LanguageManager.getLocalizedContext(newBase)
-        super.attachBaseContext(localizedContext)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setupStrictMode()
-        setActivityContext(this)
-        setPreferencesContext(this)
-
-        val splashScreen = installSplashScreen()
-
-        super.onCreate(savedInstanceState)
-
-        var keepSplashOnScreen = true
-
-        lifecycleScope.launch {
-            delay(100L)
-            keepSplashOnScreen = false
-        }
-
-        splashScreen.setKeepOnScreenCondition { keepSplashOnScreen }
-
-        runWizardFlow()
-
-        initCache()
-        setContentView(R.layout.activity_main)
-
-        screen.setupWindowManager(this)
-        this.appBarConfiguration = getAppBarConfiguration()
-
-        setupNavigationBar()
-        setupBottomBarNavigation()
-        setupNavigationViewNavigation()
-        registerReceiver()
-        setupStatusPanel()
-
-        progressBar {
-            it.visibility = View.GONE
-        }
-
-        screenLockManager.setup()
-        lifecycle.addObserver(screenLockManager)
-
-        supportActionBar?.hide()
-        backupManager = BackupManager(this)
-        FabButtons.setupSpeedDialView(this)
-
-        if (savedInstanceState == null) {
-            setupExceptionHandler()
-            setupVehicleProfiles()
-            Network.setupConnectedNetworksCallback()
-            setupMetricsProcessors()
-            displayAppSignature(this)
-            navigateToLastVisitedScreen()
-            AutoConnect.schedule(this)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        screen.setupWindowManager(this)
-        screen.changeScreenBrightness(this, 1f)
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            screen.hideSystemUI(this)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver()
-        sendBroadcastEvent(MAIN_ACTIVITY_EVENT_DESTROYED)
-    }
-
     private fun setupExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
@@ -228,12 +207,8 @@ class MainActivity :
                 R.id.nav_graph,
                 R.id.nav_gauge
             ),
-            findViewById<DrawerLayout>(R.id.drawer_layout)
+            drawerLayout
         )
-
-    private fun initCache() {
-        cacheManager.initCache(cache)
-    }
 
     private fun setupStrictMode() {
         if (BuildConfig.DEBUG) {
@@ -287,6 +262,29 @@ class MainActivity :
             Permissions.showPermissionOnboarding(this, onDeclined = {
             })
             return
+        }
+    }
+
+    private fun setupBackPressHandling() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                    } else {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+        )
+    }
+
+    private fun setupProgressBar() {
+        progressBar {
+            it.visibility = View.GONE
         }
     }
 }

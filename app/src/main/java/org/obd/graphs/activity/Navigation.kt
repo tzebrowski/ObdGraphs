@@ -69,7 +69,7 @@ internal fun MainActivity.setupNavigationViewNavigation() {
     leftAppBar { navigationView ->
         navigationView.setNavigationItemSelectedListener { item ->
             if (NavigationRouter.navigate(this, item.itemId)) {
-                getDrawer().closeDrawer(GravityCompat.START)
+                drawerLayout.closeDrawer(GravityCompat.START)
             } else {
                 Log.e(LOG_TAG, "Unknown Navigation menu item ${item.itemId}")
             }
