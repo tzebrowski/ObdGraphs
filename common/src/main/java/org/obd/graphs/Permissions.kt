@@ -35,13 +35,13 @@ import androidx.core.text.HtmlCompat
 import org.obd.graphs.commons.R
 import pub.devrel.easypermissions.EasyPermissions
 
-private const val TAG = "Permissions"
-private const val LOCATION_REQUEST_CODE = 1001
-private const val BLUETOOTH_REQUEST_CODE = 1002
-private const val NOTIFICATION_REQUEST_CODE = 1003
-
 @SuppressLint("ObsoleteSdkInt")
 object Permissions {
+
+    private const val TAG = "Permissions"
+    private const val LOCATION_REQUEST_CODE = 1001
+    private const val BLUETOOTH_REQUEST_CODE = 1002
+    private const val NOTIFICATION_REQUEST_CODE = 1003
 
     /**
      * Returns TRUE if any required permission is missing.
@@ -56,8 +56,11 @@ object Permissions {
         return !EasyPermissions.hasPermissions(context, *btPerms)
     }
 
-    fun showPermissionOnboarding(activity: Activity): AlertDialog =
-        AlertDialog
+    fun showPermissionOnboarding(
+        activity: Activity,
+        onDeclined: () -> Unit = {}
+    ): AlertDialog {
+        val dialog = AlertDialog
             .Builder(activity)
             .setTitle(R.string.permission_onboarding_title)
             .setMessage(
@@ -70,8 +73,18 @@ object Permissions {
                 if (!isBatteryOptimizationEnabled(activity)) {
                     requestBatteryOptimization(activity)
                 }
-            }.setNegativeButton(R.string.permission_onboarding_btn_negative, null)
-            .show()
+            }.setNegativeButton(R.string.permission_onboarding_btn_negative) { _, _ ->
+                onDeclined()
+            }
+            .setOnCancelListener {
+                onDeclined()
+            }
+            .create()
+        dialog.window?.setDimAmount(0.8f)
+
+        dialog.show()
+        return dialog
+    }
 
     /**
      * Returns TRUE if all required location permissions are granted.

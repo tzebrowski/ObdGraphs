@@ -38,6 +38,10 @@ class ScreenBehaviorController(
         behaviorsCache.clear()
     }
 
+    fun invalidate() {
+        behaviorsCache.values.forEach { it.getSurfaceRenderer().invalidate() }
+    }
+
     fun getScreenBehavior(screenId: Identity): ScreenBehavior? {
         if (screenId !is SurfaceRendererType) return null
 

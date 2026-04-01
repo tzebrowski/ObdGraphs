@@ -93,6 +93,7 @@ object LanguageManager {
             .create()
 
         dialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+        dialog.window?.setDimAmount(0.8f)
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
 

@@ -81,7 +81,7 @@ android {
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             resValue "string", "applicationId", "org.obd.graphs.my.giulia.aa"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 219
+            versionCode 220
         }
 
         giuliaPerformanceMonitor {
@@ -89,7 +89,7 @@ android {
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             resValue "string", "applicationId", "org.obd.graphs.my.giulia.performance_monitor"
             applicationId "org.obd.graphs.my.giulia.performance_monitor"
-            versionCode 100
+            versionCode 101
         }
 
         giulia {
@@ -194,6 +194,8 @@ dependencies {
     implementation "com.google.api-client:google-api-client-android:2.6.0"
     implementation "com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0"
     implementation 'com.google.http-client:google-http-client-android:1.44.1'
+
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.2.1'

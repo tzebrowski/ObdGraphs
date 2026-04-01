@@ -113,9 +113,7 @@ internal class SurfaceRendererScreen(
 
                     LANGUAGE_CHANGE_EVENT -> {
                         metricsCollector.invalidate()
-                        SurfaceRendererType.entries.forEach {
-                            screenBehaviorController.getScreenBehavior(it)?.getSurfaceRenderer()?.invalidate()
-                        }
+                        screenBehaviorController.invalidate()
 
                         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
                         behavior.syncFilters()

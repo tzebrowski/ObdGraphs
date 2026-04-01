@@ -37,23 +37,10 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
     override fun invalidate() {
         metrics.clear()
         visibleMetrics.clear()
+
         metricBuilder.buildFor(metrics.keys.toSet()).forEach {
             metrics[it.pid.id] = it
         }
-
-        val order = emptyMap<Long, Int>()
-        val comparator =
-            Comparator<Metric> { m1, m2 ->
-
-                val order1 = order[m1.pid.id] ?: Int.MAX_VALUE
-                val order2 = order[m2.pid.id] ?: Int.MAX_VALUE
-
-                if (order1 != Int.MAX_VALUE || order2 != Int.MAX_VALUE) {
-                    return@Comparator order1.compareTo(order2)
-                }
-
-                m1.pid.id.compareTo(m2.pid.id)
-            }
 
         visibleMetrics =
             metrics.values
