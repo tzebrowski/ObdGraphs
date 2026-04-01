@@ -26,16 +26,21 @@ import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.Network
+import org.obd.graphs.Permissions
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.AutoConnect
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -89,6 +94,7 @@ class MainActivity :
         requestCode: Int,
         perms: MutableList<String>
     ) {
+        runWizardFlow()
     }
 
     override fun onPermissionsDenied(
@@ -143,7 +149,20 @@ class MainActivity :
         setActivityContext(this)
         setPreferencesContext(this)
 
+        val splashScreen = installSplashScreen()
+
         super.onCreate(savedInstanceState)
+
+        var keepSplashOnScreen = true
+
+        lifecycleScope.launch {
+            delay(100L)
+            keepSplashOnScreen = false
+        }
+
+        splashScreen.setKeepOnScreenCondition { keepSplashOnScreen }
+
+        runWizardFlow()
 
         initCache()
         setContentView(R.layout.activity_main)
@@ -253,5 +272,21 @@ class MainActivity :
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
             .observe(gpsMetricsEmitter)
+    }
+
+    private fun runWizardFlow() {
+        if (!LanguageManager.isLanguageSelected(this)) {
+            LanguageManager.showLanguageSelectionDialog(this) { localeTag ->
+                DataLoggerRepository.updateTranslations(localeTag)
+                recreate()
+            }
+            return
+        }
+
+        if (Permissions.isAnyPermissionMissing(this)) {
+            Permissions.showPermissionOnboarding(this, onDeclined = {
+            })
+            return
+        }
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="primary_red">#E31E21</color>
+    <color name="beveled_red_shadow">#911414</color>
+
+    <color name="primary_green">#198843</color>
+    <color name="beveled_green_shadow">#152B1E</color>
+
+    <color name="screen_background">#1C1E20</color>
+</resources>

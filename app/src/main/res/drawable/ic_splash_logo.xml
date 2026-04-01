@@ -1,0 +1,54 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="120dp"
+    android:viewportWidth="160"
+    android:viewportHeight="100">
+
+    <group
+        android:pivotX="80"
+        android:pivotY="50"
+        android:scaleX="0.6"
+        android:scaleY="0.6">
+
+        <group android:translateX="3" android:translateY="3">
+            <path
+                android:strokeColor="#911414"
+                android:strokeWidth="8"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"
+                android:fillColor="#00000000"
+                android:pathData="M 60,35 V 15 L 70,25 L 80,15 V 35 M 90,15 L 100,25 V 35 M 110,15 L 100,25" />
+        </group>
+
+        <group>
+            <path
+                android:strokeColor="#E31E21"
+                android:strokeWidth="8"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"
+                android:fillColor="#00000000"
+                android:pathData="M 60,35 V 15 L 70,25 L 80,15 V 35 M 90,15 L 100,25 V 35 M 110,15 L 100,25" />
+        </group>
+
+        <group android:translateX="3" android:translateY="3">
+            <path
+                android:strokeColor="#152B1E"
+                android:strokeWidth="8"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"
+                android:fillColor="#00000000"
+                android:pathData="M 40,55 H 25 V 85 H 40 V 70 H 33 M 52,55 V 85 M 64,55 V 85 H 76 V 55 M 88,55 V 85 H 100 M 112,55 V 85 M 124,85 L 130,55 L 136,85 M 127,75 H 133" />
+        </group>
+
+        <group>
+            <path
+                android:strokeColor="#198843"
+                android:strokeWidth="8"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"
+                android:fillColor="#00000000"
+                android:pathData="M 40,55 H 25 V 85 H 40 V 70 H 33 M 52,55 V 85 M 64,55 V 85 H 76 V 55 M 88,55 V 85 H 100 M 112,55 V 85 M 124,85 L 130,55 L 136,85 M 127,75 H 133" />
+        </group>
+
+    </group>
+</vector>

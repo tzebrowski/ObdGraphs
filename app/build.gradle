@@ -195,6 +195,8 @@ dependencies {
     implementation "com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0"
     implementation 'com.google.http-client:google-http-client-android:1.44.1'
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.core:core-ktx:1.2.0'

@@ -59,8 +59,8 @@ object Permissions {
     fun showPermissionOnboarding(
         activity: Activity,
         onDeclined: () -> Unit = {}
-    ): AlertDialog =
-        AlertDialog
+    ): AlertDialog {
+        val dialog = AlertDialog
             .Builder(activity)
             .setTitle(R.string.permission_onboarding_title)
             .setMessage(
@@ -73,14 +73,18 @@ object Permissions {
                 if (!isBatteryOptimizationEnabled(activity)) {
                     requestBatteryOptimization(activity)
                 }
-            }
-            .setNegativeButton(R.string.permission_onboarding_btn_negative) { _, _ ->
+            }.setNegativeButton(R.string.permission_onboarding_btn_negative) { _, _ ->
                 onDeclined()
             }
             .setOnCancelListener {
                 onDeclined()
             }
-            .show()
+            .create()
+        dialog.window?.setDimAmount(0.8f)
+
+        dialog.show()
+        return dialog
+    }
 
     /**
      * Returns TRUE if all required location permissions are granted.

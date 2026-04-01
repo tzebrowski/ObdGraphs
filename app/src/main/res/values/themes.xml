@@ -1,13 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="colorPrimary">@color/philippine_green</item>
-        <item name="colorPrimaryDark">@color/philippine_green</item>
-        <item name="colorAccent">@color/cardinal</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-    </style>
-
     <style name="Theme.DefaultTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
 
         <item name="colorPrimary">@color/philippine_green</item>
@@ -43,5 +35,11 @@
     <style name="MyPreferenceDialogStyle" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="colorControlActivated">@color/philippine_green</item>
         <item name="textColorAlertDialogListItem">@color/list_item_text_selector</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/rainbow_indigo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.DefaultTheme</item>
     </style>
 </resources>
