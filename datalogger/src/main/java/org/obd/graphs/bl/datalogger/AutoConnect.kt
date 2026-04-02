@@ -26,20 +26,30 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 private const val SCHEDULE_DELAY_SEC = 2L
-
 private const val TAG = "AutoConnect"
 
 object AutoConnect {
     private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var future: ScheduledFuture<*>? = null
 
+    private val lastScheduleAttempt = AtomicLong(0)
+    private const val DEBOUNCE_WINDOW_MS = 5000L
+
     fun schedule(
         context: Context,
         autoConnectEnabled: Boolean = dataLoggerSettings.instance().adapter.autoConnectEnabled,
         scheduleDelaySec: Long = SCHEDULE_DELAY_SEC
     ) {
+        val now = System.currentTimeMillis()
+        if (now - lastScheduleAttempt.get() < DEBOUNCE_WINDOW_MS) {
+            Log.i(TAG, "AutoConnect scheduled recently. Skipping to prevent duplicate runs.")
+            return
+        }
+        lastScheduleAttempt.set(now)
+
         try {
             val macAddress =
                 dataLoggerSettings

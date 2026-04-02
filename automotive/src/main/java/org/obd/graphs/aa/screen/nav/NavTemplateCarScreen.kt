@@ -105,7 +105,13 @@ internal class NavTemplateCarScreen(
                 when (intent?.action) {
                     DATA_LOGGER_AUTO_CONNECT_EVENT -> {
                         Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
-                        dataLoggerStart()
+                        if (DataLoggerRepository.status() != WorkflowStatus.Connecting &&
+                            DataLoggerRepository.status() != WorkflowStatus.Connected
+                        ) {
+                            dataLoggerStart()
+                        } else {
+                            Log.i(LOG_TAG, "Data logger is already connecting/connected. Skipping start request.")
+                        }
                     }
 
                     GOTO_LAST_VSITED_SCREEN_EVENT -> {
