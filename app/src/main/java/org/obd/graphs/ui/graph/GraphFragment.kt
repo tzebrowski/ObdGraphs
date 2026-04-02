@@ -47,7 +47,6 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
-import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
