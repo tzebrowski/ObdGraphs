@@ -44,6 +44,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
@@ -146,17 +147,23 @@ internal abstract class SurfaceRendererFragment(
 
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
-                            val screenBehavior =
-                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
-                                    ?: return
-                            val query = screenBehavior.query()
+                            if (DataLoggerRepository.status() != WorkflowStatus.Connecting &&
+                                DataLoggerRepository.status() != WorkflowStatus.Connected
+                            ) {
+                                val screenBehavior =
+                                    screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                                        ?: return
+                                val query = screenBehavior.query()
 
-                            Log.i(
-                                LOG_TAG,
-                                "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}"
-                            )
-                            withDataLogger {
-                                start(query)
+                                Log.i(
+                                    LOG_TAG,
+                                    "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}"
+                                )
+                                withDataLogger {
+                                    start(query)
+                                }
+                            } else {
+                                Log.i(LOG_TAG, "Data logger is already connecting/connected. Skipping start request.")
                             }
                         }
 

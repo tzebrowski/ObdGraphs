@@ -47,11 +47,13 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
+import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -85,12 +87,18 @@ class GraphFragment : Fragment() {
                 when (intent?.action) {
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
-                            Log.i(
-                                LOG_TAG,
-                                "Auto-connect data logger for=${query().getIDs()}"
-                            )
-                            withDataLogger {
-                                start(query())
+                            if (DataLoggerRepository.status() != WorkflowStatus.Connecting &&
+                                DataLoggerRepository.status() != WorkflowStatus.Connected
+                            ) {
+                                Log.i(
+                                    LOG_TAG,
+                                    "Auto-connect data logger for=${query().getIDs()}"
+                                )
+                                withDataLogger {
+                                    start(query())
+                                }
+                            } else {
+                                Log.i(LOG_TAG, "Data logger is already connecting/connected. Skipping start request.")
                             }
                         }
 
