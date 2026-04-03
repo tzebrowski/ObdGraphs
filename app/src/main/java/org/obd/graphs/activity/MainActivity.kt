@@ -20,13 +20,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -52,6 +56,8 @@ import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
 import org.obd.graphs.ui.BackupManager
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.withDataLogger
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -115,7 +121,7 @@ class MainActivity :
 
         supportActionBar?.hide()
         backupManager = BackupManager(this)
-        FabButtons.setupSpeedDialView(this)
+        setupFabButtons()
 
         if (savedInstanceState == null) {
             setupExceptionHandler()
@@ -128,6 +134,33 @@ class MainActivity :
         }
 
         isAppReady = true
+    }
+
+    private fun setupFabButtons() {
+        FabButtons.setupSpeedDialView(this)
+
+        if (DataLoggerRepository.isRunning()) {
+            val connectBtn = FabButtons.view(this).connectFab
+
+            connectBtn.setOnClickListener {
+                if (DataLoggerRepository.isRunning()) {
+                    withDataLogger {
+                        Log.i("Fragment", "Stop data logging")
+                        stop()
+                    }
+                }
+            }
+
+            connectBtn.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    this,
+                    if (DataLoggerRepository.isRunning()) {
+                        org.obd.graphs.commons.R.color.cardinal
+                    } else {
+                        org.obd.graphs.commons.R.color.philippine_green
+                    }
+                )
+        }
     }
 
     override fun onResume() {
@@ -283,8 +316,19 @@ class MainActivity :
     }
 
     private fun setupProgressBar() {
-        progressBar {
-            it.visibility = View.GONE
+        if (DataLoggerRepository.isRunning()) {
+            progressBar {
+                it.visibility = View.VISIBLE
+                it.indeterminateDrawable.colorFilter =
+                    PorterDuffColorFilter(
+                        COLOR_PHILIPPINE_GREEN,
+                        PorterDuff.Mode.SRC_IN
+                    )
+            }
+        } else {
+            progressBar {
+                it.visibility = View.GONE
+            }
         }
     }
 }
