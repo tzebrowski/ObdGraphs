@@ -48,29 +48,81 @@ private class DefaultJSONOutput(
     private val valueMapper: (signal: Int, value: Any) -> Any
 ) : TripLogTransformer {
 
+    private class SeriesData {
+        val timestamps = mutableListOf<Long>()
+        val values = mutableListOf<Any?>()
+    }
+
     override fun transform(file: File, metadata: Map<String, String>): File =
         file.inputStream().use { input ->
             process(JsonReader(InputStreamReader(input)), metadata)
         }
 
-    override fun transform(log: String, metadata: Map<String, String>): File = process(JsonReader(StringReader(log)), metadata)
+    override fun transform(log: String, metadata: Map<String, String>): File =
+        process(JsonReader(StringReader(log)), metadata)
 
     private fun process(reader: JsonReader, metadata: Map<String, String>): File {
         Log.d("DefaultJSONOutput", "Received $metadata")
         val tempFile =
             File.createTempFile("json_buffer_", ".tmp").apply {
-                // Ensures the file is cleaned up if the JVM shuts down
                 deleteOnExit()
             }
 
+        val seriesMap = mutableMapOf<String, SeriesData>()
+
         try {
-            // Nested .use calls ensure all streams are closed even if an exception occurs
+            reader.isLenient = true
+            parseRootToMemory(reader, seriesMap)
+
             tempFile.outputStream().bufferedWriter().use { fileWriter ->
                 JsonWriter(fileWriter).use { writer ->
-                    reader.isLenient = true
-                    writer.beginArray()
-                    parseRoot(reader, writer, metadata)
-                    writer.endArray()
+                    writer.beginObject() // Root object
+
+                    // Write Metadata
+                    if (metadata.isNotEmpty()) {
+                        writer.name("metadata")
+                        writer.beginObject()
+                        metadata.forEach { (key, value) ->
+                            writer.name(key).value(value)
+                        }
+                        writer.endObject()
+                    }
+
+                    // Write Signal Dictionary
+                    writer.name("signal_dictionary")
+                    writer.beginObject()
+                    seriesMap.keys.forEach { signalKey ->
+                        val idAsInt = signalKey.toIntOrNull()
+                        val translatedName = if (idAsInt != null) {
+                            signalMapper[idAsInt] ?: signalKey
+                        } else {
+                            signalKey
+                        }
+                        writer.name(signalKey).value(translatedName.toString())
+                    }
+                    writer.endObject()
+
+                    // Write Series Data
+                    writer.name("series")
+                    writer.beginObject()
+                    seriesMap.forEach { (signalId, seriesData) ->
+                        writer.name(signalId)
+                        writer.beginObject()
+
+                        writer.name("t")
+                        writer.beginArray()
+                        seriesData.timestamps.forEach { writer.value(it) }
+                        writer.endArray()
+
+                        writer.name("v")
+                        writer.beginArray()
+                        seriesData.values.forEach { writer.writeDynamicValue(it) }
+                        writer.endArray()
+
+                        writer.endObject()
+                    }
+                    writer.endObject() // end series
+                    writer.endObject() // end root
                 }
             }
             return tempFile
@@ -85,26 +137,14 @@ private class DefaultJSONOutput(
         }
     }
 
-    private fun parseRoot(
+    private fun parseRootToMemory(
         reader: JsonReader,
-        writer: JsonWriter,
-        metadata: Map<String, String>
+        seriesMap: MutableMap<String, SeriesData>
     ) {
-        if (metadata.isNotEmpty()) {
-            writer.beginObject()
-            writer.name("metadata")
-            writer.beginObject()
-            metadata.forEach { (key, value) ->
-                writer.name(key).value(value)
-            }
-            writer.endObject()
-            writer.endObject()
-        }
-
         reader.beginObject()
         while (reader.hasNext()) {
             if (reader.nextName() == "entries") {
-                parseEntries(reader, writer)
+                parseEntriesToMemory(reader, seriesMap)
             } else {
                 reader.skipValue()
             }
@@ -112,58 +152,58 @@ private class DefaultJSONOutput(
         reader.endObject()
     }
 
-    private fun parseEntries(
+    private fun parseEntriesToMemory(
         reader: JsonReader,
-        writer: JsonWriter
+        seriesMap: MutableMap<String, SeriesData>
     ) {
-        reader.beginObject() // Start "entries" map
+        reader.beginObject()
         while (reader.hasNext()) {
             reader.nextName() // Skip the dynamic key ("12", "99")
-            parseEntryGroup(reader, writer)
+            parseEntryGroupToMemory(reader, seriesMap)
         }
         reader.endObject()
     }
 
-    private fun parseEntryGroup(
+    private fun parseEntryGroupToMemory(
         reader: JsonReader,
-        writer: JsonWriter
+        seriesMap: MutableMap<String, SeriesData>
     ) {
-        reader.beginObject() // Inside "12": {
+        reader.beginObject()
         while (reader.hasNext()) {
             if (reader.nextName() == "metrics") {
-                parseMetricsArray(reader, writer)
+                parseMetricsArrayToMemory(reader, seriesMap)
             } else {
-                reader.skipValue() // Skip "id", "mean", etc.
+                reader.skipValue()
             }
         }
         reader.endObject()
     }
 
-    private fun parseMetricsArray(
+    private fun parseMetricsArrayToMemory(
         reader: JsonReader,
-        writer: JsonWriter
+        seriesMap: MutableMap<String, SeriesData>
     ) {
-        reader.beginArray() // [
+        reader.beginArray()
         while (reader.hasNext()) {
-            parseSingleMetric(reader, writer)
+            parseSingleMetricToMemory(reader, seriesMap)
         }
         reader.endArray()
     }
 
-    private fun parseSingleMetric(
+    private fun parseSingleMetricToMemory(
         reader: JsonReader,
-        writer: JsonWriter
+        seriesMap: MutableMap<String, SeriesData>
     ) {
         var ts: Long = 0
         var signal = 0
         var value: Any = 0.0
 
-        reader.beginObject() // Metric object {
+        reader.beginObject()
         while (reader.hasNext()) {
             when (reader.nextName()) {
                 "ts" -> ts = reader.nextLong()
                 "entry" -> {
-                    reader.beginObject() // Nested "entry": {
+                    reader.beginObject()
                     while (reader.hasNext()) {
                         when (reader.nextName()) {
                             "data" -> signal = reader.nextInt()
@@ -179,25 +219,19 @@ private class DefaultJSONOutput(
                     }
                     reader.endObject()
                 }
-
                 else -> reader.skipValue()
             }
         }
-
         reader.endObject()
-        writer.beginObject()
-        writer.name("t").value(ts)
-        writer.name("s").value((signalMapper[signal] ?: signal).toString())
-        val mappedResult: Any = valueMapper(signal, value)
 
-        writer.name("v")
-        writer.writeDynamicValue(mappedResult)
-        writer.endObject()
+        val signalKey = signal.toString() // Group purely by ID
+        val mappedResult = valueMapper(signal, value)
+
+        val series = seriesMap.getOrPut(signalKey) { SeriesData() }
+        series.timestamps.add(ts)
+        series.values.add(mappedResult)
     }
 
-    /**
-     * Recursively reads a JSON object from the reader and returns it as a Map.
-     */
     private fun JsonReader.readMap(): Map<String, Any?> {
         val map = mutableMapOf<String, Any?>()
 
@@ -205,10 +239,8 @@ private class DefaultJSONOutput(
         while (this.hasNext()) {
             val key = this.nextName()
             val value: Any? = when (this.peek()) {
-                JsonToken.BEGIN_OBJECT -> readMap() // Recursive call for nested maps
+                JsonToken.BEGIN_OBJECT -> readMap()
                 JsonToken.BEGIN_ARRAY -> {
-                    // Optional: Handle arrays if your source map has lists
-                    // For now we just skip or you can implement readList() similarly
                     this.skipValue()
                     null
                 }
@@ -227,27 +259,20 @@ private class DefaultJSONOutput(
         return map
     }
 
-    /**
-     * Extension to write mixed types (Number, String, Map, List) to JsonWriter.
-     */
     private fun JsonWriter.writeDynamicValue(value: Any?) {
         when (value) {
             null -> this.nullValue()
             is Number -> this.value(value)
             is String -> this.value(value)
             is Boolean -> this.value(value)
-
-            // Handle Map -> JSON Object
             is Map<*, *> -> {
                 this.beginObject()
                 for ((k, v) in value) {
                     this.name(k.toString())
-                    writeDynamicValue(v) // Recursive call for nested values
+                    writeDynamicValue(v)
                 }
                 this.endObject()
             }
-
-            // Handle List/Array -> JSON Array (Optional, but good for safety)
             is Collection<*> -> {
                 this.beginArray()
                 for (item in value) {
@@ -255,8 +280,6 @@ private class DefaultJSONOutput(
                 }
                 this.endArray()
             }
-
-            // Fallback for unknown objects
             else -> this.value(value.toString())
         }
     }
