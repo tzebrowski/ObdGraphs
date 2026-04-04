@@ -24,7 +24,7 @@ private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 internal class TripCache {
 
     init {
-        val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
+        val trip = Trip(startTs = System.currentTimeMillis())
         updateTrip(trip)
         Log.i("tripCache", "Init Trip with stamp: ${trip.startTs}")
     }

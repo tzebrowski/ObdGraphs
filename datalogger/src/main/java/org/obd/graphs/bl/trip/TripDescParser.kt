@@ -23,16 +23,22 @@ class TripDescParser {
         val p = decodeTripName(fileName)
         val profileId = p[1]
         val profiles = profile.getAvailableProfiles()
-        val profileLabel = profiles[profileId]!!
+        val profileLabel = profiles[profileId] ?: "Unknown"
+
+        val startTime = if (p.size > 2) p[2] else ""
+        val tripTimeSec = if (p.size > 3) p[3] else "0"
 
         return TripFileDesc(
             fileName = fileName,
             profileId = profileId,
             profileLabel = profileLabel,
-            startTime = p[2],
-            tripTimeSec = p[3]
+            startTime = startTime,
+            tripTimeSec = tripTimeSec
         )
     }
 
-    fun decodeTripName(fileName: String) = fileName.substring(0, fileName.length - 5).split("-")
+    fun decodeTripName(fileName: String): List<String> {
+        val nameWithoutExtension = fileName.substringBeforeLast(".")
+        return nameWithoutExtension.split("-")
+    }
 }

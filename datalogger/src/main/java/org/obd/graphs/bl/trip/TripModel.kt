@@ -18,6 +18,8 @@ package org.obd.graphs.bl.trip
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.obd.metrics.transport.message.ConnectorResponse
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 data class TripFileDesc(
     val fileName: String,
@@ -44,7 +46,7 @@ data class Metric(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SensorData(
     val id: Long,
-    val metrics: MutableList<Metric>,
+    val metrics: MutableList<Metric> = Collections.synchronizedList(ArrayList()),
     var min: Number = 0,
     var max: Number = 0,
     var mean: Number = 0
@@ -66,4 +68,4 @@ data class SensorData(
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val startTs: Long, val entries: MutableMap<Long, SensorData>)
+data class Trip(val startTs: Long, val entries: MutableMap<Long, SensorData> = ConcurrentHashMap())

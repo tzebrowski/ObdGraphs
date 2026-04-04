@@ -18,7 +18,9 @@ package org.obd.graphs.bl.trip
 
 import android.content.Context
 import android.util.Log
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.getContext
@@ -32,14 +34,17 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.Executors
 
 val tripManager: TripManager = DefaultTripManager()
 
 private const val LOGGER_TAG = "TripManager"
 private const val MIN_TRIP_LENGTH = 5
 private const val TRIP_DIRECTORY = "trips"
-
 private const val TRIP_FILE_PREFIX = "trip"
+
+// Holds exactly 30 minutes of data per sensor at 10Hz
+private const val MAX_CACHED_METRICS_PER_SENSOR = 18000
 
 internal class DefaultTripManager :
     TripManager,
@@ -49,8 +54,15 @@ internal class DefaultTripManager :
 
     private val tripModelSerializer = TripModelSerializer()
     private val tripCache = TripCache()
-
     private val tripDescParser = TripDescParser()
+
+    // Properties for streaming
+    private var activeFileOutputStream: FileOutputStream? = null
+    private var activeTripFileName: String? = null
+
+    // Single thread dispatcher for sequential, non-blocking file operations
+    private val fileIoDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    private val fileIoScope = CoroutineScope(fileIoDispatcher)
 
     override fun getTripsDirectory(context: Context) = "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
 
@@ -61,27 +73,36 @@ internal class DefaultTripManager :
                 val key = obdMetric.command.pid.id
                 val newRecord = if (obdMetric.isNumber()) Entry(ts, obdMetric.scaleToRange(), key) else Entry(ts, obdMetric.value, key)
 
+                val metric = Metric(
+                    entry = newRecord,
+                    ts = obdMetric.timestamp,
+                    rawAnswer = obdMetric.raw
+                )
+
+                // STREAM TO FILE (Sequential, Non-Blocking via single-thread dispatcher)
+                fileIoScope.launch {
+                    try {
+                        val jsonLine = tripModelSerializer.serializer.writeValueAsString(metric) + "\n"
+                        activeFileOutputStream?.write(jsonLine.toByteArray())
+                    } catch (e: Exception) {
+                        Log.e(LOGGER_TAG, "Failed to stream line to JSONL file", e)
+                    }
+                }
+
+                // UPDATE RAM CACHE (With 30-min Cap)
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
-                    tripEntry.metrics.add(
-                        Metric(
-                            entry = newRecord,
-                            ts = obdMetric.timestamp,
-                            rawAnswer = obdMetric.raw
-                        )
-                    )
+                    tripEntry.metrics.add(metric)
+
+                    // Memory Protection: Cap the list size
+                    if (tripEntry.metrics.size > MAX_CACHED_METRICS_PER_SENSOR) {
+                        tripEntry.metrics.removeAt(0)
+                    }
                 } else {
                     trip.entries[key] =
                         SensorData(
                             id = key,
-                            metrics =
-                            mutableListOf(
-                                Metric(
-                                    entry = newRecord,
-                                    ts = obdMetric.timestamp,
-                                    rawAnswer = obdMetric.raw
-                                )
-                            )
+                            metrics = mutableListOf(metric)
                         )
                 }
             }
@@ -103,61 +124,69 @@ internal class DefaultTripManager :
     override fun startNewTrip(newTs: Long) {
         Log.i(LOGGER_TAG, "Starting new trip, timestamp: '${formatTimestamp(newTs)}'")
         updateCache(newTs)
+
+        // Generate the file name
+        val fileName = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$newTs.jsonl"
+        activeTripFileName = fileName
+
+        // Open the file stream for appending on the sequential thread
+        fileIoScope.launch {
+            try {
+                val file = getTripFile(getContext()!!, fileName)
+                activeFileOutputStream = FileOutputStream(file, true)
+                Log.i(LOGGER_TAG, "Opened stream for file: $fileName")
+            } catch (e: Exception) {
+                Log.e(LOGGER_TAG, "Failed to open file stream for streaming", e)
+            }
+        }
     }
 
-    override fun saveCurrentTrip(f: () -> Unit) {
+    override fun saveCurrentTrip() {
         tripCache.getTrip { trip ->
             val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
             val tripLength = getTripLength(trip)
-            Log.i(LOGGER_TAG, "Recorded trip, length: ${tripLength}s")
+            Log.i(LOGGER_TAG, "Stopping trip, length: ${tripLength}s")
+
+            val fileNameToProcess = activeTripFileName
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
-                val tripStartTs = trip.startTs
-
-                val filter = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$tripStartTs"
-                val alreadySaved = findAllTripsBy(filter)
-
-                if (alreadySaved.isNotEmpty()) {
-                    Log.e(
-                        LOGGER_TAG,
-                        "It seems that Trip which start same date='$filter' is already saved."
-                    )
-                } else {
+                fileIoScope.launch {
                     try {
-                        f()
-                        val histogram = DataLoggerRepository.getDiagnostics().histogram()
-                        val pidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
+                        activeFileOutputStream?.flush()
+                        activeFileOutputStream?.close()
+                        activeFileOutputStream = null
 
-                        trip.entries.forEach { (t, u) ->
-                            val p = pidDefinitionRegistry.findBy(t)
-                            p?.let {
-                                val histogramSupplier = histogram.findBy(it)
-                                u.max = histogramSupplier.max
-                                u.min = histogramSupplier.min
-                                u.mean = histogramSupplier.mean
+                        fileNameToProcess?.let { currentName ->
+                            val currentFile = getTripFile(getContext()!!, currentName)
+                            if (currentFile.exists()) {
+                                val finalName = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-${trip.startTs}-$tripLength.jsonl"
+                                val finalFile = getTripFile(getContext()!!, finalName)
+                                currentFile.renameTo(finalFile)
+                                Log.i(LOGGER_TAG, "Trip stream closed and renamed to: '$finalName'")
                             }
                         }
-
-                        val content: String =
-                            tripModelSerializer.serializer.writeValueAsString(trip)
-
-                        val fileName =
-                            "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$tripStartTs-$tripLength.json"
-                        Log.i(
-                            LOGGER_TAG,
-                            "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
-                        )
-                        writeFile(getContext()!!, fileName, content)
-                        Log.i(
-                            LOGGER_TAG,
-                            "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
-                        )
                     } catch (e: java.lang.Exception) {
-                        Log.e(LOGGER_TAG, "Failed to save trip", e)
+                        Log.e(LOGGER_TAG, "Failed to finalize streaming trip file", e)
+                    } finally {
+                        activeTripFileName = null
                     }
                 }
             } else {
-                Log.w(LOGGER_TAG, "Trip was not saved. Trip time is less than ${MIN_TRIP_LENGTH}s")
+                Log.w(LOGGER_TAG, "Trip time is less than ${MIN_TRIP_LENGTH}s. Deleting short file.")
+                fileIoScope.launch {
+                    try {
+                        activeFileOutputStream?.close()
+                        activeFileOutputStream = null
+
+                        fileNameToProcess?.let {
+                            getTripFile(getContext()!!, it).delete()
+                        }
+                    } catch (e: Exception) {
+                        Log.e(LOGGER_TAG, "Failed to delete short trip file", e)
+                    } finally {
+                        activeTripFileName = null
+                    }
+                }
             }
         }
     }
@@ -174,9 +203,8 @@ internal class DefaultTripManager :
                 files
                     .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
                     .filter { it.startsWith("${TRIP_FILE_PREFIX}_") || it.startsWith("$TRIP_FILE_PREFIX-") }
+                    .filter { it.contains("${profile.getCurrentProfile()}-") }
                     .filter {
-                        it.contains("${profile.getCurrentProfile()}-")
-                    }.filter {
                         try {
                             tripDescParser.decodeTripName(it).size > 3
                         } catch (e: Throwable) {
@@ -207,40 +235,46 @@ internal class DefaultTripManager :
         } else {
             val file = File(getTripsDirectory(getContext()!!), tripName)
             try {
-                val trip: Trip = tripModelSerializer.deserializer.readValue(file, Trip::class.java)
+                val parts = tripDescParser.decodeTripName(tripName)
+                val startTs = parts[2].toLongOrNull() ?: System.currentTimeMillis()
+                val trip = Trip(startTs = startTs)
+
+                // Read line-by-line (JSONL) instead of as one massive object
+                file.forEachLine { line ->
+                    if (line.isNotBlank()) {
+                        val metric = tripModelSerializer.deserializer.readValue(line, Metric::class.java)
+                        val key = metric.entry.data
+
+                        if (!trip.entries.containsKey(key)) {
+                            trip.entries[key] = SensorData(id = key)
+                        }
+
+                        val sensorData = trip.entries[key]!!
+                        sensorData.metrics.add(metric)
+                    }
+                }
+
+                // Calculate historical min/max/mean from loaded values
+                trip.entries.values.forEach { sensorData ->
+                    val values = sensorData.metrics.mapNotNull { it.entry.y.toString().toFloatOrNull() }
+                    if (values.isNotEmpty()) {
+                        sensorData.min = values.minOrNull() ?: 0f
+                        sensorData.max = values.maxOrNull() ?: 0f
+                        sensorData.mean = values.average()
+                    }
+                }
+
                 Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the storage.")
                 Log.i(LOGGER_TAG, "Trip selected PIDs ${trip.entries.keys}")
                 Log.i(LOGGER_TAG, "Number of entries ${trip.entries.values.size} collected within the trip")
 
                 tripCache.updateTrip(trip)
                 tripVirtualScreenManager.updateReservedVirtualScreen(
-                    trip.entries.keys
-                        .map { it.toString() }
-                        .toList()
+                    trip.entries.keys.map { it.toString() }.toList()
                 )
             } catch (e: Throwable) {
-                Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
+                Log.e(LOGGER_TAG, "Did not find or failed to parse trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
-            }
-        }
-    }
-
-    private fun writeFile(
-        context: Context,
-        fileName: String,
-        content: String
-    ) {
-        var fd: FileOutputStream? = null
-        try {
-            val file = getTripFile(context, fileName)
-            fd =
-                FileOutputStream(file).apply {
-                    write(content.toByteArray())
-                }
-        } finally {
-            fd?.run {
-                flush()
-                close()
             }
         }
     }
@@ -251,7 +285,7 @@ internal class DefaultTripManager :
     ): File = File(getTripsDirectory(context), fileName)
 
     private fun updateCache(newTs: Long) {
-        val trip = Trip(startTs = newTs, entries = mutableMapOf())
+        val trip = Trip(startTs = newTs)
         tripCache.updateTrip(trip)
         Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${formatTimestamp(newTs)}'")
     }

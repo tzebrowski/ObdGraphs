@@ -24,10 +24,6 @@ class Cache {
     fun updateEntry(name: String, value: Any) {
         cache[name] = value
     }
-
-    fun initCache(m: MutableMap<String, Any>) {
-        cache = m
-    }
 }
 
 val cacheManager = Cache()
