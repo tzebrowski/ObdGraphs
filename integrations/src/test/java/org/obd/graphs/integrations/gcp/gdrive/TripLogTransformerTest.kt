@@ -70,7 +70,10 @@ class TripLogTransformerTest {
         val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
         val result = transformer.transform(file).readText()
 
-        Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896267,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896463,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896666,\"s\":\"12\"")
+        Assertions.assertThat(result).contains("\"signal_dictionary\":{")
+        Assertions.assertThat(result).contains("\"series\":{")
+        Assertions.assertThat(result).contains("\"12\":{\"t\":[1765481896083,1765481896267")
+        Assertions.assertThat(result).contains("\"v\":[3298.0767,3298.0767")
     }
 
     @Test
@@ -111,10 +114,11 @@ class TripLogTransformerTest {
 
         val result = transformer.transform(rawJson, meta).readText()
 
+        // Notice 12 is mapped to "Boost" in dictionary, but 13 defaults to "13" since it's unmapped.
         val expectedJson =
-            """[{"metadata":{"key1":"value1","key2":"value2"}},{"t":1000,"s":"Boost","v":101.0},{"t":2000,"s":"13","v":121.0}]"""
+            """{"metadata":{"key1":"value1","key2":"value2"},"signal_dictionary":{"12":"Boost","13":"13"},"series":{"12":{"t":[1000],"v":[101.0]},"13":{"t":[2000],"v":[121.0]}}}"""
 
-        Assertions.assertThat(expectedJson).isEqualTo(result)
+        Assertions.assertThat(result).isEqualTo(expectedJson)
     }
 
     @Test
@@ -148,7 +152,7 @@ class TripLogTransformerTest {
         val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
         val result = transformer.transform(rawJson).readText()
 
-        val expectedJson = """[{"t":1500,"s":"99","v":{"GPS altitude":57.10662841796875,"GPS Location":{"altitude":57.10662841796875,"accuracy":46.843723,"latitude":54.16406183,"longitude":16.29066863}}}]"""
+        val expectedJson = """{"signal_dictionary":{"99":"99"},"series":{"99":{"t":[1500],"v":[{"GPS altitude":57.10662841796875,"GPS Location":{"altitude":57.10662841796875,"accuracy":46.843723,"latitude":54.16406183,"longitude":16.29066863}}]}}}"""
 
         Assertions.assertThat(result).isEqualTo(expectedJson)
     }
@@ -186,13 +190,13 @@ class TripLogTransformerTest {
         val result = transformer.transform(rawJson).readText()
 
         val expectedJson =
-            """[{"t":1000,"s":"Boost","v":101.0},{"t":2000,"s":"13","v":121.0}]"""
+            """{"signal_dictionary":{"12":"Boost","13":"13"},"series":{"12":{"t":[1000],"v":[101.0]},"13":{"t":[2000],"v":[121.0]}}}"""
 
-        Assertions.assertThat(expectedJson).isEqualTo(result)
+        Assertions.assertThat(result).isEqualTo(expectedJson)
     }
 
     @Test
-    fun `optimize should convert complex json to optimized flat format`() {
+    fun `optimize should convert complex json to optimized columnar format`() {
         val rawJson =
             """
             {
@@ -224,9 +228,9 @@ class TripLogTransformerTest {
         val result = transformer.transform(rawJson).readText()
 
         val expectedJson =
-            """[{"t":1000,"s":"12","v":50.5},{"t":2000,"s":"12","v":60.5}]"""
+            """{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000,2000],"v":[50.5,60.5]}}}"""
 
-        Assertions.assertThat(expectedJson).isEqualTo(result)
+        Assertions.assertThat(result).isEqualTo(expectedJson)
     }
 
     @Test
@@ -253,9 +257,10 @@ class TripLogTransformerTest {
         assertFalse(result.contains("\"rawAnswer\""))
         assertFalse(result.contains("\"entry\""))
 
-        assertTrue(result.contains("\"s\""))
+        assertTrue(result.contains("\"signal_dictionary\""))
+        assertTrue(result.contains("\"series\""))
         assertTrue(result.contains("\"t\""))
-        assertTrue(result.contains("\"v\":2.0"))
+        assertTrue(result.contains("\"v\":[2.0]"))
     }
 
     @Test
@@ -271,7 +276,7 @@ class TripLogTransformerTest {
         val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
         val result = transformer.transform(rawJson).readText()
 
-        val expected = """[]"""
+        val expected = """{"signal_dictionary":{},"series":{}}"""
         assertEquals(expected, result)
     }
 }
