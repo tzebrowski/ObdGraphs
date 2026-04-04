@@ -35,10 +35,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicLong
 
 val tripManager: TripManager = DefaultTripManager()
 
-private const val LOGGER_TAG = "TripManager"
+private const val LOG_TAG = "TripManager"
 private const val MIN_TRIP_LENGTH = 5
 private const val TRIP_DIRECTORY = "trips"
 private const val TRIP_FILE_PREFIX = "trip"
@@ -60,6 +61,9 @@ internal class DefaultTripManager :
     private var activeFileOutputStream: FileOutputStream? = null
     private var activeTripFileName: String? = null
 
+    // Thread-safe counter for total items written to disk
+    private val totalMetricsSaved = AtomicLong(0)
+
     // Single thread dispatcher for sequential, non-blocking file operations
     private val fileIoDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     private val fileIoScope = CoroutineScope(fileIoDispatcher)
@@ -79,22 +83,22 @@ internal class DefaultTripManager :
                     rawAnswer = obdMetric.raw
                 )
 
-                // STREAM TO FILE (Sequential, Non-Blocking via single-thread dispatcher)
                 fileIoScope.launch {
                     try {
                         val jsonLine = tripModelSerializer.serializer.writeValueAsString(metric) + "\n"
-                        activeFileOutputStream?.write(jsonLine.toByteArray())
+                        activeFileOutputStream?.let {
+                            it.write(jsonLine.toByteArray())
+                            totalMetricsSaved.incrementAndGet()
+                        }
                     } catch (e: Exception) {
-                        Log.e(LOGGER_TAG, "Failed to stream line to JSONL file", e)
+                        Log.e(LOG_TAG, "Failed to stream line to JSONL file", e)
                     }
                 }
 
-                // UPDATE RAM CACHE (With 30-min Cap)
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
                     tripEntry.metrics.add(metric)
 
-                    // Memory Protection: Cap the list size
                     if (tripEntry.metrics.size > MAX_CACHED_METRICS_PER_SENSOR) {
                         tripEntry.metrics.removeAt(0)
                     }
@@ -107,7 +111,7 @@ internal class DefaultTripManager :
                 }
             }
         } catch (e: Throwable) {
-            Log.e(LOGGER_TAG, "Failed to add cache entry for ${obdMetric.command.pid.pid}", e)
+            Log.e(LOG_TAG, "Failed to add cache entry for ${obdMetric.command.pid.pid}", e)
         }
     }
 
@@ -117,13 +121,14 @@ internal class DefaultTripManager :
         }
 
         val trip = tripCache.getTrip()!!
-        Log.i(LOGGER_TAG, "Get current trip ts: '${formatTimestamp(trip.startTs)}'")
+        Log.i(LOG_TAG, "Get current trip ts: '${formatTimestamp(trip.startTs)}'")
         return trip
     }
 
     override fun startNewTrip(newTs: Long) {
-        Log.i(LOGGER_TAG, "Starting new trip, timestamp: '${formatTimestamp(newTs)}'")
+        Log.i(LOG_TAG, "Starting new trip, timestamp: '${formatTimestamp(newTs)}'")
         updateCache(newTs)
+        totalMetricsSaved.set(0)
 
         // Generate the file name
         val fileName = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$newTs.jsonl"
@@ -134,9 +139,9 @@ internal class DefaultTripManager :
             try {
                 val file = getTripFile(getContext()!!, fileName)
                 activeFileOutputStream = FileOutputStream(file, true)
-                Log.i(LOGGER_TAG, "Opened stream for file: $fileName")
+                Log.i(LOG_TAG, "Opened stream for file: $fileName")
             } catch (e: Exception) {
-                Log.e(LOGGER_TAG, "Failed to open file stream for streaming", e)
+                Log.e(LOG_TAG, "Failed to open file stream for streaming", e)
             }
         }
     }
@@ -145,11 +150,13 @@ internal class DefaultTripManager :
         tripCache.getTrip { trip ->
             val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
             val tripLength = getTripLength(trip)
-            Log.i(LOGGER_TAG, "Stopping trip, length: ${tripLength}s")
+            Log.i(LOG_TAG, "Stopping trip, length: ${tripLength}s")
 
+            // Capture the current file name in case another trip starts immediately
             val fileNameToProcess = activeTripFileName
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
+                // Close and rename on the sequential thread to guarantee all pending writes finish first
                 fileIoScope.launch {
                     try {
                         activeFileOutputStream?.flush()
@@ -162,17 +169,20 @@ internal class DefaultTripManager :
                                 val finalName = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-${trip.startTs}-$tripLength.jsonl"
                                 val finalFile = getTripFile(getContext()!!, finalName)
                                 currentFile.renameTo(finalFile)
-                                Log.i(LOGGER_TAG, "Trip stream closed and renamed to: '$finalName'")
+
+                                val totalItems = totalMetricsSaved.get()
+                                val fileSizeMb = finalFile.length() / (1024.0 * 1024.0)
+                                Log.i(LOG_TAG, "Trip stream closed. File: '$finalName' | Saved: $totalItems items | Size: ${String.format("%.2f", fileSizeMb)} MB")
                             }
                         }
                     } catch (e: java.lang.Exception) {
-                        Log.e(LOGGER_TAG, "Failed to finalize streaming trip file", e)
+                        Log.e(LOG_TAG, "Failed to finalize streaming trip file", e)
                     } finally {
                         activeTripFileName = null
                     }
                 }
             } else {
-                Log.w(LOGGER_TAG, "Trip time is less than ${MIN_TRIP_LENGTH}s. Deleting short file.")
+                Log.w(LOG_TAG, "Trip time is less than ${MIN_TRIP_LENGTH}s. Deleting short file.")
                 fileIoScope.launch {
                     try {
                         activeFileOutputStream?.close()
@@ -182,7 +192,7 @@ internal class DefaultTripManager :
                             getTripFile(getContext()!!, it).delete()
                         }
                     } catch (e: Exception) {
-                        Log.e(LOGGER_TAG, "Failed to delete short trip file", e)
+                        Log.e(LOG_TAG, "Failed to delete short trip file", e)
                     } finally {
                         activeTripFileName = null
                     }
@@ -192,11 +202,11 @@ internal class DefaultTripManager :
     }
 
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
-        Log.i(LOGGER_TAG, "Finds all trips by filter: '$filter' and profile=${profile.getCurrentProfile()}")
+        Log.i(LOG_TAG, "Finds all trips by filter: '$filter' and profile=${profile.getCurrentProfile()}")
 
         val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
-            Log.i(LOGGER_TAG, "No files were found in the trips directory.")
+            Log.i(LOG_TAG, "No files were found in the trips directory.")
             return mutableListOf()
         } else {
             val result =
@@ -211,24 +221,24 @@ internal class DefaultTripManager :
                             false
                         }
                     }.mapNotNull { fileName ->
-                        Log.d(LOGGER_TAG, "Found trip which fits the conditions: $fileName")
+                        Log.d(LOG_TAG, "Found trip which fits the conditions: $fileName")
                         tripDescParser.getTripDesc(fileName)
                     }.sortedByDescending { it.startTime.toLongOrNull() }
                     .toMutableList()
-            Log.i(LOGGER_TAG, "Found trips by filter: '$filter' for profile=${profile.getCurrentProfile()}. Result size: ${result.size}")
+            Log.i(LOG_TAG, "Found trips by filter: '$filter' for profile=${profile.getCurrentProfile()}. Result size: ${result.size}")
             return result
         }
     }
 
     override fun deleteTrip(trip: TripFileDesc) {
-        Log.i(LOGGER_TAG, "Deleting '${trip.fileName}' from the storage.")
+        Log.i(LOG_TAG, "Deleting '${trip.fileName}' from the storage.")
         val file = File(getTripsDirectory(getContext()!!), trip.fileName)
         file.delete()
-        Log.i(LOGGER_TAG, "Trip '${trip.fileName}' has been deleted from the storage.")
+        Log.i(LOG_TAG, "Trip '${trip.fileName}' has been deleted from the storage.")
     }
 
     override fun loadTrip(tripName: String) {
-        Log.i(LOGGER_TAG, "Loading '$tripName' from disk.")
+        Log.i(LOG_TAG, "Loading '$tripName' from disk.")
 
         if (tripName.isEmpty()) {
             updateCache(System.currentTimeMillis())
@@ -264,16 +274,16 @@ internal class DefaultTripManager :
                     }
                 }
 
-                Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the storage.")
-                Log.i(LOGGER_TAG, "Trip selected PIDs ${trip.entries.keys}")
-                Log.i(LOGGER_TAG, "Number of entries ${trip.entries.values.size} collected within the trip")
+                Log.i(LOG_TAG, "Trip '${file.absolutePath}' was loaded from the storage.")
+                Log.i(LOG_TAG, "Trip selected PIDs ${trip.entries.keys}")
+                Log.i(LOG_TAG, "Number of entries ${trip.entries.values.size} collected within the trip")
 
                 tripCache.updateTrip(trip)
                 tripVirtualScreenManager.updateReservedVirtualScreen(
                     trip.entries.keys.map { it.toString() }.toList()
                 )
             } catch (e: Throwable) {
-                Log.e(LOGGER_TAG, "Did not find or failed to parse trip '$tripName'.", e)
+                Log.e(LOG_TAG, "Did not find or failed to parse trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
             }
         }
@@ -287,7 +297,7 @@ internal class DefaultTripManager :
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs)
         tripCache.updateTrip(trip)
-        Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${formatTimestamp(newTs)}'")
+        Log.i(LOG_TAG, "Init new Trip with timestamp: '${formatTimestamp(newTs)}'")
     }
 
     private fun getTripLength(trip: Trip): Long =
