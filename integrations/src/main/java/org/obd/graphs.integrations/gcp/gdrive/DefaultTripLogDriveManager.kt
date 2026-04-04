@@ -29,6 +29,7 @@ import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
+import java.util.zip.GZIPOutputStream
 
 internal open class DefaultTripLogDriveManager(
     webClientId: String,
@@ -68,18 +69,31 @@ internal open class DefaultTripLogDriveManager(
                         metadata["trip.profileId"] = tripDesc.profileId
                         metadata["trip.startTime"] = tripDesc.startTime
                         metadata["trip.profileLabel"] = tripDesc.profileLabel
-                        metadata["trip.profileId"] = tripDesc.profileId
 
-                        transformer.transform(inFile, metadata).inputStream().use { outFile ->
-                            drive.uploadFile(
-                                InputStreamContent(
-                                    "text/plain",
-                                    outFile,
-                                    "$deviceId-${inFile.name.removePrefix("trip-profile_")}"
-                                ),
-                                folderId
-                            )
+                        val transformedFile = transformer.transform(inFile, metadata)
+
+                        val tempGzipFile = File(activity.cacheDir, "${inFile.name}.gz")
+
+                        tempGzipFile.outputStream().use { fos ->
+                            GZIPOutputStream(fos).use { gzipOs ->
+                                transformedFile.inputStream().use { inputStream ->
+                                    inputStream.copyTo(gzipOs)
+                                }
+                            }
                         }
+
+                        val originalName = inFile.name.removePrefix("trip-profile_")
+                        val fileName = "$deviceId-$originalName.json.gz"
+
+                        drive.uploadFile(
+                            localFile = tempGzipFile,
+                            fileName = fileName,
+                            parentFolderId = folderId,
+                            mimeType = "application/gzip"
+                        )
+
+                        tempGzipFile.delete()
+                        transformedFile.delete()
                     }
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
                 }

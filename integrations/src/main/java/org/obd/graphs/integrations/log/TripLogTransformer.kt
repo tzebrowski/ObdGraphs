@@ -32,7 +32,6 @@ internal interface TripLogTransformer {
 internal enum class OutputType { JSON }
 
 object TripLog {
-    @Suppress("UNUSED_EXPRESSION")
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
