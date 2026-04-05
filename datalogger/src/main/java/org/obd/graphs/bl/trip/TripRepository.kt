@@ -52,7 +52,6 @@ internal class FileTripRepository(
     private var activeTripId: String? = null
     private val totalMetricsSaved = AtomicLong(0)
 
-    // Single thread dispatcher guarantees sequential disk I/O
     private val ioDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     private val ioScope = CoroutineScope(ioDispatcher)
 
@@ -107,11 +106,16 @@ internal class FileTripRepository(
                 if (currentFile.exists()) {
                     val finalName = "$TRIP_FILE_PREFIX-$profile-$tripStartTs-$tripLength.jsonl"
                     val finalFile = getTripFile(finalName)
-                    currentFile.renameTo(finalFile)
 
-                    val totalItems = totalMetricsSaved.get()
-                    val fileSizeMb = finalFile.length() / (1024.0 * 1024.0)
-                    Log.i(LOGGER_TAG, "Trip finished. ID: '$finalName' | Saved: $totalItems metrics | Size: ${String.format("%.2f", fileSizeMb)} MB")
+                    val isRenamed = currentFile.renameTo(finalFile)
+
+                    if (isRenamed) {
+                        val totalItems = totalMetricsSaved.get()
+                        val fileSizeMb = finalFile.length() / (1024.0 * 1024.0)
+                        Log.i(LOGGER_TAG, "Trip finished. ID: '$finalName' | Saved: $totalItems metrics | Size: ${String.format("%.2f", fileSizeMb)} MB")
+                    } else {
+                        Log.e(LOGGER_TAG, "Failed to rename temporary trip file '$tripId' to '$finalName'.")
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(LOGGER_TAG, "Failed to update trip metadata", e)

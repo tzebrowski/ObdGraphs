@@ -57,7 +57,7 @@ private class DefaultJSONOutput(
 
     override fun transform(file: File, metadata: Map<String, String>): File =
         file.inputStream().use { input ->
-            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                 Log.d(LOG_TAG, "Received file for transformation name=${file.name}, length=${file.length()}, metadata=$metadata")
             }
 
@@ -68,7 +68,6 @@ private class DefaultJSONOutput(
         process(JsonReader(StringReader(log)), metadata)
 
     private fun process(reader: JsonReader, metadata: Map<String, String>): File {
-
         val tempFile =
             File.createTempFile("json_buffer_", ".tmp").apply {
                 deleteOnExit()
@@ -203,10 +202,6 @@ private class DefaultJSONOutput(
             }
         }
     }
-
-    // ==========================================
-    // LEGACY FORMAT PARSING HELPERS
-    // ==========================================
 
     private fun parseEntriesToMemory(
         reader: JsonReader,

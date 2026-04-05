@@ -73,6 +73,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.ConcurrentLinkedDeque
 
 private const val LOG_TAG = "Graph"
 
@@ -260,7 +261,7 @@ class GraphFragment : Fragment() {
                 val sensorData =
                     SensorData(
                         id = it.command.pid.id,
-                        metrics = mutableListOf(),
+                        metrics = ConcurrentLinkedDeque(),
                         min = hist.min,
                         max = hist.max,
                         mean = hist.mean

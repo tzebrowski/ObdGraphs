@@ -67,15 +67,14 @@ internal class DefaultTripManager :
 
                 repository.saveMetric(metric)
 
-                if (trip.entries.containsKey(key)) {
-                    val tripEntry = trip.entries[key]!!
-                    tripEntry.metrics.add(metric)
+                val tripEntry = trip.entries.getOrPut(key) {
+                    SensorData(id = key)
+                }
 
-                    if (tripEntry.metrics.size > MAX_CACHED_METRICS_PER_SENSOR) {
-                        tripEntry.metrics.removeAt(0)
-                    }
-                } else {
-                    trip.entries[key] = SensorData(id = key, metrics = mutableListOf(metric))
+                tripEntry.metrics.add(metric)
+
+                while (tripEntry.metrics.size > MAX_CACHED_METRICS_PER_SENSOR) {
+                    tripEntry.metrics.removeFirst()
                 }
             }
         } catch (e: Throwable) {
@@ -84,11 +83,12 @@ internal class DefaultTripManager :
     }
 
     override fun getCurrentTrip(): Trip {
-        if (null == tripCache.getTrip()) {
-            startNewTrip(System.currentTimeMillis())
+        val trip = tripCache.getTrip() ?: run {
+            val newTs = System.currentTimeMillis()
+            startNewTrip(newTs)
+            tripCache.getTrip() ?: Trip(startTs = newTs)
         }
 
-        val trip = tripCache.getTrip()!!
         Log.i(LOGGER_TAG, "Get current trip ts: '${formatTimestamp(trip.startTs)}'")
         return trip
     }
