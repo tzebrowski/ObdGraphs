@@ -20,6 +20,7 @@ import android.util.Log
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import java.io.EOFException
 import java.io.File
 import java.io.InputStreamReader
 import java.io.StringReader
@@ -42,6 +43,8 @@ object TripLog {
         }
 }
 
+private const val LOG_TAG = "DefaultJSONOutput"
+
 private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
     private val valueMapper: (signal: Int, value: Any) -> Any
@@ -54,6 +57,10 @@ private class DefaultJSONOutput(
 
     override fun transform(file: File, metadata: Map<String, String>): File =
         file.inputStream().use { input ->
+            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received file for transformation name=${file.name}, length=${file.length()}, metadata=$metadata")
+            }
+
             process(JsonReader(InputStreamReader(input)), metadata)
         }
 
@@ -61,7 +68,7 @@ private class DefaultJSONOutput(
         process(JsonReader(StringReader(log)), metadata)
 
     private fun process(reader: JsonReader, metadata: Map<String, String>): File {
-        Log.d("DefaultJSONOutput", "Received $metadata")
+
         val tempFile =
             File.createTempFile("json_buffer_", ".tmp").apply {
                 deleteOnExit()
@@ -71,7 +78,67 @@ private class DefaultJSONOutput(
 
         try {
             reader.isLenient = true
-            parseRootToMemory(reader, seriesMap)
+
+            // Hybrid parsing loop supports both Legacy JSON and New JSONL
+            try {
+                while (reader.peek() != JsonToken.END_DOCUMENT) {
+                    if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                        reader.beginObject()
+
+                        var ts: Long = 0
+                        var signal = 0
+                        var value: Any = 0.0
+                        var isFlatMetric = false
+
+                        while (reader.hasNext()) {
+                            when (reader.nextName()) {
+                                // LEGACY FORMAT ROUTES
+                                "startTs" -> reader.skipValue()
+                                "entries" -> parseEntriesToMemory(reader, seriesMap)
+
+                                // NEW JSONL FORMAT ROUTES
+                                "ts" -> {
+                                    isFlatMetric = true
+                                    ts = reader.nextLong()
+                                }
+                                "entry" -> {
+                                    isFlatMetric = true
+                                    reader.beginObject()
+                                    while (reader.hasNext()) {
+                                        when (reader.nextName()) {
+                                            "data" -> signal = reader.nextInt()
+                                            "y" -> {
+                                                value = if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                                                    reader.readMap()
+                                                } else {
+                                                    reader.nextDouble()
+                                                }
+                                            }
+                                            else -> reader.skipValue()
+                                        }
+                                    }
+                                    reader.endObject()
+                                }
+                                else -> reader.skipValue()
+                            }
+                        }
+                        reader.endObject()
+
+                        if (isFlatMetric) {
+                            val signalKey = signal.toString()
+                            val mappedResult = valueMapper(signal, value)
+
+                            val series = seriesMap.getOrPut(signalKey) { SeriesData() }
+                            series.timestamps.add(ts)
+                            series.values.add(mappedResult)
+                        }
+                    } else {
+                        reader.skipValue()
+                    }
+                }
+            } catch (e: EOFException) {
+                // Safely reached the end of the stream
+            }
 
             tempFile.outputStream().bufferedWriter().use { fileWriter ->
                 JsonWriter(fileWriter).use { writer ->
@@ -126,6 +193,7 @@ private class DefaultJSONOutput(
             }
             return tempFile
         } catch (e: Exception) {
+            e.printStackTrace()
             tempFile.delete()
             throw e
         } finally {
@@ -136,20 +204,9 @@ private class DefaultJSONOutput(
         }
     }
 
-    private fun parseRootToMemory(
-        reader: JsonReader,
-        seriesMap: MutableMap<String, SeriesData>
-    ) {
-        reader.beginObject()
-        while (reader.hasNext()) {
-            if (reader.nextName() == "entries") {
-                parseEntriesToMemory(reader, seriesMap)
-            } else {
-                reader.skipValue()
-            }
-        }
-        reader.endObject()
-    }
+    // ==========================================
+    // LEGACY FORMAT PARSING HELPERS
+    // ==========================================
 
     private fun parseEntriesToMemory(
         reader: JsonReader,
