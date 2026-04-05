@@ -279,4 +279,52 @@ class TripLogTransformerTest {
         val expected = """{"signal_dictionary":{},"series":{}}"""
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `optimize should convert jsonl flat format to optimized columnar format`() {
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"x": 100.0, "y": 50.5, "data": 12}, "rawAnswer": "ignore me"}
+            {"ts": 2000, "entry": {"x": 101.0, "y": 60.5, "data": 12}, "rawAnswer": ""}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        val expectedJson =
+            """{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000,2000],"v":[50.5,60.5]}}}"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
+    }
+
+    @Test
+    fun `jsonl parsing should handle mixed signals`() {
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 1500, "entry": {"data": 13, "y": 60.5}}
+            {"ts": 2000, "entry": {"data": 12, "y": 70.5}}
+        """.trimIndent()
+
+        val signalMapper = mapOf(12 to "Boost", 13 to "RPM")
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper = signalMapper) { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        val expectedJson =
+            """{"signal_dictionary":{"12":"Boost","13":"RPM"},"series":{"12":{"t":[1000,2000],"v":[50.5,70.5]},"13":{"t":[1500],"v":[60.5]}}}"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
+    }
+
+    @Test
+    fun `jsonl format should support map type in value field`() {
+        val rawJsonl = """
+            {"ts": 1500, "entry": {"data": 99, "y": {"GPS altitude": 57.10662841796875, "GPS Location": { "altitude": 57.10662841796875, "accuracy": 46.843723, "latitude": 54.16406183, "longitude": 16.29066863}}}, "rawAnswer": "raw"}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        val expectedJson = """{"signal_dictionary":{"99":"99"},"series":{"99":{"t":[1500],"v":[{"GPS altitude":57.10662841796875,"GPS Location":{"altitude":57.10662841796875,"accuracy":46.843723,"latitude":54.16406183,"longitude":16.29066863}}]}}}"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
+    }
 }

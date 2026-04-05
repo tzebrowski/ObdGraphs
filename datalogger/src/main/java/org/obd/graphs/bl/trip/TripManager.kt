@@ -28,7 +28,7 @@ private const val LOG_TAG = "TripManager"
 interface TripManager : MetricsProcessor {
     fun getCurrentTrip(): Trip
     fun startNewTrip(newTs: Long)
-    fun saveCurrentTrip(f: () -> Unit)
+    fun saveCurrentTrip()
     fun getTripsDirectory(context: Context): String
 
     fun saveCurrentTripAsync(){
@@ -37,7 +37,7 @@ interface TripManager : MetricsProcessor {
 
         runAsync (wait = false) {
             try {
-                tripManager.saveCurrentTrip {}
+                tripManager.saveCurrentTrip()
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
