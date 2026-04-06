@@ -19,7 +19,6 @@ package org.obd.graphs.bl.trip
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.obd.metrics.transport.message.ConnectorResponse
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedDeque
 
 data class TripFileDesc(
     val fileName: String,
@@ -46,7 +45,7 @@ data class Metric(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SensorData(
     val id: Long,
-    val metrics: ConcurrentLinkedDeque<Metric> = ConcurrentLinkedDeque(),
+    val metrics: ArrayDeque<Metric> = ArrayDeque(),
     var min: Number = 0,
     var max: Number = 0,
     var mean: Number = 0

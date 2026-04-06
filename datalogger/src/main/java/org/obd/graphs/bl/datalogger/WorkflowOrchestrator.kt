@@ -141,7 +141,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 "Collecting process is completed."
             )
             sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
-            tripManager.saveCurrentTripAsync()
+            tripManager.saveCurrentTrip()
         }
     }
 

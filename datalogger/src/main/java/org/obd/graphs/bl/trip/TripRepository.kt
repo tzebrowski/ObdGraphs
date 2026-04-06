@@ -26,7 +26,7 @@ import java.io.FileOutputStream
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
-private const val LOGGER_TAG = "TripRepository"
+private const val LOG_TAG = "TripRepository"
 private const val TRIP_DIRECTORY = "trips"
 private const val TRIP_FILE_PREFIX = "trip"
 
@@ -66,9 +66,9 @@ internal class FileTripRepository(
             try {
                 val file = getTripFile(activeTripId!!)
                 activeFileOutputStream = FileOutputStream(file, true)
-                Log.i(LOGGER_TAG, "Started saving trip to: $activeTripId")
+                Log.i(LOG_TAG, "Started saving trip to: $activeTripId")
             } catch (e: Exception) {
-                Log.e(LOGGER_TAG, "Failed to initialize storage for trip", e)
+                Log.e(LOG_TAG, "Failed to initialize storage for trip", e)
             }
         }
     }
@@ -80,7 +80,7 @@ internal class FileTripRepository(
                 activeFileOutputStream?.close()
                 activeFileOutputStream = null
             } catch (e: Exception) {
-                Log.e(LOGGER_TAG, "Failed to release storage", e)
+                Log.e(LOG_TAG, "Failed to release storage", e)
             }
         }
     }
@@ -94,7 +94,7 @@ internal class FileTripRepository(
                     totalMetricsSaved.incrementAndGet()
                 }
             } catch (e: Exception) {
-                Log.e(LOGGER_TAG, "Failed to save metric", e)
+                Log.e(LOG_TAG, "Failed to save metric", e)
             }
         }
     }
@@ -112,13 +112,13 @@ internal class FileTripRepository(
                     if (isRenamed) {
                         val totalItems = totalMetricsSaved.get()
                         val fileSizeMb = finalFile.length() / (1024.0 * 1024.0)
-                        Log.i(LOGGER_TAG, "Trip finished. ID: '$finalName' | Saved: $totalItems metrics | Size: ${String.format("%.2f", fileSizeMb)} MB")
+                        Log.i(LOG_TAG, "Trip finished. ID: '$finalName' | Saved: $totalItems metrics | Size: ${String.format("%.2f", fileSizeMb)} MB")
                     } else {
-                        Log.e(LOGGER_TAG, "Failed to rename temporary trip file '$tripId' to '$finalName'.")
+                        Log.e(LOG_TAG, "Failed to rename temporary trip file '$tripId' to '$finalName'.")
                     }
                 }
             } catch (e: Exception) {
-                Log.e(LOGGER_TAG, "Failed to update trip metadata", e)
+                Log.e(LOG_TAG, "Failed to update trip metadata", e)
             } finally {
                 activeTripId = null
             }
@@ -129,9 +129,9 @@ internal class FileTripRepository(
         ioScope.launch {
             try {
                 getTripFile(tripId).delete()
-                Log.i(LOGGER_TAG, "Deleted trip data: $tripId")
+                Log.i(LOG_TAG, "Deleted trip data: $tripId")
             } catch (e: Exception) {
-                Log.e(LOGGER_TAG, "Failed to delete trip data", e)
+                Log.e(LOG_TAG, "Failed to delete trip data", e)
             } finally {
                 if (activeTripId == tripId) activeTripId = null
             }
