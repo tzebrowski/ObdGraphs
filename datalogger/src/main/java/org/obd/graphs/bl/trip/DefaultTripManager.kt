@@ -170,11 +170,12 @@ internal class DefaultTripManager : TripManager {
         runAsync(wait = false) {
             try {
                 tripCache.getTrip { trip ->
+                    var ts = System.currentTimeMillis()
                     val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
                     val tripLength = getTripLength(trip)
                     val currentTripId = activeTripId ?: return@getTrip
 
-                    Log.i(LOG_TAG, "Stopping trip, length: ${tripLength}s")
+                    Log.i(LOG_TAG, "Stopping current trip: $currentTripId, length: ${tripLength}s")
 
                     repository.releaseStorage(currentTripId)
 
@@ -186,6 +187,8 @@ internal class DefaultTripManager : TripManager {
                     }
 
                     activeTripId = null
+                    ts = System.currentTimeMillis() - ts
+                    Log.i(LOG_TAG, "Trip: $currentTripId is saved. It took $ts ms")
                 }
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
