@@ -16,6 +16,8 @@
  */
 package org.obd.graphs
 
+const val TRIP_LOG_WRITE_COMPLETED = "trip.log.write.completed.event"
+
 const val LANGUAGE_CHANGE_EVENT = "lang.change.event"
 
 const val SCREEN_LOCK_DIALOG_CANCELLED_EVENT = "screen.lock.dialog.cancelled.event"

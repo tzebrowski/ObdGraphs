@@ -21,6 +21,7 @@ import android.util.Log
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.ScreenLock
+import org.obd.graphs.TRIP_LOG_WRITE_COMPLETED
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.commons.R
@@ -188,6 +189,7 @@ internal class DefaultTripManager : TripManager {
 
                     activeTripId = null
                     ts = System.currentTimeMillis() - ts
+                    sendBroadcastEvent(TRIP_LOG_WRITE_COMPLETED)
                     Log.i(LOG_TAG, "Trip: $currentTripId is saved. It took $ts ms")
                 }
             } finally {

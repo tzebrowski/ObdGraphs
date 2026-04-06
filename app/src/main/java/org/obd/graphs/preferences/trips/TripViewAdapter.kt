@@ -19,6 +19,9 @@ package org.obd.graphs.preferences.trips
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +40,7 @@ import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.core.graphics.toColorInt
 
 private const val LOGGER_KEY = "TripsViewAdapter"
 
@@ -80,7 +84,28 @@ class TripViewAdapter internal constructor(
                 startTs = dateFormat.format(Date(it))
             }
 
-            holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
+            source.startTime.toLongOrNull()?.let {
+                startTs = dateFormat.format(Date(it))
+            }
+
+            if (source.isSynced) {
+                val syncText = "  ☁️ Synced"
+                val fullText = startTs + syncText
+
+                holder.tripStartDate.setText(fullText, Color.GRAY, Typeface.NORMAL, 0.9f)
+
+                val spannable = SpannableString(fullText)
+                spannable.setSpan(
+                    ForegroundColorSpan("#4CAF50".toColorInt()), // A nice Material Green
+                    startTs.length,
+                    fullText.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                holder.tripStartDate.text = spannable
+            } else {
+                holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
+            }
 
             holder.selected.isChecked = checked
             holder.selected.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -90,6 +115,7 @@ class TripViewAdapter internal constructor(
             }
 
             holder.tripTime.let {
+
                 val seconds: Int = source.tripTimeSec.toInt() % 60
                 var hours: Int = source.tripTimeSec.toInt() / 60
                 val minutes = hours % 60
@@ -99,6 +125,7 @@ class TripViewAdapter internal constructor(
                 }:${seconds.toString().padStart(2, '0')}s"
 
                 it.setText(text, Color.GRAY, Typeface.BOLD, 0.9f)
+
             }
         }
     }

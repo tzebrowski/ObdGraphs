@@ -25,6 +25,8 @@ import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.trip.TripDescParser
+import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
+import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.uploadFile
 import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.sendBroadcastEvent
