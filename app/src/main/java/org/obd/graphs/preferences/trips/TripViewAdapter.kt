@@ -119,7 +119,7 @@ class TripViewAdapter internal constructor(
         init {
             if (showDeleteButton) {
                 loadTrip.setOnClickListener {
-                    tripManager.loadTripAsync(data.elementAt(adapterPosition).source.fileName)
+                    tripManager.loadTrip(data.elementAt(adapterPosition).source.fileName)
                 }
 
                 deleteTrip.setOnClickListener {
