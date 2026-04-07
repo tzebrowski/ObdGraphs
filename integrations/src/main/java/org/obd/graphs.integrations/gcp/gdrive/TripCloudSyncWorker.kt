@@ -41,6 +41,8 @@ import org.obd.graphs.integrations.gcp.authorization.SilentAuthorization
 import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
 import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.isEnabled
 import java.io.File
 
 private const val LOG_TAG = "TripCloudSyncWorker"
@@ -50,26 +52,32 @@ object DriveSync {
 
     fun start(context: Context) {
         try {
-            Log.i(LOG_TAG, "Drive start sync scheduling")
+            val enabled = Prefs.isEnabled("pref.trips.drive.auto_sync")
 
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.UNMETERED)
-                .setRequiresBatteryNotLow(true)
-                .build()
+            Log.i(LOG_TAG, "Received trips drive auto-sync request, sync enabled=$enabled")
 
-            val syncRequest = OneTimeWorkRequestBuilder<TripCloudSyncWorker>()
-                .setConstraints(constraints)
-                .build()
+            if (enabled) {
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.UNMETERED)
+                    .setRequiresBatteryNotLow(true)
+                    .build()
 
-            WorkManager.getInstance(context).enqueueUniqueWork(
-                SYNC_WORK_NAME,
-                ExistingWorkPolicy.KEEP,
-                syncRequest
-            )
+                val syncRequest = OneTimeWorkRequestBuilder<TripCloudSyncWorker>()
+                    .setConstraints(constraints)
+                    .build()
 
-            Log.i(LOG_TAG, "Drive sync scheduled")
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    SYNC_WORK_NAME,
+                    ExistingWorkPolicy.KEEP,
+                    syncRequest
+                )
+
+                Log.i(LOG_TAG, "Drive auto-sync is scheduled")
+            } else {
+                Log.i(LOG_TAG, "Skipping Trips Drive auto-sync")
+            }
         } catch (e: Exception) {
-            Log.e(LOG_TAG, "Failed to schedule drive sync", e)
+            Log.e(LOG_TAG, "Failed to schedule drive auto-sync", e)
         }
     }
 }
