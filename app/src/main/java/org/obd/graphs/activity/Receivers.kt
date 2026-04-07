@@ -104,7 +104,7 @@ private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         TRIP_LOG_WRITE_COMPLETED -> {
-            DriveSync.start()
+            DriveSync.start(this)
         }
 
         DATA_LOGGER_SCHEDULED_STOP_EVENT -> {

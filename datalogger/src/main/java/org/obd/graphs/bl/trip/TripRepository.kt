@@ -148,7 +148,7 @@ internal class FileTripRepository(
             .filter {
                 try {
                     parser.decodeTripName(it).size > 3
-                } catch (_ : Throwable) {
+                } catch (_: Throwable) {
                     false
                 }
             }.mapNotNull { fileName ->

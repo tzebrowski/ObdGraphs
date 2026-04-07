@@ -20,6 +20,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -36,29 +37,40 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.trip.TripDescParser
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.getContext
 import org.obd.graphs.integrations.gcp.authorization.SilentAuthorization
 import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
-import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.uploadFile
 import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
 import java.io.File
-import java.util.zip.GZIPOutputStream
 
 private const val LOG_TAG = "TripCloudSyncWorker"
+private const val SYNC_WORK_NAME = "TripCloudSync"
 
 object DriveSync {
-    fun start() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.UNMETERED)
-            .setRequiresBatteryNotLow(true)
-            .build()
 
-        val syncRequest = OneTimeWorkRequestBuilder<TripCloudSyncWorker>()
-            .setConstraints(constraints)
-            .build()
+    fun start(context: Context) {
+        try {
+            Log.i(LOG_TAG, "Drive start sync scheduling")
 
-        WorkManager.getInstance(getContext()!!).enqueue(syncRequest)
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.UNMETERED)
+                .setRequiresBatteryNotLow(true)
+                .build()
+
+            val syncRequest = OneTimeWorkRequestBuilder<TripCloudSyncWorker>()
+                .setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                SYNC_WORK_NAME,
+                ExistingWorkPolicy.KEEP,
+                syncRequest
+            )
+
+            Log.i(LOG_TAG, "Drive sync scheduled")
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to schedule drive sync", e)
+        }
     }
 }
 
@@ -69,20 +81,23 @@ internal class TripCloudSyncWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val context = applicationContext
-
-        val directory = File(tripManager.getTripsDirectory(context))
-        val unsyncedFiles = directory.listFiles()?.filter {
-            it.name.startsWith("trip-") && !it.name.endsWith(".synced")
-        } ?: emptyList()
-
-        if (unsyncedFiles.isEmpty()) {
-            return@withContext Result.success()
-        }
-
         val token = SilentAuthorization.getAccessTokenSilently(context)
-            ?: return@withContext Result.retry() // Try again later if auth fails
+            ?: return@withContext Result.retry()
 
         try {
+            Log.i(LOG_TAG, "Received sync request")
+
+            val directory = File(tripManager.getTripsDirectory(context))
+            val unsyncedFiles = directory.listFiles()?.filter {
+                it.name.startsWith("trip-") && !it.name.endsWith(".synced")
+            } ?: emptyList()
+
+            Log.i(LOG_TAG, "Number of files to sync: ${unsyncedFiles.size}")
+
+            if (unsyncedFiles.isEmpty()) {
+                return@withContext Result.success()
+            }
+
             val driveService = Drive.Builder(
                 NetHttpTransport.Builder().build(),
                 GsonFactory(),
@@ -109,31 +124,16 @@ internal class TripCloudSyncWorker(
             unsyncedFiles.forEach { inFile ->
                 Log.i(LOG_TAG, "Syncing file: ${inFile.name}")
 
-                val metadata = mutableMapOf<String, String>()
-                val tripDesc = tripDescParser.getTripDesc(inFile.name)
-                metadata["trip.duration"] = tripDesc.tripTimeSec
-                metadata["trip.profileId"] = tripDesc.profileId
-                metadata["trip.startTime"] = tripDesc.startTime
-                metadata["trip.profileLabel"] = tripDesc.profileLabel
-
-                val transformedFile = transformer.transform(inFile, metadata)
-                val tempGzipFile = File(context.cacheDir, "${inFile.name}.gz")
-
-                tempGzipFile.outputStream().use { fos ->
-                    GZIPOutputStream(fos).use { gzipOs ->
-                        transformedFile.inputStream().use { inputStream ->
-                            inputStream.copyTo(gzipOs)
-                        }
-                    }
+                with(TripUpload) {
+                    driveService.transformAndUploadTrip(
+                        inFile = inFile,
+                        cacheDir = context.cacheDir,
+                        folderId = folderId,
+                        deviceId = deviceId,
+                        transformer = transformer,
+                        tripDescParser = tripDescParser
+                    )
                 }
-
-                val originalName = inFile.name.removePrefix("trip-profile_")
-                val fileName = "$deviceId-$originalName.json.gz"
-
-                driveService.uploadFile(tempGzipFile, fileName, folderId, "application/gzip")
-
-                tempGzipFile.delete()
-                transformedFile.delete()
 
                 inFile.renameTo(File(inFile.absolutePath + ".synced"))
             }

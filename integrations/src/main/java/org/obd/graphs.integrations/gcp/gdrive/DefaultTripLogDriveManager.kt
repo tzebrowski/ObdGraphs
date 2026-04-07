@@ -22,16 +22,10 @@ import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.trip.TripDescParser
 import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
-import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.uploadFile
-import org.obd.graphs.integrations.log.OutputType
-import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
-import java.util.zip.GZIPOutputStream
 
 internal open class DefaultTripLogDriveManager(
     webClientId: String,
@@ -50,53 +44,24 @@ internal open class DefaultTripLogDriveManager(
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
-                    val definitions = DataLoggerRepository.getPidDefinitionRegistry().findAll()
-                    val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n", " ") }
-                    val pidMap = definitions.associateBy { it.id.toInt() }
-                    val transformer =
-                        TripLog.transformer(OutputType.JSON, signalsMapper) { s, v ->
-                            if (v is Number) {
-                                (pidMap[s]?.scaleToRange(v.toFloat())) ?: v
-                            } else {
-                                v
-                            }
-                        }
 
+                    val transformer = TripUpload.buildTransformer()
+                    val tripDescParser = TripDescParser()
                     val deviceId = Device.id()
+
                     files.forEach { inFile ->
-
-                        val metadata = mutableMapOf<String, String>()
-                        val tripDesc = TripDescParser().getTripDesc(inFile.name)
-                        metadata["trip.duration"] = tripDesc.tripTimeSec
-                        metadata["trip.profileId"] = tripDesc.profileId
-                        metadata["trip.startTime"] = tripDesc.startTime
-                        metadata["trip.profileLabel"] = tripDesc.profileLabel
-
-                        val transformedFile = transformer.transform(inFile, metadata)
-
-                        val tempGzipFile = File(activity.cacheDir, "${inFile.name}.gz")
-
-                        tempGzipFile.outputStream().use { fos ->
-                            GZIPOutputStream(fos).use { gzipOs ->
-                                transformedFile.inputStream().use { inputStream ->
-                                    inputStream.copyTo(gzipOs)
-                                }
-                            }
+                        with(TripUpload) {
+                            drive.transformAndUploadTrip(
+                                inFile = inFile,
+                                cacheDir = activity.cacheDir,
+                                folderId = folderId,
+                                deviceId = deviceId,
+                                transformer = transformer,
+                                tripDescParser = tripDescParser
+                            )
                         }
-
-                        val originalName = inFile.name.removePrefix("trip-profile_")
-                        val fileName = "$deviceId-$originalName.json.gz"
-
-                        drive.uploadFile(
-                            localFile = tempGzipFile,
-                            fileName = fileName,
-                            parentFolderId = folderId,
-                            mimeType = "application/gzip"
-                        )
-
-                        tempGzipFile.delete()
-                        transformedFile.delete()
                     }
+
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
                 }
             }

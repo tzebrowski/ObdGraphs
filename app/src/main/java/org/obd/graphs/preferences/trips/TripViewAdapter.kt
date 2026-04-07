@@ -31,6 +31,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.trip.tripManager
@@ -40,7 +41,6 @@ import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.core.graphics.toColorInt
 
 private const val LOGGER_KEY = "TripsViewAdapter"
 
@@ -115,7 +115,6 @@ class TripViewAdapter internal constructor(
             }
 
             holder.tripTime.let {
-
                 val seconds: Int = source.tripTimeSec.toInt() % 60
                 var hours: Int = source.tripTimeSec.toInt() / 60
                 val minutes = hours % 60
@@ -125,7 +124,6 @@ class TripViewAdapter internal constructor(
                 }:${seconds.toString().padStart(2, '0')}s"
 
                 it.setText(text, Color.GRAY, Typeface.BOLD, 0.9f)
-
             }
         }
     }
