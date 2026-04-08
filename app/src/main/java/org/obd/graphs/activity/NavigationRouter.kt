@@ -33,7 +33,7 @@ import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GRAPH
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_PERFORMANCE
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_TRIP_INFO
 import org.obd.graphs.preferences.PREF_GAUGE_TRIPS
-import org.obd.graphs.preferences.PREF_LOGS
+import org.obd.graphs.preferences.PREF_TRIP_LOGS
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
@@ -109,7 +109,7 @@ internal object NavigationRouter {
             R.id.nav_preferences -> navigateToPreferencesScreen("pref.root")
             R.id.navigation_adapter_connection -> navigateToPreferencesScreen("pref.adapter.connection")
             R.id.navigation_adapter_settings -> navigateToPreferencesScreen("pref.adapter")
-            R.id.navigation_trip_logs -> navigateToPreferencesScreen(PREF_LOGS)
+            R.id.navigation_trip_logs -> navigateToPreferencesScreen(PREF_TRIP_LOGS)
 
             R.id.navigation_giulia -> navigateToScreen(R.id.nav_giulia)
             R.id.navigation_graph -> navigateToScreen(R.id.nav_graph)

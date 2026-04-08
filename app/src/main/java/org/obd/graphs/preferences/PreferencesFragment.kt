@@ -60,7 +60,7 @@ const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 const val PREF_GAUGE_TRIPS = "pref.gauge.recordings"
-const val PREF_LOGS = "pref.trip_logs"
+const val PREF_TRIP_LOGS = "pref.trip_logs"
 
 const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 private const val LOG_KEY = "Prefs"
@@ -278,7 +278,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPreferenceDialogFor(preferenceKey: String) {
         when (preferenceKey) {
             PREF_GAUGE_TRIPS -> TripLogListDialogFragment(enableUploadCloudButton = false).show(parentFragmentManager, null)
-            PREF_LOGS -> TripLogListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
+            PREF_TRIP_LOGS -> TripLogListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog(

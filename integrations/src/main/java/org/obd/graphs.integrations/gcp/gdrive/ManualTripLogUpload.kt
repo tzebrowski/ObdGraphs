@@ -27,13 +27,13 @@ import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
-internal open class DefaultTripLogDriveManager(
+internal open class ManualTripLogUpload(
     webClientId: String,
     activity: Activity,
     fragment: Fragment?
 ) : AbstractDriveManager(webClientId, activity, fragment),
     TripLogDriveManager {
-    override suspend fun exportTrips(files: List<File>) =
+    override suspend fun uploadTrips(files: List<File>) =
         signInAndExecute("exportTrips") { token ->
             executeDriveOperation(
                 accessToken = token,
@@ -59,6 +59,10 @@ internal open class DefaultTripLogDriveManager(
                                 transformer = transformer,
                                 tripDescParser = tripDescParser
                             )
+                        }
+
+                        if (!inFile.path.endsWith(".synced")) {
+                            inFile.renameTo(File(inFile.absolutePath + ".synced"))
                         }
                     }
 
