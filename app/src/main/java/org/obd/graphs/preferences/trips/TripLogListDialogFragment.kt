@@ -17,6 +17,9 @@
 package org.obd.graphs.preferences.trips
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,11 +36,13 @@ import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
+import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.integrations.gcp.gdrive.TripLogDriveManager
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
@@ -51,6 +56,39 @@ class TripLogListDialogFragment(
     private val enableUploadCloudButton: Boolean = true
 ) : CoreDialogFragment() {
     private lateinit var tripLogDriveManager: TripLogDriveManager
+
+    private lateinit var adapter: TripViewAdapter
+
+    private var broadcastReceiver =
+        object : BroadcastReceiver() {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?
+            ) {
+                when (intent?.action) {
+                    TRIPS_UPLOAD_SUCCESSFUL -> {
+                        if (isAdded && isVisible) {
+                            adapter.data = tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList()
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+        }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        registerReceiver(activity, broadcastReceiver) {
+            it.addAction(TRIPS_UPLOAD_SUCCESSFUL)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,12 +104,13 @@ class TripLogListDialogFragment(
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
-        val adapter =
+        adapter =
             TripViewAdapter(
                 context,
                 tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList(),
                 enableDeleteButtons
             )
+
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -131,7 +170,7 @@ class TripLogListDialogFragment(
                                 sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                             } else {
                                 lifecycleScope.launch {
-                                    tripLogDriveManager.exportTrips(files)
+                                    tripLogDriveManager.uploadTrips(files)
                                 }
                             }
                         }.setNegativeButton(no) { dialog, _ ->

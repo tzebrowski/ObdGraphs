@@ -28,17 +28,21 @@ class TripDescParser {
         val startTime = if (p.size > 2) p[2] else ""
         val tripTimeSec = if (p.size > 3) p[3] else "0"
 
+        val isSynced = fileName.endsWith(".synced")
+
         return TripFileDesc(
             fileName = fileName,
             profileId = profileId,
             profileLabel = profileLabel,
             startTime = startTime,
-            tripTimeSec = tripTimeSec
+            tripTimeSec = tripTimeSec,
+            isSynced = isSynced
         )
     }
 
     fun decodeTripName(fileName: String): List<String> {
-        val nameWithoutExtension = fileName.substringBeforeLast(".")
+        val cleanName = fileName.removeSuffix(".synced")
+        val nameWithoutExtension = cleanName.substringBeforeLast(".")
         return nameWithoutExtension.split("-")
     }
 }

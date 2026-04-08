@@ -46,6 +46,9 @@ dependencies {
     implementation project(":datalogger")
     implementation("com.google.code.gson:gson:2.10.1")
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3"
+    implementation "androidx.work:work-runtime-ktx:2.9.1"
+
     // This specific library provides lifecycleScope
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
     // (Optional) If you are using it in a ViewModel, you might also need:

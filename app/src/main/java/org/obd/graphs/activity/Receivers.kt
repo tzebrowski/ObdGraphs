@@ -54,6 +54,7 @@ import org.obd.graphs.ScreenLock
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
+import org.obd.graphs.TRIP_LOG_WRITE_COMPLETED
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
@@ -75,6 +76,7 @@ import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_IDLING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_RUNNING
 import org.obd.graphs.getContext
 import org.obd.graphs.getSerializableCompat
+import org.obd.graphs.integrations.gcp.gdrive.DriveSync
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -101,6 +103,10 @@ private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
+        TRIP_LOG_WRITE_COMPLETED -> {
+            DriveSync.start(this)
+        }
+
         DATA_LOGGER_SCHEDULED_STOP_EVENT -> {
             Log.d(
                 LOG_TAG,
@@ -388,6 +394,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
         it.addAction(DATA_LOGGER_SCHEDULED_STOP_EVENT)
         it.addAction(PROFILE_NAME_CHANGED_EVENT)
+        it.addAction(TRIP_LOG_WRITE_COMPLETED)
     }
 
     registerReceiver(this, DataLoggerRepository.broadcastReceivers()) {

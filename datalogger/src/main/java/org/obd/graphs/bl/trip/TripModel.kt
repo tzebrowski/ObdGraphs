@@ -25,7 +25,8 @@ data class TripFileDesc(
     val profileId: String,
     val profileLabel: String,
     val startTime: String,
-    val tripTimeSec: String
+    val tripTimeSec: String,
+    val isSynced: Boolean = false
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

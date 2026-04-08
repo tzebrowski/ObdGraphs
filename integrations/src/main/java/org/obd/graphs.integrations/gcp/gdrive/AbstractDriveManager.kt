@@ -23,7 +23,6 @@ import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.AbstractInputStreamContent
-import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
@@ -32,10 +31,8 @@ import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
-import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
-import com.google.api.services.drive.model.File as DriveFile
 
 private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "AbstractDriveManager"
@@ -105,98 +102,6 @@ internal abstract class AbstractDriveManager(
             } finally {
                 onFinally()
             }
-        }
-    }
-
-    fun Drive.uploadFile(
-        content: InputStreamContent,
-        parentFolderId: String
-    ): DriveFile {
-        Log.i(TAG, "Uploading file ${content.fileName}")
-        val metadata =
-            DriveFile().apply {
-                name = content.fileName
-                parents = listOf(parentFolderId)
-            }
-
-        val uploaded =
-            this
-                .files()
-                .create(metadata, content)
-                .setFields("id")
-                .execute()
-
-        Log.i(TAG, "Uploaded ${content.fileName}, ID: ${uploaded.id}")
-        return uploaded
-    }
-
-    fun Drive.uploadFile(
-        localFile: File,
-        fileName: String,
-        parentFolderId: String,
-        mimeType: String = "text/plain"
-    ): DriveFile {
-        Log.i(TAG, "Uploading file ${localFile.absolutePath} to $fileName")
-        val metadata =
-            DriveFile().apply {
-                name = fileName
-                parents = listOf(parentFolderId)
-            }
-        val content = FileContent(mimeType, localFile)
-
-        val uploaded =
-            this
-                .files()
-                .create(metadata, content)
-                .setFields("id")
-                .execute()
-
-        Log.i(TAG, "Uploaded ${localFile.name}, ID: ${uploaded.id} as $fileName")
-        return uploaded
-    }
-
-    protected fun Drive.findFolderIdRecursive(path: String): String {
-        val folderNames = path.split("/").filter { it.isNotEmpty() }
-        var currentParentId = "root"
-        for (folderName in folderNames) {
-            currentParentId = findOrCreateSingleFolder(this, folderName, currentParentId)
-        }
-        return currentParentId
-    }
-
-    private fun findOrCreateSingleFolder(
-        drive: Drive,
-        folderName: String,
-        parentId: String
-    ): String {
-        val query =
-            "mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and '$parentId' in parents and trashed = false"
-
-        val files =
-            drive
-                .files()
-                .list()
-                .setQ(query)
-                .setSpaces("drive")
-                .setFields("files(id, name)")
-                .execute()
-                .files
-
-        return if (files.isNotEmpty()) {
-            files.first().id
-        } else {
-            val metadata =
-                DriveFile().apply {
-                    name = folderName
-                    mimeType = "application/vnd.google-apps.folder"
-                    parents = listOf(parentId)
-                }
-            drive
-                .files()
-                .create(metadata)
-                .setFields("id")
-                .execute()
-                .id
         }
     }
 

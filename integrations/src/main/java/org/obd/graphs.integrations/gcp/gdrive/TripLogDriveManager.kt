@@ -21,13 +21,13 @@ import androidx.fragment.app.Fragment
 import java.io.File
 
 interface TripLogDriveManager {
-    suspend fun exportTrips(files: List<File>)
+    suspend fun uploadTrips(files: List<File>)
 
     companion object {
         fun instance(
             webClientId: String,
             activity: Activity,
             fragment: Fragment?
-        ): TripLogDriveManager = DefaultTripLogDriveManager(webClientId, activity, fragment)
+        ): TripLogDriveManager = ManualTripLogUpload(webClientId, activity, fragment)
     }
 }

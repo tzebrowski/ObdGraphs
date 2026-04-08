@@ -33,7 +33,7 @@ class TripLogDriveManagerTest {
     private val driveService = mockk<Drive>(relaxed = true)
 
     // Subclass to expose logic wrapped in the executeDriveOperation block
-    private inner class TestableTripLogManager : DefaultTripLogDriveManager("client", activity, null) {
+    private inner class TestableTripLogManager : ManualTripLogUpload("client", activity, null) {
         fun testUploadLogic(files: List<File>) {
             if (files.isEmpty()) {
                 sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)

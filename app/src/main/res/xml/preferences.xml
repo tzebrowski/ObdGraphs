@@ -8,6 +8,16 @@
         android:summary="@string/pref.language.summary"
         android:persistent="false" />
 
+    <PreferenceCategory android:title="@string/pref.trips.title">
+        <SwitchPreferenceCompat
+                android:defaultValue="false"
+                android:dialogTitle="@string/pref.trips.drive.auto_sync_enabled"
+                android:key="pref.trips.drive.auto_sync"
+                android:title="@string/pref.trips.drive.auto_sync_enabled"
+                android:summary="@string/pref.trips.drive.auto_sync_enabled_summary"
+                app:singleLineTitle="false" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
             android:key="pref.registry"
@@ -1904,12 +1914,14 @@
                     </PreferenceScreen>
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.trips_recordings">
+                <PreferenceCategory android:title="@string/pref.trips.title">
+
+
                     <PreferenceScreen
-                        android:summary="@string/pref.trips_recordings"
-                        android:title="@string/pref.trips_recordings"
+                        android:summary="@string/pref.trips.title"
+                        android:title="@string/pref.trips.title"
                         app:key="pref.gauge.recordings">
-                        <PreferenceCategory android:title="@string/pref.trips_recordings">
+                        <PreferenceCategory android:title="@string/pref.trips.title">
                             <org.obd.graphs.preferences.trips.TripsListPreferences
                                 android:defaultValue="@array/pref.empty_array"
                                 android:key="pref.graph.trips.selected"

@@ -19,6 +19,9 @@ package org.obd.graphs.preferences.trips
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +31,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.trip.tripManager
@@ -80,7 +84,28 @@ class TripViewAdapter internal constructor(
                 startTs = dateFormat.format(Date(it))
             }
 
-            holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
+            source.startTime.toLongOrNull()?.let {
+                startTs = dateFormat.format(Date(it))
+            }
+
+            if (source.isSynced) {
+                val syncText = "  ☁️ Synced"
+                val fullText = startTs + syncText
+
+                holder.tripStartDate.setText(fullText, Color.GRAY, Typeface.NORMAL, 0.9f)
+
+                val spannable = SpannableString(fullText)
+                spannable.setSpan(
+                    ForegroundColorSpan("#4CAF50".toColorInt()), // A nice Material Green
+                    startTs.length,
+                    fullText.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                holder.tripStartDate.text = spannable
+            } else {
+                holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
+            }
 
             holder.selected.isChecked = checked
             holder.selected.setOnCheckedChangeListener { buttonView, isChecked ->

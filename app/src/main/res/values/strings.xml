@@ -2,6 +2,9 @@
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
 
+
+
+
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> label top offset</string>
     <string name="pref.performance.screen_top_margin">Top margin</string>
 
@@ -423,7 +426,10 @@
     <string name="pref.dash_swipe_to_delete">Enable swipe to delete metric</string>
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
-    <string name="pref.trips_recordings">Recorded trips</string>
+    <string name="pref.trips.title">Recorded trips</string>
+    <string name="pref.trips.drive.auto_sync_enabled">Auto-Sync to Google Drive</string>
+    <string name="pref.trips.drive.auto_sync_enabled_summary">Automatically upload new trips to Google Drive when connected to Wi-Fi.</string>
+
     <string name="pref.view_category_summary">In this section, you can adjust settings related to the Gauge, Graph, and Giulia views.</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>

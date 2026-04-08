@@ -424,7 +424,11 @@
     <string name="pref.dash_swipe_to_delete">Włącz usunięcie metryki przesunięciem</string>
     <string name="pref.dash_top_values_blink">Alarm dla najwyższych wartości</string>
     <string name="pref.trips_category">Trasy</string>
-    <string name="pref.trips_recordings">Nagrane trasy</string>
+    <string name="pref.trips.title">Nagrane trasy</string>
+
+    <string name="pref.trips.drive.auto_sync_enabled">Automatyczna synchronizacja z Dyskiem Google</string>
+    <string name="pref.trips.drive.auto_sync_enabled_summary">Automatycznie przesyłaj nowe przejazdy na Dysk Google po połączeniu z siecią Wi-Fi.</string>
+
     <string name="pref.view_category_summary">W tej sekcji możesz dostosować ustawienia związane z widokami Gauge, Wykres i Giulia.</string>
     <string name="pref.view_category">Widoki</string>
     <string name="pref.toolbar_category">Pasek narzędzi</string>
