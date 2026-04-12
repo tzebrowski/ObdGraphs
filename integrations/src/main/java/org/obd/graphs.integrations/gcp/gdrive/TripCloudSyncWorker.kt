@@ -33,6 +33,7 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.obd.graphs.TRIPS_UPLOAD_FAILED_NO_TOKEN
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.trip.TripDescParser
@@ -43,6 +44,7 @@ import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
 private const val LOG_TAG = "TripCloudSyncWorker"
@@ -90,7 +92,12 @@ internal class TripCloudSyncWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val context = applicationContext
         val token = SilentAuthorization.getAccessTokenSilently(context)
-            ?: return@withContext Result.retry()
+
+        if (token == null) {
+            Log.w(LOG_TAG, "Silent auth completely failed. User intervention required.")
+            sendBroadcastEvent(TRIPS_UPLOAD_FAILED_NO_TOKEN)
+            return@withContext Result.failure()
+        }
 
         try {
             Log.i(LOG_TAG, "Received sync request")

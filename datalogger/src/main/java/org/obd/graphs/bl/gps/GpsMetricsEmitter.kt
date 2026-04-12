@@ -17,7 +17,9 @@
 package org.obd.graphs.bl.gps
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.ContextWrapper
 import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
@@ -28,7 +30,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
-import org.obd.graphs.Notification
+import org.obd.graphs.Notifications
 import org.obd.graphs.Permissions
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.MetricsProcessor
@@ -81,19 +83,30 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
         // Guard Clauses
         if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) return
+
         if (!Permissions.hasLocationPermissions(context)) {
-            Notification.sendBasicNotification(
-                context,
-                "Location permissions are not granted." +
-                    "GPS data won't be collected."
+            Notifications.show(
+                context = context,
+                notificationId = 12346, // Unique ID so it doesn't overwrite the main logger service
+                channelId = "data_logger_channel_v2", // Reusing your existing channel
+                channelName = "Vehicle Telemetry Service",
+                channelDescription = "Displays the status of the OBD connection",
+                title = "GPS Permissions Missing",
+                text = "Location permissions are not granted. GPS data won't be collected.",
+                pendingIntent = pendingIntent(context)
             )
             return
         }
         if (!Permissions.isLocationEnabled(context)) {
-            Notification.sendBasicNotification(
-                context,
-                "Location is not enabled. " +
-                    "GPS data won't be collected."
+            Notifications.show(
+                context = context,
+                notificationId = 12346,
+                channelId = "data_logger_channel_v2",
+                channelName = "Vehicle Telemetry Service",
+                channelDescription = "Displays the status of the OBD connection",
+                title = "Location Services Disabled",
+                text = "Location is not enabled. GPS data won't be collected.",
+                pendingIntent = pendingIntent(context)
             )
             return
         }
@@ -101,6 +114,16 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         // Start Updates
         startGpsUpdates(context)
     }
+
+    private fun pendingIntent(context: ContextWrapper): PendingIntent? =
+        context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
+            PendingIntent.getActivity(
+                context,
+                0,
+                it,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
 
     override fun onStopped() {
         stopGpsUpdates()
