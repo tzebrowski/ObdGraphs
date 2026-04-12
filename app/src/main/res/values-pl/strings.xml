@@ -428,6 +428,9 @@
 
     <string name="pref.trips.drive.auto_sync_enabled">Automatyczna synchronizacja z Dyskiem Google</string>
     <string name="pref.trips.drive.auto_sync_enabled_summary">Automatycznie przesyłaj nowe przejazdy na Dysk Google po połączeniu z siecią Wi-Fi. Uwaga: Najpierw należy ręcznie przesłać przejazd w aplikacji, aby przyznać uprawnienia.</string>
+    <string name="pref.trips.drive.auto_sync_enabled.sign_in.dialog_title">Wymagane logowanie do Dysku Google</string>
+    <string name="pref.trips.drive.auto_sync_enabled.sign_in.dialog_summary">Aby automatycznie tworzyć kopie zapasowe przejazdów w tle, MyGiulia potrzebuje uprawnień do zapisywania plików na Twoim Dysku Google.\n\nZaloguj się na swoje konto Google na następnym ekranie, aby włączyć automatyczną synchronizację.</string>
+
 
     <string name="pref.view_category_summary">W tej sekcji możesz dostosować ustawienia związane z widokami Gauge, Wykres i Giulia.</string>
     <string name="pref.view_category">Widoki</string>

@@ -9,7 +9,7 @@
         android:persistent="false" />
 
     <PreferenceCategory android:title="@string/pref.trips.title">
-        <SwitchPreferenceCompat
+        <org.obd.graphs.preferences.DriveAutoSyncEnablerCheckBoxPreference
                 android:defaultValue="false"
                 android:dialogTitle="@string/pref.trips.drive.auto_sync_enabled"
                 android:key="pref.trips.drive.auto_sync"

@@ -23,6 +23,7 @@ import java.io.File
 interface TripLogDriveManager {
     suspend fun uploadTrips(files: List<File>)
 
+    suspend fun authenticate()
     companion object {
         fun instance(
             webClientId: String,

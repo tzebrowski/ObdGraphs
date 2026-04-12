@@ -34,6 +34,12 @@ class TripLogDriveManagerTest {
 
     // Subclass to expose logic wrapped in the executeDriveOperation block
     private inner class TestableTripLogManager : ManualTripLogUpload("client", activity, null) {
+        override suspend fun authenticate() =
+            signInAndExecute("authenticate_for_auto_sync") { token ->
+                // If we get here, the user successfully signed in and the token is cached!
+                // No need to do anything else. The background worker will now work.
+            }
+
         fun testUploadLogic(files: List<File>) {
             if (files.isEmpty()) {
                 sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)

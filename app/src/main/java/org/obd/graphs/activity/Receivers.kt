@@ -39,6 +39,7 @@ import org.obd.graphs.BACKUP_START
 import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
 import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
+import org.obd.graphs.GOOGLE_SIGN_IN_REQUEST
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.Notifications
 import org.obd.graphs.Permissions
@@ -127,7 +128,13 @@ internal fun MainActivity.receive(intent: Intent?) {
         TRIPS_UPLOAD_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_successful)
         TRIPS_UPLOAD_NO_FILES_SELECTED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_no_files_selected)
 
-        TRIPS_UPLOAD_FAILED_NO_TOKEN -> {
+        GOOGLE_SIGN_IN_REQUEST -> {
+            lifecycleScope.launch {
+                tripLogDriveManager.authenticate()
+            }
+        }
+
+        TRIPS_UPLOAD_FAILED_NO_TOKEN ->
             Notifications.show(
                 context = applicationContext,
                 notificationId = 9999,
@@ -146,7 +153,6 @@ internal fun MainActivity.receive(intent: Intent?) {
                 },
                 isOngoing = false
             )
-        }
 
         BACKUP_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_failed)
         BACKUP_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_successful)
@@ -420,6 +426,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(PROFILE_NAME_CHANGED_EVENT)
         it.addAction(TRIP_LOG_WRITE_COMPLETED)
         it.addAction(TRIPS_UPLOAD_FAILED_NO_TOKEN)
+        it.addAction(GOOGLE_SIGN_IN_REQUEST)
     }
 
     registerReceiver(this, DataLoggerRepository.broadcastReceivers()) {

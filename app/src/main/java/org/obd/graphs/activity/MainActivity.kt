@@ -50,6 +50,7 @@ import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.integrations.gcp.gdrive.TripLogDriveManager
 import org.obd.graphs.language.LanguageManager
 import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.profile.profile
@@ -69,6 +70,9 @@ class MainActivity :
 
     internal val screenLockManager = ScreenLockManager(this)
     internal lateinit var backupManager: BackupManager
+
+    internal lateinit var tripLogDriveManager: TripLogDriveManager
+
     internal lateinit var appBarConfiguration: AppBarConfiguration
 
     val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
@@ -121,6 +125,8 @@ class MainActivity :
 
         supportActionBar?.hide()
         backupManager = BackupManager(this)
+        tripLogDriveManager = TripLogDriveManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID), activity = this, null)
+
         setupFabButtons()
 
         if (savedInstanceState == null) {

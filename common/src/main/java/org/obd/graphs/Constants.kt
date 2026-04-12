@@ -54,6 +54,8 @@ const val TRIPS_UPLOAD_NO_FILES_SELECTED = "trips.upload.no_files"
 
 const val TRIPS_UPLOAD_FAILED_NO_TOKEN = "trips.upload.no_token"
 
+const val GOOGLE_SIGN_IN_REQUEST = "gdrive.authorization.token_requests"
+
 const val GOOGLE_SIGN_IN_GENERAL_FAILURE = "gdrive.authorization.failed"
 const val GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE = "gdrive.authorization.no_credentials.failed"
 
