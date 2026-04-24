@@ -37,6 +37,8 @@
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/vehicle_profile"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -48,9 +50,13 @@
                     android:text="@string/status_panel.vehicle_profile"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:maxWidth="200dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                    app:layout_constraintStart_toEndOf="@id/connection_status" />
+                    app:layout_constraintStart_toEndOf="@id/connection_status"
+                    app:layout_constraintEnd_toStartOf="@+id/vehicle_status" />
 
                 <TextView
                     android:id="@+id/vehicle_status"
@@ -61,20 +67,24 @@
                     android:text="@string/status_panel.vehicle_status"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                    app:layout_constraintStart_toEndOf="@id/vehicle_profile" />
+                    app:layout_constraintStart_toEndOf="@id/vehicle_profile"
+                    app:layout_constraintEnd_toStartOf="@+id/timer" />
 
                 <Chronometer
                     android:id="@+id/timer"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:padding="2dp"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                    app:layout_constraintEnd_toStartOf="@id/toggle_fullscreen"
-                    app:layout_constraintStart_toEndOf="@id/vehicle_status" />
+                    app:layout_constraintStart_toEndOf="@id/vehicle_status"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_fullscreen" />
 
                 <ImageView
                     android:id="@+id/toggle_fullscreen"
