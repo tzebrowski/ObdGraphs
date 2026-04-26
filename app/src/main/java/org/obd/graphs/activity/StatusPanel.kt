@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.activity
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,77 +26,83 @@ import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
 
-
-internal fun MainActivity.updateVehicleStatus(status: String) {
-
-    updateTextField(
-        R.id.vehicle_status,
-        resources.getString(R.string.status_panel_vehicle_status),
-        status,
-        COLOR_CARDINAL,
-        1.0f
-    ){
-        it.isGone = !dataLoggerSettings.instance().vehicleStatusPanelEnabled
+class StatusPanel(private val activity: MainActivity) {
+    companion object {
+        private const val MAX_PROFILE_NAME_LENGTH = 15
+        private const val TEXT_SIZE_PRIMARY = 1.0f
+        private const val TEXT_SIZE_SECONDARY = 0.7f
     }
-}
 
-internal fun MainActivity.updateAdapterConnectionType() {
-    updateTextField(
-        R.id.connection_status,
-        resources.getString(R.string.status_panel_adapter_connection_type),
-        dataLoggerSettings.instance().adapter.connectionType,
-        COLOR_PHILIPPINE_GREEN,
-        1.0f
-    )
-}
+    fun setup() {
+        updateAdapterConnectionType()
+        updateVehicleProfile()
+        updateVehicleStatus("")
 
-internal fun MainActivity.setupStatusPanel() {
-    updateAdapterConnectionType()
-    updateVehicleProfile()
-    updateVehicleStatus("")
-
-    (findViewById<TextView>(R.id.connection_status)).let {
-        it.setOnClickListener {
+        activity.findViewById<TextView>(R.id.connection_status)?.setOnClickListener {
             navigateToPreferencesScreen("pref.adapter.connection")
         }
-    }
 
-    (findViewById<TextView>(R.id.vehicle_profile)).let {
-        it.setOnClickListener {
+        activity.findViewById<TextView>(R.id.vehicle_profile)?.setOnClickListener {
             navigateToPreferencesScreen("pref.profiles")
         }
-    }
 
-    (findViewById<ImageView>(R.id.toggle_fullscreen)).let {
-        it.setOnClickListener {
-           sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
+        activity.findViewById<ImageView>(R.id.toggle_fullscreen)?.setOnClickListener {
+            sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
         }
     }
-}
 
-internal fun MainActivity.updateVehicleProfile() {
-    updateTextField(
-        R.id.vehicle_profile,
-        resources.getString(R.string.status_panel_vehicle_profile),
-        profile.getCurrentProfileName(),
-        COLOR_RAINBOW_INDIGO,
-        1.0f
-    )
-}
+    fun updateVehicleStatus(status: String) {
+        updateTextField(
+            R.id.vehicle_status,
+            activity.getString(R.string.status_panel_vehicle_status),
+            status,
+            COLOR_CARDINAL,
+            TEXT_SIZE_PRIMARY
+        ) {
+            it.isGone = !dataLoggerSettings.instance().vehicleStatusPanelEnabled
+        }
+    }
 
-@SuppressLint("SetTextI18n")
-private fun MainActivity.updateTextField(
-    viewId: Int,
-    text1: String,
-    text2: String,
-    color: Int,
-    text2Size: Float,
-    func: (p: TextView) -> Unit = {}
-) {
-    (findViewById<TextView>(viewId)).let {
-        func(it)
-        it.text = "$text1 $text2"
-        it.highLightText(text1, 0.7f, Color.WHITE)
-        it.highLightText(text2, text2Size, color)
+    fun updateVehicleProfile() {
+        val fullProfileName = profile.getCurrentProfileName()
+        var displayName = fullProfileName.substringBefore("(").trim()
+
+        if (displayName.length > MAX_PROFILE_NAME_LENGTH) {
+            displayName = displayName.substring(0, MAX_PROFILE_NAME_LENGTH).trimEnd() + "..."
+        }
+
+        updateTextField(
+            R.id.vehicle_profile,
+            activity.getString(R.string.status_panel_vehicle_profile),
+            displayName,
+            COLOR_RAINBOW_INDIGO,
+            TEXT_SIZE_PRIMARY
+        )
+    }
+
+    fun updateAdapterConnectionType() {
+        updateTextField(
+            R.id.connection_status,
+            activity.getString(R.string.status_panel_adapter_connection_type),
+            dataLoggerSettings.instance().adapter.connectionType,
+            COLOR_PHILIPPINE_GREEN,
+            TEXT_SIZE_PRIMARY
+        )
+    }
+
+    private fun updateTextField(
+        viewId: Int,
+        text1: String,
+        text2: String,
+        color: Int,
+        text2Size: Float,
+        func: (p: TextView) -> Unit = {}
+    ) {
+        activity.findViewById<TextView>(viewId)?.apply {
+            func(this)
+            text = "$text1 $text2"
+            highLightText(text1, TEXT_SIZE_SECONDARY, Color.WHITE)
+            highLightText(text2, text2Size, color)
+        }
     }
 }

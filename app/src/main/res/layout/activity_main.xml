@@ -36,9 +36,10 @@
                     android:text="@string/status_panel.adapter_connection_type"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/vehicle_profile"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -53,7 +54,6 @@
                     android:maxLines="1"
                     android:ellipsize="end"
                     app:layout_constrainedWidth="true"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
                     app:layout_constraintStart_toEndOf="@id/connection_status"
                     app:layout_constraintEnd_toStartOf="@+id/vehicle_status" />
@@ -67,8 +67,6 @@
                     android:text="@string/status_panel.vehicle_status"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
                     app:layout_constraintStart_toEndOf="@id/vehicle_profile"
                     app:layout_constraintEnd_toStartOf="@+id/timer" />
@@ -81,7 +79,6 @@
                     android:padding="2dp"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
                     app:layout_constraintStart_toEndOf="@id/vehicle_status"
                     app:layout_constraintEnd_toStartOf="@id/toggle_fullscreen" />
@@ -177,7 +174,6 @@
             android:visibility="invisible"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
             tools:ignore="ContentDescription" />
-
 
         <TextView
             android:id="@+id/configure_view_action_label"

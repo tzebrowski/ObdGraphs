@@ -222,11 +222,11 @@ internal fun MainActivity.receive(intent: Intent?) {
         TOOLBAR_SHOW -> Toolbar.hide(this, false)
         TOOLBAR_TOGGLE_ACTION -> Toolbar.toggle(this)
 
-        PROFILE_NAME_CHANGED_EVENT -> updateVehicleProfile()
+        PROFILE_NAME_CHANGED_EVENT -> statusPanel.updateVehicleProfile()
 
         PROFILE_CHANGED_EVENT -> {
-            updateVehicleProfile()
-            updateAdapterConnectionType()
+            statusPanel.updateVehicleProfile()
+            statusPanel.updateAdapterConnectionType()
 
             toggleNavigationItem(GIULIA_VIEW_ID, R.id.nav_giulia)
             toggleNavigationItem(GRAPH_VIEW_ID, R.id.nav_graph)
@@ -276,7 +276,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
         }
 
-        PREFS_CONNECTION_TYPE_CHANGED_EVENT -> updateAdapterConnectionType()
+        PREFS_CONNECTION_TYPE_CHANGED_EVENT -> statusPanel.updateAdapterConnectionType()
 
         DATA_LOGGER_NO_NETWORK_EVENT -> {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_no_network)
@@ -301,7 +301,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
 
             Toolbar.hide(this, true)
-            updateAdapterConnectionType()
+            statusPanel.updateAdapterConnectionType()
         }
 
         DATA_LOGGER_STOPPED_EVENT -> {
@@ -314,13 +314,13 @@ internal fun MainActivity.receive(intent: Intent?) {
             handleStop()
         }
 
-        EVENT_VEHICLE_STATUS_VEHICLE_RUNNING -> updateVehicleStatus("Running")
-        EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> updateVehicleStatus("Idling")
-        EVENT_VEHICLE_STATUS_IGNITION_ON -> updateVehicleStatus("Key on")
-        EVENT_VEHICLE_STATUS_CHANGED -> updateVehicleStatus("")
+        EVENT_VEHICLE_STATUS_VEHICLE_RUNNING -> statusPanel.updateVehicleStatus("Running")
+        EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> statusPanel.updateVehicleStatus("Idling")
+        EVENT_VEHICLE_STATUS_IGNITION_ON -> statusPanel.updateVehicleStatus("Key on")
+        EVENT_VEHICLE_STATUS_CHANGED -> statusPanel.updateVehicleStatus("")
 
         EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
-            updateVehicleStatus("Key off")
+            statusPanel.updateVehicleStatus("Key off")
             if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff) {
                 Log.i(LOG_TAG, "Received vehicle status OFF event. Closing the session.")
                 withDataLogger {
