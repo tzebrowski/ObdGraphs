@@ -68,6 +68,7 @@ class MainActivity :
     AppCompatActivity(),
     EasyPermissions.PermissionCallbacks {
 
+    internal lateinit var statusPanel: StatusPanel
     internal val screenLockManager = ScreenLockManager(this)
     internal lateinit var backupManager: BackupManager
 
@@ -140,6 +141,11 @@ class MainActivity :
         }
 
         isAppReady = true
+    }
+
+    private fun setupStatusPanel() {
+        statusPanel = StatusPanel(this)
+        statusPanel.setup()
     }
 
     private fun setupFabButtons() {
