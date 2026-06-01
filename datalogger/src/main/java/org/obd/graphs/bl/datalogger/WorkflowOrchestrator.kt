@@ -30,7 +30,9 @@ import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
+import org.obd.metrics.command.Command
 import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
+import org.obd.metrics.command.group.CommandGroup
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.routine.RoutineCommand
 import org.obd.metrics.command.routine.RoutineExecutionStatus
@@ -304,15 +306,33 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun init(preferences: DataLoggerSettings = dataLoggerSettings.instance()) =
-        Init.builder()
+    private fun init(preferences: DataLoggerSettings = dataLoggerSettings.instance()) : Init {
+        val init  = Init.builder()
             .delayAfterInit(preferences.adapter.initDelay)
             .delayAfterReset(preferences.adapter.delayAfterReset)
             .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
                 Init.Header.builder().mode(entry.key).header(entry.value).build()
             }.toMutableList())
             .protocol(Init.Protocol.valueOf(preferences.adapter.initProtocol))
-            .sequence(DefaultCommandGroup.INIT).build()
+            .sequence(sequence(preferences.adapter.initSequence)).build()
+
+        return init
+    }
+
+    private fun sequence(seqName : String): CommandGroup<out Command?> =
+        if (seqName == "DEFAULT") {
+            DefaultCommandGroup.INIT
+        } else {
+            try {
+                Log.i(LOG_TAG, "Loading init-sequence for: $seqName")
+                val className = "org.obd.metrics.init.VgateVlinkerMsSequence"
+                val field = Class.forName(className).getField(seqName)
+                field.get(null) as? CommandGroup<*> ?: DefaultCommandGroup.INIT
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Failed loading init-sequence for: $seqName", e)
+                DefaultCommandGroup.INIT
+            }
+        }
 
     private fun workflow() = Workflow.instance()
         .formulaEvaluatorConfig(

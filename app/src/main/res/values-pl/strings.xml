@@ -319,6 +319,7 @@
     <string name="pref.adapter_delay_reset">Opóźnienie po komendzie resetowania (ATZ)</string>
 
     <string name="pref.adapter_init_protocol">Protokół</string>
+    <string name="pref.adapter_init_sequence">Sekwencja inicjalizacyjna</string>
     <string name="pref.general_settings">Ustawienia ogólne</string>
     <string name="pref.adapter.general_settings">Ustawienia zaawansowane</string>
     <string name="pref.adapter.batch_settings">Ustawienia trybu wsadowego</string>
