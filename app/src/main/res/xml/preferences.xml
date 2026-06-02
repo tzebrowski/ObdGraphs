@@ -243,6 +243,14 @@
                         android:title="@string/pref.adapter_init_protocol"
                         app:useSimpleSummaryProvider="true" />
 
+                    <ListPreference
+                        android:defaultValue="DEFAULT"
+                        android:entries="@array/pref.init_sequence"
+                        android:entryValues="@array/pref.init_sequence"
+                        android:key="pref.adapter.init.sequence"
+                        android:title="@string/pref.adapter_init_sequence"
+                        app:useSimpleSummaryProvider="true" />
+
                     <PreferenceCategory android:title="@string/pref.adapter.diagnostic_request_id.mapping.category">
                         <org.obd.graphs.preferences.dri.DiagnosticRequestIDListPreferences
                             android:key="pref.adapter.init.mode.selected"

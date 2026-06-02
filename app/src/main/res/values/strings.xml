@@ -318,6 +318,8 @@
     <string name="pref.adapter_delay_reset">Delay after reset command (ATZ)</string>
 
     <string name="pref.adapter_init_protocol">Protocol</string>
+    <string name="pref.adapter_init_sequence">Init Sequence</string>
+
     <string name="pref.general_settings">General settings</string>
     <string name="pref.adapter.general_settings">Advanced settings</string>
     <string name="pref.adapter.batch_settings">Batch settings</string>
@@ -759,7 +761,16 @@
         <item name="AUTO">AUTO</item>
         <item name="CAN_11" tools:ignore="Typos">CAN_11</item>
         <item name="CAN_29">CAN_29</item>
+        <item name="CAN_USER1" tools:ignore="Typos">CAN_USER1</item>
     </string-array>
+
+    <string-array name="pref.init_sequence">
+        <item name="DEFAULT">DEFAULT</item>
+        <item name="MS_CAN" >MS_CAN</item>
+        <item name="HS_CAN">HS_CAN</item>
+        <item name="CH_CAN" tools:ignore="Typos">CH_CAN</item>
+    </string-array>
+
 
     <!-- Extracted from layouts -->
     <string name="dtc.freeze_frame_data">UDS Freeze Frame Data</string>
