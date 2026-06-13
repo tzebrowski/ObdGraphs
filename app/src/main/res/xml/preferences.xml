@@ -139,6 +139,14 @@
                     app:title="@string/pref.connection.category">
 
                     <ListPreference
+                        android:defaultValue="DEFAULT"
+                        android:entries="@array/pref.adapter_type"
+                        android:entryValues="@array/pref.adapter_type"
+                        android:key="pref.adapter.type"
+                        android:title="@string/pref.adapter.type"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <ListPreference
                         android:defaultValue="1000"
                         android:dialogTitle="@string/pref.connection.connection_timeout"
                         android:entries="@array/pref.numbers_500_6000"

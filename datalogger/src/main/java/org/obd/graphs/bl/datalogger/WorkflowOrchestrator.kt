@@ -26,6 +26,8 @@ import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
+import org.obd.metrics.api.CANNetworkRegistry
+import org.obd.metrics.api.DefaultCanNetworkRegistry
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
@@ -314,10 +316,31 @@ internal class WorkflowOrchestrator internal constructor() {
                 Init.Header.builder().mode(entry.key).header(entry.value).build()
             }.toMutableList())
             .protocol(Init.Protocol.valueOf(preferences.adapter.initProtocol))
+            .networkRegistry(networkRegistry(preferences.adapter.type))
             .sequence(sequence(preferences.adapter.initSequence)).build()
 
         return init
     }
+
+    private fun networkRegistry(seqName : String): CANNetworkRegistry  =
+        when (seqName) {
+            "DEFAULT" -> {
+                DefaultCanNetworkRegistry()
+            }
+            "VGATE_VLINKER_MS" -> {
+                runCatching {
+                    val clazz = Class.forName("org.obd.metrics.init.VgateVlinkerMsCANNetworkRegistry")
+                    val defaultField = clazz.getDeclaredField("DEFAULT")
+                    defaultField.get(null) as CANNetworkRegistry
+                }.getOrElse { exception ->
+                    Log.e(LOG_TAG,"Reflection failed: ${exception.message}. Falling back to DefaultCanNetworkRegistry.")
+                    DefaultCanNetworkRegistry()
+                }
+            }
+            else -> {
+                DefaultCanNetworkRegistry()
+            }
+        }
 
     private fun sequence(seqName : String): CommandGroup<out Command?> =
         if (seqName == "DEFAULT") {

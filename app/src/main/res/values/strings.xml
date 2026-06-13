@@ -319,6 +319,7 @@
 
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.adapter_init_sequence">Init Sequence</string>
+    <string name="pref.adapter.type">Adapter Type</string>
 
     <string name="pref.general_settings">General settings</string>
     <string name="pref.adapter.general_settings">Advanced settings</string>
@@ -769,6 +770,11 @@
         <item name="MS_CAN" >MS_CAN</item>
         <item name="HS_CAN">HS_CAN</item>
         <item name="CH_CAN" tools:ignore="Typos">CH_CAN</item>
+    </string-array>
+
+    <string-array name="pref.adapter_type">
+        <item name="DEFAULT">DEFAULT</item>
+        <item name="VGATE_VLINKER_MS" >VGATE_VLINKER_MS</item>
     </string-array>
 
 
