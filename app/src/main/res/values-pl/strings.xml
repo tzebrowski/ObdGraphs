@@ -107,6 +107,7 @@
     <string name="pref.connection.connection_type_dialog">Wybierz typ połączenia adaptera OBD</string>
     <string name="pref.connection.connection_type"><b><font color='#01804F'>Typ połączenia adaptera OBD</font></b></string>
     <string name="pref.connection.connection_timeout">Limit czasu połączenia</string>
+    <string name="pref.adapter.type">Typ adaptera</string>
 
     <string name="pref.adapter_id">Dostępne urządzenia Bluetooth</string>
     <string name="pref.gauge.number_of_columns">Liczba kolumn</string>

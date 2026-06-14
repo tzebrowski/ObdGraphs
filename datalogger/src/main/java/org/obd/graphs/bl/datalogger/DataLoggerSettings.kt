@@ -87,6 +87,9 @@ data class Adapter(
     @XmlPreference("pref.adapter.init.sequence", "DEFAULT", String::class)
     var initSequence: String = "DEFAULT",
 
+    @XmlPreference("pref.adapter.type", "DEFAULT", String::class)
+    var type: String = "DEFAULT",
+
     @XmlPreference("pref.adapter.reconnect.max_retry", "0", Int::class)
     var maxReconnectNum: Int = 0,
 
