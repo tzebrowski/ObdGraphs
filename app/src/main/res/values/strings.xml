@@ -772,9 +772,14 @@
         <item name="CH_CAN" tools:ignore="Typos">CH_CAN</item>
     </string-array>
 
-    <string-array name="pref.adapter_type">
-        <item name="DEFAULT">DEFAULT</item>
-        <item name="VGATE_VLINKER_MS" >VGATE_VLINKER_MS</item>
+    <string-array name="pref.adapter_type_entries">
+        <item>Default Adapter</item>
+        <item>VGate vLinker MS</item>
+    </string-array>
+
+    <string-array name="pref.adapter_type_values">
+        <item>DEFAULT</item>
+        <item>VGATE_VLINKER_MS</item>
     </string-array>
 
 

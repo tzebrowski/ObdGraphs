@@ -140,8 +140,8 @@
 
                     <ListPreference
                         android:defaultValue="DEFAULT"
-                        android:entries="@array/pref.adapter_type"
-                        android:entryValues="@array/pref.adapter_type"
+                        android:entries="@array/pref.adapter_type_entries"
+                        android:entryValues="@array/pref.adapter_type_values"
                         android:key="pref.adapter.type"
                         android:title="@string/pref.adapter.type"
                         app:useSimpleSummaryProvider="true" />

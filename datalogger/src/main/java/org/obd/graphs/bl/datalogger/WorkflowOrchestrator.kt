@@ -322,25 +322,31 @@ internal class WorkflowOrchestrator internal constructor() {
         return init
     }
 
-    private fun networkRegistry(seqName : String): CANNetworkRegistry  =
-        when (seqName) {
+    private fun networkRegistry(adapterType : String): CANNetworkRegistry {
+        Log.i(LOG_TAG,"Selected adapter type $adapterType")
+
+        return when (adapterType) {
             "DEFAULT" -> {
                 DefaultCanNetworkRegistry()
             }
+
             "VGATE_VLINKER_MS" -> {
                 runCatching {
                     val clazz = Class.forName("org.obd.metrics.init.VgateVlinkerMsCANNetworkRegistry")
                     val defaultField = clazz.getDeclaredField("DEFAULT")
                     defaultField.get(null) as CANNetworkRegistry
                 }.getOrElse { exception ->
-                    Log.e(LOG_TAG,"Reflection failed: ${exception.message}. Falling back to DefaultCanNetworkRegistry.")
+                    Log.e(LOG_TAG, "Reflection failed: ${exception.message}. Falling back to DefaultCanNetworkRegistry.")
                     DefaultCanNetworkRegistry()
                 }
             }
+
             else -> {
                 DefaultCanNetworkRegistry()
             }
         }
+    }
+
 
     private fun sequence(seqName : String): CommandGroup<out Command?> =
         if (seqName == "DEFAULT") {
