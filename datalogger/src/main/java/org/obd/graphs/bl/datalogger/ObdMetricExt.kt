@@ -31,13 +31,17 @@ fun PidDefinition.scaleToRange(value: Float): Float =
         max.toFloat()
     )
 
-fun ObdMetric.scaleToRange(): Float =
-    toFloat().mapRange(
-        command.pid.min.toFloat(),
-        command.pid.max.toFloat(),
+fun ObdMetric.scaleToRange(): Float {
+   val minVal = command.pid?.min?.toFloat() ?: 0f
+   val maxVal = command.pid?.max?.toFloat() ?: 9999f
+
+    return toFloat().mapRange(
+        minVal,
+        maxVal,
         NEW_RANGE_MIN_VAL,
         NEW_RANGE_MAX_VAL
     )
+}
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == Pid.ATM_PRESSURE_PID_ID.id
 
