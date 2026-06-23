@@ -33,8 +33,8 @@ fun PidDefinition.scaleToRange(value: Float): Float =
 
 fun ObdMetric.scaleToRange(): Float =
     toFloat().mapRange(
-        command.pid.min.toFloat(),
-        command.pid.max.toFloat(),
+        command.pid?.min?.toFloat() ?: 0f,
+        command.pid?.max?.toFloat() ?: 9999f,
         NEW_RANGE_MIN_VAL,
         NEW_RANGE_MAX_VAL
     )
