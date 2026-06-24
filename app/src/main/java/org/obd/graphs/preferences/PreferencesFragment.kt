@@ -166,7 +166,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     it
                 )
                 if (savedInstanceState == null) {
-                    if (Log.isLoggable(LOG_KEY,Log.DEBUG)) {
+                    if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                         Log.d(LOG_KEY, "Loading Pref Screen for key=$it. Opening the dialog window.")
                     }
 
