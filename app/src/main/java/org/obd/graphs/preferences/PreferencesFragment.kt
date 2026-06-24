@@ -161,13 +161,17 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             setPreferencesFromResource(R.xml.preferences, rootKey)
         } else {
             requireArguments().getString(PREFERENCE_SCREEN_KEY)?.let {
-                Log.d(LOG_KEY, "Loading Pref Screen for key=$it")
-
                 setPreferencesFromResource(
                     R.xml.preferences,
                     it
                 )
-                openPreferenceDialogFor(it)
+                if (savedInstanceState == null) {
+                    if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+                        Log.d(LOG_KEY, "Loading Pref Screen for key=$it. Opening the dialog window.")
+                    }
+
+                    openPreferenceDialogFor(it)
+                }
             }
         }
     }
