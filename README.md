@@ -9,7 +9,7 @@ Built atop the [ObdMetrics](https://github.com/tzebrowski/ObdMetrics "ObdMetrics
 
 ---
 
-## 🚀 Key Features and Capabilities
+##  Key Features and Capabilities
 
 * **Broad Adapter Compatibility:** Seamlessly connects with **ELM327** and **STNxxxx** OBD2 adapters via Bluetooth, WiFi, or USB.
 * **Real-Time Data Visualization:** Transforms raw sensor data into intuitive, customizable gauges and high-frequency graphs for instant analysis.
@@ -26,14 +26,14 @@ Built atop the [ObdMetrics](https://github.com/tzebrowski/ObdMetrics "ObdMetrics
 
 ---
 
-## 📊 Data Analysis & Logging
+## Data Analysis & Logging
 
 The application includes native integration with the **ObdGraphsLogViewer** project. This integration allows users to:
 * **Export Telemetry Logs:** Save detailed session data from the mobile app in the Google Drive.
 * **Online Log Visualization:** Utilize the specialized [ObdGraphsLogViewer](https://github.com/tzebrowski/ObdGraphsLogViewer) to analyze logs on a larger screen, enabling deep-dive performance reviews and trend analysis.
 
 
-### 🔄 How to Sync Data between Mobile App and Log Viewer
+### How to Sync Data between Mobile App and Log Viewer
 
 To analyze your vehicle's performance on a larger screen, follow these steps to sync your data:
 
@@ -45,7 +45,7 @@ To analyze your vehicle's performance on a larger screen, follow these steps to 
 For a detailed video walkthrough of this process, refer to the official tutorial: [ObdGraphs - Online Log Analyzer (YouTube)](https://www.youtube.com/watch?v=SJe4QkUgMKs).
 
 ---
-## 🔗 Official Resources
+## Official Resources
 
 | Resource | Link |
 | :--- | :--- |
@@ -59,7 +59,7 @@ For a detailed video walkthrough of this process, refer to the official tutorial
 
 ## Template App
 This application can serve as a template to support various vehicles, each with its own set of custom PIDs. 
-Example for such use-case  can be found [here](https://github.com/tzebrowski/ObdGraphs/compare/master...feat/custom_pids_example "custom pids")
+Example for such use-case  can be found [here](https://github.com/tzebrowski/ObdGraphs/compare/master...custom_pids_example "custom pids")
 
 ##  Developer-Friendly Aspects
 * `Open Source:` Licensed under Apache 2.0, encouraging community contributions and modifications.
