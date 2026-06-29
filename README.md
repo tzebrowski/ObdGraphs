@@ -26,7 +26,7 @@ Built atop the [ObdMetrics](https://github.com/tzebrowski/ObdMetrics "ObdMetrics
 
 ---
 
-## 📊 Data Analysis & Logging
+## Data Analysis & Logging
 
 The application includes native integration with the **ObdGraphsLogViewer** project. This integration allows users to:
 * **Export Telemetry Logs:** Save detailed session data from the mobile app in the Google Drive.
