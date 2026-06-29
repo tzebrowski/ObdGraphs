@@ -1,0 +1,56 @@
+{
+  "livedata": [
+    {
+      "priority": 0,
+      "id": "50",
+      "mode": "22",
+      "pid": "010B",
+      "length": 8,
+      "description": "Front Left",
+      "min": 0,
+      "max": 180,
+      "units": "km/h",
+      "formula": "x=A.toString(16) + B.toString(16);parseInt(x,16) * 0.0078125",
+      "module": "4wheel"
+    },
+    {
+      "priority": 0,
+      "id": "51",
+      "mode": "22",
+      "pid": "010B",
+      "length": 8,
+      "description": "Front Right",
+      "min": 0,
+      "max": 180,
+      "units": "km/h",
+      "formula": "x=C.toString(16) + D.toString(16); parseInt(x,16) * 0.0078125",
+      "module": "4wheel"
+    },
+    {
+      "priority": 0,
+      "id": "52",
+      "mode": "22",
+      "pid": "010B",
+      "length": 8,
+      "description": "Rear Left",
+      "min": 0,
+      "max": 180,
+      "units": "km/h",
+      "formula": "x=E.toString(16) + F.toString(16); parseInt(x,16) * 0.0078125",
+      "module": "4wheel"
+    },
+    {
+      "priority": 0,
+      "id": "53",
+      "mode": "22",
+      "pid": "010B",
+      "length": 8,
+      "description": "Rear Right",
+      "min": 0,
+      "max": 180,
+      "units": "km/h",
+      "formula": "x=G.toString(16) + H.toString(16); parseInt(x,16) * 0.0078125",
+      "module": "4wheel"
+    }
+  ]
+}
