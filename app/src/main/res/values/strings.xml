@@ -120,12 +120,18 @@
     <string name="pref.toolbar.toggle_double_click">Toggle toolbar on double click</string>
 
     <string name="pref.adapter.diagnostic_request_id.mapping.category">Configure Diagnostic Request ID mapping</string>
-    <string name="pref.adapter.diagnostic_request_id.select_key">Select Diagnostic Request ID key</string>
-    <string name="pref.adapter.diagnostic_request_id.set_new_value">Set Diagnostic Request ID value for the selected key</string>
-    <string name="pref.adapter.diagnostic_request_id.set_key">Update Diagnostic Request ID key</string>
-    <string name="pref.adapter.diagnostic_request_id.add_new_value">Add new Diagnostic Request ID value</string>
-    <string name="pref.adapter.diagnostic_request_id.values.category">Configure Diagnostic Request ID values</string>
-    <string name="pref.adapter.diagnostic_request_id.keys.category">Configure Diagnostic Request ID keys</string>
+    <string name="pref.adapter.diagnostic_request_id.manage_title">Manage Diagnostic CAN Request IDs</string>
+    <string name="pref.adapter.diagnostic_request_id.manage_summary"> Configure custom target ECU header mappings in CAN network</string>
+    <string name="pref.adapter.diagnostic_request_id.add_new_mapping">Add New Mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.key_label">Key: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.value_label">Value: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.edit_title">Edit Request ID Mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.add_title">Add New Request ID Mapping</string>
+
+    <string name="pref.adapter.diagnostic_request_id.dialog_default_title">Diagnostic Request ID</string>
+    <string name="pref.adapter.diagnostic_request_id.key_hint">Request Key (e.g. 555)</string>
+    <string name="pref.adapter.diagnostic_request_id.value_hint">Header Value (e.g. 18DA18F1)</string>
+    <string name="pref.adapter.diagnostic_request_id.save_button">Save Mapping</string>
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
