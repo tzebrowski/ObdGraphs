@@ -16,7 +16,6 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <!-- Text Container for Key and Value -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -39,23 +38,20 @@
                 android:textColor="?android:attr/textColorSecondary" />
         </LinearLayout>
 
-        <!-- Edit Button -->
         <ImageButton
             android:id="@+id/btnEdit"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Edit Mapping"
+            android:contentDescription="@string/pref.adapter.diagnostic_request_id.edit_mapping_desc"
             android:src="@android:drawable/ic_menu_edit" />
 
-        <!-- Delete Button -->
         <ImageButton
             android:id="@+id/btnDelete"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete Mapping"
+            android:contentDescription="@string/pref.adapter.diagnostic_request_id.delete_mapping_desc"
             android:src="@android:drawable/ic_menu_delete" />
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -36,7 +36,7 @@ class EditDiagnosticRequestIdBottomSheet(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_edit_diagnostic_request_id, container, false)
+        return inflater.inflate(R.layout.dialog_dri_edit, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

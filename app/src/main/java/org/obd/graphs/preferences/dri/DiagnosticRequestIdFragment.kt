@@ -35,7 +35,7 @@ class DiagnosticRequestIdFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_diagnostic_request_id_manager, container, false)
+        return inflater.inflate(R.layout.fragment_dri_manager, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

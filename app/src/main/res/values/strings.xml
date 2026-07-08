@@ -127,6 +127,8 @@
     <string name="pref.adapter.diagnostic_request_id.value_label">Value: %1$s</string>
     <string name="pref.adapter.diagnostic_request_id.edit_title">Edit Request ID Mapping</string>
     <string name="pref.adapter.diagnostic_request_id.add_title">Add New Request ID Mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.edit_mapping_desc">Edit Mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Delete Mapping</string>
 
     <string name="pref.adapter.diagnostic_request_id.dialog_default_title">Diagnostic Request ID</string>
     <string name="pref.adapter.diagnostic_request_id.key_hint">Request Key (e.g. 555)</string>
