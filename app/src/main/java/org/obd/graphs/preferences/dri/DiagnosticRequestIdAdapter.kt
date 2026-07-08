@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences.dri
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,8 +46,16 @@ class DiagnosticRequestIdAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.tvKey.text = "Key: ${item.requestKey}"
-        holder.tvValue.text = "Value: ${item.headerValue}"
+        val context = holder.itemView.context
+
+        holder.tvKey.text = context.getString(
+            R.string.pref_adapter_diagnostic_request_id_key_label,
+            item.requestKey
+        )
+        holder.tvValue.text = context.getString(
+            R.string.pref_adapter_diagnostic_request_id_value_label,
+            item.headerValue
+        )
 
         holder.btnEdit.setOnClickListener { onEditClicked(item) }
         holder.btnDelete.setOnClickListener { onDeleteClicked(item) }
@@ -54,6 +63,7 @@ class DiagnosticRequestIdAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newItems: List<DiagnosticMappingItem>) {
         items.clear()
         items.addAll(newItems)

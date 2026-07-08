@@ -126,6 +126,11 @@
     <string name="pref.adapter.diagnostic_request_id.mapping.category">Konfiguracja mapowania identyfikatora żądania diagnostycznego</string>
     <string name="pref.adapter.diagnostic_request_id.manage_title">Zarządzaj identyfikatorami żądań diagnostycznych w sieci CAN</string>
     <string name="pref.adapter.diagnostic_request_id.manage_summary">Skonfiguruj niestandardowe mapowania nagłówków sieci CAN</string>
+    <string name="pref.adapter.diagnostic_request_id.add_new_mapping">Dodaj nowe mapowanie</string>
+    <string name="pref.adapter.diagnostic_request_id.key_label">Klucz: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.value_label">Wartość: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.edit_title">Edytuj mapowanie ID żądania</string>
+    <string name="pref.adapter.diagnostic_request_id.add_title">Dodaj nowe mapowanie ID żądania</string>
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>

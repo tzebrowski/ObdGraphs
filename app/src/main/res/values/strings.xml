@@ -122,7 +122,11 @@
     <string name="pref.adapter.diagnostic_request_id.mapping.category">Configure Diagnostic Request ID mapping</string>
     <string name="pref.adapter.diagnostic_request_id.manage_title">Manage Diagnostic CAN Request IDs</string>
     <string name="pref.adapter.diagnostic_request_id.manage_summary"> Configure custom target ECU header mappings in CAN network</string>
-
+    <string name="pref.adapter.diagnostic_request_id.add_new_mapping">Add New Mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.key_label">Key: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.value_label">Value: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.edit_title">Edit Request ID Mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.add_title">Add New Request ID Mapping</string>
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>

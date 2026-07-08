@@ -48,11 +48,11 @@ class EditDiagnosticRequestIdBottomSheet(
         val btnSave = view.findViewById<Button>(R.id.btnSave)
 
         if (existingItem != null) {
-            tvTitle.text = "Edit Request ID Mapping"
+            tvTitle.text = requireContext().getString(R.string.pref_adapter_diagnostic_request_id_edit_title)
             etKey.setText(existingItem.requestKey)
             etValue.setText(existingItem.headerValue)
         } else {
-            tvTitle.text = "Add New Request ID Mapping"
+            tvTitle.text = requireContext().getString(R.string.pref_adapter_diagnostic_request_id_add_title)
         }
 
         btnSave.setOnClickListener {
