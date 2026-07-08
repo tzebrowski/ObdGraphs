@@ -128,6 +128,7 @@ internal class AdjustmentsStrategy {
             ).errorsPolicy(
                 ErrorsPolicy
                     .builder()
+                    .continueOnError(preferences.adapter.continueOnError)
                     .numberOfRetries(preferences.adapter.maxReconnectNum)
                     .reconnectEnabled(preferences.adapter.reconnectWhenError)
                     .build()

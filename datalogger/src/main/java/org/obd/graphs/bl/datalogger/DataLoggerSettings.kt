@@ -66,6 +66,9 @@ data class Adapter(
     @XmlPreference("pref.adapter.connection.tcp.host", "192.168.0.10", String::class)
     var tcpHost: String = "192.168.0.10",
 
+    @XmlPreference("pref.adapter.error.continue_on_error", "true", Boolean::class)
+    var continueOnError: Boolean = false,
+
     @XmlPreference("pref.adapter.reconnect", "true", Boolean::class)
     var reconnectWhenError: Boolean = true,
 

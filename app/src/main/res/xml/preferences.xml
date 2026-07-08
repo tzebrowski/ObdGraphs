@@ -305,6 +305,14 @@
                     android:title="@string/pref.settings">
 
                     <SwitchPreferenceCompat
+                        android:defaultValue="false"
+                        android:dialogTitle="@string/pref.adapter.error.continue_on_error"
+                        android:key="pref.adapter.error.continue_on_error"
+                        android:title="@string/pref.adapter.error.continue_on_error"
+                        android:summary="@string/pref.adapter.error.continue_on_error_summary"
+                        app:singleLineTitle="false" />
+
+                    <SwitchPreferenceCompat
                         android:defaultValue="true"
                         android:dialogTitle="@string/pref.adapter_reconnect"
                         android:key="pref.adapter.reconnect"
