@@ -87,11 +87,8 @@
     <string name="pref.adapter_reconnect">Automatically reconnect the OBD2 adapter when a connection error occurs.</string>
     <string name="pref.adapter_reconnect_summary">Automatically restore OBD2 connection if Lost</string>
 
-
     <string name="pref.adapter.error.continue_on_error">Continue on errors</string>
     <string name="pref.adapter.error.continue_on_error_summary">Continue data collection on errors</string>
-
-
     <string name="pref.adapter_reconnect_max_retry">Maximum reconnect attempts</string>
     <string name="pref.adapter.query.view_individual.enabled">Retrieve Data Based on What\'s Shown on the current Screen</string>
     <string name="pref.adapter.query.view_individual.enabled_summary">Fetch from ECU only PIDs shown on current screen to boost performance—recommended for slow adapters. Note: this disables high/low freq PIDs polling.</string>

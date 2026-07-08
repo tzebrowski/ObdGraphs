@@ -109,6 +109,9 @@
     <string name="pref.connection.connection_timeout">Limit czasu połączenia</string>
     <string name="pref.adapter.type">Typ adaptera</string>
 
+    <string name="pref.adapter.error.continue_on_error">Ignoruj błedy</string>
+    <string name="pref.adapter.error.continue_on_error_summary">Nie przerywaj komunikacji z adapterem podczas błędów</string>
+
     <string name="pref.adapter_id">Dostępne urządzenia Bluetooth</string>
     <string name="pref.gauge.number_of_columns">Liczba kolumn</string>
     <string name="pref.gauge.font_size">Rozmiar czcionki</string>
