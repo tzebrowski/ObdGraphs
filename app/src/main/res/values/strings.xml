@@ -128,6 +128,11 @@
     <string name="pref.adapter.diagnostic_request_id.edit_title">Edit Request ID Mapping</string>
     <string name="pref.adapter.diagnostic_request_id.add_title">Add New Request ID Mapping</string>
 
+    <string name="pref.adapter.diagnostic_request_id.dialog_default_title">Diagnostic Request ID</string>
+    <string name="pref.adapter.diagnostic_request_id.key_hint">Request Key (e.g. 555)</string>
+    <string name="pref.adapter.diagnostic_request_id.value_hint">Header Value (e.g. 18DA18F1)</string>
+    <string name="pref.adapter.diagnostic_request_id.save_button">Save Mapping</string>
+
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>

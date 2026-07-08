@@ -132,6 +132,11 @@
     <string name="pref.adapter.diagnostic_request_id.edit_title">Edytuj mapowanie ID żądania</string>
     <string name="pref.adapter.diagnostic_request_id.add_title">Dodaj nowe mapowanie ID żądania</string>
 
+    <string name="pref.adapter.diagnostic_request_id.dialog_default_title">ID żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.key_hint">Klucz żądania (np. 555)</string>
+    <string name="pref.adapter.diagnostic_request_id.value_hint">Wartość nagłówka (np. 18DA18F1)</string>
+    <string name="pref.adapter.diagnostic_request_id.save_button">Zapisz mapowanie</string>
+
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>
     <string name="pref.pids.group.dtc.available_message">DTC są dostępne. Sprawdź sekcję DTC</string>

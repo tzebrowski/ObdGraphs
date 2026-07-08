@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Diagnostic Request ID"
+        android:text="@string/pref.adapter.diagnostic_request_id.dialog_default_title"
         android:textAppearance="?attr/textAppearanceHeadline6" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -20,7 +19,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Request Key (e.g. 555)">
+        android:hint="@string/pref.adapter.diagnostic_request_id.key_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etKey"
@@ -36,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Header Value (e.g. 18DA18F1)">
+        android:hint="@string/pref.adapter.diagnostic_request_id.value_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etValue"
@@ -50,6 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Save Mapping" />
+        android:text="@string/pref.adapter.diagnostic_request_id.save_button" />
 
 </LinearLayout>
