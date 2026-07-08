@@ -124,12 +124,8 @@
     <string name="pref.toolbar.toggle_double_click">Przełącz pasek narzędzi podwójnym kliknięciem</string>
 
     <string name="pref.adapter.diagnostic_request_id.mapping.category">Konfiguracja mapowania identyfikatora żądania diagnostycznego</string>
-    <string name="pref.adapter.diagnostic_request_id.select_key">Wybierz klucz identyfikatora żądania diagnostycznego</string>
-    <string name="pref.adapter.diagnostic_request_id.set_new_value">Ustaw wartość identyfikatora żądania diagnostycznego dla wybranego klucza</string>
-    <string name="pref.adapter.diagnostic_request_id.set_key">Zaktualizuj klucz identyfikatora żądania diagnostycznego</string>
-    <string name="pref.adapter.diagnostic_request_id.add_new_value">Dodaj nową wartość identyfikatora żądania diagnostycznego</string>
-    <string name="pref.adapter.diagnostic_request_id.values.category">Konfiguracja wartości identyfikatora żądania diagnostycznego</string>
-    <string name="pref.adapter.diagnostic_request_id.keys.category">Konfiguracja kluczy identyfikatora żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.manage_title">Zarządzaj identyfikatorami żądań diagnostycznych w sieci CAN</string>
+    <string name="pref.adapter.diagnostic_request_id.manage_summary">Skonfiguruj niestandardowe mapowania nagłówków sieci CAN</string>
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>

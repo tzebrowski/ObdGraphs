@@ -262,9 +262,9 @@
                     <PreferenceCategory android:title="@string/pref.adapter.diagnostic_request_id.mapping.category">
                         <Preference
                             android:key="pref.adapter.init.manage_dri"
-                            android:title="Manage Diagnostic Request IDs"
+                            android:title="@string/pref.adapter.diagnostic_request_id.manage_title"
                             app:fragment="org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment"
-                            android:summary="Configure custom target ECU header mappings" />
+                            android:summary="@string/pref.adapter.diagnostic_request_id.manage_summary" />
                     </PreferenceCategory>
                 </PreferenceScreen>
             </PreferenceCategory>
