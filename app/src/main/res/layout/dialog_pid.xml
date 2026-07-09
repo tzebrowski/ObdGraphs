@@ -13,6 +13,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
+        app:cardBackgroundColor="#F0F2F5"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp">
 
@@ -20,7 +21,7 @@
             android:id="@+id/custom_dialog_layout_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="@android:color/transparent"
             android:theme="@style/ThemeOverlay.AppCompat.Light"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     </com.google.android.material.card.MaterialCardView>
@@ -42,6 +43,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="#F0F2F5"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp">
 
@@ -49,7 +51,7 @@
             android:id="@+id/status_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="@android:color/transparent"
             android:orientation="horizontal"
             android:padding="8dp">
 
