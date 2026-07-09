@@ -143,7 +143,7 @@
     <string name="pref.pid.alert.edit_validation_error">Lower threshold cannot be greater than Upper threshold.</string>
     <string name="pref.pid.alert.edit_save">SAVE</string>
 
-
+    <string name="pref.pids.search_hint">Search PIDs...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>

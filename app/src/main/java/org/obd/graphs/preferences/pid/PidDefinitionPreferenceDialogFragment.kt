@@ -148,7 +148,7 @@ open class PidDefinitionPreferenceDialogFragment(
 
         searchView.setIconifiedByDefault(true)
         searchView.isIconified = false
-        searchView.queryHint = "Search PIDs..."
+        searchView.queryHint = getString(R.string.pref_pids_search_hint)
 
         val searchEditText = searchView.findViewById<android.widget.EditText>(androidx.appcompat.R.id.search_src_text)
         searchEditText?.let {

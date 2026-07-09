@@ -146,6 +146,7 @@
     <string name="pref.pid.alert.edit_validation_error">Dolny próg nie może być większy niż górny próg.</string>
     <string name="pref.pid.alert.edit_save">ZAPISZ</string>
 
+    <string name="pref.pids.search_hint">Szukaj PIDów...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>
     <string name="pref.pids.group.dtc.available_message">DTC są dostępne. Sprawdź sekcję DTC</string>
