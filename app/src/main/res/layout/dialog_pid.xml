@@ -47,59 +47,78 @@
 
         <LinearLayout
             android:id="@+id/status_panel"
-            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/pid_list_select_all"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="@color/rainbow_indigo"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                app:backgroundTint="@color/rainbow_indigo"
+                app:rippleColor="#40FFFFFF"
+                app:cornerRadius="8dp"
                 android:text="@string/dialog_select_all_action"
                 android:textColor="@android:color/white"
                 android:textSize="10sp"
                 tools:ignore="SmallSp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/pid_list_deselect_all"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/rainbow_indigo"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                app:backgroundTint="@color/rainbow_indigo"
+                app:rippleColor="#40FFFFFF"
+                app:cornerRadius="8dp"
                 android:text="@string/dialog_deselect_all_action"
                 android:textColor="@android:color/white"
                 android:textSize="10sp"
                 tools:ignore="SmallSp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/action_close_window"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/rainbow_indigo"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                app:backgroundTint="@color/rainbow_indigo"
+                app:rippleColor="#40FFFFFF"
+                app:cornerRadius="8dp"
                 android:text="@string/dialog_close_window_action"
                 android:textColor="@android:color/white"
                 android:textSize="10sp"
                 tools:ignore="SmallSp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/pid_list_save"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/rainbow_indigo"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                app:backgroundTint="@color/rainbow_indigo"
+                app:rippleColor="#40FFFFFF"
+                app:cornerRadius="8dp"
                 android:text="@string/dialog_save_action"
                 android:textColor="@android:color/white"
                 android:textSize="10sp"
