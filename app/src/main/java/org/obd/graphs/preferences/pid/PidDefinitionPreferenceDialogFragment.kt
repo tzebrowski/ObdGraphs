@@ -73,7 +73,10 @@ open class PidDefinitionPreferenceDialogFragment(
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
-    private val editableViewEnabled: Boolean = (source == "edit")
+
+    private val isEditMode: Boolean = (source == "edit")
+    private val isAlertMode: Boolean = (source == "alert")
+    private val isInteractiveMode: Boolean = isEditMode || isAlertMode
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -95,7 +98,7 @@ open class PidDefinitionPreferenceDialogFragment(
         val adapter = PidViewAdapter(
             context = context,
             data = listOfItems,
-            editModeEnabled = editableViewEnabled,
+            editModeEnabled = isInteractiveMode, // Enables the edit pencil icon on cards
             onEditClicked = { clickedPid ->
                 showEditBottomSheet(clickedPid)
             }
@@ -109,13 +112,51 @@ open class PidDefinitionPreferenceDialogFragment(
         attachDragManager(recyclerView)
         attachActionButtons()
 
+        val fabAddPid = root.findViewById<View>(R.id.fab_add_pid)
+        fabAddPid.visibility = if (isEditMode) View.VISIBLE else View.GONE
+        fabAddPid.setOnClickListener {
+            showEditBottomSheet(null)
+        }
+
         adjustRecyclerViewHeight(recyclerView, resources.configuration.orientation)
         return root
     }
 
-    private fun showEditBottomSheet(pidItem: PidDefinitionDetails) {
-        val bottomSheet = EditPidBottomSheet(pidItem) { updatedPid ->
-            updatedPid.source.serialize()
+    private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
+        val bottomSheet = EditPidBottomSheet(pidItem, source) { description, mode, pidCode, formula, lower, upper ->
+            if (pidItem != null) {
+                if (isEditMode) {
+                    pidItem.source.description = description ?: pidItem.source.description
+                    pidItem.source.formula = formula ?: pidItem.source.formula
+//                    pidItem.source.mode = mode ?: pidItem.source.mode
+//                    pidItem.source.pid = pidCode ?: pidItem.source.pid
+                }
+
+                pidItem.source.alert.lowerThreshold = lower
+                pidItem.source.alert.upperThreshold = upper
+                pidItem.source.serialize()
+            } else if (isEditMode) {
+                // CREATE NEW PID (Only happens in Edit Mode)
+                // TODO: Initialize your PidDefinition object according to your backend architecture.
+                /*
+                val newPid = PidDefinition(
+                    id = System.currentTimeMillis(),
+                    description = description ?: "",
+                    mode = mode ?: "",
+                    pid = pidCode ?: "",
+                    formula = formula
+                )
+                newPid.alert.lowerThreshold = lower
+                newPid.alert.upperThreshold = upper
+
+                val newDetails = PidDefinitionDetails(newPid, checked = true, supported = true)
+                listOfItems.add(newDetails)
+                DataLoggerRepository.getPidDefinitionRegistry().register(newPid)
+                newPid.serialize()
+                 */
+            }
+
+            getAdapter().updateData(sortItems(listOfItems))
             getAdapter().notifyDataSetChanged()
         }
         bottomSheet.show(childFragmentManager, "EditPidBottomSheet")
@@ -126,7 +167,7 @@ open class PidDefinitionPreferenceDialogFragment(
         orientation: Int
     ) {
         recyclerView.layoutParams.height =
-            if (editableViewEnabled) {
+            if (isInteractiveMode) {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.2f, resources.displayMetrics).toInt()
                 } else {
@@ -193,7 +234,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
-            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
+            visibility = if (isInteractiveMode) View.GONE else View.VISIBLE
 
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
@@ -205,7 +246,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
-            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
+            visibility = if (isInteractiveMode) View.GONE else View.VISIBLE
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
                 adapter.data.forEach {
@@ -342,7 +383,7 @@ open class PidDefinitionPreferenceDialogFragment(
                 when (source) {
                     "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
                     "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
-                    "edit" -> findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
+                    "edit", "alert" -> findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
                     "dashboard" -> map(all)
                     "graph" -> map(all)
                     "gauge" -> map(all)

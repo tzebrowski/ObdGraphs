@@ -440,7 +440,7 @@
                 android:summary="@string/pref.pids.edit_summary"
                 android:title="@string/pref.pids.edit"
                 app:singleLineTitle="false"
-                app:source="edit" />
+                app:source="alert" />
 
         </PreferenceScreen>
     </PreferenceCategory>

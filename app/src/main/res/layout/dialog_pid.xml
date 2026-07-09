@@ -35,6 +35,20 @@
         android:clipToPadding="false"
         android:paddingVertical="4dp" />
 
+    <!-- NEW: Floating Action Button for adding a new PID -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_pid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_panel_card"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="Add new PID"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/philippine_green"
+        app:tint="@android:color/white" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_panel_card"
         android:layout_width="match_parent"
