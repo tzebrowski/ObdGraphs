@@ -145,8 +145,16 @@ open class PidDefinitionPreferenceDialogFragment(
         val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
         toolbar.inflateMenu(R.menu.pids_dialog_menu)
         val searchView = toolbar.menu.findItem(R.id.menu_searchview).actionView as SearchView
+
         searchView.setIconifiedByDefault(true)
         searchView.isIconified = false
+        searchView.queryHint = "Search PIDs..."
+
+        val searchEditText = searchView.findViewById<android.widget.EditText>(androidx.appcompat.R.id.search_src_text)
+        searchEditText?.let {
+            it.setTextColor(android.graphics.Color.BLACK)
+            it.setHintTextColor(android.graphics.Color.DKGRAY)
+        }
 
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
