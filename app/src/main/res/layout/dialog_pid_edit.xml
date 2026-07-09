@@ -10,14 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Edit PID Alerting"
+        android:text="@string/pref_pid_alert_edit_title"
         android:textAppearance="?attr/textAppearanceHeadline6" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Calculation Formula">
+        android:hint="@string/pref.pid.alert.edit_formula_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etFormula"
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Alert Lower Threshold">
+        android:hint="@string/pref.pid.alert.edit_lower_threshold_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etLower"
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Alert Upper Threshold">
+        android:hint="@string/pref.pid.alert.edit_upper_threshold_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUpper"
@@ -61,13 +61,13 @@
         android:layout_marginTop="8dp"
         android:textColor="@color/design_default_color_error"
         android:visibility="gone"
-        android:text="Lower threshold cannot be greater than Upper threshold." />
+        android:text="@string/pref.pid.alert.edit_validation_error" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="SAVE" />
+        android:text="@string/pref.pid.alert.edit_save" />
 
 </LinearLayout>
