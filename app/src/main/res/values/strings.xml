@@ -135,6 +135,15 @@
     <string name="pref.adapter.diagnostic_request_id.value_hint">Header Value (e.g. 18DA18F1)</string>
     <string name="pref.adapter.diagnostic_request_id.save_button">Save Mapping</string>
 
+
+    <string name="pref_pid_alert_edit_title">Edit PID Alerting</string>
+    <string name="pref.pid.alert.edit_formula_hint">Calculation Formula</string>
+    <string name="pref.pid.alert.edit_lower_threshold_hint">Alert Lower Threshold</string>
+    <string name="pref.pid.alert.edit_upper_threshold_hint">Alert Upper Threshold</string>
+    <string name="pref.pid.alert.edit_validation_error">Lower threshold cannot be greater than Upper threshold.</string>
+    <string name="pref.pid.alert.edit_save">SAVE</string>
+
+    <string name="pref.pids.search_hint">Search PIDs...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>

@@ -139,6 +139,14 @@
     <string name="pref.adapter.diagnostic_request_id.edit_mapping_desc">Edytuj mapowanie</string>
     <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Usuń mapowanie</string>
 
+    <string name="pref_pid_alert_edit_title">Edytuj alerty PID</string>
+    <string name="pref.pid.alert.edit_formula_hint">Formuła obliczeniowa</string>
+    <string name="pref.pid.alert.edit_lower_threshold_hint">Dolny próg alertu</string>
+    <string name="pref.pid.alert.edit_upper_threshold_hint">Górny próg alertu</string>
+    <string name="pref.pid.alert.edit_validation_error">Dolny próg nie może być większy niż górny próg.</string>
+    <string name="pref.pid.alert.edit_save">ZAPISZ</string>
+
+    <string name="pref.pids.search_hint">Szukaj PIDów...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>
     <string name="pref.pids.group.dtc.available_message">DTC są dostępne. Sprawdź sekcję DTC</string>

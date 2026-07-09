@@ -26,8 +26,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TableLayout
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
@@ -79,7 +77,6 @@ open class PidDefinitionPreferenceDialogFragment(
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-
         adjustRecyclerViewHeight(recyclerView = recyclerView, newConfig.orientation)
     }
 
@@ -95,7 +92,15 @@ open class PidDefinitionPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PidViewAdapter(root, context, listOfItems, editableViewEnabled)
+        val adapter = PidViewAdapter(
+            context = context,
+            data = listOfItems,
+            editModeEnabled = editableViewEnabled,
+            onEditClicked = { clickedPid ->
+                showEditBottomSheet(clickedPid)
+            }
+        )
+
         recyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -103,10 +108,17 @@ open class PidDefinitionPreferenceDialogFragment(
         attachSearchView()
         attachDragManager(recyclerView)
         attachActionButtons()
-        adjustItemsVisibility()
 
         adjustRecyclerViewHeight(recyclerView, resources.configuration.orientation)
         return root
+    }
+
+    private fun showEditBottomSheet(pidItem: PidDefinitionDetails) {
+        val bottomSheet = EditPidBottomSheet(pidItem) { updatedPid ->
+            updatedPid.source.serialize()
+            getAdapter().notifyDataSetChanged()
+        }
+        bottomSheet.show(childFragmentManager, "EditPidBottomSheet")
     }
 
     private fun adjustRecyclerViewHeight(
@@ -129,30 +141,20 @@ open class PidDefinitionPreferenceDialogFragment(
             }
     }
 
-    private fun adjustItemsVisibility() {
-        root.findViewById<TableLayout>(R.id.details_view).apply {
-            visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
-        }
-
-        root.findViewById<TextView>(R.id.pid_details_stable_header).apply {
-            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
-        }
-
-        root.findViewById<TextView>(R.id.pid_details_formula_header).apply {
-            visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
-        }
-
-        root.findViewById<TextView>(R.id.pid_details_selection_header).apply {
-            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
-        }
-    }
-
     private fun attachSearchView() {
         val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
         toolbar.inflateMenu(R.menu.pids_dialog_menu)
         val searchView = toolbar.menu.findItem(R.id.menu_searchview).actionView as SearchView
+
         searchView.setIconifiedByDefault(true)
         searchView.isIconified = false
+        searchView.queryHint = getString(R.string.pref_pids_search_hint)
+
+        val searchEditText = searchView.findViewById<android.widget.EditText>(androidx.appcompat.R.id.search_src_text)
+        searchEditText?.let {
+            it.setTextColor(android.graphics.Color.BLACK)
+            it.setHintTextColor(android.graphics.Color.DKGRAY)
+        }
 
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
@@ -160,7 +162,6 @@ open class PidDefinitionPreferenceDialogFragment(
                     if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                         Log.d(LOG_TAG, "OnQueryTextSubmit newText=$query")
                     }
-
                     filterListOfItems(query)
                     return false
                 }
@@ -169,7 +170,6 @@ open class PidDefinitionPreferenceDialogFragment(
                     if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                         Log.d(LOG_TAG, "OnQueryTextChange newValue=$newValue")
                     }
-
                     filterListOfItems(newValue)
                     return false
                 }
@@ -197,7 +197,6 @@ open class PidDefinitionPreferenceDialogFragment(
 
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
-
                 adapter.data.forEach {
                     it.checked = true
                 }
@@ -209,7 +208,6 @@ open class PidDefinitionPreferenceDialogFragment(
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
-
                 adapter.data.forEach {
                     it.checked = false
                 }
@@ -236,7 +234,6 @@ open class PidDefinitionPreferenceDialogFragment(
                     if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                         Log.v(LOG_TAG, "storePreferences for $key")
                     }
-
                     viewSerializer.store(getAdapter().data.map { it.source.id })
                     notifyListChanged()
                 }
@@ -460,10 +457,6 @@ open class PidDefinitionPreferenceDialogFragment(
             Prefs.updateStringSet(key, newList)
         } else {
             Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not changed")
-        }
-
-        if (editableViewEnabled) {
-            getAdapter().data[getAdapter().currentSelectedPosition].source.serialize()
         }
     }
 }
