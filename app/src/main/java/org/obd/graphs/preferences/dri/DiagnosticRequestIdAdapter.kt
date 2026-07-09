@@ -40,7 +40,7 @@ class DiagnosticRequestIdAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_diagnostic_request_id, parent, false)
+            .inflate(R.layout.item_dri, parent, false)
         return ViewHolder(view)
     }
 
