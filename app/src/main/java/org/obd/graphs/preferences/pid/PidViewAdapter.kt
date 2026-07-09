@@ -65,28 +65,33 @@ class PidViewAdapter internal constructor(
                 holder.status.setText("Stable: No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
             }
 
-            var formulaText = source.formula ?: ""
+            holder.formula.text = source.formula ?: ""
+
             val lower = source.alert.lowerThreshold
             val upper = source.alert.upperThreshold
+            val hasAlerts = lower != null || upper != null
 
-            if (lower != null || upper != null) {
-                val alerts = mutableListOf<String>()
-                if (lower != null) alerts.add("x<$lower")
-                if (upper != null) alerts.add("x>$upper")
-                formulaText += " (Alerts: ${alerts.joinToString(", ")})"
+            if (hasAlerts) {
+                val alertsList = mutableListOf<String>()
+                if (lower != null) alertsList.add("Min $lower")
+                if (upper != null) alertsList.add("Max $upper")
+                holder.alerts.text = "Alerts: ${alertsList.joinToString(", ")}"
             }
-            holder.formula.text = formulaText
 
             if (editModeEnabled) {
                 holder.selected.visibility = View.GONE
                 holder.status.visibility = View.GONE
                 holder.btnEdit.visibility = View.VISIBLE
+
                 holder.formula.visibility = View.VISIBLE
+                holder.alerts.visibility = if (hasAlerts) View.VISIBLE else View.GONE
             } else {
                 holder.selected.visibility = View.VISIBLE
                 holder.status.visibility = View.VISIBLE
                 holder.btnEdit.visibility = View.GONE
+
                 holder.formula.visibility = View.GONE
+                holder.alerts.visibility = View.GONE
             }
 
             holder.selected.isChecked = checked
@@ -111,6 +116,7 @@ class PidViewAdapter internal constructor(
         val module: TextView = binding.findViewById(R.id.pid_module)
         val description: TextView = binding.findViewById(R.id.pid_description)
         val formula: TextView = binding.findViewById(R.id.pid_formula)
+        val alerts: TextView = binding.findViewById(R.id.pid_alerts)
         val status: TextView = binding.findViewById(R.id.pid_status)
         val selected: CheckBox = binding.findViewById(R.id.pid_selected)
         val btnEdit: ImageButton = binding.findViewById(R.id.btnEdit)
