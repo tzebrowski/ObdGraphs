@@ -31,6 +31,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -39,6 +40,7 @@ import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.modules
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_PERFORMANCE
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_TRIP_INFO
@@ -129,8 +131,6 @@ open class PidDefinitionPreferenceDialogFragment(
                     pidItem.source.description = formData.description ?: pidItem.source.description
                     pidItem.source.longDescription = formData.longDescription ?: pidItem.source.longDescription
                     pidItem.source.formula = formData.formula ?: pidItem.source.formula
-                    // pidItem.source.mode = formData.mode ?: pidItem.source.mode // If allowed to edit mode
-                    // pidItem.source.pid = formData.pidCode ?: pidItem.source.pid // If allowed to edit pid
                     pidItem.source.units = formData.units
                     pidItem.source.stable = formData.stable
                 }
@@ -161,7 +161,8 @@ open class PidDefinitionPreferenceDialogFragment(
                 val newDetails = PidDefinitionDetails(newPid, checked = true, supported = true)
                 listOfItems.add(newDetails)
                 DataLoggerRepository.getPidDefinitionRegistry().register(newPid)
-                newPid.serialize()
+                modules.saveCustomPid(requireContext(), newDetails.source)
+                sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
             }
 
             getAdapter().updateData(sortItems(listOfItems))

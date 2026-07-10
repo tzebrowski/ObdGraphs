@@ -435,12 +435,21 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun getReadDtcAction(): DtcAction  = if (dataLoggerSettings.instance().adapter.dtcReadSnapshots) DtcAction.READ_SNAPSHPOTS else DtcAction.READ
 
-    private fun pids(): Pids? =
-        Pids.builder().resources(dataLoggerSettings.instance().resources.map {
+    private fun pids(): Pids? {
+        val resourceUrls = dataLoggerSettings.instance().resources.map {
             if (modules.isExternalStorageModule(it)) {
                 modules.externalModuleToURL(it)
             } else {
                 Urls.resourceToUrl(it)
             }
-        }.toMutableList()).build()
+        }.toMutableList()
+
+       modules.getCustomPidsFile()?.let {
+           if (it.exists()) {
+               resourceUrls.add(it.toURI().toURL())
+           }
+       }
+
+       return Pids.builder().resources(resourceUrls).build()
+    }
 }

@@ -18,7 +18,11 @@ package org.obd.graphs
 
 import android.content.Context
 import android.util.Log
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.obd.graphs.preferences.Prefs
+import org.obd.metrics.pid.PidDefinition
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -30,12 +34,19 @@ private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "Modules"
 
 val modules = Modules()
+private const val USER_CUSTOM_PIDS_FILE = "user_custom_pids.json"
+
 class Modules {
 
     private val overrides = mapOf(
         "alfa.json" to "Giulietta QV",
-        "giulia_2.0_gme.json" to "Giulia 2.0 GME"
+        "giulia_2.0_gme.json" to "Giulia 2.0 GME",
+        "user_custom_pids.json" to "User custom PIDs"
     )
+
+    private val mapper = ObjectMapper().apply {
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
 
     private var modules = mutableMapOf<String, String>()
 
@@ -46,6 +57,47 @@ class Modules {
     fun getDefaultModules(): Map<String, String> = modules.apply {
         putAll(overrides)
     }
+
+    fun saveCustomPid(context: Context, pidDefinition: PidDefinition) {
+        getCustomPidsFile(context)?.let {  file ->
+
+            val typeRef = object : TypeReference<MutableMap<String, MutableList<PidDefinition>>>() {}
+
+            val pidsData: MutableMap<String, MutableList<PidDefinition>> = if (file.exists()) {
+                try {
+                    mapper.readValue(file, typeRef)
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, "Failed to read existing custom PIDs. Creating a new wrapper.", e)
+                    mutableMapOf("livedata" to mutableListOf())
+                }
+            } else {
+                mutableMapOf("livedata" to mutableListOf())
+            }
+
+            val livedata = pidsData.getOrPut("livedata") { mutableListOf() }
+
+            pidDefinition.resourceFile = USER_CUSTOM_PIDS_FILE
+
+            val index = livedata.indexOfFirst { it.id == pidDefinition.id }
+            if (index >= 0) {
+                livedata[index] = pidDefinition
+            } else {
+                livedata.add(pidDefinition)
+            }
+
+            try {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(file, pidsData)
+                Log.i(LOG_TAG, "Successfully saved custom PID (ID: ${pidDefinition.id}) to ${file.absolutePath}")
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Failed to write custom PIDs to file", e)
+            }
+        }
+    }
+
+    fun getCustomPidsFile(context: Context? = getContext()): File? =
+        context?.let {
+            return File(context.filesDir, USER_CUSTOM_PIDS_FILE)
+        }
 
     fun updateSettings(allProps: MutableMap<String, Any?>) {
         val keys = allProps.keys.filter { it.contains(PREF_MODULE_LIST) }.toList()
