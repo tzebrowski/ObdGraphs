@@ -123,37 +123,45 @@ open class PidDefinitionPreferenceDialogFragment(
     }
 
     private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
-        val bottomSheet = EditPidBottomSheet(pidItem, source) { description, mode, pidCode, formula, lower, upper ->
+        val bottomSheet = EditPidBottomSheet(pidItem, source) { formData ->
             if (pidItem != null) {
                 if (isEditMode) {
-                    pidItem.source.description = description ?: pidItem.source.description
-                    pidItem.source.formula = formula ?: pidItem.source.formula
-//                    pidItem.source.mode = mode ?: pidItem.source.mode
-//                    pidItem.source.pid = pidCode ?: pidItem.source.pid
+                    pidItem.source.description = formData.description ?: pidItem.source.description
+                    pidItem.source.longDescription = formData.longDescription ?: pidItem.source.longDescription
+                    pidItem.source.formula = formData.formula ?: pidItem.source.formula
+                    // pidItem.source.mode = formData.mode ?: pidItem.source.mode // If allowed to edit mode
+                    // pidItem.source.pid = formData.pidCode ?: pidItem.source.pid // If allowed to edit pid
+                    pidItem.source.units = formData.units
+                    pidItem.source.stable = formData.stable
                 }
 
-                pidItem.source.alert.lowerThreshold = lower
-                pidItem.source.alert.upperThreshold = upper
+                pidItem.source.alert.lowerThreshold = formData.lowerThreshold
+                pidItem.source.alert.upperThreshold = formData.upperThreshold
                 pidItem.source.serialize()
             } else if (isEditMode) {
-                // CREATE NEW PID (Only happens in Edit Mode)
-                // TODO: Initialize your PidDefinition object according to your backend architecture.
-                /*
                 val newPid = PidDefinition(
-                    id = System.currentTimeMillis(),
-                    description = description ?: "",
-                    mode = mode ?: "",
-                    pid = pidCode ?: "",
-                    formula = formula
-                )
-                newPid.alert.lowerThreshold = lower
-                newPid.alert.upperThreshold = upper
+                    System.currentTimeMillis(),
+                    formData.length,
+                    formData.formula ?: "",
+                    formData.mode ?: "",
+                    formData.pidCode ?: "",
+                    formData.units ?: "",
+                    formData.description ?: "",
+                    formData.min,
+                    formData.max,
+                    org.obd.metrics.pid.ValueType.DOUBLE
+                ).apply {
+                    longDescription = formData.longDescription
+                    stable = formData.stable
+
+                    alert.lowerThreshold = formData.lowerThreshold
+                    alert.upperThreshold = formData.upperThreshold
+                }
 
                 val newDetails = PidDefinitionDetails(newPid, checked = true, supported = true)
                 listOfItems.add(newDetails)
                 DataLoggerRepository.getPidDefinitionRegistry().register(newPid)
                 newPid.serialize()
-                 */
             }
 
             getAdapter().updateData(sortItems(listOfItems))

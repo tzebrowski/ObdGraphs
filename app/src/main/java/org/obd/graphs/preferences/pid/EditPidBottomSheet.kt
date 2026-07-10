@@ -21,15 +21,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import org.obd.graphs.R
 
+data class PidFormData(
+    val description: String?,
+    val longDescription: String?,
+    val mode: String?,
+    val pidCode: String?,
+    val formula: String?,
+    val length: Int,
+    val min: Number?,
+    val max: Number?,
+    val units: String?,
+    val stable: Boolean,
+    val cacheable: Boolean,
+    val lowerThreshold: Number?,
+    val upperThreshold: Number?
+)
+
 class EditPidBottomSheet(
     private val pidItem: PidDefinitionDetails? = null,
     private val editMode: String = "alert",
-    private val onSave: (String?, String?, String?, String?, Int?, Int?) -> Unit
+    private val onSave: (PidFormData) -> Unit
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
@@ -44,13 +61,26 @@ class EditPidBottomSheet(
         super.onViewCreated(view, savedInstanceState)
 
         val tvTitle = view.findViewById<TextView>(R.id.tvDialogTitle)
-        val tilFormula = view.findViewById<View>(R.id.tilFormula)
+
         val tilDescription = view.findViewById<View>(R.id.tilDescription)
+        val tilLongDescription = view.findViewById<View>(R.id.tilLongDescription)
         val llCorePidFields = view.findViewById<View>(R.id.llCorePidFields)
+        val llDataFields = view.findViewById<View>(R.id.llDataFields)
+        val tilFormula = view.findViewById<View>(R.id.tilFormula)
+        val llToggles = view.findViewById<View>(R.id.llToggles)
+
         val etDescription = view.findViewById<TextInputEditText>(R.id.etDescription)
+        val etLongDescription = view.findViewById<TextInputEditText>(R.id.etLongDescription)
         val etMode = view.findViewById<TextInputEditText>(R.id.etMode)
         val etPidCode = view.findViewById<TextInputEditText>(R.id.etPidCode)
         val etFormula = view.findViewById<TextInputEditText>(R.id.etFormula)
+        val etLength = view.findViewById<TextInputEditText>(R.id.etLength)
+        val etMin = view.findViewById<TextInputEditText>(R.id.etMin)
+        val etMax = view.findViewById<TextInputEditText>(R.id.etMax)
+        val etUnits = view.findViewById<TextInputEditText>(R.id.etUnits)
+        val cbStable = view.findViewById<CheckBox>(R.id.cbStable)
+        val cbCacheable = view.findViewById<CheckBox>(R.id.cbCacheable)
+
         val etLower = view.findViewById<TextInputEditText>(R.id.etLower)
         val etUpper = view.findViewById<TextInputEditText>(R.id.etUpper)
 
@@ -59,32 +89,44 @@ class EditPidBottomSheet(
 
         if (editMode == "alert") {
             tilDescription.visibility = View.GONE
+            tilLongDescription.visibility = View.GONE
             llCorePidFields.visibility = View.GONE
+            llDataFields.visibility = View.GONE
             tilFormula.visibility = View.GONE
+            llToggles.visibility = View.GONE
+
             tvTitle.text = pidItem?.source?.description ?: "Edit Alerts"
         } else {
-            tilFormula.visibility = View.VISIBLE
             tilDescription.visibility = View.VISIBLE
+            tilLongDescription.visibility = View.VISIBLE
             llCorePidFields.visibility = View.VISIBLE
+            llDataFields.visibility = View.VISIBLE
+            tilFormula.visibility = View.VISIBLE
+            llToggles.visibility = View.VISIBLE
+
             tvTitle.text = if (pidItem != null) "Edit PID" else "Add New PID"
         }
 
         if (pidItem != null) {
             etDescription.setText(pidItem.source.description)
+            etLongDescription.setText(pidItem.source.longDescription)
             etMode.setText(pidItem.source.mode)
             etPidCode.setText(pidItem.source.pid)
             etFormula.setText(pidItem.source.formula)
+            etLength.setText(pidItem.source.length.toString())
+            etMin.setText(pidItem.source.min?.toString() ?: "")
+            etMax.setText(pidItem.source.max?.toString() ?: "")
+            etUnits.setText(pidItem.source.units ?: "")
+            cbStable.isChecked = pidItem.source.stable ?: true
+            cbCacheable.isChecked = pidItem.source.cacheable ?: true
+
             etLower.setText(pidItem.source.alert.lowerThreshold?.toString() ?: "")
             etUpper.setText(pidItem.source.alert.upperThreshold?.toString() ?: "")
         }
 
         btnSave.setOnClickListener {
-            val descStr = if (editMode == "edit") etDescription.text.toString().trim() else null
-            val modeStr = if (editMode == "edit") etMode.text.toString().trim() else null
-            val pidCodeStr = if (editMode == "edit") etPidCode.text.toString().trim() else null
-            val formulaStr = etFormula.text.toString().trim()
-            val lowerVal = etLower.text.toString().toIntOrNull()
-            val upperVal = etUpper.text.toString().toIntOrNull()
+            val lowerVal = etLower.text.toString().toDoubleOrNull()
+            val upperVal = etUpper.text.toString().toDoubleOrNull()
 
             if (lowerVal != null && upperVal != null && lowerVal >= upperVal) {
                 tvError.text = getString(R.string.pref_pid_alert_edit_validation_error)
@@ -92,13 +134,29 @@ class EditPidBottomSheet(
                 return@setOnClickListener
             }
 
-            if (editMode == "edit" && (descStr.isNullOrEmpty() || modeStr.isNullOrEmpty() || pidCodeStr.isNullOrEmpty())) {
+            val formData = PidFormData(
+                description = if (editMode == "edit") etDescription.text.toString().trim() else null,
+                longDescription = if (editMode == "edit") etLongDescription.text.toString().trim() else null,
+                mode = if (editMode == "edit") etMode.text.toString().trim() else null,
+                pidCode = if (editMode == "edit") etPidCode.text.toString().trim() else null,
+                formula = if (editMode == "edit") etFormula.text.toString().trim() else null,
+                length = etLength.text.toString().toIntOrNull() ?: 1,
+                min = etMin.text.toString().toDoubleOrNull(),
+                max = etMax.text.toString().toDoubleOrNull(),
+                units = etUnits.text.toString().trim(),
+                stable = cbStable.isChecked,
+                cacheable = cbCacheable.isChecked,
+                lowerThreshold = lowerVal,
+                upperThreshold = upperVal
+            )
+
+            if (editMode == "edit" && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
                 tvError.text = "Description, Mode, and PID Code are required!"
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
 
-            onSave(descStr, modeStr, pidCodeStr, formulaStr, lowerVal, upperVal)
+            onSave(formData)
             dismiss()
         }
     }
