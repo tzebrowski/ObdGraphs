@@ -64,16 +64,16 @@
 
     <string name="pref.aa.performance.displayed_parameter_ids">Dostosuj zbierane i widoczne OBD2 PID</string>
     <string name="pref.aa.performance.displayed_parameter_ids_summary">Wybierz czujniki OBD2 lub PID, które chcesz widzieć. <font color="#C22636">Uwaga: Diagnostyczne PID (takie jak RPM, Spark Advance, MFA) są rejestrowane tylko do zbierania danych i nie będą widoczne na desce rozdzielczej.</font></string>
-    <string name="pref.pids.edit">Modyfikuj indywidualne progi alertów</string>
-    <string name="pref.pids.edit_summary">Dostosuj konfigurację poszczególnych PID, w tym ustawianie progów alertów.</string>
+    <string name="pref.pid.alert.edit_dialog">Modyfikuj indywidualne progi alertów</string>
+    <string name="pref.pid.alert.edit_dialog_summary">Dostosuj konfigurację poszczególnych PID, w tym ustawianie progów alertów.</string>
 
-    <string name="pref.pids_generic_high">Wybierz szybko aktualizowane dane OBD2 do wyświetlenia</string>
-    <string name="pref.pids_generic_high_summary">Wybierz czujniki OBD2 lub PID o wysokiej częstotliwości, które chcesz pobierać z ECU.</string>
-    <string name="pref.pids_generic_low">Wybierz wolno aktualizowane dane OBD2 do wyświetlenia</string>
-    <string name="pref.pids_generic_low_summary">Wybierz czujniki OBD2 lub PID o niskiej częstotliwości, które chcesz pobierać z ECU.</string>
+    <string name="pref.pid.generic_high">Wybierz szybko aktualizowane dane OBD2 do wyświetlenia</string>
+    <string name="pref.pid.generic_high_summary">Wybierz czujniki OBD2 lub PID o wysokiej częstotliwości, które chcesz pobierać z ECU.</string>
+    <string name="pref.pid.generic_low">Wybierz wolno aktualizowane dane OBD2 do wyświetlenia</string>
+    <string name="pref.pid.generic_low_summary">Wybierz czujniki OBD2 lub PID o niskiej częstotliwości, które chcesz pobierać z ECU.</string>
 
-    <string name="prefs.adapter_batch_mode_01_batch_size">Rozmiar paczki dla trybu 01</string>
-    <string name="prefs.adapter_batch_mode_22_batch_size">Rozmiar paczki dla trybu 22</string>
+    <string name="pref.adapter_batch_mode_01_batch_size">Rozmiar paczki dla trybu 01</string>
+    <string name="pref.adapter_batch_mode_22_batch_size">Rozmiar paczki dla trybu 22</string>
     <string name="pref.adapter_batch_enabled">Włącz tryb wsadowy</string>
     <string name="pref.adapter_batch_strict_validation_enabled">Włącz ścisłą walidację wiadomości</string>
     <string name="pref.adapter_batch_strict_validation_enabled_summary">Ignoruje odpowiedzi OBD2 z błędami strukturalnymi.</string>
@@ -138,6 +138,8 @@
     <string name="pref.adapter.diagnostic_request_id.save_button">Zapisz mapowanie</string>
     <string name="pref.adapter.diagnostic_request_id.edit_mapping_desc">Edytuj mapowanie</string>
     <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Usuń mapowanie</string>
+    <string name="pref.pid.manage_dialog">Zarządzaj PIDami</string>
+    <string name="pref.pid.manage_dialog_summary">Modyfikuj i dodawaj nowe PIDy</string>
 
     <string name="pref_pid_alert_edit_title">Edytuj alerty PID</string>
     <string name="pref.pid.alert.edit_formula_hint">Formuła obliczeniowa</string>
