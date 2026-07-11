@@ -37,7 +37,8 @@ class PidViewAdapter internal constructor(
     context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
-    private val onEditClicked: (PidDefinitionDetails) -> Unit
+    private val onEditClicked: (PidDefinitionDetails) -> Unit,
+    private val onDeleteClicked: (PidDefinitionDetails) -> Unit
 ) : RecyclerView.Adapter<PidViewAdapter.ViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -83,12 +84,22 @@ class PidViewAdapter internal constructor(
                 holder.status.visibility = View.GONE
                 holder.btnEdit.visibility = View.VISIBLE
 
+                if (source.resourceFile == "user_custom_pids.json") {
+                    holder.btnDelete.visibility = View.VISIBLE
+                    holder.btnDelete.setOnClickListener {
+                        onDeleteClicked(item)
+                    }
+                } else {
+                    holder.btnDelete.visibility = View.GONE
+                }
+
                 holder.formula.visibility = View.VISIBLE
                 holder.alerts.visibility = if (hasAlerts) View.VISIBLE else View.GONE
             } else {
                 holder.selected.visibility = View.VISIBLE
                 holder.status.visibility = View.VISIBLE
                 holder.btnEdit.visibility = View.GONE
+                holder.btnDelete.visibility = View.GONE
 
                 holder.formula.visibility = View.GONE
                 holder.alerts.visibility = View.GONE
@@ -120,5 +131,6 @@ class PidViewAdapter internal constructor(
         val status: TextView = binding.findViewById(R.id.pid_status)
         val selected: CheckBox = binding.findViewById(R.id.pid_selected)
         val btnEdit: ImageButton = binding.findViewById(R.id.btnEdit)
+        val btnDelete: ImageButton = binding.findViewById(R.id.btnDelete)
     }
 }

@@ -58,6 +58,33 @@ class Modules {
         putAll(overrides)
     }
 
+    fun deleteCustomPid(context: Context, pidId: Long) {
+        getCustomPidsFile(context)?.let { file ->
+            if (!file.exists()) return
+
+            val mapper = ObjectMapper()
+            val typeRef = object : TypeReference<MutableMap<String, MutableList<PidDefinition>>>() {}
+
+            try {
+                val pidsData = mapper.readValue(file, typeRef)
+                val livedata = pidsData["livedata"] ?: return
+
+                val initialSize = livedata.size
+                livedata.removeAll { it.id == pidId }
+
+                if (livedata.size < initialSize) {
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(file, pidsData)
+                    Log.i(LOG_TAG, "Successfully deleted PID (ID: $pidId)")
+                } else {
+                  //
+                }
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Error occurred while removing custom PID", e)
+            }
+        }
+    }
+
+
     fun saveCustomPid(context: Context, pidDefinition: PidDefinition) {
         getCustomPidsFile(context)?.let {  file ->
 

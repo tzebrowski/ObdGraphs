@@ -100,9 +100,13 @@ open class PidDefinitionPreferenceDialogFragment(
         val adapter = PidViewAdapter(
             context = context,
             data = listOfItems,
-            editModeEnabled = isInteractiveMode, // Enables the edit pencil icon on cards
+            editModeEnabled = isInteractiveMode,
             onEditClicked = { clickedPid ->
                 showEditBottomSheet(clickedPid)
+            },
+
+            onDeleteClicked = { clickedPid ->
+                deleteCustomPid(clickedPid)
             }
         )
 
@@ -122,6 +126,13 @@ open class PidDefinitionPreferenceDialogFragment(
 
         adjustRecyclerViewHeight(recyclerView, resources.configuration.orientation)
         return root
+    }
+
+    private fun deleteCustomPid(pidItem: PidDefinitionDetails) {
+        modules.deleteCustomPid(requireContext(), pidItem.source.id)
+        listOfItems.remove(pidItem)
+        getAdapter().updateData(sortItems(listOfItems))
+        sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
     }
 
     private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
