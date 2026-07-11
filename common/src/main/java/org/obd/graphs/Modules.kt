@@ -76,7 +76,7 @@ class Modules {
                     mapper.writerWithDefaultPrettyPrinter().writeValue(file, pidsData)
                     Log.i(LOG_TAG, "Successfully deleted PID (ID: $pidId)")
                 } else {
-                  //
+                    //
                 }
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Error occurred while removing custom PID", e)
@@ -84,9 +84,8 @@ class Modules {
         }
     }
 
-
     fun saveCustomPid(context: Context, pidDefinition: PidDefinition) {
-        getCustomPidsFile(context)?.let {  file ->
+        getCustomPidsFile(context)?.let { file ->
 
             val typeRef = object : TypeReference<MutableMap<String, MutableList<PidDefinition>>>() {}
 
