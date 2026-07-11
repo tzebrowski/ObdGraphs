@@ -34,7 +34,7 @@ import org.obd.graphs.ui.common.setText
 import java.util.Collections
 
 class PidViewAdapter internal constructor(
-    context: Context?,
+    private val context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
     private val onEditClicked: (PidDefinitionDetails) -> Unit,
@@ -61,9 +61,9 @@ class PidViewAdapter internal constructor(
             holder.description.setText(desc, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
 
             if (source.stable) {
-                holder.status.setText("Stable: Yes", Color.GRAY, Typeface.NORMAL, 0.7f)
+                holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_yes), Color.GRAY, Typeface.NORMAL, 0.7f)
             } else {
-                holder.status.setText("Stable: No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
+                holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_no), COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
             }
 
             holder.formula.text = source.formula ?: ""
@@ -74,9 +74,13 @@ class PidViewAdapter internal constructor(
 
             if (hasAlerts) {
                 val alertsList = mutableListOf<String>()
-                if (lower != null) alertsList.add("Min $lower")
-                if (upper != null) alertsList.add("Max $upper")
-                holder.alerts.text = "Alerts: ${alertsList.joinToString(", ")}"
+                val minPrefix = context?.getString(R.string.pref_pid_manage_dialog_min_prefix)
+                val maxPrefix = context?.getString(R.string.pref_pid_manage_dialog_max_prefix)
+
+                if (lower != null) alertsList.add("$minPrefix $lower")
+                if (upper != null) alertsList.add("$maxPrefix $upper")
+
+                holder.alerts.text = "${context?.getString(R.string.pref_pid_manage_dialog_alerts_prefix)} ${alertsList.joinToString(", ")}"
             }
 
             if (editModeEnabled) {

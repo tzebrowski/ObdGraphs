@@ -141,6 +141,31 @@
     <string name="pref.pid.manage_dialog">Zarządzaj PIDami</string>
     <string name="pref.pid.manage_dialog_summary">Modyfikuj i dodawaj nowe PIDy</string>
 
+    <string name="pref.pid.manage_dialog.stable_yes">Stabilny: Tak</string>
+    <string name="pref.pid.manage_dialog.stable_no">Stabilny: Nie</string>
+    <string name="pref.pid.manage_dialog.alerts_prefix">Alerty:</string>
+    <string name="pref.pid.manage_dialog.min_prefix">Min</string>
+    <string name="pref.pid.manage_dialog.max_prefix">Max</string>
+    <string name="pref.pid.manage_dialog.edit_alerts_title">Edytuj alerty</string>
+    <string name="pref.pid.manage_dialog.edit_pid_title">Edytuj PID</string>
+    <string name="pref.pid.manage_dialog.add_new_pid_title">Dodaj nowy PID</string>
+    <string name="pref.pid.manage_dialog.validation_required_fields">Opis, Tryb i Kod PID są wymagane!</string>
+    <string name="pref.pid.manage_dialog.hint_description">Opis (np. Temp. Oleju)</string>
+    <string name="pref.pid.manage_dialog.hint_long_description">Długi opis</string>
+    <string name="pref.pid.manage_dialog.hint_mode">Tryb (np. 01)</string>
+    <string name="pref.pid.manage_dialog.hint_pid_code">Kod PID (np. 05)</string>
+    <string name="pref.pid.manage_dialog.hint_length">Długość</string>
+    <string name="pref.pid.manage_dialog.hint_min">Min</string>
+    <string name="pref.pid.manage_dialog.hint_max">Max</string>
+    <string name="pref.pid.manage_dialog.hint_units">Jednostki</string>
+    <string name="pref.pid.manage_dialog.checkbox_stable">Stabilny</string>
+    <string name="pref.pid.manage_dialog.checkbox_cacheable">Możliwy do buforowania</string>
+    <string name="pref.pid.manage_dialog.content_desc_edit">Edytuj PID</string>
+    <string name="pref.pid.manage_dialog.content_desc_delete">Usuń</string>
+    <string name="pref.pid.manage_dialog.content_desc_add_new">Dodaj nowy PID</string>
+
+
+
     <string name="pref_pid_alert_edit_title">Edytuj alerty PID</string>
     <string name="pref.pid.alert.edit_formula_hint">Formuła obliczeniowa</string>
     <string name="pref.pid.alert.edit_lower_threshold_hint">Dolny próg alertu</string>

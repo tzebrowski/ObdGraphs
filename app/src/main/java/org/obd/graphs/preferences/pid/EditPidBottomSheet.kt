@@ -95,7 +95,7 @@ class EditPidBottomSheet(
             tilFormula.visibility = View.GONE
             llToggles.visibility = View.GONE
 
-            tvTitle.text = pidItem?.source?.description ?: "Edit Alerts"
+            tvTitle.text = pidItem?.source?.description ?: getString(R.string.pref_pid_manage_dialog_edit_alerts_title)
         } else {
             tilDescription.visibility = View.VISIBLE
             tilLongDescription.visibility = View.VISIBLE
@@ -104,7 +104,7 @@ class EditPidBottomSheet(
             tilFormula.visibility = View.VISIBLE
             llToggles.visibility = View.VISIBLE
 
-            tvTitle.text = if (pidItem != null) "Edit PID" else "Add New PID"
+            tvTitle.text = if (pidItem != null) getString(R.string.pref_pid_manage_dialog_edit_pid_title) else getString(R.string.pref_pid_manage_dialog_add_new_pid_title)
         }
 
         if (pidItem != null) {
@@ -151,7 +151,7 @@ class EditPidBottomSheet(
             )
 
             if (editMode == "edit" && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
-                tvError.text = "Description, Mode, and PID Code are required!"
+                tvError.text = getString(R.string.pref_pid_manage_dialog_validation_required_fields)
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
             }

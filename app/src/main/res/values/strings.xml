@@ -56,13 +56,35 @@
     <string name="context_menu.extra_views">Extra Views</string>
 
 
+
+
+    <string name="pref.pid.manage_dialog.stable_yes">Stable: Yes</string>
+    <string name="pref.pid.manage_dialog.stable_no">Stable: No</string>
+    <string name="pref.pid.manage_dialog.alerts_prefix">Alerts:</string>
+    <string name="pref.pid.manage_dialog.min_prefix">Min</string>
+    <string name="pref.pid.manage_dialog.max_prefix">Max</string>
+    <string name="pref.pid.manage_dialog.edit_alerts_title">Edit Alerts</string>
+    <string name="pref.pid.manage_dialog.edit_pid_title">Edit PID</string>
+    <string name="pref.pid.manage_dialog.add_new_pid_title">Add New PID</string>
+    <string name="pref.pid.manage_dialog.validation_required_fields">Description, Mode, and PID Code are required!</string>
+    <string name="pref.pid.manage_dialog.hint_description">Description (e.g. Oil Temp)</string>
+    <string name="pref.pid.manage_dialog.hint_long_description">Long Description</string>
+    <string name="pref.pid.manage_dialog.hint_mode">Mode (e.g. 01)</string>
+    <string name="pref.pid.manage_dialog.hint_pid_code">PID Code (e.g. 05)</string>
+    <string name="pref.pid.manage_dialog.hint_length">Length</string>
+    <string name="pref.pid.manage_dialog.hint_min">Min</string>
+    <string name="pref.pid.manage_dialog.hint_max">Max</string>
+    <string name="pref.pid.manage_dialog.hint_units">Units</string>
+    <string name="pref.pid.manage_dialog.checkbox_stable">Stable</string>
+    <string name="pref.pid.manage_dialog.checkbox_cacheable">Cacheable</string>
+    <string name="pref.pid.manage_dialog.content_desc_edit">Edit PID</string>
+    <string name="pref.pid.manage_dialog.content_desc_delete">Delete</string>
+    <string name="pref.pid.manage_dialog.content_desc_add_new">Add new PID</string>
+
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
-
-
     <string name="pref.aa.performance.displayed_parameter_ids">Customize collected and visible OBD2 PIDs</string>
     <string name="pref.aa.performance.displayed_parameter_ids_summary">Select the OBD2 sensors or PIDs you want to see. <font color="#C22636">Note: Diagnostic PIDs (like RPM, Spark Advance, MFA) are logged for data collection only and will not be visible on the dashboard.</font></string>
-
     <string name="pref.pid.alert.edit_dialog">Modify individual alert thresholds</string>
     <string name="pref.pid.alert.edit_dialog_summary">Adjust the configuration of individual PIDs, including setting alert thresholds.</string>
     <string name="pref.pid.manage_dialog">Manage existing and new PIDs</string>

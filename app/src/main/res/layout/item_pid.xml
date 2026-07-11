@@ -59,8 +59,7 @@
                 android:layout_marginTop="2dp"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="@color/cardinal"
-                android:textStyle="bold"
-                tools:text="Alerts: Min -10, Max 120" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/pid_status"
@@ -75,7 +74,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Edit PID"
+            android:contentDescription="@string/pref.pid.manage_dialog.content_desc_edit"
             android:src="@android:drawable/ic_menu_edit" />
 
         <ImageButton
@@ -85,7 +84,7 @@
             android:layout_marginStart="8dp"
             android:src="@android:drawable/ic_menu_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete" />
+            android:contentDescription="@string/pref.pid.manage_dialog.content_desc_delete" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
