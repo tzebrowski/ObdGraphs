@@ -42,8 +42,6 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.CoreDialogFragment
-import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_PERFORMANCE
-import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_TRIP_INFO
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -76,6 +74,9 @@ open class PidDefinitionPreferenceDialogFragment(
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
 
+    // Immediately parse the string source into our strongly-typed mode
+    private val dialogMode: PidDialogMode = PidDialogMode.fromString(source)
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         adjustRecyclerViewHeight(recyclerView = recyclerView, newConfig.orientation)
@@ -96,7 +97,7 @@ open class PidDefinitionPreferenceDialogFragment(
         val adapter = PidViewAdapter(
             context = context,
             data = listOfItems,
-            editModeEnabled = source.isInteractive,
+            editModeEnabled = dialogMode.isInteractive,
             onEditClicked = { clickedPid ->
                 showEditBottomSheet(clickedPid)
             },
@@ -114,7 +115,7 @@ open class PidDefinitionPreferenceDialogFragment(
         attachActionButtons()
 
         val fabAddPid = root.findViewById<View>(R.id.fab_add_pid)
-        fabAddPid.visibility = if (source.isEdit) View.VISIBLE else View.GONE
+        fabAddPid.visibility = if (dialogMode.isEdit) View.VISIBLE else View.GONE
         fabAddPid.setOnClickListener {
             showEditBottomSheet(null)
         }
@@ -131,9 +132,9 @@ open class PidDefinitionPreferenceDialogFragment(
     }
 
     private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
-        val bottomSheet = EditPidBottomSheet(pidItem, source) { formData ->
+        val bottomSheet = EditPidBottomSheet(pidItem, dialogMode) { formData ->
             if (pidItem != null) {
-                if (source.isEdit) {
+                if (dialogMode.isEdit) {
                     pidItem.source.description = formData.description ?: pidItem.source.description
                     pidItem.source.longDescription = formData.longDescription ?: pidItem.source.longDescription
                     pidItem.source.formula = formData.formula ?: pidItem.source.formula
@@ -144,7 +145,7 @@ open class PidDefinitionPreferenceDialogFragment(
                 pidItem.source.alert.lowerThreshold = formData.lowerThreshold
                 pidItem.source.alert.upperThreshold = formData.upperThreshold
                 pidItem.source.serialize()
-            } else if (source.isEdit) {
+            } else if (dialogMode.isEdit) {
                 val newPid = PidDefinition(
                     System.currentTimeMillis(),
                     formData.length,
@@ -182,7 +183,7 @@ open class PidDefinitionPreferenceDialogFragment(
         orientation: Int
     ) {
         recyclerView.layoutParams.height =
-            if (source.isInteractive) {
+            if (dialogMode.isInteractive) {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.2f, resources.displayMetrics).toInt()
                 } else {
@@ -249,7 +250,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
-            visibility = if (source.isInteractive) View.GONE else View.VISIBLE
+            visibility = if (dialogMode.isInteractive) View.GONE else View.VISIBLE
 
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
@@ -261,7 +262,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
-            visibility = if (source.isInteractive) View.GONE else View.VISIBLE
+            visibility = if (dialogMode.isInteractive) View.GONE else View.VISIBLE
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
                 adapter.data.forEach {
@@ -372,41 +373,33 @@ open class PidDefinitionPreferenceDialogFragment(
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = DataLoggerRepository.getPidDefinitionRegistry().findAll()
         val individualQuery = dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled
+        val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
 
-        val sourceList: List<PidDefinitionDetails> =
-            if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO) {
-                val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
-                val list =
-                    Query
-                        .instance(QueryStrategyType.TRIP_INFO_QUERY)
-                        .getDefaultPIDs()
-                        .mapNotNull { pidRegistry.findBy(it) }
-                        .toMutableList()
-                list.map { PidDefinitionDetails(it, checked = false, supported = true) }
-            } else if (source == PREFERENCE_SCREEN_SOURCE_PERFORMANCE) {
-                val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
-                val list =
-                    Query
-                        .instance(QueryStrategyType.PERFORMANCE_QUERY)
-                        .getDefaultPIDs()
-                        .mapNotNull { pidRegistry.findBy(it) }
-                        .toMutableList()
-                list.map { PidDefinitionDetails(it, checked = false, supported = true) }
-            } else if (individualQuery) {
-                findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
-            } else {
-                when (source) {
-                    "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
-                    "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
-                    "edit", "alert" -> findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
-                    "dashboard" -> map(all)
-                    "graph" -> map(all)
-                    "gauge" -> map(all)
-                    "giulia" -> map(all)
-                    "aa" -> map(all)
-                    else -> findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
+        val sourceList: List<PidDefinitionDetails> = when {
+            dialogMode is PidDialogMode.TripInfo -> {
+                Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaultPIDs()
+                    .mapNotNull { pidRegistry.findBy(it) }
+                    .map { PidDefinitionDetails(it, checked = false, supported = true) }
+            }
+            dialogMode is PidDialogMode.Performance -> {
+                Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getDefaultPIDs()
+                    .mapNotNull { pidRegistry.findBy(it) }
+                    .map { PidDefinitionDetails(it, checked = false, supported = true) }
+            }
+            individualQuery -> {
+                findPidDefinitionByPriority(pidRegistry.findAll()) { true }
+            }
+            else -> {
+                when (dialogMode) {
+                    is PidDialogMode.LowPriority -> findPidDefinitionByPriority(all) { it.priority > 0 }
+                    is PidDialogMode.HighPriority -> findPidDefinitionByPriority(all) { it.priority == 0 }
+                    is PidDialogMode.Dashboard, is PidDialogMode.Graph,
+                    is PidDialogMode.Gauge, is PidDialogMode.Giulia,
+                    is PidDialogMode.AA -> map(all)
+                    else -> findPidDefinitionByPriority(pidRegistry.findAll()) { true }
                 }
             }
+        }
 
         if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
             Log.d(LOG_TAG, "source=$source, size=${sourceList.size}")
