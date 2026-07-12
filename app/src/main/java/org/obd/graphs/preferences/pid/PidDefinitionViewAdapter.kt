@@ -55,6 +55,16 @@ class PidDefinitionViewAdapter internal constructor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
+
+        val isSystemPid = !item.source.isUserCustom
+        val previousWasCustom = position > 0 && data[position - 1].source.isUserCustom
+
+        if (isSystemPid && previousWasCustom) {
+            holder.separator.visibility = View.VISIBLE
+        } else {
+            holder.separator.visibility = View.GONE
+        }
+
         item.run {
             holder.module.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
             holder.description.setText(source.description ?: "", COLOR_RAINBOW_INDIGO, Typeface.BOLD, 1f)
@@ -135,6 +145,7 @@ class PidDefinitionViewAdapter internal constructor(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder(binding: View) : RecyclerView.ViewHolder(binding) {
+        val separator: TextView = binding.findViewById(R.id.tv_separator)
         val module: TextView = binding.findViewById(R.id.pid_module)
         val description: TextView = binding.findViewById(R.id.pid_description)
         val longDescription: TextView = binding.findViewById(R.id.pid_long_description)
