@@ -43,6 +43,7 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.getScreenHeight
+import org.obd.metrics.api.CANNetwork
 import org.obd.metrics.pid.PidDefinition
 
 open class PidDefinitionDialogFragment(
@@ -54,7 +55,7 @@ open class PidDefinitionDialogFragment(
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
 
-    private val dialogMode: PidDialogMode = PidDialogMode.fromString(source)
+    private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
         PidViewModelFactory(key, dialogMode)
     }
@@ -72,7 +73,7 @@ open class PidDefinitionDialogFragment(
         requestWindowFeatures()
         root = inflater.inflate(R.layout.dialog_pid, container, false)
 
-        val adapter = PidViewAdapter(
+        val adapter = PidDefinitionViewAdapter(
             context = context,
             data = emptyList(),
             editModeEnabled = dialogMode.isInteractive,
@@ -98,7 +99,7 @@ open class PidDefinitionDialogFragment(
         return root
     }
 
-    private fun observeViewModel(adapter: PidViewAdapter) {
+    private fun observeViewModel(adapter: PidDefinitionViewAdapter) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
@@ -131,7 +132,8 @@ open class PidDefinitionDialogFragment(
                     formData.description ?: "",
                     formData.min,
                     formData.max,
-                    org.obd.metrics.pid.ValueType.DOUBLE
+                    org.obd.metrics.pid.ValueType.DOUBLE,
+                    PidDefinition.Overrides(formData.canHeader,false, null)
                 ).apply {
                     longDescription = formData.longDescription
                     stable = formData.stable
@@ -241,5 +243,5 @@ open class PidDefinitionDialogFragment(
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
     }
 
-    private fun getAdapter() = (recyclerView.adapter as PidViewAdapter)
+    private fun getAdapter() = (recyclerView.adapter as PidDefinitionViewAdapter)
 }

@@ -34,13 +34,13 @@ import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
 import java.util.Collections
 
-class PidViewAdapter internal constructor(
+class PidDefinitionViewAdapter internal constructor(
     private val context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
     private val onEditClicked: (PidDefinitionDetails) -> Unit,
     private val onDeleteClicked: (PidDefinitionDetails) -> Unit
-) : RecyclerView.Adapter<PidViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PidDefinitionViewAdapter.ViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 

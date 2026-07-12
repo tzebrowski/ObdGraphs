@@ -16,19 +16,19 @@
  */
 package org.obd.graphs.preferences.pid
 
-sealed class PidDialogMode {
-    object Edit : PidDialogMode()
-    object Alert : PidDialogMode()
-    object TripInfo : PidDialogMode()
-    object Performance : PidDialogMode()
-    object LowPriority : PidDialogMode()
-    object HighPriority : PidDialogMode()
-    object Dashboard : PidDialogMode()
-    object Graph : PidDialogMode()
-    object Gauge : PidDialogMode()
-    object Giulia : PidDialogMode()
-    object AA : PidDialogMode()
-    data class Custom(val id: String) : PidDialogMode()
+sealed class PidDefinitionDialogMode {
+    object Edit : PidDefinitionDialogMode()
+    object Alert : PidDefinitionDialogMode()
+    object TripInfo : PidDefinitionDialogMode()
+    object Performance : PidDefinitionDialogMode()
+    object LowPriority : PidDefinitionDialogMode()
+    object HighPriority : PidDefinitionDialogMode()
+    object Dashboard : PidDefinitionDialogMode()
+    object Graph : PidDefinitionDialogMode()
+    object Gauge : PidDefinitionDialogMode()
+    object Giulia : PidDefinitionDialogMode()
+    object AA : PidDefinitionDialogMode()
+    data class Custom(val id: String) : PidDefinitionDialogMode()
 
     val isInteractive: Boolean
         get() = this is Edit || this is Alert
@@ -40,7 +40,7 @@ sealed class PidDialogMode {
         get() = this is Alert
 
     companion object {
-        fun fromString(source: String?): PidDialogMode = when (source) {
+        fun fromString(source: String?): PidDefinitionDialogMode = when (source) {
             "edit" -> Edit
             "alert" -> Alert
             "trip_info" -> TripInfo

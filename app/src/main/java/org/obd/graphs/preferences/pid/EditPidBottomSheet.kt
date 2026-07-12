@@ -20,17 +20,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
 
 data class PidFormData(
     val description: String?,
     val longDescription: String?,
     val mode: String?,
+    val canHeader: String?,
     val pidCode: String?,
     val formula: String?,
     val length: Int,
@@ -45,7 +49,7 @@ data class PidFormData(
 
 class EditPidBottomSheet(
     private val pidItem: PidDefinitionDetails? = null,
-    private val mode: PidDialogMode = PidDialogMode.Alert,
+    private val mode: PidDefinitionDialogMode = PidDefinitionDialogMode.Alert,
     private val onSave: (PidFormData) -> Unit
 ) : BottomSheetDialogFragment() {
 
@@ -60,6 +64,7 @@ class EditPidBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         val tvTitle = view.findViewById<TextView>(R.id.tvDialogTitle)
 
         val tilDescription = view.findViewById<View>(R.id.tilDescription)
@@ -71,7 +76,17 @@ class EditPidBottomSheet(
 
         val etDescription = view.findViewById<TextInputEditText>(R.id.etDescription)
         val etLongDescription = view.findViewById<TextInputEditText>(R.id.etLongDescription)
+        val etCanHeader = view.findViewById<AutoCompleteTextView>(R.id.etCanHeader)
+
         val etMode = view.findViewById<TextInputEditText>(R.id.etMode)
+        val canHeaders = DiagnosticRequestIDManager.getMappings().map { it.requestKey }
+        val canHEaderAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            canHeaders
+        )
+        etCanHeader.setAdapter(canHEaderAdapter)
+
         val etPidCode = view.findViewById<TextInputEditText>(R.id.etPidCode)
         val etFormula = view.findViewById<TextInputEditText>(R.id.etFormula)
         val etLength = view.findViewById<TextInputEditText>(R.id.etLength)
@@ -108,9 +123,10 @@ class EditPidBottomSheet(
         }
 
         if (pidItem != null) {
+            etCanHeader.setText(pidItem.source.deductMode())
+            etMode.setText(pidItem.source.mode)
             etDescription.setText(pidItem.source.description)
             etLongDescription.setText(pidItem.source.longDescription)
-            etMode.setText(pidItem.source.mode)
             etPidCode.setText(pidItem.source.pid)
             etFormula.setText(pidItem.source.formula)
             etLength.setText(pidItem.source.length.toString())
@@ -138,6 +154,7 @@ class EditPidBottomSheet(
                 description = if (mode.isEdit) etDescription.text.toString().trim() else null,
                 longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
                 mode = if (mode.isEdit) etMode.text.toString().trim() else null,
+                canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
                 pidCode = if (mode.isEdit) etPidCode.text.toString().trim() else null,
                 formula = if (mode.isEdit) etFormula.text.toString().trim() else null,
                 length = etLength.text.toString().toIntOrNull() ?: 1,

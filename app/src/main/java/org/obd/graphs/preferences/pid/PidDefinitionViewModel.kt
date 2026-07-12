@@ -64,7 +64,7 @@ data class PidUiState(
 
 class PidDefinitionViewModel(
     private val key: String,
-    val dialogMode: PidDialogMode
+    val dialogMode: PidDefinitionDialogMode
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PidUiState())
@@ -209,12 +209,12 @@ class PidDefinitionViewModel(
         val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
 
         val sourceList: List<PidDefinitionDetails> = when {
-            dialogMode is PidDialogMode.TripInfo -> {
+            dialogMode is PidDefinitionDialogMode.TripInfo -> {
                 Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaultPIDs()
                     .mapNotNull { pidRegistry.findBy(it) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }
-            dialogMode is PidDialogMode.Performance -> {
+            dialogMode is PidDefinitionDialogMode.Performance -> {
                 Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getDefaultPIDs()
                     .mapNotNull { pidRegistry.findBy(it) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
@@ -224,11 +224,11 @@ class PidDefinitionViewModel(
             }
             else -> {
                 when (dialogMode) {
-                    is PidDialogMode.LowPriority -> findPidDefinitionByPriority(all) { it.priority > 0 }
-                    is PidDialogMode.HighPriority -> findPidDefinitionByPriority(all) { it.priority == 0 }
-                    is PidDialogMode.Dashboard, is PidDialogMode.Graph,
-                    is PidDialogMode.Gauge, is PidDialogMode.Giulia,
-                    is PidDialogMode.AA -> map(all)
+                    is PidDefinitionDialogMode.LowPriority -> findPidDefinitionByPriority(all) { it.priority > 0 }
+                    is PidDefinitionDialogMode.HighPriority -> findPidDefinitionByPriority(all) { it.priority == 0 }
+                    is PidDefinitionDialogMode.Dashboard, is PidDefinitionDialogMode.Graph,
+                    is PidDefinitionDialogMode.Gauge, is PidDefinitionDialogMode.Giulia,
+                    is PidDefinitionDialogMode.AA -> map(all)
                     else -> findPidDefinitionByPriority(pidRegistry.findAll()) { true }
                 }
             }
@@ -305,7 +305,7 @@ class PidDefinitionViewModel(
 
 class PidViewModelFactory(
     private val key: String,
-    private val dialogMode: PidDialogMode
+    private val dialogMode: PidDefinitionDialogMode
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PidDefinitionViewModel::class.java)) {

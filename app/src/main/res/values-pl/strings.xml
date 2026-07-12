@@ -140,6 +140,8 @@
     <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Usuń mapowanie</string>
     <string name="pref.pid.manage_dialog">Zarządzaj PIDami</string>
     <string name="pref.pid.manage_dialog_summary">Modyfikuj i dodawaj nowe PIDy</string>
+    <string name="pref.pid.manage_dialog.mode_hint">Mode (e.g. 01)</string>
+    <string name="pref.pid.manage_dialog.can_header">Nagłówek CAN</string>
 
     <string name="pref.pid.manage_dialog.stable_yes">Stabilny: Tak</string>
     <string name="pref.pid.manage_dialog.stable_no">Stabilny: Nie</string>

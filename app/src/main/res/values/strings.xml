@@ -80,6 +80,8 @@
     <string name="pref.pid.manage_dialog.content_desc_edit">Edit PID</string>
     <string name="pref.pid.manage_dialog.content_desc_delete">Delete</string>
     <string name="pref.pid.manage_dialog.content_desc_add_new">Add new PID</string>
+    <string name="pref.pid.manage_dialog.can_header">CAN Request Header</string>
+    <string name="pref.pid.manage_dialog.mode_hint">Mode (e.g. 01)</string>
 
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
