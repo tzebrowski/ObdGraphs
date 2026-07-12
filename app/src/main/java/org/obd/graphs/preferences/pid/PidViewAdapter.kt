@@ -56,9 +56,15 @@ class PidViewAdapter internal constructor(
         val item = data[position]
         item.run {
             holder.module.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
+            holder.description.setText(source.description ?: "", COLOR_RAINBOW_INDIGO, Typeface.BOLD, 1f)
 
-            val desc = if (source.longDescription.isNullOrEmpty()) source.description else source.longDescription
-            holder.description.setText(desc, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
+            val longDesc = source.longDescription
+            if (!longDesc.isNullOrEmpty() && longDesc != source.description) {
+                holder.longDescription.visibility = View.VISIBLE
+                holder.longDescription.setText(longDesc, Color.GRAY, Typeface.NORMAL, 0.85f)
+            } else {
+                holder.longDescription.visibility = View.GONE
+            }
 
             if (source.stable) {
                 holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_yes), Color.GRAY, Typeface.NORMAL, 0.7f)
@@ -130,6 +136,8 @@ class PidViewAdapter internal constructor(
     inner class ViewHolder(binding: View) : RecyclerView.ViewHolder(binding) {
         val module: TextView = binding.findViewById(R.id.pid_module)
         val description: TextView = binding.findViewById(R.id.pid_description)
+        val longDescription: TextView = binding.findViewById(R.id.pid_long_description)
+
         val formula: TextView = binding.findViewById(R.id.pid_formula)
         val alerts: TextView = binding.findViewById(R.id.pid_alerts)
         val status: TextView = binding.findViewById(R.id.pid_status)
