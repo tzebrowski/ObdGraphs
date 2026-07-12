@@ -76,10 +76,6 @@ open class PidDefinitionPreferenceDialogFragment(
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
 
-    private val isEditMode: Boolean = (source == "edit")
-    private val isAlertMode: Boolean = (source == "alert")
-    private val isInteractiveMode: Boolean = isEditMode || isAlertMode
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         adjustRecyclerViewHeight(recyclerView = recyclerView, newConfig.orientation)
@@ -100,11 +96,10 @@ open class PidDefinitionPreferenceDialogFragment(
         val adapter = PidViewAdapter(
             context = context,
             data = listOfItems,
-            editModeEnabled = isInteractiveMode,
+            editModeEnabled = source.isInteractive,
             onEditClicked = { clickedPid ->
                 showEditBottomSheet(clickedPid)
             },
-
             onDeleteClicked = { clickedPid ->
                 deleteCustomPid(clickedPid)
             }
@@ -119,7 +114,7 @@ open class PidDefinitionPreferenceDialogFragment(
         attachActionButtons()
 
         val fabAddPid = root.findViewById<View>(R.id.fab_add_pid)
-        fabAddPid.visibility = if (isEditMode) View.VISIBLE else View.GONE
+        fabAddPid.visibility = if (source.isEdit) View.VISIBLE else View.GONE
         fabAddPid.setOnClickListener {
             showEditBottomSheet(null)
         }
@@ -138,7 +133,7 @@ open class PidDefinitionPreferenceDialogFragment(
     private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
         val bottomSheet = EditPidBottomSheet(pidItem, source) { formData ->
             if (pidItem != null) {
-                if (isEditMode) {
+                if (source.isEdit) {
                     pidItem.source.description = formData.description ?: pidItem.source.description
                     pidItem.source.longDescription = formData.longDescription ?: pidItem.source.longDescription
                     pidItem.source.formula = formData.formula ?: pidItem.source.formula
@@ -149,7 +144,7 @@ open class PidDefinitionPreferenceDialogFragment(
                 pidItem.source.alert.lowerThreshold = formData.lowerThreshold
                 pidItem.source.alert.upperThreshold = formData.upperThreshold
                 pidItem.source.serialize()
-            } else if (isEditMode) {
+            } else if (source.isEdit) {
                 val newPid = PidDefinition(
                     System.currentTimeMillis(),
                     formData.length,
@@ -187,7 +182,7 @@ open class PidDefinitionPreferenceDialogFragment(
         orientation: Int
     ) {
         recyclerView.layoutParams.height =
-            if (isInteractiveMode) {
+            if (source.isInteractive) {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.2f, resources.displayMetrics).toInt()
                 } else {
@@ -254,7 +249,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
-            visibility = if (isInteractiveMode) View.GONE else View.VISIBLE
+            visibility = if (source.isInteractive) View.GONE else View.VISIBLE
 
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
@@ -266,7 +261,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
-            visibility = if (isInteractiveMode) View.GONE else View.VISIBLE
+            visibility = if (source.isInteractive) View.GONE else View.VISIBLE
             setOnClickListener {
                 val adapter: PidViewAdapter = getAdapter()
                 adapter.data.forEach {

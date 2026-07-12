@@ -45,7 +45,7 @@ data class PidFormData(
 
 class EditPidBottomSheet(
     private val pidItem: PidDefinitionDetails? = null,
-    private val editMode: String = "alert",
+    private val source: String = "alert",
     private val onSave: (PidFormData) -> Unit
 ) : BottomSheetDialogFragment() {
 
@@ -87,7 +87,7 @@ class EditPidBottomSheet(
         val tvError = view.findViewById<TextView>(R.id.tvValidationError)
         val btnSave = view.findViewById<Button>(R.id.btnSave)
 
-        if (editMode == "alert") {
+        if (source.isAlert) {
             tilDescription.visibility = View.GONE
             tilLongDescription.visibility = View.GONE
             llCorePidFields.visibility = View.GONE
@@ -135,11 +135,11 @@ class EditPidBottomSheet(
             }
 
             val formData = PidFormData(
-                description = if (editMode == "edit") etDescription.text.toString().trim() else null,
-                longDescription = if (editMode == "edit") etLongDescription.text.toString().trim() else null,
-                mode = if (editMode == "edit") etMode.text.toString().trim() else null,
-                pidCode = if (editMode == "edit") etPidCode.text.toString().trim() else null,
-                formula = if (editMode == "edit") etFormula.text.toString().trim() else null,
+                description = if (source.isEdit) etDescription.text.toString().trim() else null,
+                longDescription = if (source.isEdit) etLongDescription.text.toString().trim() else null,
+                mode = if (source.isEdit) etMode.text.toString().trim() else null,
+                pidCode = if (source.isEdit) etPidCode.text.toString().trim() else null,
+                formula = if (source.isEdit) etFormula.text.toString().trim() else null,
                 length = etLength.text.toString().toIntOrNull() ?: 1,
                 min = etMin.text.toString().toDoubleOrNull(),
                 max = etMax.text.toString().toDoubleOrNull(),
@@ -150,7 +150,7 @@ class EditPidBottomSheet(
                 upperThreshold = upperVal
             )
 
-            if (editMode == "edit" && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
+            if (source.isEdit && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
                 tvError.text = getString(R.string.pref_pid_manage_dialog_validation_required_fields)
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
