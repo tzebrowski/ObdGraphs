@@ -38,7 +38,7 @@ class CustomPidRepository(private val context: Context) {
 
     private fun getFile(): File = File(context.filesDir, USER_CUSTOM_PIDS_FILE)
 
-    suspend fun saveCustomPid(pidDefinition: PidDefinition) = withContext(Dispatchers.IO) {
+    suspend fun save(pidDefinition: PidDefinition) = withContext(Dispatchers.IO) {
         val file = getFile()
         val typeRef = object : TypeReference<MutableMap<String, MutableList<PidDefinition>>>() {}
 
@@ -71,7 +71,7 @@ class CustomPidRepository(private val context: Context) {
         }
     }
 
-    suspend fun deleteCustomPid(pidId: Long) = withContext(Dispatchers.IO) {
+    suspend fun delete(pidId: Long) = withContext(Dispatchers.IO) {
         val file = getFile()
         if (!file.exists()) return@withContext
 

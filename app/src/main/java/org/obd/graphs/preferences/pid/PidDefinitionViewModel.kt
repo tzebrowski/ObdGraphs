@@ -131,14 +131,14 @@ class PidDefinitionViewModel(
 
     fun saveCustomPid(newPid: PidDefinition) {
         viewModelScope.launch(Dispatchers.IO) {
-            customPidRepository.saveCustomPid(newPid)
+            customPidRepository.save(newPid)
             sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
         }
     }
 
     fun deleteCustomPid(pidItem: PidDefinitionDetails) {
         viewModelScope.launch(Dispatchers.IO) {
-            customPidRepository.deleteCustomPid(pidItem.source.id)
+            customPidRepository.delete(pidItem.source.id)
 
             allMasterItems = allMasterItems.filterNot { it.source.id == pidItem.source.id }.toMutableList()
 

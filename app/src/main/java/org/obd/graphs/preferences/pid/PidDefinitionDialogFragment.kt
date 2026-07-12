@@ -54,8 +54,7 @@ open class PidDefinitionDialogFragment(
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
-        val repository = CustomPidRepository(requireContext().applicationContext)
-        PidViewModelFactory(key, dialogMode, repository)
+        PidViewModelFactory(key, dialogMode, CustomPidRepository(requireContext().applicationContext))
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
