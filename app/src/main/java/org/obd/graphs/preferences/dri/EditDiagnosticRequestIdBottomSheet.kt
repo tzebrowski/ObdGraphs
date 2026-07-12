@@ -24,6 +24,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import org.obd.graphs.DiagnosticMappingItem
 import org.obd.graphs.R
 
 class EditDiagnosticRequestIdBottomSheet(

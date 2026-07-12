@@ -14,10 +14,14 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.dri
+package org.obd.graphs
 
+import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
+
+const val DRI_LOG_KEY = "DRI"
+private const val DRI_MAX_MAPPINGS_ALLOWED = 100
 
 data class DiagnosticMappingItem(
     val modeIndex: Int,
@@ -32,9 +36,13 @@ object DiagnosticRequestIDManager {
     private const val ACTIVE_ID_KEY = "pref.adapter.init.mode.id"
     private const val ACTIVE_HEADER_KEY = "pref.adapter.init.mode.header"
 
+    private val values = mutableSetOf<String>()
+
+    fun getValuePreferenceName() = ACTIVE_HEADER_KEY
+
     fun getMappings(): List<DiagnosticMappingItem> {
         val mappings = mutableListOf<DiagnosticMappingItem>()
-        for (i in 1..100) {
+        for (i in 1..DRI_MAX_MAPPINGS_ALLOWED) {
             val key = Prefs.getString("$PREFIX_ID$i", null)
             val value = Prefs.getString("$PREFIX_HEADER$i", null)
 
@@ -45,6 +53,12 @@ object DiagnosticRequestIDManager {
             }
         }
         return mappings
+    }
+
+    fun getMapping(): Map<String, String> {
+        val mapping = getMappings().associate { it.requestKey to it.headerValue }.filter { it.value.isNotEmpty() }
+        Log.i(DRI_LOG_KEY, "Available mapping: $mapping")
+        return mapping
     }
 
     fun saveMapping(item: DiagnosticMappingItem) {
@@ -71,5 +85,25 @@ object DiagnosticRequestIDManager {
             .remove("$PREFIX_ID${item.modeIndex}")
             .remove("$PREFIX_HEADER${item.modeIndex}")
             .apply()
+    }
+
+    fun reset() {
+        Prefs.edit().let { editor ->
+            for (i in 1..DRI_MAX_MAPPINGS_ALLOWED) {
+                editor.putString("$PREFIX_HEADER$i", "")
+                editor.putString("$PREFIX_ID$i", "")
+            }
+            editor.putString(ACTIVE_HEADER_KEY, "")
+            editor.putString(ACTIVE_ID_KEY, "")
+            editor.apply()
+        }
+        values.clear()
+    }
+
+    fun updateSettings(preferences: MutableMap<String, Any?>) {
+        val canIDS = preferences.filter { entry -> entry.key.contains(ACTIVE_HEADER_KEY) }
+            .values.map { it.toString() }.toSet()
+        Log.i(DRI_LOG_KEY, "Registered following CAN IDS: $canIDS")
+        values.addAll(canIDS)
     }
 }
