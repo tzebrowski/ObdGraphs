@@ -28,9 +28,8 @@ const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "Modules"
-val modules = Modules()
 
-class Modules {
+object Modules {
 
     private val overrides = mapOf(
         "alfa.json" to "Giulietta QV",
@@ -49,8 +48,12 @@ class Modules {
     }
 
     fun getCustomPidsFile(context: Context? = getContext()): File? =
-        context?.let {
-            return File(context.filesDir, USER_CUSTOM_PIDS_FILE)
+        if (Prefs.getStringSet(PREF_MODULE_LIST, mutableSetOf())!!.contains(USER_CUSTOM_PIDS_FILE)) {
+            context?.let {
+                File(context.filesDir, USER_CUSTOM_PIDS_FILE)
+            }
+        } else {
+            null
         }
 
     fun updateSettings(allProps: MutableMap<String, Any?>) {

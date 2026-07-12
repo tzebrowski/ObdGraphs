@@ -45,7 +45,7 @@ import org.obd.metrics.pid.PidDefinition
 
 open class PidDefinitionDialogFragment(
     private val key: String,
-    private val source: String,
+    source: String,
     private val onDialogCloseListener: (() -> Unit) = {}
 ) : CoreDialogFragment() {
 

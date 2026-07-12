@@ -437,14 +437,14 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun pids(): Pids? {
         val resourceUrls = dataLoggerSettings.instance().resources.map {
-            if (modules.isExternalStorageModule(it)) {
-                modules.externalModuleToURL(it)
+            if (Modules.isExternalStorageModule(it)) {
+                Modules.externalModuleToURL(it)
             } else {
                 Urls.resourceToUrl(it)
             }
         }.toMutableList()
 
-       modules.getCustomPidsFile()?.let {
+        Modules.getCustomPidsFile()?.let {
            if (it.exists()) {
                resourceUrls.add(it.toURI().toURL())
            }

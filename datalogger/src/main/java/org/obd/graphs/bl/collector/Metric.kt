@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.collector
 
-import org.obd.graphs.modules
+import org.obd.graphs.Modules
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
@@ -31,7 +31,7 @@ data class Metric(
     var inLowerAlertRisedHist: Boolean = false,
     var inUpperAlertRisedHist: Boolean = false,
     val pid: PidDefinition = source.command.pid,
-    val moduleName: String? = modules.getDefaultModules()[source.command.pid.resourceFile]
+    val moduleName: String? = Modules.getDefaultModules()[source.command.pid.resourceFile]
 ) {
 
     companion object {

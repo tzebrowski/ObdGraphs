@@ -20,13 +20,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.MultiSelectListPreference
-import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.ACCESS_EXTERNAL_STORAGE_ENABLED
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
+import org.obd.graphs.Modules
 import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 
@@ -37,7 +36,7 @@ class ModulesListPreferences(
     attrs: AttributeSet?
 ) : MultiSelectListPreference(context, attrs) {
     init {
-        initialize { modules.getExternalModules(context) }
+        initialize { Modules.getExternalModules(context) }
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
@@ -53,7 +52,7 @@ class ModulesListPreferences(
         findPreferenceInHierarchy<SwitchPreferenceCompat>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
             onPreferenceChangeListener =
                 OnPreferenceChangeListener { _, new ->
-                    initialize { modules.getExternalModules(context) { new.toString().toBoolean() } }
+                    initialize { Modules.getExternalModules(context) { new.toString().toBoolean() } }
                     true
                 }
         }
@@ -61,11 +60,12 @@ class ModulesListPreferences(
 
     private fun initialize(files: () -> MutableMap<String, String>? = { null }) {
         val mutableMap =
-            modules.getDefaultModules().toMutableMap().apply {
+            Modules.getDefaultModules().toMutableMap().apply {
                 files()?.let {
                     putAll(it)
                 }
             }
+
         mutableMap.let {
             entries = it.values.toTypedArray()
             entryValues = it.keys.toTypedArray()

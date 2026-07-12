@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger
 
-import org.obd.graphs.modules
+import org.obd.graphs.Modules
 import org.obd.graphs.preferences.XmlPreference
 
 data class Adapter(
@@ -130,7 +130,7 @@ data class DataLoggerSettings(
     @XmlPreference("pref.mode", "Generic mode", String::class)
     var mode: String = "Generic mode",
     @XmlPreference("pref.pids.registry.list", "", Set::class)
-    var resources: Set<String> = modules.getDefaultModules().keys,
+    var resources: Set<String> = Modules.getDefaultModules().keys,
     @XmlPreference("pref.debug.trip.save.connector_response", "false", Boolean::class)
     var dumpRawConnectorResponse: Boolean = false,
     @XmlPreference("pref.vehicle_settings.fuelTankSize", "58", Int::class)

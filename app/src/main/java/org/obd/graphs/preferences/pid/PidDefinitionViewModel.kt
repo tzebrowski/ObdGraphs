@@ -97,6 +97,21 @@ class PidDefinitionViewModel(
         }
     }
 
+    fun toggleSelectAll(selectAll: Boolean) {
+        viewModelScope.launch(Dispatchers.Default) {
+            allMasterItems.forEach { it.checked = selectAll }
+            val updated = applyFilter(allMasterItems, _uiState.value.searchQuery)
+            _uiState.value = _uiState.value.copy(items = allMasterItems, filteredItems = updated)
+        }
+    }
+
+    fun saveCustomPid(newPid: PidDefinition) {
+        viewModelScope.launch(Dispatchers.IO) {
+            customPidRepository.save(newPid)
+            sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
+        }
+    }
+
     fun updatePidAlerts(pidItem: PidDefinitionDetails, lower: Number?, upper: Number?) {
         viewModelScope.launch(Dispatchers.IO) {
             pidItem.source.alert.lowerThreshold = lower
@@ -118,21 +133,6 @@ class PidDefinitionViewModel(
                 filteredItems = ArrayList(filtered),
                 searchQuery = _uiState.value.searchQuery
             )
-        }
-    }
-
-    fun toggleSelectAll(selectAll: Boolean) {
-        viewModelScope.launch(Dispatchers.Default) {
-            allMasterItems.forEach { it.checked = selectAll }
-            val updated = applyFilter(allMasterItems, _uiState.value.searchQuery)
-            _uiState.value = _uiState.value.copy(items = allMasterItems, filteredItems = updated)
-        }
-    }
-
-    fun saveCustomPid(newPid: PidDefinition) {
-        viewModelScope.launch(Dispatchers.IO) {
-            customPidRepository.save(newPid)
-            sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
         }
     }
 
