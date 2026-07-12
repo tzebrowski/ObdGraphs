@@ -24,15 +24,11 @@ import org.obd.graphs.toFloat
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
-
-
-
 /**
  * Extension property to easily check if a PidDefinition is user-created.
  */
 val PidDefinition.isUserCustom: Boolean
     get() = resourceFile == USER_CUSTOM_PIDS_FILE
-
 
 fun PidDefinition.scaleToRange(value: Float): Float =
     value.mapRange(
