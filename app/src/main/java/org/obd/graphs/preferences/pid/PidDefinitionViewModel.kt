@@ -31,6 +31,7 @@ import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -247,7 +248,7 @@ class PidDefinitionViewModel(
         val viewSerializer = viewPreferencesSerializer()
         val sortOrder = viewSerializer.getItemsSortOrder()
 
-        val (userPids, standardPids) = input.partition { it.source.resourceFile == "user_custom_pids.json" }
+        val (userPids, standardPids) = input.partition { it.source.isUserCustom }
 
         val checkedStandard = standardPids.filter { it.checked }.toMutableList()
         val uncheckedStandard = standardPids.filter { !it.checked }

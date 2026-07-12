@@ -32,16 +32,16 @@ const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "Modules"
+const val USER_CUSTOM_PIDS_FILE = "user_custom_pids.json"
 
 val modules = Modules()
-private const val USER_CUSTOM_PIDS_FILE = "user_custom_pids.json"
 
 class Modules {
 
     private val overrides = mapOf(
         "alfa.json" to "Giulietta QV",
         "giulia_2.0_gme.json" to "Giulia 2.0 GME",
-        "user_custom_pids.json" to "User custom PIDs"
+        USER_CUSTOM_PIDS_FILE to "User custom PIDs"
     )
 
     private val mapper = ObjectMapper().apply {

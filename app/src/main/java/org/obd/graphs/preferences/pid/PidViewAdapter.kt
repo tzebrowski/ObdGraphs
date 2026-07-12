@@ -27,6 +27,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -94,7 +95,7 @@ class PidViewAdapter internal constructor(
                 holder.status.visibility = View.GONE
                 holder.btnEdit.visibility = View.VISIBLE
 
-                if (source.resourceFile == "user_custom_pids.json") {
+                if (source.isUserCustom) {
                     holder.btnDelete.visibility = View.VISIBLE
                     holder.btnDelete.setOnClickListener {
                         onDeleteClicked(item)
