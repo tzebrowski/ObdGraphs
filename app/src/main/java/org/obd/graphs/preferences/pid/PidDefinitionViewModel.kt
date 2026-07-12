@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.preferences.pid
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.obd.graphs.CustomPidRepository
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -35,7 +35,6 @@ import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -64,7 +63,8 @@ data class PidUiState(
 
 class PidDefinitionViewModel(
     private val key: String,
-    val dialogMode: PidDefinitionDialogMode
+    val dialogMode: PidDefinitionDialogMode,
+    private val customPidRepository: CustomPidRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PidUiState())
@@ -129,9 +129,16 @@ class PidDefinitionViewModel(
         }
     }
 
-    fun deleteCustomPid(context: Context, pidItem: PidDefinitionDetails) {
+    fun saveCustomPid(newPid: PidDefinition) {
         viewModelScope.launch(Dispatchers.IO) {
-            modules.deleteCustomPid(context, pidItem.source.id)
+            customPidRepository.saveCustomPid(newPid)
+            sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
+        }
+    }
+
+    fun deleteCustomPid(pidItem: PidDefinitionDetails) {
+        viewModelScope.launch(Dispatchers.IO) {
+            customPidRepository.deleteCustomPid(pidItem.source.id)
 
             allMasterItems = allMasterItems.filterNot { it.source.id == pidItem.source.id }.toMutableList()
 
@@ -305,12 +312,13 @@ class PidDefinitionViewModel(
 
 class PidViewModelFactory(
     private val key: String,
-    private val dialogMode: PidDefinitionDialogMode
+    private val dialogMode: PidDefinitionDialogMode,
+    private val customPidRepository: CustomPidRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PidDefinitionViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PidDefinitionViewModel(key, dialogMode) as T
+            return PidDefinitionViewModel(key, dialogMode, customPidRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

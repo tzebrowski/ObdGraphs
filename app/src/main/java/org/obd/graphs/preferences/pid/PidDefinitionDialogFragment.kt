@@ -34,16 +34,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
-import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
+import org.obd.graphs.CustomPidRepository
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.modules
 import org.obd.graphs.preferences.CoreDialogFragment
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.getScreenHeight
-import org.obd.metrics.api.CANNetwork
 import org.obd.metrics.pid.PidDefinition
 
 open class PidDefinitionDialogFragment(
@@ -57,7 +54,8 @@ open class PidDefinitionDialogFragment(
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
-        PidViewModelFactory(key, dialogMode)
+        val repository = CustomPidRepository(requireContext().applicationContext)
+        PidViewModelFactory(key, dialogMode, repository)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -78,7 +76,7 @@ open class PidDefinitionDialogFragment(
             data = emptyList(),
             editModeEnabled = dialogMode.isInteractive,
             onEditClicked = { clickedPid -> showEditBottomSheet(clickedPid) },
-            onDeleteClicked = { clickedPid -> viewModel.deleteCustomPid(requireContext(), clickedPid) }
+            onDeleteClicked = { clickedPid -> viewModel.deleteCustomPid(clickedPid) }
         )
 
         recyclerView = root.findViewById(R.id.recycler_view)
@@ -133,7 +131,7 @@ open class PidDefinitionDialogFragment(
                     formData.min,
                     formData.max,
                     org.obd.metrics.pid.ValueType.DOUBLE,
-                    PidDefinition.Overrides(formData.canHeader,false, null)
+                    PidDefinition.Overrides(formData.canHeader, false, null)
                 ).apply {
                     longDescription = formData.longDescription
                     stable = formData.stable
@@ -142,8 +140,7 @@ open class PidDefinitionDialogFragment(
                 }
 
                 DataLoggerRepository.getPidDefinitionRegistry().register(newPid)
-                modules.saveCustomPid(requireContext(), newPid)
-                sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
+                viewModel.saveCustomPid(newPid)
 
                 viewModel.loadData()
             }

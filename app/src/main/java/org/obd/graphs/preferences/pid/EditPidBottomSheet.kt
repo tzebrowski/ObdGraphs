@@ -64,7 +64,6 @@ class EditPidBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val tvTitle = view.findViewById<TextView>(R.id.tvDialogTitle)
 
         val tilDescription = view.findViewById<View>(R.id.tilDescription)
