@@ -90,9 +90,11 @@ class PidDefinitionViewModel(
     fun onSearchQueryChanged(query: String) {
         viewModelScope.launch(Dispatchers.Default) {
             val filtered = applyFilter(allMasterItems, query)
+            val sortedAndFiltered = sortItems(filtered)
+
             _uiState.value = _uiState.value.copy(
                 searchQuery = query,
-                filteredItems = filtered
+                filteredItems = sortedAndFiltered
             )
         }
     }
