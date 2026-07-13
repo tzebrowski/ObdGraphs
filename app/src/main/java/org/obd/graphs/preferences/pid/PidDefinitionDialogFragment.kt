@@ -87,7 +87,7 @@ open class PidDefinitionDialogFragment(
 
         val fabAddPid = root.findViewById<View>(R.id.fab_add_pid)
         fabAddPid.visibility = if (dialogMode.isEdit) View.VISIBLE else View.GONE
-        fabAddPid.setOnClickListener { showEditBottomSheet(null) }
+        fabAddPid.setOnClickListener { showAddBottomSheet() }
 
         adjustRecyclerViewHeight(recyclerView, resources.configuration.orientation)
         observeViewModel(adapter)
@@ -105,50 +105,10 @@ open class PidDefinitionDialogFragment(
         }
     }
 
-    private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
-        val bottomSheet = EditPidBottomSheet(pidItem, dialogMode) { formData ->
-            if (pidItem != null) {
-                if (dialogMode.isEdit) {
-                    val parsedType = try {
-                        org.obd.metrics.pid.ValueType.valueOf(formData.valueType)
-                    } catch (e: Exception) {
-                        org.obd.metrics.pid.ValueType.DOUBLE
-                    }
-                    pidItem.source.apply {
-                        length = formData.length
-                        formula = formData.formula ?: ""
-                        mode = formData.mode ?: ""
-                        pid = formData.pidCode ?: ""
-                        units = formData.units ?: ""
-                        description = formData.description ?: ""
-                        min = formData.min
-                        max = formData.max
-                        type = parsedType
-                        overrides = PidDefinition.Overrides(formData.canHeader, formData.batch, null)
-                        longDescription = formData.longDescription
-                        stable = formData.stable
-                        alert.lowerThreshold = formData.lowerThreshold
-                        alert.upperThreshold = formData.upperThreshold
-                    }
-                } else {
-                    pidItem.source.apply {
-                        alert.lowerThreshold = formData.lowerThreshold
-                        alert.upperThreshold = formData.upperThreshold
-                    }
-                }
-
-                viewModel.update(pidItem)
-
-                recyclerView.post {
-                    getAdapter().notifyDataSetChanged()
-                }
-            } else if (dialogMode.isEdit) {
-                val type = try {
-                    org.obd.metrics.pid.ValueType.valueOf(formData.valueType)
-                } catch (_: Exception) {
-                    org.obd.metrics.pid.ValueType.DOUBLE
-                }
-
+    private fun showAddBottomSheet() {
+        val bottomSheet = EditPidBottomSheet(null, dialogMode) { formData ->
+            if (dialogMode.isEdit) {
+                val parsedType = parseValueType(formData.valueType)
                 val newPid = PidDefinition(
                     System.currentTimeMillis(),
                     formData.length,
@@ -159,7 +119,7 @@ open class PidDefinitionDialogFragment(
                     formData.description ?: "",
                     formData.min,
                     formData.max,
-                    type,
+                    parsedType,
                     PidDefinition.Overrides(formData.canHeader, formData.batch, null)
                 ).apply {
                     longDescription = formData.longDescription
@@ -170,7 +130,51 @@ open class PidDefinitionDialogFragment(
                 viewModel.save(newPid)
             }
         }
+        bottomSheet.show(childFragmentManager, "AddPidBottomSheet")
+    }
+
+    private fun showEditBottomSheet(pidItem: PidDefinitionDetails) {
+        val bottomSheet = EditPidBottomSheet(pidItem, dialogMode) { formData ->
+            if (dialogMode.isEdit) {
+                val parsedType = parseValueType(formData.valueType)
+                pidItem.source.apply {
+                    length = formData.length
+                    formula = formData.formula ?: ""
+                    mode = formData.mode ?: ""
+                    pid = formData.pidCode ?: ""
+                    units = formData.units ?: ""
+                    description = formData.description ?: ""
+                    min = formData.min
+                    max = formData.max
+                    type = parsedType
+                    overrides = PidDefinition.Overrides(formData.canHeader, formData.batch, null)
+                    longDescription = formData.longDescription
+                    stable = formData.stable
+                    alert.lowerThreshold = formData.lowerThreshold
+                    alert.upperThreshold = formData.upperThreshold
+                }
+            } else {
+                pidItem.source.apply {
+                    alert.lowerThreshold = formData.lowerThreshold
+                    alert.upperThreshold = formData.upperThreshold
+                }
+            }
+
+            viewModel.update(pidItem)
+
+            recyclerView.post {
+                getAdapter().notifyDataSetChanged()
+            }
+        }
         bottomSheet.show(childFragmentManager, "EditPidBottomSheet")
+    }
+
+    private fun parseValueType(valueType: String): org.obd.metrics.pid.ValueType {
+        return try {
+            org.obd.metrics.pid.ValueType.valueOf(valueType)
+        } catch (e: Exception) {
+            org.obd.metrics.pid.ValueType.DOUBLE
+        }
     }
 
     private fun adjustRecyclerViewHeight(recyclerView: RecyclerView, orientation: Int) {
