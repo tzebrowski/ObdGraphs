@@ -109,6 +109,11 @@ open class PidDefinitionDialogFragment(
         val bottomSheet = EditPidBottomSheet(pidItem, dialogMode) { formData ->
             if (pidItem != null) {
                 val updatedSource = if (dialogMode.isEdit) {
+                    val type = try {
+                        org.obd.metrics.pid.ValueType.valueOf(formData.valueType)
+                    } catch (e: Exception) {
+                        org.obd.metrics.pid.ValueType.DOUBLE
+                    }
                     PidDefinition(
                         pidItem.source.id,
                         formData.length,
@@ -119,7 +124,7 @@ open class PidDefinitionDialogFragment(
                         formData.description ?: "",
                         formData.min,
                         formData.max,
-                        pidItem.source.type,
+                        type,
                         PidDefinition.Overrides(formData.canHeader, formData.batch, null)
                     ).apply {
                         longDescription = formData.longDescription
@@ -142,6 +147,12 @@ open class PidDefinitionDialogFragment(
                     getAdapter().notifyDataSetChanged()
                 }
             } else if (dialogMode.isEdit) {
+                val type = try {
+                    org.obd.metrics.pid.ValueType.valueOf(formData.valueType)
+                } catch (e: Exception) {
+                    org.obd.metrics.pid.ValueType.DOUBLE
+                }
+
                 val newPid = PidDefinition(
                     System.currentTimeMillis(),
                     formData.length,
@@ -152,7 +163,7 @@ open class PidDefinitionDialogFragment(
                     formData.description ?: "",
                     formData.min,
                     formData.max,
-                    org.obd.metrics.pid.ValueType.DOUBLE,
+                    type,
                     PidDefinition.Overrides(formData.canHeader, formData.batch, null)
                 ).apply {
                     longDescription = formData.longDescription

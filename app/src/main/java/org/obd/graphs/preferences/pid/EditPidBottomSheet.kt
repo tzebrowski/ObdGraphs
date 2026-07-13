@@ -43,6 +43,7 @@ data class PidFormData(
     val units: String?,
     val stable: Boolean,
     val cacheable: Boolean,
+    val valueType: String,
     val batch: Boolean,
     val lowerThreshold: Number?,
     val upperThreshold: Number?
@@ -86,6 +87,15 @@ class EditPidBottomSheet(
             canHeaders
         )
         etCanHeader.setAdapter(canHEaderAdapter)
+
+        val etValueType = view.findViewById<AutoCompleteTextView>(R.id.etValueType)
+        val valueTypes = listOf("INT", "DOUBLE", "SHORT")
+        val valueTypeAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            valueTypes
+        )
+        etValueType.setAdapter(valueTypeAdapter)
 
         val etPidCode = view.findViewById<TextInputEditText>(R.id.etPidCode)
         val etFormula = view.findViewById<TextInputEditText>(R.id.etFormula)
@@ -136,6 +146,7 @@ class EditPidBottomSheet(
             etUnits.setText(pidItem.source.units ?: "")
             cbStable.isChecked = pidItem.source.stable ?: true
             cbCacheable.isChecked = pidItem.source.cacheable ?: true
+            etValueType.setText(pidItem.source.type?.name ?: "DOUBLE", false)
 
             etLower.setText(pidItem.source.alert.lowerThreshold?.toString() ?: "")
             etUpper.setText(pidItem.source.alert.upperThreshold?.toString() ?: "")
@@ -166,7 +177,8 @@ class EditPidBottomSheet(
                 batch = cbBatch.isChecked,
                 cacheable = cbCacheable.isChecked,
                 lowerThreshold = lowerVal,
-                upperThreshold = upperVal
+                upperThreshold = upperVal,
+                valueType = if (mode.isEdit) etValueType.text.toString().trim() else "DOUBLE"
             )
 
             if (mode.isEdit && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
