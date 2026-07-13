@@ -99,7 +99,17 @@ class EditPidBottomSheet(
 
         val etPidCode = view.findViewById<TextInputEditText>(R.id.etPidCode)
         val etFormula = view.findViewById<TextInputEditText>(R.id.etFormula)
-        val etLength = view.findViewById<TextInputEditText>(R.id.etLength)
+
+        val etLength = view.findViewById<AutoCompleteTextView>(R.id.etLength)
+        val lengthAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            (1..12).map { it.toString() }
+        )
+        etLength.setAdapter(lengthAdapter)
+        // Set default value to "1" for new items
+        etLength.setText("1", false)
+
         val etMin = view.findViewById<TextInputEditText>(R.id.etMin)
         val etMax = view.findViewById<TextInputEditText>(R.id.etMax)
         val etUnits = view.findViewById<TextInputEditText>(R.id.etUnits)
@@ -140,7 +150,8 @@ class EditPidBottomSheet(
             etLongDescription.setText(pidItem.source.longDescription)
             etPidCode.setText(pidItem.source.pid)
             etFormula.setText(pidItem.source.formula)
-            etLength.setText(pidItem.source.length.toString())
+            // Overwrites the default "1" if we are editing an existing item
+            etLength.setText(pidItem.source.length.toString(), false)
             etMin.setText(pidItem.source.min?.toString() ?: "")
             etMax.setText(pidItem.source.max?.toString() ?: "")
             etUnits.setText(pidItem.source.units ?: "")
