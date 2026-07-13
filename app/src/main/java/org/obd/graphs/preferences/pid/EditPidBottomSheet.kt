@@ -43,6 +43,7 @@ data class PidFormData(
     val units: String?,
     val stable: Boolean,
     val cacheable: Boolean,
+    val batch: Boolean,
     val lowerThreshold: Number?,
     val upperThreshold: Number?
 )
@@ -94,6 +95,7 @@ class EditPidBottomSheet(
         val etUnits = view.findViewById<TextInputEditText>(R.id.etUnits)
         val cbStable = view.findViewById<CheckBox>(R.id.cbStable)
         val cbCacheable = view.findViewById<CheckBox>(R.id.cbCacheable)
+        val cbBatch = view.findViewById<CheckBox>(R.id.cbBatch)
 
         val etLower = view.findViewById<TextInputEditText>(R.id.etLower)
         val etUpper = view.findViewById<TextInputEditText>(R.id.etUpper)
@@ -161,6 +163,7 @@ class EditPidBottomSheet(
                 max = etMax.text.toString().toDoubleOrNull(),
                 units = etUnits.text.toString().trim(),
                 stable = cbStable.isChecked,
+                batch = cbBatch.isChecked,
                 cacheable = cbCacheable.isChecked,
                 lowerThreshold = lowerVal,
                 upperThreshold = upperVal

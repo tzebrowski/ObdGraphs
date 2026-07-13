@@ -224,6 +224,14 @@
                 android:checked="true" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbBatch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Batch"
+                android:checked="true" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbCacheable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

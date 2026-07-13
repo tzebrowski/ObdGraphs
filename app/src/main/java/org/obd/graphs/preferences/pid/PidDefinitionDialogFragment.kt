@@ -120,7 +120,7 @@ open class PidDefinitionDialogFragment(
                         formData.min,
                         formData.max,
                         pidItem.source.type,
-                        PidDefinition.Overrides(formData.canHeader, false, null)
+                        PidDefinition.Overrides(formData.canHeader, formData.batch, null)
                     ).apply {
                         longDescription = formData.longDescription
                         stable = formData.stable
@@ -153,7 +153,7 @@ open class PidDefinitionDialogFragment(
                     formData.min,
                     formData.max,
                     org.obd.metrics.pid.ValueType.DOUBLE,
-                    PidDefinition.Overrides(formData.canHeader, false, null)
+                    PidDefinition.Overrides(formData.canHeader, formData.batch, null)
                 ).apply {
                     longDescription = formData.longDescription
                     stable = formData.stable
