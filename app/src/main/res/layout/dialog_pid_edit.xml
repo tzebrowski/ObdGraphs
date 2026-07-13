@@ -129,7 +129,8 @@
                     android:id="@+id/etMin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberSigned|numberDecimal" />
+                    android:inputType="numberSigned|numberDecimal"
+                    android:digits="0123456789.-" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

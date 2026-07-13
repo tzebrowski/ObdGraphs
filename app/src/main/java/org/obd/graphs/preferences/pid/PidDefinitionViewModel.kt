@@ -32,7 +32,6 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.isUserCustom
-import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
@@ -58,7 +57,8 @@ data class PidDefinitionDetails(
 data class PidUiState(
     val items: List<PidDefinitionDetails> = emptyList(),
     val filteredItems: List<PidDefinitionDetails> = emptyList(),
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val lastUpdate: Long = System.currentTimeMillis()
 )
 
 class PidDefinitionViewModel(
@@ -107,38 +107,47 @@ class PidDefinitionViewModel(
         }
     }
 
-    fun saveCustomPid(newPid: PidDefinition) {
+    fun save(newPid: PidDefinition) {
         viewModelScope.launch(Dispatchers.IO) {
+            DataLoggerRepository.getPidDefinitionRegistry().register(newPid)
             customPidRepository.save(newPid)
+            loadData()
             sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
         }
     }
 
-    fun updatePidAlerts(pidItem: PidDefinitionDetails, lower: Number?, upper: Number?) {
+    fun update(pidItem: PidDefinitionDetails) {
         viewModelScope.launch(Dispatchers.IO) {
-            pidItem.source.alert.lowerThreshold = lower
-            pidItem.source.alert.upperThreshold = upper
-            pidItem.source.serialize()
+            val correctResourceFile = pidItem.source.resourceFile
+            DataLoggerRepository.getPidDefinitionRegistry().register(pidItem.source)
+            pidItem.source.resourceFile = correctResourceFile
+
+            if (pidItem.source.isUserCustom) {
+                customPidRepository.save(pidItem.source)
+            }
 
             allMasterItems = allMasterItems.map { item ->
                 if (item.source.id == pidItem.source.id) {
-                    item.copy(source = item.source)
+                    pidItem
                 } else {
                     item
                 }
             }.toMutableList()
 
             val filtered = applyFilter(allMasterItems, _uiState.value.searchQuery)
+            val sortedAndFiltered = sortItems(filtered)
 
             _uiState.value = PidUiState(
                 items = ArrayList(allMasterItems),
-                filteredItems = ArrayList(filtered),
-                searchQuery = _uiState.value.searchQuery
+                filteredItems = ArrayList(sortedAndFiltered),
+                searchQuery = _uiState.value.searchQuery,
+                lastUpdate = System.currentTimeMillis()
             )
+            sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
         }
     }
 
-    fun deleteCustomPid(pidItem: PidDefinitionDetails) {
+    fun delete(pidItem: PidDefinitionDetails) {
         viewModelScope.launch(Dispatchers.IO) {
             customPidRepository.delete(pidItem.source.id)
 
@@ -216,7 +225,6 @@ class PidDefinitionViewModel(
         val all = DataLoggerRepository.getPidDefinitionRegistry().findAll()
         val individualQuery = dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled
         val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
-
         val sourceList: List<PidDefinitionDetails> = when {
             dialogMode is PidDefinitionDialogMode.TripInfo -> {
                 Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaultPIDs()

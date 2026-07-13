@@ -36,7 +36,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import org.obd.graphs.CustomPidRepository
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
@@ -75,7 +74,7 @@ open class PidDefinitionDialogFragment(
             data = emptyList(),
             editModeEnabled = dialogMode.isInteractive,
             onEditClicked = { clickedPid -> showEditBottomSheet(clickedPid) },
-            onDeleteClicked = { clickedPid -> viewModel.deleteCustomPid(clickedPid) }
+            onDeleteClicked = { clickedPid -> viewModel.delete(clickedPid) }
         )
 
         recyclerView = root.findViewById(R.id.recycler_view)
@@ -109,15 +108,39 @@ open class PidDefinitionDialogFragment(
     private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
         val bottomSheet = EditPidBottomSheet(pidItem, dialogMode) { formData ->
             if (pidItem != null) {
-                if (dialogMode.isEdit) {
-                    pidItem.source.description = formData.description ?: pidItem.source.description
-                    pidItem.source.longDescription = formData.longDescription ?: pidItem.source.longDescription
-                    pidItem.source.formula = formData.formula ?: pidItem.source.formula
-                    pidItem.source.units = formData.units
-                    pidItem.source.stable = formData.stable
+                val updatedSource = if (dialogMode.isEdit) {
+                    PidDefinition(
+                        pidItem.source.id,
+                        formData.length,
+                        formData.formula ?: "",
+                        formData.mode ?: "",
+                        formData.pidCode ?: "",
+                        formData.units ?: "",
+                        formData.description ?: "",
+                        formData.min,
+                        formData.max,
+                        pidItem.source.type,
+                        PidDefinition.Overrides(formData.canHeader, false, null)
+                    ).apply {
+                        longDescription = formData.longDescription
+                        stable = formData.stable
+                        resourceFile = pidItem.source.resourceFile
+                        alert.lowerThreshold = formData.lowerThreshold
+                        alert.upperThreshold = formData.upperThreshold
+                    }
+                } else {
+                    pidItem.source.apply {
+                        alert.lowerThreshold = formData.lowerThreshold
+                        alert.upperThreshold = formData.upperThreshold
+                    }
                 }
 
-                viewModel.updatePidAlerts(pidItem, formData.lowerThreshold, formData.upperThreshold)
+                val updatedPidItem = pidItem.copy(source = updatedSource)
+                viewModel.update(updatedPidItem)
+
+                recyclerView.post {
+                    getAdapter().notifyDataSetChanged()
+                }
             } else if (dialogMode.isEdit) {
                 val newPid = PidDefinition(
                     System.currentTimeMillis(),
@@ -137,15 +160,7 @@ open class PidDefinitionDialogFragment(
                     alert.lowerThreshold = formData.lowerThreshold
                     alert.upperThreshold = formData.upperThreshold
                 }
-
-                DataLoggerRepository.getPidDefinitionRegistry().register(newPid)
-                viewModel.saveCustomPid(newPid)
-
-                viewModel.loadData()
-            }
-
-            recyclerView.post {
-                getAdapter().notifyDataSetChanged()
+                viewModel.save(newPid)
             }
         }
         bottomSheet.show(childFragmentManager, "EditPidBottomSheet")
