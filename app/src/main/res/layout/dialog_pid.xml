@@ -35,6 +35,19 @@
         android:clipToPadding="false"
         android:paddingVertical="4dp" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_pid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_panel_card"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/pref.pid.manage_dialog.content_desc_add_new"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/philippine_green"
+        app:tint="@android:color/white" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_panel_card"
         android:layout_width="match_parent"

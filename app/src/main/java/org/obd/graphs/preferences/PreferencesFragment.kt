@@ -47,8 +47,8 @@ import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragment
+import org.obd.graphs.preferences.pid.PidDefinitionDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
-import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.sendBroadcastEvent
@@ -323,7 +323,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         source: String,
         onDialogCloseListener: (() -> Unit) = {}
     ) {
-        PidDefinitionPreferenceDialogFragment(
+        PidDefinitionDialogFragment(
             key = key,
             source = source,
             onDialogCloseListener = onDialogCloseListener

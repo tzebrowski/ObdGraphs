@@ -27,6 +27,15 @@
 
             <PreferenceCategory android:title="@string/pref.registry.category">
 
+                <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
+                    android:dialogTitle="@string/pref.pid.manage_dialog"
+                    android:key="pref.pids.edit"
+                    android:summary="@string/pref.pid.manage_dialog_summary"
+                    android:title="@string/pref.pid.manage_dialog"
+                    app:singleLineTitle="false"
+                    app:source="edit" />
+
+
                 <org.obd.graphs.preferences.pid.IndividualQueryStrategyCheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.adapter.query.individual.enabled"
@@ -36,19 +45,19 @@
 
                 <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
                     app:dependency="pref.adapter.query.individual.enabled"
-                    android:dialogTitle="@string/pref.pids_generic_high"
+                    android:dialogTitle="@string/pref.pid.generic_high"
                     android:key="pref.pids.generic.high"
-                    android:summary="@string/pref.pids_generic_high_summary"
-                    android:title="@string/pref.pids_generic_high"
+                    android:summary="@string/pref.pid.generic_high_summary"
+                    android:title="@string/pref.pid.generic_high"
                     app:singleLineTitle="false"
                     app:source="high" />
 
                 <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
                     app:dependency="pref.adapter.query.individual.enabled"
-                    android:dialogTitle="@string/pref.pids_generic_low"
+                    android:dialogTitle="@string/pref.pid.generic_low"
                     android:key="pref.pids.generic.low"
-                    android:summary="@string/pref.pids_generic_low_summary"
-                    android:title="@string/pref.pids_generic_low"
+                    android:summary="@string/pref.pid.generic_low_summary"
+                    android:title="@string/pref.pid.generic_low"
                     app:singleLineTitle="false"
                     app:source="low" />
 
@@ -317,10 +326,10 @@
                 <org.obd.graphs.preferences.components.ExtendedSeekBar
                     app:dependency="pref.adapter.batch.enabled"
                     android:defaultValue="8"
-                    android:dialogTitle="@string/prefs.adapter_batch_mode_22_batch_size"
+                    android:dialogTitle="@string/pref.adapter_batch_mode_22_batch_size"
                     android:key="pref.adapter.batch.size"
                     android:max="24"
-                    android:title="@string/prefs.adapter_batch_mode_22_batch_size"
+                    android:title="@string/pref.adapter_batch_mode_22_batch_size"
                     android:summary="Batch Size for Mode 22"
                     app:min="1"
                     app:showSeekBarValue="true"
@@ -331,10 +340,10 @@
                 <org.obd.graphs.preferences.components.ExtendedSeekBar
                     app:dependency="pref.adapter.batch.enabled"
                     android:defaultValue="3"
-                    android:dialogTitle="@string/prefs.adapter_batch_mode_01_batch_size"
+                    android:dialogTitle="@string/pref.adapter_batch_mode_01_batch_size"
                     android:key="pref.adapter.batch_01.size"
                     android:max="24"
-                    android:title="@string/prefs.adapter_batch_mode_01_batch_size"
+                    android:title="@string/pref.adapter_batch_mode_01_batch_size"
                     android:summary="Batch Size for Mode 01"
                     app:min="1"
                     app:showSeekBarValue="true"
@@ -435,12 +444,12 @@
                 app:singleLineTitle="false" />
 
             <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
-                android:dialogTitle="@string/pref.pids.edit"
+                android:dialogTitle="@string/pref.pid.alert.edit_dialog"
                 android:key="pref.pids.edit"
-                android:summary="@string/pref.pids.edit_summary"
-                android:title="@string/pref.pids.edit"
+                android:summary="@string/pref.pid.alert.edit_dialog_summary"
+                android:title="@string/pref.pid.alert.edit_dialog"
                 app:singleLineTitle="false"
-                app:source="edit" />
+                app:source="alert" />
 
         </PreferenceScreen>
     </PreferenceCategory>

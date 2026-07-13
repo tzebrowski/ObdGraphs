@@ -41,9 +41,6 @@ private const val TAG = "PID_SER"
 
 fun PidDefinition.serialize() =
     try {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "Serialize PID $id=${key()}")
-        }
         Prefs.updateString(key(), mapper.writeValueAsString(this)).commit()
     } catch (e: Throwable) {
         Log.e(TAG, "Failed to serialize, PID id=$id", e)
@@ -53,14 +50,7 @@ fun PidDefinition.serialize() =
 fun PidDefinition.deserialize(): PidDefinition? =
     try {
         val data = Prefs.getString(key(), null)
-        if (data == null) {
-            null
-        } else {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Deserialize $id=${key()}=$data")
-            }
-            mapper.readValue(data, PidDefinition::class.java)
-        }
+        if (data == null) null else mapper.readValue(data, PidDefinition::class.java)
     } catch (e: Throwable) {
         Log.e(TAG, "Failed to deserialize, PID id=$id", e)
         null

@@ -29,12 +29,12 @@ const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "Modules"
 
-val modules = Modules()
-class Modules {
+object Modules {
 
     private val overrides = mapOf(
         "alfa.json" to "Giulietta QV",
-        "giulia_2.0_gme.json" to "Giulia 2.0 GME"
+        "giulia_2.0_gme.json" to "Giulia 2.0 GME",
+        USER_CUSTOM_PIDS_FILE to "User custom PIDs"
     )
 
     private var modules = mutableMapOf<String, String>()
@@ -46,6 +46,15 @@ class Modules {
     fun getDefaultModules(): Map<String, String> = modules.apply {
         putAll(overrides)
     }
+
+    fun getCustomPidsFile(context: Context? = getContext()): File? =
+        if (Prefs.getStringSet(PREF_MODULE_LIST, mutableSetOf())!!.contains(USER_CUSTOM_PIDS_FILE)) {
+            context?.let {
+                File(context.filesDir, USER_CUSTOM_PIDS_FILE)
+            }
+        } else {
+            null
+        }
 
     fun updateSettings(allProps: MutableMap<String, Any?>) {
         val keys = allProps.keys.filter { it.contains(PREF_MODULE_LIST) }.toList()

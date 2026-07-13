@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.DiagnosticMappingItem
 import org.obd.graphs.R
 
 class DiagnosticRequestIdAdapter(

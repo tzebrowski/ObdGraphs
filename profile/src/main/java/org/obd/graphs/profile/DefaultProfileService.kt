@@ -21,11 +21,11 @@ import android.content.SharedPreferences
 import android.os.Environment
 import android.util.Log
 import androidx.core.content.edit
+import org.obd.graphs.DiagnosticRequestIDManager
+import org.obd.graphs.Modules
 import org.obd.graphs.PREF_DRAG_RACE_KEY_PREFIX
 import org.obd.graphs.PREF_MODULE_LIST
-import org.obd.graphs.diagnosticRequestIDMapper
 import org.obd.graphs.getContext
-import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.updateBoolean
@@ -315,7 +315,7 @@ internal class DefaultProfileService :
     }
 
     private fun resetCurrentProfile() {
-        diagnosticRequestIDMapper.reset()
+        DiagnosticRequestIDManager.reset()
 
         Prefs.edit().let {
             Prefs.all
@@ -355,8 +355,8 @@ internal class DefaultProfileService :
 
     @SuppressLint("DefaultLocale")
     private fun distributePreferences(entries: MutableMap<String, Any?>) {
-        diagnosticRequestIDMapper.updateSettings(entries)
-        modules.updateSettings(entries)
+        DiagnosticRequestIDManager.updateSettings(entries)
+        Modules.updateSettings(entries)
     }
 
     private fun allProps(): MutableMap<String, Any?> {
@@ -445,7 +445,7 @@ internal class DefaultProfileService :
         }
     }
 
-    private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName(), PREF_MODULE_LIST)
+    private fun allowedToOverride() = setOf(DiagnosticRequestIDManager.getValuePreferenceName(), PREF_MODULE_LIST)
 
     private fun getBackupFile(): File = File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)
 
