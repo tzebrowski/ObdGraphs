@@ -26,7 +26,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
 import org.obd.metrics.pid.PidDefinition
-import org.obd.metrics.pid.ValueType
 
 private var mapper =
     ObjectMapper().apply {
@@ -39,7 +38,6 @@ private var mapper =
 
 private const val PREF_KEY = "pref.pid.registry.overrides.pid"
 private const val TAG = "PID_SER"
-
 
 fun PidDefinition.serialize() =
     try {
