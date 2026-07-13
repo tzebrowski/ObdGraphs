@@ -119,23 +119,11 @@ class PidDefinitionViewModel(
 
     fun update(pidItem: PidDefinitionDetails) {
         viewModelScope.launch(Dispatchers.IO) {
-            val correctResourceFile = pidItem.source.resourceFile
-            DataLoggerRepository.getPidDefinitionRegistry().register(pidItem.source)
-            pidItem.source.resourceFile = correctResourceFile
-
             if (pidItem.source.isUserCustom) {
                 customPidRepository.save(pidItem.source)
             } else {
                 pidItem.source.serialize()
             }
-
-            allMasterItems = allMasterItems.map { item ->
-                if (item.source.id == pidItem.source.id) {
-                    pidItem
-                } else {
-                    item
-                }
-            }.toMutableList()
 
             val filtered = applyFilter(allMasterItems, _uiState.value.searchQuery)
             val sortedAndFiltered = sortItems(filtered)

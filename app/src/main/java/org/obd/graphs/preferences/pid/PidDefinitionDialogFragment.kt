@@ -108,28 +108,25 @@ open class PidDefinitionDialogFragment(
     private fun showEditBottomSheet(pidItem: PidDefinitionDetails?) {
         val bottomSheet = EditPidBottomSheet(pidItem, dialogMode) { formData ->
             if (pidItem != null) {
-                val updatedSource = if (dialogMode.isEdit) {
-                    val type = try {
+                if (dialogMode.isEdit) {
+                    val parsedType = try {
                         org.obd.metrics.pid.ValueType.valueOf(formData.valueType)
                     } catch (e: Exception) {
                         org.obd.metrics.pid.ValueType.DOUBLE
                     }
-                    PidDefinition(
-                        pidItem.source.id,
-                        formData.length,
-                        formData.formula ?: "",
-                        formData.mode ?: "",
-                        formData.pidCode ?: "",
-                        formData.units ?: "",
-                        formData.description ?: "",
-                        formData.min,
-                        formData.max,
-                        type,
-                        PidDefinition.Overrides(formData.canHeader, formData.batch, null)
-                    ).apply {
+                    pidItem.source.apply {
+                        length = formData.length
+                        formula = formData.formula ?: ""
+                        mode = formData.mode ?: ""
+                        pid = formData.pidCode ?: ""
+                        units = formData.units ?: ""
+                        description = formData.description ?: ""
+                        min = formData.min
+                        max = formData.max
+                        type = parsedType
+                        overrides = PidDefinition.Overrides(formData.canHeader, formData.batch, null)
                         longDescription = formData.longDescription
                         stable = formData.stable
-                        resourceFile = pidItem.source.resourceFile
                         alert.lowerThreshold = formData.lowerThreshold
                         alert.upperThreshold = formData.upperThreshold
                     }
@@ -140,8 +137,7 @@ open class PidDefinitionDialogFragment(
                     }
                 }
 
-                val updatedPidItem = pidItem.copy(source = updatedSource)
-                viewModel.update(updatedPidItem)
+                viewModel.update(pidItem)
 
                 recyclerView.post {
                     getAdapter().notifyDataSetChanged()
