@@ -150,14 +150,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     private val workflow: Workflow = workflow().apply {
-        pidRegistry.findAll().forEach { p ->
-            p.deserialize()?.let {
-                p.formula = it.formula
-                p.alert.lowerThreshold = it.alert.lowerThreshold
-                p.alert.upperThreshold = it.alert.upperThreshold
-            }
-        }
-
+        applySavedOverrides(this.pidRegistry)
         registerGPSPids(this.pidRegistry)
     }
 
@@ -388,14 +381,7 @@ internal class WorkflowOrchestrator internal constructor() {
             provider
         )
 
-        workflow.pidRegistry.findAll().forEach { p ->
-            p.deserialize()?.let {
-                p.formula = it.formula
-                p.alert.lowerThreshold = it.alert.lowerThreshold
-                p.alert.upperThreshold = it.alert.upperThreshold
-            }
-        }
-
+        applySavedOverrides(workflow.pidRegistry)
         registerGPSPids(workflow.pidRegistry)
     }
 
@@ -404,14 +390,7 @@ internal class WorkflowOrchestrator internal constructor() {
             pids()
         )
 
-        workflow.pidRegistry.findAll().forEach { p ->
-            p.deserialize()?.let {
-                p.formula = it.formula
-                p.alert.lowerThreshold = it.alert.lowerThreshold
-                p.alert.upperThreshold = it.alert.upperThreshold
-            }
-        }
-
+        applySavedOverrides(workflow.pidRegistry)
         registerGPSPids(workflow.pidRegistry)
     }
 
@@ -431,6 +410,31 @@ internal class WorkflowOrchestrator internal constructor() {
                 ValueType.DOUBLE
             )
         )
+    }
+
+    private fun applySavedOverrides(pidRegistry: PidDefinitionRegistry) {
+        pidRegistry.findAll().forEach { livePid ->
+            if (!livePid.isUserCustom) {
+                livePid.deserialize()?.let { savedPid ->
+                    livePid.description = savedPid.description ?: livePid.description
+                    livePid.longDescription = savedPid.longDescription ?: livePid.longDescription
+                    livePid.mode = savedPid.mode ?: livePid.mode
+                    livePid.pid = savedPid.pid ?: livePid.pid
+                    livePid.formula = savedPid.formula ?: livePid.formula
+                    livePid.length = savedPid.length ?: livePid.length
+                    livePid.min = savedPid.min ?: livePid.min
+                    livePid.max = savedPid.max ?: livePid.max
+                    livePid.units = savedPid.units ?: livePid.units
+                    livePid.type = savedPid.type ?: livePid.type
+                    livePid.overrides = savedPid.overrides ?: livePid.overrides
+                    livePid.stable = savedPid.stable
+                    livePid.cacheable = savedPid.cacheable
+
+                    livePid.alert.lowerThreshold = savedPid.alert.lowerThreshold
+                    livePid.alert.upperThreshold = savedPid.alert.upperThreshold
+                }
+            }
+        }
     }
 
     private fun getReadDtcAction(): DtcAction  = if (dataLoggerSettings.instance().adapter.dtcReadSnapshots) DtcAction.READ_SNAPSHPOTS else DtcAction.READ

@@ -149,7 +149,7 @@ open class PidDefinitionDialogFragment(
             } else if (dialogMode.isEdit) {
                 val type = try {
                     org.obd.metrics.pid.ValueType.valueOf(formData.valueType)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     org.obd.metrics.pid.ValueType.DOUBLE
                 }
 

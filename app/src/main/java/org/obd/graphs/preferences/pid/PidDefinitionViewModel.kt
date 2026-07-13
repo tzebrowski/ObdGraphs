@@ -32,6 +32,7 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.isUserCustom
+import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
@@ -124,6 +125,8 @@ class PidDefinitionViewModel(
 
             if (pidItem.source.isUserCustom) {
                 customPidRepository.save(pidItem.source)
+            } else {
+                pidItem.source.serialize()
             }
 
             allMasterItems = allMasterItems.map { item ->
