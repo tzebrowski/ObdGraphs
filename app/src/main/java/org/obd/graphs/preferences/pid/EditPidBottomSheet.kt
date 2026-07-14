@@ -80,13 +80,12 @@ class EditPidBottomSheet(
         val etCanHeader = view.findViewById<AutoCompleteTextView>(R.id.etCanHeader)
 
         val etMode = view.findViewById<AutoCompleteTextView>(R.id.etMode)
-        val modes = listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "1A", "21", "22")
+        val modes = listOf("01", "09", "22")
         val modeAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
             modes
         )
-
         etMode.setAdapter(modeAdapter)
         etMode.setText("01", false)
 
@@ -97,6 +96,7 @@ class EditPidBottomSheet(
             canHeaders
         )
         etCanHeader.setAdapter(canHEaderAdapter)
+        etCanHeader.setText("01", false)
 
         val etValueType = view.findViewById<AutoCompleteTextView>(R.id.etValueType)
         val valueTypes = listOf("INT", "DOUBLE", "SHORT")
@@ -106,6 +106,7 @@ class EditPidBottomSheet(
             valueTypes
         )
         etValueType.setAdapter(valueTypeAdapter)
+        etValueType.setText("DOUBLE", false)
 
         val etPidCode = view.findViewById<TextInputEditText>(R.id.etPidCode)
         val etFormula = view.findViewById<TextInputEditText>(R.id.etFormula)
@@ -153,10 +154,8 @@ class EditPidBottomSheet(
         }
 
         if (pidItem != null) {
-            etCanHeader.setText(pidItem.source.deductMode())
-
+            etCanHeader.setText(pidItem.source.deductMode(), false)
             etMode.setText(pidItem.source.mode, false)
-
             etDescription.setText(pidItem.source.description)
             etLongDescription.setText(pidItem.source.longDescription)
             etPidCode.setText(pidItem.source.pid)
@@ -186,9 +185,7 @@ class EditPidBottomSheet(
             val formData = PidFormData(
                 description = if (mode.isEdit) etDescription.text.toString().trim() else null,
                 longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
-
                 mode = if (mode.isEdit) etMode.text.toString().trim() else null,
-
                 canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
                 pidCode = if (mode.isEdit) etPidCode.text.toString().trim() else null,
                 formula = if (mode.isEdit) etFormula.text.toString().trim() else null,
