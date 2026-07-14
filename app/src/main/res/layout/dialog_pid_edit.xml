@@ -2,7 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingBottom="32dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,6 +65,8 @@
                     android:id="@+id/etMode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,6 +118,8 @@
                     android:id="@+id/etLength"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,8 +134,8 @@
                     android:id="@+id/etMin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberSigned|numberDecimal"
-                    android:digits="0123456789.-" />
+                    android:digits="0123456789.-"
+                    android:inputType="numberSigned|numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -143,6 +149,7 @@
                     android:id="@+id/etMax"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="0123456789.-"
                     android:inputType="numberSigned|numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -172,12 +179,14 @@
                 android:id="@+id/etValueType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:id="@+id/tilFormula"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -189,7 +198,7 @@
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-       <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -205,6 +214,7 @@
                     android:id="@+id/etLower"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="0123456789.-"
                     android:inputType="numberSigned|numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -218,6 +228,7 @@
                     android:id="@+id/etUpper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:digits="0123456789.-"
                     android:inputType="numberSigned|numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -233,24 +244,24 @@
                 android:id="@+id/cbStable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/pref.pid.alert.stable_text"
-                android:checked="true" />
+                android:checked="true"
+                android:text="@string/pref.pid.alert.stable_text" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbBatch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="@string/pref.pid.alert.batch_text"
-                android:checked="true" />
+                android:checked="true"
+                android:text="@string/pref.pid.alert.batch_text" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbCacheable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="@string/pref.pid.alert.cacheable_text"
-                android:checked="true" />
+                android:checked="true"
+                android:text="@string/pref.pid.alert.cacheable_text" />
         </LinearLayout>
 
         <TextView
@@ -258,9 +269,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="@string/pref.pid.alert.edit_validation_error"
             android:textColor="@color/design_default_color_error"
-            android:visibility="gone"
-            android:text="@string/pref.pid.alert.edit_validation_error" />
+            android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
