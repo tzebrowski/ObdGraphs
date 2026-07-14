@@ -167,14 +167,24 @@
     <string name="pref.pid.manage_dialog.content_desc_delete">Usuń</string>
     <string name="pref.pid.manage_dialog.content_desc_add_new">Dodaj nowy PID</string>
 
-
-
     <string name="pref_pid_alert_edit_title">Edytuj alerty PID</string>
     <string name="pref.pid.alert.edit_formula_hint">Formuła obliczeniowa</string>
     <string name="pref.pid.alert.edit_lower_threshold_hint">Dolny próg alertu</string>
     <string name="pref.pid.alert.edit_upper_threshold_hint">Górny próg alertu</string>
     <string name="pref.pid.alert.edit_validation_error">Dolny próg nie może być większy niż górny próg.</string>
     <string name="pref.pid.alert.edit_save">ZAPISZ</string>
+    <string name="pref.pid.alert.description_hint">Opis (np. Temp. oleju)</string>
+    <string name="pref.pid.alert.long_description_hint">Pełny opis</string>
+    <string name="pref.pid.alert.mode_hint">Tryb (Mode)</string>
+    <string name="pref.pid.alert.pid_code_hint">Kod PID</string>
+    <string name="pref.pid.alert.length_hint">Długość</string>
+    <string name="pref.pid.alert.min_hint">Min</string>
+    <string name="pref.pid.alert.max_hint">Maks</string>
+    <string name="pref.pid.alert.units_hint">Jednostki</string>
+    <string name="pref.pid.alert.value_type_hint">Typ wartości</string>
+    <string name="pref.pid.alert.stable_text">Stabilny</string>
+    <string name="pref.pid.alert.batch_text">Zapytanie grupowe (Batch)</string>
+    <string name="pref.pid.alert.cacheable_text">Pamięć podręczna (Cache)</string>
 
     <string name="pref.pids.search_hint">Szukaj PIDów...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
