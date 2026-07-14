@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
+import org.obd.metrics.pid.ValueType
 
 data class PidFormData(
     val description: String?,
@@ -80,45 +81,19 @@ class EditPidBottomSheet(
         val etCanHeader = view.findViewById<AutoCompleteTextView>(R.id.etCanHeader)
 
         val etMode = view.findViewById<AutoCompleteTextView>(R.id.etMode)
-        val modes = listOf("01", "09", "22")
-        val modeAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            modes
-        )
-        etMode.setAdapter(modeAdapter)
-        etMode.setText("01", false)
+        etMode.setupDropdown(listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "1A", "21", "22"), "01")
 
         val canHeaders = DiagnosticRequestIDManager.getMappings().map { it.requestKey }
-        val canHEaderAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            canHeaders
-        )
-        etCanHeader.setAdapter(canHEaderAdapter)
-        etCanHeader.setText("01", false)
+        etCanHeader.setupDropdown(canHeaders, "01")
 
         val etValueType = view.findViewById<AutoCompleteTextView>(R.id.etValueType)
-        val valueTypes = listOf("INT", "DOUBLE", "SHORT")
-        val valueTypeAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            valueTypes
-        )
-        etValueType.setAdapter(valueTypeAdapter)
-        etValueType.setText("DOUBLE", false)
+        etValueType.setupDropdown(listOf("INT", "DOUBLE", "SHORT"), ValueType.DOUBLE.name)
 
         val etPidCode = view.findViewById<TextInputEditText>(R.id.etPidCode)
         val etFormula = view.findViewById<TextInputEditText>(R.id.etFormula)
 
         val etLength = view.findViewById<AutoCompleteTextView>(R.id.etLength)
-        val lengthAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            (1..12).map { it.toString() }
-        )
-        etLength.setAdapter(lengthAdapter)
-        etLength.setText("1", false)
+        etLength.setupDropdown((1..12).map { it.toString() }, "1")
 
         val etMin = view.findViewById<TextInputEditText>(R.id.etMin)
         val etMax = view.findViewById<TextInputEditText>(R.id.etMax)
@@ -166,13 +141,15 @@ class EditPidBottomSheet(
             etUnits.setText(pidItem.source.units ?: "")
             cbStable.isChecked = pidItem.source.stable ?: true
             cbCacheable.isChecked = pidItem.source.cacheable ?: true
-            etValueType.setText(pidItem.source.type?.name ?: "DOUBLE", false)
+            etValueType.setText(pidItem.source.type?.name ?: ValueType.DOUBLE.name, false)
 
             etLower.setText(pidItem.source.alert.lowerThreshold?.toString() ?: "")
             etUpper.setText(pidItem.source.alert.upperThreshold?.toString() ?: "")
         }
 
         btnSave.setOnClickListener {
+            tvError.visibility = View.GONE
+
             val lowerVal = etLower.text.toString().toDoubleOrNull()
             val upperVal = etUpper.text.toString().toDoubleOrNull()
 
@@ -182,23 +159,23 @@ class EditPidBottomSheet(
                 return@setOnClickListener
             }
 
-            val formData = PidFormData(
-                description = if (mode.isEdit) etDescription.text.toString().trim() else null,
-                longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
-                mode = if (mode.isEdit) etMode.text.toString().trim() else null,
-                canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
-                pidCode = if (mode.isEdit) etPidCode.text.toString().trim() else null,
-                formula = if (mode.isEdit) etFormula.text.toString().trim() else null,
-                length = etLength.text.toString().toIntOrNull() ?: 1,
-                min = etMin.text.toString().toDoubleOrNull(),
-                max = etMax.text.toString().toDoubleOrNull(),
-                units = etUnits.text.toString().trim(),
-                stable = cbStable.isChecked,
-                batch = cbBatch.isChecked,
-                cacheable = cbCacheable.isChecked,
-                lowerThreshold = lowerVal,
-                upperThreshold = upperVal,
-                valueType = if (mode.isEdit) etValueType.text.toString().trim() else "DOUBLE"
+            val formData = extractFormData(
+                etDescription = etDescription,
+                etLongDescription = etLongDescription,
+                etMode = etMode,
+                etCanHeader = etCanHeader,
+                etPidCode = etPidCode,
+                etFormula = etFormula,
+                etLength = etLength,
+                etMin = etMin,
+                etMax = etMax,
+                etUnits = etUnits,
+                cbStable = cbStable,
+                cbBatch = cbBatch,
+                cbCacheable = cbCacheable,
+                lowerVal = lowerVal,
+                upperVal = upperVal,
+                etValueType = etValueType
             )
 
             if (mode.isEdit && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
@@ -210,5 +187,52 @@ class EditPidBottomSheet(
             onSave(formData)
             dismiss()
         }
+    }
+
+    private fun extractFormData(
+        etDescription: TextInputEditText,
+        etLongDescription: TextInputEditText,
+        etMode: AutoCompleteTextView,
+        etCanHeader: AutoCompleteTextView,
+        etPidCode: TextInputEditText,
+        etFormula: TextInputEditText,
+        etLength: AutoCompleteTextView,
+        etMin: TextInputEditText,
+        etMax: TextInputEditText,
+        etUnits: TextInputEditText,
+        cbStable: CheckBox,
+        cbBatch: CheckBox,
+        cbCacheable: CheckBox,
+        lowerVal: Double?,
+        upperVal: Double?,
+        etValueType: AutoCompleteTextView
+    ): PidFormData {
+        return PidFormData(
+            description = if (mode.isEdit) etDescription.text.toString().trim() else null,
+            longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
+            mode = if (mode.isEdit) etMode.text.toString().trim() else null,
+            canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
+            pidCode = if (mode.isEdit) etPidCode.text.toString().trim() else null,
+            formula = if (mode.isEdit) etFormula.text.toString().trim() else null,
+            length = etLength.text.toString().toIntOrNull() ?: 1,
+            min = etMin.text.toString().toDoubleOrNull(),
+            max = etMax.text.toString().toDoubleOrNull(),
+            units = etUnits.text.toString().trim(),
+            stable = cbStable.isChecked,
+            batch = cbBatch.isChecked,
+            cacheable = cbCacheable.isChecked,
+            lowerThreshold = lowerVal,
+            upperThreshold = upperVal,
+            valueType = if (mode.isEdit) etValueType.text.toString().trim() else ValueType.DOUBLE.name
+        )
+    }
+
+    private fun AutoCompleteTextView.setupDropdown(
+        items: List<String>,
+        defaultValue: String? = null
+    ) {
+        val adapter = ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, items)
+        setAdapter(adapter)
+        defaultValue?.let { setText(it, false) }
     }
 }
