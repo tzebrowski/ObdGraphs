@@ -23,7 +23,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Description (e.g. Oil Temp)">
+            android:hint="@string/pref.pid.alert.description_hint">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDescription"
                 android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Long Description">
+            android:hint="@string/pref.pid.alert.long_description_hint">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLongDescription"
                 android:layout_width="match_parent"
@@ -52,14 +52,13 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <!-- CHANGED TO DROPDOWN MENU -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:hint="Mode">
+                android:hint="@string/pref.pid.alert.mode_hint">
                 <AutoCompleteTextView
                     android:id="@+id/etMode"
                     android:layout_width="match_parent"
@@ -88,7 +87,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="PID Code">
+                android:hint="@string/pref.pid.alert.pid_code_hint">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPidCode"
                     android:layout_width="match_parent"
@@ -110,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:hint="Length">
+                android:hint="@string/pref.pid.alert.length_hint">
                 <AutoCompleteTextView
                     android:id="@+id/etLength"
                     android:layout_width="match_parent"
@@ -124,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:hint="Min">
+                android:hint="@string/pref.pid.alert.min_hint">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etMin"
                     android:layout_width="match_parent"
@@ -139,7 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:hint="Max">
+                android:hint="@string/pref.pid.alert.max_hint">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etMax"
                     android:layout_width="match_parent"
@@ -152,7 +151,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Units">
+                android:hint="@string/pref.pid.alert.units_hint">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etUnits"
                     android:layout_width="match_parent"
@@ -167,7 +166,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Value Type">
+            android:hint="@string/pref.pid.alert.value_type_hint">
 
             <AutoCompleteTextView
                 android:id="@+id/etValueType"
@@ -190,8 +189,7 @@
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- ALERTS: Always visible -->
-        <LinearLayout
+       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -235,7 +233,7 @@
                 android:id="@+id/cbStable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Stable"
+                android:text="@string/pref.pid.alert.stable_text"
                 android:checked="true" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
@@ -243,7 +241,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Batch"
+                android:text="@string/pref.pid.alert.batch_text"
                 android:checked="true" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
@@ -251,7 +249,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Cacheable"
+                android:text="@string/pref.pid.alert.cacheable_text"
                 android:checked="true" />
         </LinearLayout>
 
