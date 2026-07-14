@@ -79,7 +79,17 @@ class EditPidBottomSheet(
         val etLongDescription = view.findViewById<TextInputEditText>(R.id.etLongDescription)
         val etCanHeader = view.findViewById<AutoCompleteTextView>(R.id.etCanHeader)
 
-        val etMode = view.findViewById<TextInputEditText>(R.id.etMode)
+        val etMode = view.findViewById<AutoCompleteTextView>(R.id.etMode)
+        val modes = listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "1A", "21", "22")
+        val modeAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            modes
+        )
+
+        etMode.setAdapter(modeAdapter)
+        etMode.setText("01", false)
+
         val canHeaders = DiagnosticRequestIDManager.getMappings().map { it.requestKey }
         val canHEaderAdapter = ArrayAdapter(
             requireContext(),
@@ -107,7 +117,6 @@ class EditPidBottomSheet(
             (1..12).map { it.toString() }
         )
         etLength.setAdapter(lengthAdapter)
-        // Set default value to "1" for new items
         etLength.setText("1", false)
 
         val etMin = view.findViewById<TextInputEditText>(R.id.etMin)
@@ -145,12 +154,13 @@ class EditPidBottomSheet(
 
         if (pidItem != null) {
             etCanHeader.setText(pidItem.source.deductMode())
-            etMode.setText(pidItem.source.mode)
+
+            etMode.setText(pidItem.source.mode, false)
+
             etDescription.setText(pidItem.source.description)
             etLongDescription.setText(pidItem.source.longDescription)
             etPidCode.setText(pidItem.source.pid)
             etFormula.setText(pidItem.source.formula)
-            // Overwrites the default "1" if we are editing an existing item
             etLength.setText(pidItem.source.length.toString(), false)
             etMin.setText(pidItem.source.min?.toString() ?: "")
             etMax.setText(pidItem.source.max?.toString() ?: "")
@@ -176,7 +186,9 @@ class EditPidBottomSheet(
             val formData = PidFormData(
                 description = if (mode.isEdit) etDescription.text.toString().trim() else null,
                 longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
+
                 mode = if (mode.isEdit) etMode.text.toString().trim() else null,
+
                 canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
                 pidCode = if (mode.isEdit) etPidCode.text.toString().trim() else null,
                 formula = if (mode.isEdit) etFormula.text.toString().trim() else null,
