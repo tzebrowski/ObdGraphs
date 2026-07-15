@@ -2,7 +2,7 @@
     <style name="Theme.DefaultTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/philippine_green</item>
         <item name="colorPrimaryVariant">@color/philippine_green</item>
-        <item name="colorOnPrimary">@color/gray</item>
+        <item name="colorOnPrimary">@color/gray_light</item>
         <item name="colorSecondary">@color/rainbow_indigo</item>
         <item name="colorSecondaryVariant">@color/cardinal</item>
         <item name="colorOnSecondary">@color/black</item>
@@ -12,7 +12,7 @@
         <item name="preferenceFragmentCompatStyle">@style/TransparentPreferenceFragment</item>
 
         <item name="android:textColorPrimary">@color/dialog_text_primary</item>
-        <item name="android:textColorSecondary">@color/dialog_text_secondary</item>
+        <item name="android:textColorSecondary">@color/gray_light</item>
     </style>
 
     <style name="TransparentPreferenceFragment" parent="@style/PreferenceFragment">
