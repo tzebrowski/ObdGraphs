@@ -104,7 +104,11 @@ class PidDefinitionViewModel(
         viewModelScope.launch(Dispatchers.Default) {
             allMasterItems.forEach { it.checked = selectAll }
             val updated = applyFilter(allMasterItems, _uiState.value.searchQuery)
-            _uiState.value = _uiState.value.copy(items = allMasterItems, filteredItems = updated)
+            _uiState.value = _uiState.value.copy(
+                items = ArrayList(allMasterItems),
+                filteredItems = ArrayList(updated),
+                lastUpdate = System.currentTimeMillis()
+            )
         }
     }
 
@@ -308,7 +312,13 @@ class PidDefinitionViewModel(
     }
 
     private fun isSupported(ecuSupportedPIDs: MutableList<String>, p: PidDefinition): Boolean =
-        if (p.mode == "01") ecuSupportedPIDs.contains(p.pid.lowercase()) else true
+        if (p.isUserCustom) {
+            true
+        } else if (p.mode == "01") {
+            ecuSupportedPIDs.contains(p.pid.lowercase())
+        } else {
+            true
+        }
 }
 
 class PidViewModelFactory(
