@@ -152,7 +152,7 @@
     <string name="pref.pid.manage_dialog.edit_alerts_title">Edytuj alerty</string>
     <string name="pref.pid.manage_dialog.edit_pid_title">Edytuj PID</string>
     <string name="pref.pid.manage_dialog.add_new_pid_title">Dodaj nowy PID</string>
-    <string name="pref.pid.manage_dialog.validation_required_fields">Opis, Tryb i Kod PID są wymagane!</string>
+    <string name="pref.pid.manage_dialog.validation_required_fields">Opis, Tryb, Kod PID, Min i Max są wymagane!</string>
     <string name="pref.pid.manage_dialog.hint_description">Opis (np. Temp. Oleju)</string>
     <string name="pref.pid.manage_dialog.hint_long_description">Długi opis</string>
     <string name="pref.pid.manage_dialog.hint_mode">Tryb (np. 01)</string>

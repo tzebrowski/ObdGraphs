@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
+import org.obd.metrics.api.CANNetwork
 import org.obd.metrics.pid.ValueType
 
 data class PidFormData(
@@ -36,6 +37,7 @@ data class PidFormData(
     val longDescription: String?,
     val mode: String?,
     val canHeader: String?,
+    val canNetwork: CANNetwork?,
     val pidCode: String?,
     val formula: String?,
     val length: Int,
@@ -86,6 +88,10 @@ class EditPidBottomSheet(
         val canHeaders = DiagnosticRequestIDManager.getMappings().map { it.requestKey }
         etCanHeader.setupDropdown(canHeaders, "01")
 
+        val noneCanNetwork = getString(R.string.pref_pid_alert_can_network_none)
+        val etCanNetwork = view.findViewById<AutoCompleteTextView>(R.id.etCanNetwork)
+        etCanNetwork.setupDropdown(listOf(noneCanNetwork) + CANNetwork.values().map { it.name }, noneCanNetwork)
+
         val etValueType = view.findViewById<AutoCompleteTextView>(R.id.etValueType)
         etValueType.setupDropdown(listOf("INT", "DOUBLE", "SHORT"), ValueType.DOUBLE.name)
 
@@ -130,6 +136,7 @@ class EditPidBottomSheet(
 
         if (pidItem != null) {
             etCanHeader.setText(pidItem.source.deductMode(), false)
+            etCanNetwork.setText(pidItem.source.overrides?.canNetwork?.name ?: noneCanNetwork, false)
             etMode.setText(pidItem.source.mode, false)
             etDescription.setText(pidItem.source.description)
             etLongDescription.setText(pidItem.source.longDescription)
@@ -164,6 +171,8 @@ class EditPidBottomSheet(
                 etLongDescription = etLongDescription,
                 etMode = etMode,
                 etCanHeader = etCanHeader,
+                etCanNetwork = etCanNetwork,
+                noneCanNetwork = noneCanNetwork,
                 etPidCode = etPidCode,
                 etFormula = etFormula,
                 etLength = etLength,
@@ -178,7 +187,14 @@ class EditPidBottomSheet(
                 etValueType = etValueType
             )
 
-            if (mode.isEdit && (formData.description.isNullOrEmpty() || formData.mode.isNullOrEmpty() || formData.pidCode.isNullOrEmpty())) {
+            if (mode.isEdit && (
+                    formData.description.isNullOrEmpty() ||
+                        formData.mode.isNullOrEmpty() ||
+                        formData.pidCode.isNullOrEmpty() ||
+                        formData.min == null ||
+                        formData.max == null
+                    )
+            ) {
                 tvError.text = getString(R.string.pref_pid_manage_dialog_validation_required_fields)
                 tvError.visibility = View.VISIBLE
                 return@setOnClickListener
@@ -194,6 +210,8 @@ class EditPidBottomSheet(
         etLongDescription: TextInputEditText,
         etMode: AutoCompleteTextView,
         etCanHeader: AutoCompleteTextView,
+        etCanNetwork: AutoCompleteTextView,
+        noneCanNetwork: String,
         etPidCode: TextInputEditText,
         etFormula: TextInputEditText,
         etLength: AutoCompleteTextView,
@@ -212,6 +230,12 @@ class EditPidBottomSheet(
             longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
             mode = if (mode.isEdit) etMode.text.toString().trim() else null,
             canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
+            canNetwork = if (mode.isEdit) {
+                val selected = etCanNetwork.text.toString().trim()
+                if (selected.isEmpty() || selected == noneCanNetwork) null else CANNetwork.valueOf(selected)
+            } else {
+                null
+            },
             pidCode = if (mode.isEdit) etPidCode.text.toString().trim() else null,
             formula = if (mode.isEdit) etFormula.text.toString().trim() else null,
             length = etLength.text.toString().toIntOrNull() ?: 1,

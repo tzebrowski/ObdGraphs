@@ -120,8 +120,9 @@ open class PidDefinitionDialogFragment(
                     formData.min,
                     formData.max,
                     parsedType,
-                    PidDefinition.Overrides(formData.canHeader, formData.batch, null)
+                    PidDefinition.Overrides(formData.canHeader, formData.batch, formData.canNetwork)
                 ).apply {
+                    group = org.obd.metrics.pid.PIDsGroup.LIVEDATA
                     longDescription = formData.longDescription
                     stable = formData.stable
                     alert.lowerThreshold = formData.lowerThreshold
@@ -147,7 +148,7 @@ open class PidDefinitionDialogFragment(
                     min = formData.min
                     max = formData.max
                     type = parsedType
-                    overrides = PidDefinition.Overrides(formData.canHeader, formData.batch, null)
+                    overrides = PidDefinition.Overrides(formData.canHeader, formData.batch, formData.canNetwork)
                     longDescription = formData.longDescription
                     stable = formData.stable
                     alert.lowerThreshold = formData.lowerThreshold
@@ -233,7 +234,9 @@ open class PidDefinitionDialogFragment(
     }
 
     private fun attachActionButtons() {
-        root.findViewById<Button>(R.id.pid_list_save).setOnClickListener {
+        val btnSave = root.findViewById<Button>(R.id.pid_list_save)
+        btnSave.visibility = if (dialogMode.isInteractive) View.GONE else View.VISIBLE
+        btnSave.setOnClickListener {
             viewModel.persistSelection()
         }
 
