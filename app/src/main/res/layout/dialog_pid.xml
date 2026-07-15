@@ -21,9 +21,7 @@
             android:id="@+id/custom_dialog_layout_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            android:background="@android:color/transparent" />
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -57,7 +55,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="#F0F2F5"
+        app:cardBackgroundColor="@color/dialog_card_background"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp">
 

@@ -16,4 +16,9 @@
     <color name="beveled_green_shadow">#152B1E</color>
 
     <color name="screen_background">#1C1E20</color>
+
+    <color name="divider_color">#E0E0E0</color>
+    <color name="surface_variant">#E4E7EB</color>
+    <color name="gps_status_accent">#00897B</color>
+    <color name="gps_status_warning">#EF6C00</color>
 </resources>

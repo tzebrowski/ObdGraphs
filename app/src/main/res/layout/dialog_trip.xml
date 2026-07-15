@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <TableLayout android:background="@color/white"
+    <TableLayout android:background="@color/dialog_card_background"
         android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -35,7 +35,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
                 android:text="@string/trip_vehicle_profile"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -45,7 +45,7 @@
                 android:gravity="start"
                 android:text="@string/trip_start_date"
                 android:textAllCaps="false"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -56,7 +56,7 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="0dp"
                 android:text="@string/trip_length"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -68,7 +68,7 @@
                 android:paddingStart="0dp"
                 android:paddingEnd="1dp"
                 android:text="@string/trip_action"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dip"
                 android:layout_weight="2"
-                android:background="#FF909090"
+                android:background="@color/divider_color"
                 android:padding="2dip" />
         </TableRow>
 
