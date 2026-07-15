@@ -14,7 +14,7 @@
         android:layout_marginBottom="4dp"
         android:text="@string/pref.pid.manage_dialog.system_pids"
         android:textAppearance="?attr/textAppearanceOverline"
-        android:textColor="@color/white"
+        android:textColor="?android:attr/textColorPrimary"
         android:visibility="gone" />
 
     <com.google.android.material.card.MaterialCardView

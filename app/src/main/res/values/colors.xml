@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="dialog_text_primary">#000000</color>
+    <color name="dialog_text_secondary">#757575</color>
+
+    <color name="dialog_card_background">#F0F2F5</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 

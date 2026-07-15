@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.isUserCustom
@@ -66,21 +67,26 @@ class PidDefinitionViewAdapter internal constructor(
         }
 
         item.run {
-            holder.module.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
-            holder.description.setText(source.description ?: "", COLOR_RAINBOW_INDIGO, Typeface.BOLD, 1f)
+            val colorGreen = context?.let { ContextCompat.getColor(it, R.color.philippine_green) } ?: COLOR_PHILIPPINE_GREEN
+            val colorIndigo = context?.let { ContextCompat.getColor(it, R.color.rainbow_indigo) } ?: COLOR_RAINBOW_INDIGO
+            val colorGray = context?.let { ContextCompat.getColor(it, android.R.color.darker_gray) } ?: Color.GRAY
+            val colorSport = context?.let { ContextCompat.getColor(it, R.color.dynamic_selector_sport) } ?: COLOR_DYNAMIC_SELECTOR_SPORT
+
+            holder.module.setText(source.resourceFile, colorGreen, Typeface.NORMAL, 0.7f)
+            holder.description.setText(source.description ?: "", colorIndigo, Typeface.BOLD, 1f)
 
             val longDesc = source.longDescription
             if (!longDesc.isNullOrEmpty() && longDesc != source.description) {
                 holder.longDescription.visibility = View.VISIBLE
-                holder.longDescription.setText(longDesc, Color.GRAY, Typeface.NORMAL, 0.85f)
+                holder.longDescription.setText(longDesc, colorGray, Typeface.NORMAL, 0.85f)
             } else {
                 holder.longDescription.visibility = View.GONE
             }
 
             if (source.stable) {
-                holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_yes), Color.GRAY, Typeface.NORMAL, 0.7f)
+                holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_yes), colorGray, Typeface.NORMAL, 0.7f)
             } else {
-                holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_no), COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
+                holder.status.setText(context?.getString(R.string.pref_pid_manage_dialog_stable_no), colorSport, Typeface.NORMAL, 0.7f)
             }
 
             holder.formula.text = source.formula ?: ""
