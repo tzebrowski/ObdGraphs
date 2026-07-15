@@ -1,3 +1,9 @@
-<resources>
-    <!-- Base application theme. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.YourApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">#121212</item>
+        <item name="android:colorBackground">#121212</item>
+
+        <item name="android:textColorPrimary">@color/dialog_text_primary</item>
+        <item name="android:textColorSecondary">@color/dialog_text_secondary</item>
+    </style>
 </resources>
