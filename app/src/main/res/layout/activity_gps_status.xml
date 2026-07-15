@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="?android:attr/colorBackground"
     android:padding="16dp">
 
     <LinearLayout
@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.title"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="24dp"
@@ -25,14 +25,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.status_label"
-            android:textColor="#AAAAAA"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
         <TextView
             android:id="@+id/txt_provider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.waiting_for_fix"
-            android:textColor="#03DAC5"
+            android:textColor="@color/gps_status_accent"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
@@ -41,14 +41,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.accuracy_label"
-            android:textColor="#AAAAAA"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
         <TextView
             android:id="@+id/txt_accuracy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="--"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="28sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
@@ -68,13 +68,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gps.latitude"
-                    android:textColor="#AAAAAA"/>
+                    android:textColor="?android:attr/textColorSecondary"/>
                 <TextView
                     android:id="@+id/txt_lat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.0000"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"/>
             </LinearLayout>
 
@@ -87,13 +87,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gps.longitude"
-                    android:textColor="#AAAAAA"/>
+                    android:textColor="?android:attr/textColorSecondary"/>
                 <TextView
                     android:id="@+id/txt_lon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.0000"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"/>
             </LinearLayout>
         </LinearLayout>
@@ -101,7 +101,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#333333"
+            android:background="@color/divider_color"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"/>
 
@@ -109,14 +109,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.satellites_label"
-            android:textColor="#AAAAAA"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
         <TextView
             android:id="@+id/txt_satellites"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="0 / 0"
-            android:textColor="#FFB74D"
+            android:textColor="@color/gps_status_warning"
             android:textSize="24sp"
             android:layout_marginBottom="16dp"/>
 
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.debug_log"
-            android:textColor="#AAAAAA"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:layout_marginTop="20dp"/>
         <TextView
@@ -132,7 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/gps.initializing"
-            android:textColor="#888888"
+            android:textColor="?android:attr/textColorSecondary"
             android:fontFamily="monospace"
             android:textSize="12sp"
             android:layout_marginTop="8dp"/>

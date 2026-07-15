@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minWidth="350dp"
-    android:background="@color/white">
+    android:background="@color/dialog_card_background">
 
     <TextView
         android:id="@+id/header_code"
@@ -14,7 +14,7 @@
         android:minWidth="80dp"
         android:padding="8dp"
         android:text="@string/pref.dtc.code"
-        android:textColor="@color/gray_dark"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="@string/pref.dtc.description"
-        android:textColor="@color/gray_dark"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,7 @@
         android:id="@+id/header_divider"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:background="#FF909090"
+        android:background="@color/divider_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_code" />
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:backgroundTint="#D32F2F"
+                android:backgroundTint="@color/cardinal"
                 android:text="@string/dtc.action_clear_codes"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />

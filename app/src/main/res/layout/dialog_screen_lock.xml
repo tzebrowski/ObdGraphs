@@ -6,7 +6,7 @@
     android:layout_margin="24dp"
     app:cardCornerRadius="0dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@android:color/white">
+    app:cardBackgroundColor="@color/dialog_card_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/pref.dialog.screen.lock.message"
-            android:textColor="@color/gray_dark"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/dialog_screen_lock_progress"

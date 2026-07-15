@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TableLayout android:background="@color/white"
+    <TableLayout android:background="@color/dialog_card_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:layout_weight="1"
-                android:background="#FF909090"
+                android:background="@color/divider_color"
                 android:padding="2dip" />
         </TableRow>
     </TableLayout>

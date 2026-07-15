@@ -9,7 +9,7 @@
         android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/dialog_card_background"
         android:paddingStart="0dp"
         android:paddingEnd="2dip"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,7 +30,7 @@
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:layout_weight="1"
-                android:background="#FF909090"
+                android:background="@color/divider_color"
                 android:padding="2dip" />
         </TableRow>
     </TableLayout>

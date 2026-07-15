@@ -52,14 +52,14 @@
             android:id="@+id/dtc_detail_system_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray_dark"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp" />
 
         <TextView
             android:id="@+id/dtc_detail_hex_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray_dark"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp"
             android:layout_marginTop="4dp" />
 
@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="#F0F4F8"
+            android:background="@color/surface_variant"
             android:padding="8dp"
             android:orientation="vertical"
             android:visibility="gone">
@@ -86,7 +86,7 @@
                 android:id="@+id/dtc_detail_snapshot_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="13sp"
                 android:textIsSelectable="true" />
         </LinearLayout>
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dtc.action_copy"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -122,7 +122,7 @@
         android:id="@+id/item_divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#E0E0E0"
+        android:background="@color/divider_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

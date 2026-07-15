@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <TableLayout android:background="@color/white"
+    <TableLayout android:background="@color/dialog_card_background"
         android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
                 android:text="@string/pref.vehicle.metadata.name"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:gravity="start"
                 android:text="@string/pref.vehicle.metadata.value"
                 android:textAllCaps="false"
-                android:textColor="@color/gray_dark"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </TableRow>
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dip"
                 android:layout_weight="2"
-                android:background="#FF909090"
+                android:background="@color/divider_color"
                 android:padding="2dip" />
         </TableRow>
 
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tablelayout"
-        android:background="@color/white" />
+        android:background="@color/dialog_card_background" />
 
     <LinearLayout
         android:id="@+id/status_panel"
