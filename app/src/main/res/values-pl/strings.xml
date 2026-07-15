@@ -182,6 +182,8 @@
     <string name="pref.pid.alert.max_hint">Maks</string>
     <string name="pref.pid.alert.units_hint">Jednostki</string>
     <string name="pref.pid.alert.value_type_hint">Typ wartości</string>
+    <string name="pref.pid.alert.can_network_hint">Sieć CAN</string>
+    <string name="pref.pid.alert.can_network_none">Brak</string>
     <string name="pref.pid.alert.stable_text">Stabilny</string>
     <string name="pref.pid.alert.batch_text">Zapytanie grupowe (Batch)</string>
     <string name="pref.pid.alert.cacheable_text">Pamięć podręczna (Cache)</string>
