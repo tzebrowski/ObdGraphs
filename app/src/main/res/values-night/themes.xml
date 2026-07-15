@@ -17,7 +17,6 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="preferenceFragmentCompatStyle">@style/TransparentPreferenceFragment</item>
 
-        <item name="alertDialogTheme">@style/MyPreferenceDialogStyle</item>
     </style>
 
     <style name="TransparentPreferenceFragment" parent="@style/PreferenceFragment">
