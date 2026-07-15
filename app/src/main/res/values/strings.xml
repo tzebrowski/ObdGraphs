@@ -66,7 +66,7 @@
     <string name="pref.pid.manage_dialog.edit_alerts_title">Edit Alerts</string>
     <string name="pref.pid.manage_dialog.edit_pid_title">Edit PID</string>
     <string name="pref.pid.manage_dialog.add_new_pid_title">Add New PID</string>
-    <string name="pref.pid.manage_dialog.validation_required_fields">Description, Mode, PID Code, Min, and Max are required!</string>
+    <string name="pref.pid.manage_dialog.validation_required_fields">Description, Mode, PID Code, Formula, Min, and Max are required!</string>
     <string name="pref.pid.manage_dialog.hint_description">Description (e.g. Oil Temp)</string>
     <string name="pref.pid.manage_dialog.hint_long_description">Long Description</string>
     <string name="pref.pid.manage_dialog.hint_mode">Mode (e.g. 01)</string>
@@ -94,13 +94,16 @@
     <string name="pref.pid.alert.long_description_hint">Long Description</string>
     <string name="pref.pid.alert.mode_hint">Mode</string>
     <string name="pref.pid.alert.pid_code_hint">PID Code</string>
-    <string name="pref.pid.alert.length_hint">Length</string>
+    <string name="pref.pid.alert.length_hint">Parameters</string>
     <string name="pref.pid.alert.min_hint">Min</string>
     <string name="pref.pid.alert.max_hint">Max</string>
     <string name="pref.pid.alert.units_hint">Units</string>
     <string name="pref.pid.alert.value_type_hint">Value Type</string>
     <string name="pref.pid.alert.can_network_hint">CAN Network</string>
     <string name="pref.pid.alert.can_network_none">None</string>
+    <string name="pref.pid.alert.formula_validation_error">Formula contains invalid JavaScript syntax.</string>
+    <string name="pref.pid.alert.formula_helper_text">e.g. A + B</string>
+    <string name="pref.pid.alert.formula_rules">Formula is JavaScript. Parameters sets how many response bytes are available, bound to letters starting at A (Parameters=1 → A, Parameters=2 → A,B, Parameters=3 → A,B,C, and so on). The formula must return a number.</string>
     <string name="pref.pid.alert.stable_text">Stable</string>
     <string name="pref.pid.alert.batch_text">Batch</string>
     <string name="pref.pid.alert.cacheable_text">Cacheable</string>
