@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -149,7 +150,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen) {
         sendBroadcastEvent(TOOLBAR_SHOW)
-        // add to navigation chain
         navigateToPreferencesScreen(preferenceScreen.key)
     }
 
@@ -191,7 +191,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun customizeListView() {
-        listView.setBackgroundColor(Color.LTGRAY)
+        val typedValue = TypedValue()
+        val theme = requireContext().theme
+        if (theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)) {
+            listView.setBackgroundColor(typedValue.data)
+        } else {
+            listView.setBackgroundColor(Color.TRANSPARENT)
+        }
+
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
     }
 

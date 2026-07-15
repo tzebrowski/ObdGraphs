@@ -1,35 +1,36 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Theme.DefaultTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-
         <item name="colorPrimary">@color/philippine_green</item>
         <item name="colorPrimaryVariant">@color/philippine_green</item>
-        <item name="android:colorBackground">@color/black</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/gray</item>
         <item name="colorSecondary">@color/rainbow_indigo</item>
         <item name="colorSecondaryVariant">@color/cardinal</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <item name="android:textColor">@color/gray_dark</item>
-        <item name="android:textColorSecondary">@color/gray_light</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="preferenceFragmentCompatStyle">@style/TransparentPreferenceFragment</item>
+
         <item name="alertDialogTheme">@style/MyPreferenceDialogStyle</item>
+        <item name="android:textColorPrimary">@color/philippine_green</item>
+        <item name="android:textColorSecondary">@color/dialog_text_secondary</item>
     </style>
 
+    <style name="TransparentPreferenceFragment" parent="@style/PreferenceFragment">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 
     <style name="AppTheme.CompactBottomBar" parent="ThemeOverlay.MaterialComponents.ActionBar">
         <item name="actionButtonStyle">@style/CompactActionButton</item>
         <item name="colorControlNormal">@color/black</item>
-
     </style>
 
     <style name="CompactActionButton" parent="Widget.AppCompat.ActionButton">
-
         <item name="android:minWidth">32dp</item>
         <item name="android:minHeight">32dp</item>
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
         <item name="android:translationY">8dp</item>
-
     </style>
 
     <style name="MyPreferenceDialogStyle" parent="ThemeOverlay.AppCompat.Dialog.Alert">
