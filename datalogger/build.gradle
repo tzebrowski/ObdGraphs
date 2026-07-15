@@ -2,9 +2,14 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'com.diffplug.spotless'
+    id 'jacoco'
 }
 
 apply from: "$project.rootDir/spotless.gradle"
+
+jacoco {
+    toolVersion = "0.8.11"
+}
 
 android {
     compileSdk rootProject.ext.compileSdkVersion
@@ -73,4 +78,34 @@ dependencies {
 
     // Robolectric (Critical for testing Services and Location without a device)
     testImplementation "org.robolectric:robolectric:4.11.1"
+}
+
+tasks.withType(Test).configureEach {
+    // Robolectric loads app/test classes through its own sandboxed classloader; without this,
+    // JaCoco's on-the-fly agent drops most of those classes as "no location" and coverage reads near-zero.
+    configure(extensions.getByType(JacocoTaskExtension)) {
+        includeNoLocationClasses = true
+        excludes = ['jdk.internal.*']
+    }
+}
+
+tasks.register('jacocoTestReport', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    def fileFilter = [
+        '**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
+        '**/*Test*.*', 'android/**/*.*', '**/*$Lambda$*.*', '**/*$inlined$*.*'
+    ]
+
+    def javaClasses = fileTree(dir: "${project.buildDir}/intermediates/javac/debug", excludes: fileFilter)
+    def kotlinClasses = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+
+    classDirectories.setFrom(files([javaClasses, kotlinClasses]))
+    sourceDirectories.setFrom(files(['src/main/java']))
+    executionData.setFrom(fileTree(dir: project.buildDir, includes: ['jacoco/testDebugUnitTest.exec']))
 }
