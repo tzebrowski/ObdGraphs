@@ -202,11 +202,22 @@ open class PidDefinitionDialogFragment(
         searchView.isIconified = false
         searchView.queryHint = getString(R.string.pref_pids_search_hint)
 
+        val textColor = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.dialog_text_primary)
+        val hintColor = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.dialog_text_secondary)
+
         val searchEditText = searchView.findViewById<android.widget.EditText>(androidx.appcompat.R.id.search_src_text)
         searchEditText?.let {
-            it.setTextColor(android.graphics.Color.BLACK)
-            it.setHintTextColor(android.graphics.Color.DKGRAY)
+            it.setTextColor(textColor)
+            it.setHintTextColor(hintColor)
         }
+
+        val searchIcon = searchView.findViewById<android.widget.ImageView>(androidx.appcompat.R.id.search_mag_icon)
+        searchIcon?.setColorFilter(textColor)
+
+        val closeIcon = searchView.findViewById<android.widget.ImageView>(androidx.appcompat.R.id.search_close_btn)
+        closeIcon?.setColorFilter(textColor)
+
+        toolbar.navigationIcon?.setTint(textColor)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {

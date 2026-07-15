@@ -13,7 +13,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
-        app:cardBackgroundColor="#F0F2F5"
+        app:cardBackgroundColor="@color/dialog_card_background"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp">
 
@@ -33,6 +33,7 @@
         android:layout_below="@id/toolbar_card"
         android:layout_above="@id/bottom_panel_card"
         android:clipToPadding="false"
+        app:cardBackgroundColor="@color/dialog_card_background"
         android:paddingVertical="4dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

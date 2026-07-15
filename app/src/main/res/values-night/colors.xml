@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dialog_text_primary">#FFFFFF</color>
+    <color name="dialog_text_secondary">#A1A1AA</color>
+
+    <color name="dialog_card_background">#1E1E1E</color>
+
+    <color name="philippine_green">#4ADE80</color>
+    <color name="rainbow_indigo">#818CF8</color>
+
+    <color name="dynamic_selector_sport">#F87171</color>
+    <color name="cardinal">#F43F5E</color>
+</resources>

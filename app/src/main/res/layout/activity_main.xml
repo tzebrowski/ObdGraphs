@@ -214,11 +214,11 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
+        android:background="@color/dialog_card_background"
         android:id="@+id/leftNavView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:backgroundTint="@color/gray"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/header_navigation_drawer"
         app:menu="@menu/left_nav_menu" />
