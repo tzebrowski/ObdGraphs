@@ -110,6 +110,22 @@
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>
+
+            <PreferenceCategory android:title="@string/pref.pid.custom.category">
+
+                <org.obd.graphs.preferences.pid.CustomPidsPublishAction
+                    android:key="pref.pids.custom.publish"
+                    android:summary="@string/pref.pid.custom.publish_summary"
+                    android:title="@string/pref.pid.custom.publish"
+                    app:singleLineTitle="false" />
+
+                <org.obd.graphs.preferences.pid.CustomPidsDownloadAction
+                    android:key="pref.pids.custom.download"
+                    android:summary="@string/pref.pid.custom.download_summary"
+                    android:title="@string/pref.pid.custom.download"
+                    app:singleLineTitle="false" />
+
+            </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
 

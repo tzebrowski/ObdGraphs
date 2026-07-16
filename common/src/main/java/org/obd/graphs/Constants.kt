@@ -54,6 +54,17 @@ const val TRIPS_UPLOAD_NO_FILES_SELECTED = "trips.upload.no_files"
 
 const val TRIPS_UPLOAD_FAILED_NO_TOKEN = "trips.upload.no_token"
 
+const val CUSTOM_PIDS_PUBLISH = "custom_pids.publish"
+const val CUSTOM_PIDS_DOWNLOAD = "custom_pids.download"
+
+const val CUSTOM_PIDS_PUBLISH_FAILED = "custom_pids.publish.failed"
+const val CUSTOM_PIDS_PUBLISH_SUCCESSFUL = "custom_pids.publish.successful"
+const val CUSTOM_PIDS_PUBLISH_NO_FILE = "custom_pids.publish.no_file"
+
+const val CUSTOM_PIDS_DOWNLOAD_FAILED = "custom_pids.download.failed"
+const val CUSTOM_PIDS_DOWNLOAD_SUCCESSFUL = "custom_pids.download.successful"
+const val CUSTOM_PIDS_DOWNLOAD_NO_FILES = "custom_pids.download.no_files"
+
 const val GOOGLE_SIGN_IN_REQUEST = "gdrive.authorization.token_requests"
 
 const val GOOGLE_SIGN_IN_GENERAL_FAILURE = "gdrive.authorization.failed"

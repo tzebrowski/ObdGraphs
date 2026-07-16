@@ -18,6 +18,13 @@
     <string name="main_activity.toast.backup.restore.failed">Przywracanie nie powiodło się. Powtórz operację.</string>
     <string name="main_activity.toast.backup.restore.successful">Przywracanie kopii zapasowej zakończone pomyślnie.</string>
 
+    <string name="main_activity.toast.custom_pids.publish.failed">Publikowanie własnych PID-ów na Dysku Google nie powiodło się. Powtórz operację.</string>
+    <string name="main_activity.toast.custom_pids.publish.successful">Własne PID-y zostały opublikowane na Dysku Google.</string>
+    <string name="main_activity.toast.custom_pids.publish.no_file">Nie ma jeszcze żadnych własnych PID-ów do opublikowania.</string>
+    <string name="main_activity.toast.custom_pids.download.failed">Pobieranie własnych PID-ów z Dysku Google nie powiodło się. Powtórz operację.</string>
+    <string name="main_activity.toast.custom_pids.download.successful">Własne PID-y zostały pobrane z Dysku Google.</string>
+    <string name="main_activity.toast.custom_pids.download.no_files">Na Dysku Google nie znaleziono pliku z własnymi PID-ami.</string>
+
     <string name="main_activity.toast.trips.upload.failed">Wysyłanie tras nie powiodło się.</string>
     <string name="main_activity.toast.trips.upload.successful">Wysyłanie tras zakończone pomyślnie.</string>
     <string name="main_activity.toast.trips.upload.no_files_selected">Nie wybrano plików. Nic nie zostało wysłane.</string>

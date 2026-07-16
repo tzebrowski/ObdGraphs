@@ -110,6 +110,13 @@
 
     <string name="pref.pid.manage_dialog">Manage existing and new PIDs</string>
     <string name="pref.pid.manage_dialog_summary">You can modify and add new PID</string>
+
+    <string name="pref.pid.custom.category">Custom PIDs</string>
+    <string name="pref.pid.custom.publish">Publish to Google Drive</string>
+    <string name="pref.pid.custom.publish_summary">Upload your custom PIDs to Google Drive</string>
+    <string name="pref.pid.custom.download">Download from Google Drive</string>
+    <string name="pref.pid.custom.download_summary">Restore your custom PIDs from Google Drive</string>
+    <string name="pref_pid_custom_download_confirmation_dialog">Ready to download your custom PIDs from Google Drive? This will replace your current custom PIDs.</string>
     <string name="pref.pid.generic_high">Choose Fast-Updating OBD2 Data to Show</string>
     <string name="pref.pid.generic_high_summary">Pick the high-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
     <string name="pref.pid.generic_low">Choose Slow-Updating OBD2 Data to Show</string>
