@@ -23,15 +23,15 @@ import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.USER_CUSTOM_PIDS_FILE
 import org.obd.graphs.activity.MainActivity
-import org.obd.graphs.integrations.gcp.gdrive.CustomPidsDriveManager
+import org.obd.graphs.integrations.gcp.gdrive.CustomPidsManager
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
 internal class CustomPidsBackupManager(
     private val activity: MainActivity
 ) {
-    private val driveManager: CustomPidsDriveManager =
-        CustomPidsDriveManager.instance(activity.getString(R.string.ANDROID_WEB_CLIENT_ID), activity)
+    private val driveManager: CustomPidsManager =
+        CustomPidsManager.instance(activity.getString(R.string.ANDROID_WEB_CLIENT_ID), activity)
 
     private fun localFile(): File = File(activity.filesDir, USER_CUSTOM_PIDS_FILE)
 

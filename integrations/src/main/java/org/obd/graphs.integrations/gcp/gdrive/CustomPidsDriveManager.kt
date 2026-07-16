@@ -17,17 +17,74 @@
 package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
+import android.util.Log
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD_FAILED
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD_NO_FILES
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD_SUCCESSFUL
+import org.obd.graphs.CUSTOM_PIDS_PUBLISH_FAILED
+import org.obd.graphs.CUSTOM_PIDS_PUBLISH_SUCCESSFUL
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.USER_CUSTOM_PIDS_FILE
+import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
+import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.uploadFile
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
+import java.io.FileOutputStream
 
-interface CustomPidsDriveManager {
-    suspend fun exportCustomPids(file: File)
+private const val CUSTOM_PIDS_FOLDER = "mygiulia"
+private const val TAG = "CustomPidsDrive"
 
-    suspend fun importCustomPids(onImport: (file: File) -> Unit)
+internal class CustomPidsDriveManager(
+    webClientId: String,
+    activity: Activity
+) : AbstractDriveManager(webClientId, activity, null),
+    CustomPidsManager {
+    override suspend fun exportCustomPids(file: File) =
+        signInAndExecute("exportCustomPids") { token ->
+            executeDriveOperation(
+                accessToken = token,
+                onFailure = { sendBroadcastEvent(CUSTOM_PIDS_PUBLISH_FAILED) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+            ) { drive ->
+                val folderId = drive.findFolderIdRecursive(CUSTOM_PIDS_FOLDER)
+                drive.uploadFile(file, USER_CUSTOM_PIDS_FILE, folderId, mimeType = "application/json")
+                sendBroadcastEvent(CUSTOM_PIDS_PUBLISH_SUCCESSFUL)
+            }
+        }
 
-    companion object {
-        fun instance(
-            webClientId: String,
-            activity: Activity
-        ): CustomPidsDriveManager = DefaultCustomPidsDriveManager(webClientId, activity)
-    }
+    override suspend fun importCustomPids(onImport: (File) -> Unit) =
+        signInAndExecute("importCustomPids") { token ->
+            executeDriveOperation(
+                accessToken = token,
+                onFailure = { sendBroadcastEvent(CUSTOM_PIDS_DOWNLOAD_FAILED) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+            ) { drive ->
+                val fileList =
+                    drive
+                        .files()
+                        .list()
+                        .setSpaces("drive")
+                        .setQ("name = '$USER_CUSTOM_PIDS_FILE' and trashed = false")
+                        .setOrderBy("createdTime desc")
+                        .setFields("files(id, createdTime)")
+                        .execute()
+
+                val remoteFile = fileList.files.firstOrNull()
+
+                if (remoteFile != null) {
+                    Log.d(TAG, "Found custom PIDs file: ${remoteFile.id}")
+                    val target = File(activity.filesDir, "downloaded_$USER_CUSTOM_PIDS_FILE")
+
+                    FileOutputStream(target).use { output ->
+                        drive.files().get(remoteFile.id).executeMediaAndDownloadTo(output)
+                    }
+
+                    onImport(target)
+                    sendBroadcastEvent(CUSTOM_PIDS_DOWNLOAD_SUCCESSFUL)
+                } else {
+                    Log.d(TAG, "No custom PIDs file found.")
+                    sendBroadcastEvent(CUSTOM_PIDS_DOWNLOAD_NO_FILES)
+                }
+            }
+        }
 }
