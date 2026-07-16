@@ -108,6 +108,8 @@
     <string name="pref.connection.connection_type"><b><font color='#01804F'>Typ połączenia adaptera OBD</font></b></string>
     <string name="pref.connection.connection_timeout">Limit czasu połączenia</string>
     <string name="pref.adapter.type">Typ adaptera</string>
+    <string name="pref_adapter_type_vlinker_ms_dialog_title">Zastosowano dodatkowe ustawienia</string>
+    <string name="pref_adapter_type_vlinker_ms_dialog_message">VGate vLinker MS wymaga dodatkowych ustawień adaptera. Zostały one zastosowane automatycznie:\n\n• Kontynuuj przy błędach: Włączone\n• Protokół: CAN_USER1\n• Sekwencja inicjalizacyjna: HS_CAN</string>
 
     <string name="pref.adapter.error.continue_on_error">Ignoruj błedy</string>
     <string name="pref.adapter.error.continue_on_error_summary">Nie przerywaj komunikacji z adapterem podczas błędów</string>
