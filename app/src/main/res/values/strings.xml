@@ -391,6 +391,8 @@
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.adapter_init_sequence">Init Sequence</string>
     <string name="pref.adapter.type">Adapter Type</string>
+    <string name="pref_adapter_type_vlinker_ms_dialog_title">Additional settings applied</string>
+    <string name="pref_adapter_type_vlinker_ms_dialog_message">VGate vLinker MS requires additional adapter settings. These have been applied automatically:\n\n• Continue on errors: Enabled\n• Protocol: CAN_USER1\n• Init Sequence: HS_CAN\n• CAN Header Mapping: TRW_CLIMATE_CONTROL (18DA98F1)</string>
 
     <string name="pref.general_settings">General settings</string>
     <string name="pref.adapter.general_settings">Advanced settings</string>

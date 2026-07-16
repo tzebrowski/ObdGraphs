@@ -80,6 +80,33 @@ internal class DefaultProfileService :
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
+    // Reads straight from the bundled .properties assets, bypassing Prefs, since saveCurrentProfile()
+    // mirrors live (possibly overridden) values back into "<profileId>.<key>" Prefs entries.
+    override fun getProfileDefaultValue(
+        profileId: String,
+        key: String
+    ): String? {
+        val fullKey = "$profileId.$key"
+        return findProfileFiles()
+            ?.firstNotNullOfOrNull { fileName ->
+                runCatching { loadFile(fileName).getProperty(fullKey) }.getOrNull()
+            }
+    }
+
+    // Not every profile overrides every key, so fall back to the default profile before the caller's literal.
+    override fun getProfileValue(
+        key: String,
+        fallback: String
+    ): String =
+        getProfileDefaultValue(getCurrentProfile(), key)
+            ?: getProfileDefaultValue(getDefaultProfile(), key)
+            ?: fallback
+
+    override fun getProfileValue(
+        key: String,
+        fallback: Boolean
+    ): Boolean = getProfileValue(key, fallback.toString()).toBoolean()
+
     override fun restoreBackup() {
         restoreBackup(getBackupFile())
     }

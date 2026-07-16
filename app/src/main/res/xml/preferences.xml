@@ -163,7 +163,7 @@
                     app:singleLineTitle="false"
                     app:title="@string/pref.connection.category">
 
-                    <ListPreference
+                    <org.obd.graphs.preferences.AdapterTypeListPreference
                         android:defaultValue="DEFAULT"
                         android:entries="@array/pref.adapter_type_entries"
                         android:entryValues="@array/pref.adapter_type_values"
