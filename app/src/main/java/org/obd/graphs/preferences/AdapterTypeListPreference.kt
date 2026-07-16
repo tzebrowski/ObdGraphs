@@ -20,6 +20,8 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.ListPreference
+import org.obd.graphs.DiagnosticMappingItem
+import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
 
 private const val ADAPTER_TYPE_VGATE_VLINKER_MS = "VGATE_VLINKER_MS"
@@ -27,6 +29,10 @@ private const val ADAPTER_TYPE_VGATE_VLINKER_MS = "VGATE_VLINKER_MS"
 private const val PREF_CONTINUE_ON_ERROR = "pref.adapter.error.continue_on_error"
 private const val PREF_INIT_PROTOCOL = "pref.adapter.init.protocol"
 private const val PREF_INIT_SEQUENCE = "pref.adapter.init.sequence"
+
+private const val TRW_CLIMATE_CONTROL_MODE_INDEX = 11
+private const val TRW_CLIMATE_CONTROL_ID = "TRW_CLIMATE_CONTROL"
+private const val TRW_CLIMATE_CONTROL_HEADER = "18DA98F1"
 
 class AdapterTypeListPreference(
     context: Context,
@@ -38,6 +44,14 @@ class AdapterTypeListPreference(
                 Prefs.updateBoolean(PREF_CONTINUE_ON_ERROR, true)
                 Prefs.updateString(PREF_INIT_PROTOCOL, "CAN_USER1")
                 Prefs.updateString(PREF_INIT_SEQUENCE, "HS_CAN")
+
+                DiagnosticRequestIDManager.saveMapping(
+                    DiagnosticMappingItem(
+                        modeIndex = TRW_CLIMATE_CONTROL_MODE_INDEX,
+                        requestKey = TRW_CLIMATE_CONTROL_ID,
+                        headerValue = TRW_CLIMATE_CONTROL_HEADER
+                    )
+                )
 
                 AlertDialog
                     .Builder(context)
