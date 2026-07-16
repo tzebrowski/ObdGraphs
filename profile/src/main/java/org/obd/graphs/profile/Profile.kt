@@ -40,6 +40,12 @@ interface Profile {
 
     fun getCurrentProfileName(): String
 
+    fun getProfileDefaultValue(profileId: String, key: String): String?
+
+    fun getProfileValue(key: String, fallback: String): String
+
+    fun getProfileValue(key: String, fallback: Boolean): Boolean
+
     fun reset()
 
     fun init(
