@@ -57,6 +57,7 @@ import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
 import org.obd.graphs.ui.BackupManager
+import org.obd.graphs.ui.CustomPidsBackupManager
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.withDataLogger
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -71,6 +72,7 @@ class MainActivity :
     internal lateinit var statusPanel: StatusPanel
     internal val screenLockManager = ScreenLockManager(this)
     internal lateinit var backupManager: BackupManager
+    internal lateinit var customPidsBackupManager: CustomPidsBackupManager
 
     internal lateinit var tripLogDriveManager: TripLogDriveManager
 
@@ -126,6 +128,7 @@ class MainActivity :
 
         supportActionBar?.hide()
         backupManager = BackupManager(this)
+        customPidsBackupManager = CustomPidsBackupManager(this)
         tripLogDriveManager = TripLogDriveManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID), activity = this, null)
 
         setupFabButtons()

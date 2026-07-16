@@ -37,6 +37,14 @@ import org.obd.graphs.BACKUP_RESTORE_NO_FILES
 import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
 import org.obd.graphs.BACKUP_START
 import org.obd.graphs.BACKUP_SUCCESSFUL
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD_FAILED
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD_NO_FILES
+import org.obd.graphs.CUSTOM_PIDS_DOWNLOAD_SUCCESSFUL
+import org.obd.graphs.CUSTOM_PIDS_PUBLISH
+import org.obd.graphs.CUSTOM_PIDS_PUBLISH_FAILED
+import org.obd.graphs.CUSTOM_PIDS_PUBLISH_NO_FILE
+import org.obd.graphs.CUSTOM_PIDS_PUBLISH_SUCCESSFUL
 import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
 import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
 import org.obd.graphs.GOOGLE_SIGN_IN_REQUEST
@@ -168,6 +176,23 @@ internal fun MainActivity.receive(intent: Intent?) {
         BACKUP_START ->
             lifecycleScope.launch {
                 backupManager.backup()
+            }
+
+        CUSTOM_PIDS_PUBLISH_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_custom_pids_publish_failed)
+        CUSTOM_PIDS_PUBLISH_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_custom_pids_publish_successful)
+        CUSTOM_PIDS_PUBLISH_NO_FILE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_custom_pids_publish_no_file)
+        CUSTOM_PIDS_DOWNLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_custom_pids_download_failed)
+        CUSTOM_PIDS_DOWNLOAD_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_custom_pids_download_successful)
+        CUSTOM_PIDS_DOWNLOAD_NO_FILES -> toast(org.obd.graphs.commons.R.string.main_activity_toast_custom_pids_download_no_files)
+
+        CUSTOM_PIDS_PUBLISH ->
+            lifecycleScope.launch {
+                customPidsBackupManager.publish()
+            }
+
+        CUSTOM_PIDS_DOWNLOAD ->
+            lifecycleScope.launch {
+                customPidsBackupManager.download()
             }
 
         REQUEST_NOTIFICATION_PERMISSIONS -> Permissions.requestNotificationPermissions(this)
@@ -414,6 +439,14 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(BACKUP_RESTORE_NO_FILES)
         it.addAction(BACKUP_RESTORE_SUCCESSFUL)
         it.addAction(BACKUP_RESTORE_FAILED)
+        it.addAction(CUSTOM_PIDS_PUBLISH)
+        it.addAction(CUSTOM_PIDS_DOWNLOAD)
+        it.addAction(CUSTOM_PIDS_PUBLISH_FAILED)
+        it.addAction(CUSTOM_PIDS_PUBLISH_SUCCESSFUL)
+        it.addAction(CUSTOM_PIDS_PUBLISH_NO_FILE)
+        it.addAction(CUSTOM_PIDS_DOWNLOAD_FAILED)
+        it.addAction(CUSTOM_PIDS_DOWNLOAD_SUCCESSFUL)
+        it.addAction(CUSTOM_PIDS_DOWNLOAD_NO_FILES)
         it.addAction(TRIPS_UPLOAD_FAILED)
         it.addAction(TRIPS_UPLOAD_SUCCESSFUL)
         it.addAction(TRIPS_UPLOAD_NO_FILES_SELECTED)

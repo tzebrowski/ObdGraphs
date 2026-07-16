@@ -18,6 +18,13 @@
     <string name="main_activity.toast.backup.restore.failed">Restore operation failed. Please repeat the operation.</string>
     <string name="main_activity.toast.backup.restore.successful">Restore operation completed successfully.</string>
 
+    <string name="main_activity.toast.custom_pids.publish.failed">Publishing custom PIDs to Google Drive failed. Please repeat the operation.</string>
+    <string name="main_activity.toast.custom_pids.publish.successful">Custom PIDs published to Google Drive successfully.</string>
+    <string name="main_activity.toast.custom_pids.publish.no_file">There are no custom PIDs to publish yet.</string>
+    <string name="main_activity.toast.custom_pids.download.failed">Downloading custom PIDs from Google Drive failed. Please repeat the operation.</string>
+    <string name="main_activity.toast.custom_pids.download.successful">Custom PIDs downloaded from Google Drive successfully.</string>
+    <string name="main_activity.toast.custom_pids.download.no_files">There is no custom PIDs file available in Google Drive.</string>
+
     <string name="main_activity.toast.trips.upload.failed">Trips upload operation failed. </string>
     <string name="main_activity.toast.trips.upload.successful">Trips upload operation completed successfully.</string>
     <string name="main_activity.toast.trips.upload.no_files_selected">There is no files selected. Nothing was uploaded.</string>

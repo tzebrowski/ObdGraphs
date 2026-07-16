@@ -140,6 +140,13 @@
     <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Usuń mapowanie</string>
     <string name="pref.pid.manage_dialog">Zarządzaj PIDami</string>
     <string name="pref.pid.manage_dialog_summary">Modyfikuj i dodawaj nowe PIDy</string>
+
+    <string name="pref.pid.custom.category">Własne PIDy</string>
+    <string name="pref.pid.custom.publish">Publikuj na Dysku Google</string>
+    <string name="pref.pid.custom.publish_summary">Prześlij swoje własne PIDy na Dysk Google</string>
+    <string name="pref.pid.custom.download">Pobierz z Dysku Google</string>
+    <string name="pref.pid.custom.download_summary">Przywróć własne PIDy z Dysku Google</string>
+    <string name="pref_pid_custom_download_confirmation_dialog">Pobrać własne PIDy z Dysku Google? To zastąpi Twoje obecne własne PIDy.</string>
     <string name="pref.pid.manage_dialog.mode_hint">Mode (e.g. 01)</string>
     <string name="pref.pid.manage_dialog.can_header">Nagłówek CAN</string>
     <string name="pref.pid.manage_dialog.system_pids">PIDy systemowe</string>
