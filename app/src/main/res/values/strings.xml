@@ -921,4 +921,8 @@
     <string name="wizard_step_views_title">Views &amp; PIDs</string>
     <string name="wizard_step_views_description">Choose which views to show and, optionally, which PIDs to display on each.</string>
     <string name="wizard_step_views_select_pids">Select PIDs</string>
+
+    <string name="wizard_step_summary_title">All Set</string>
+    <string name="wizard_step_summary_intro">You\'re all set!</string>
+    <string name="wizard_step_summary_description">Your app is configured and ready to go. You can revisit any of these settings anytime in Preferences, or re-run this wizard from the \"Run Setup Wizard\" entry at the top of Preferences.</string>
 </resources>

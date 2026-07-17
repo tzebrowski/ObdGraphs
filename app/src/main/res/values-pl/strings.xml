@@ -688,4 +688,8 @@
     <string name="wizard_step_views_description">Wybierz, które widoki mają być widoczne oraz, opcjonalnie, jakie PID-y mają być na nich wyświetlane.</string>
     <string name="wizard_step_views_select_pids">Wybierz PID-y</string>
 
+    <string name="wizard_step_summary_title">Gotowe</string>
+    <string name="wizard_step_summary_intro">Wszystko gotowe!</string>
+    <string name="wizard_step_summary_description">Aplikacja jest skonfigurowana i gotowa do użycia. Możesz wrócić do tych ustawień w dowolnym momencie w Ustawieniach lub uruchomić ponownie tego kreatora z pozycji \"Uruchom kreatora konfiguracji\" na górze Ustawień.</string>
+
 </resources>

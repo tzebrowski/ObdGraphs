@@ -48,7 +48,8 @@ class SetupWizardActivity :
             WizardStep(R.string.wizard_step_profile_title) { ProfileStepFragment() },
             WizardStep(R.string.wizard_step_adapter_title) { AdapterStepFragment() },
             WizardStep(R.string.wizard_step_gdrive_title) { GoogleDriveStepFragment() },
-            WizardStep(R.string.wizard_step_views_title) { ViewsStepFragment() }
+            WizardStep(R.string.wizard_step_views_title) { ViewsStepFragment() },
+            WizardStep(R.string.wizard_step_summary_title) { SummaryStepFragment() }
         )
 
     override fun attachBaseContext(newBase: Context) {
