@@ -20,9 +20,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getString
 import org.obd.graphs.profile.profile
+
+private const val PREF_PROFILE_ABOUT = "pref.profile.about"
 
 class ProfileStepFragment : Fragment(R.layout.fragment_wizard_profile) {
     override fun onViewCreated(
@@ -32,6 +37,7 @@ class ProfileStepFragment : Fragment(R.layout.fragment_wizard_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         val radioGroup = view.findViewById<RadioGroup>(R.id.rgWizardProfiles)
+        val tvDetail = view.findViewById<TextView>(R.id.tvWizardProfileDetail)
         val currentProfileId = profile.getCurrentProfile()
 
         profile.getAvailableProfiles().forEach { (profileId, name) ->
@@ -47,10 +53,17 @@ class ProfileStepFragment : Fragment(R.layout.fragment_wizard_profile) {
             }
         }
 
+        tvDetail.text = profileAbout(currentProfileId)
+
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             val selectedProfileId = group.findViewById<RadioButton>(checkedId).tag as String
             profile.saveCurrentProfile()
             profile.loadProfile(selectedProfileId)
+            tvDetail.text = profileAbout(selectedProfileId)
         }
     }
+
+    private fun profileAbout(profileId: String): String =
+        Prefs.getString("$profileId.$PREF_PROFILE_ABOUT")?.takeIf { it.isNotBlank() }
+            ?: getString(R.string.wizard_step_profile_detail_no_description)
 }

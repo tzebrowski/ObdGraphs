@@ -930,7 +930,10 @@
     <string name="wizard_step_permissions_grant_button">Grant Permissions</string>
 
     <string name="wizard_step_profile_title">Vehicle Profile</string>
-    <string name="wizard_step_profile_description">Pick the vehicle profile you want to start with. You can change this anytime in Preferences.</string>
+    <string name="wizard_step_profile_description">A profile bundles together your vehicle, adapter and connection settings, and PID selections. Switching profiles switches your whole setup at once - handy if you drive more than one car or use different adapters. Pick one to start with; you can create, rename, and switch between profiles anytime in Preferences.</string>
+    <string name="wizard_step_profile_legend">Profile names may include: BT = Bluetooth, STN = STN-based adapter chips (OBDSolutions), AA = Android Auto, USB = USB connectivity, WIFI = WiFi connectivity</string>
+    <string name="wizard_step_profile_detail_title">About This Profile</string>
+    <string name="wizard_step_profile_detail_no_description">No description available for this profile.</string>
 
     <string name="wizard_step_adapter_title">OBD Adapter</string>
 
