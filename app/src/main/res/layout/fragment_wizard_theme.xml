@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/wizard_step_theme_description"
+        android:textColor="?android:attr/textColorSecondary" />
+
+    <RadioGroup
+        android:id="@+id/rgWizardTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbWizardThemeSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wizard_step_theme_system" />
+
+        <RadioButton
+            android:id="@+id/rbWizardThemeLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wizard_step_theme_light" />
+
+        <RadioButton
+            android:id="@+id/rbWizardThemeDark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wizard_step_theme_dark" />
+    </RadioGroup>
+</LinearLayout>

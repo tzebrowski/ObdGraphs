@@ -8,6 +8,20 @@
         android:summary="@string/pref.language.summary"
         android:persistent="false" />
 
+    <org.obd.graphs.wizard.RunSetupWizardAction
+        android:key="pref.wizard.rerun"
+        android:title="@string/pref.wizard.rerun_title"
+        android:summary="@string/pref.wizard.rerun_summary"
+        android:persistent="false" />
+
+    <org.obd.graphs.preferences.ThemeListPreference
+        android:entries="@array/pref.app_theme_entries"
+        android:entryValues="@array/pref.app_theme_values"
+        android:key="pref.app.theme"
+        android:title="@string/pref.app.theme_title"
+        android:persistent="false"
+        app:useSimpleSummaryProvider="true" />
+
     <PreferenceCategory android:title="@string/pref.trips.title">
         <org.obd.graphs.preferences.DriveAutoSyncEnablerCheckBoxPreference
                 android:defaultValue="false"

@@ -885,4 +885,75 @@
         <item>en</item>
         <item>pl</item>
     </string-array>
+
+    <string name="pref.wizard.rerun_title">Run Setup Wizard</string>
+    <string name="pref.wizard.rerun_summary">Re-run the profile, adapter, Google Drive and views setup steps</string>
+
+    <string name="wizard_title">Setup Wizard</string>
+    <string name="wizard.action_back">Back</string>
+    <string name="wizard.action_skip">Skip</string>
+    <string name="wizard.action_next">Next</string>
+    <string name="wizard_action_finish">Finish</string>
+
+    <string name="wizard_step_welcome_title">Welcome</string>
+    <string name="wizard_step_welcome_intro">Welcome! Let\'s get your app set up.</string>
+    <string name="wizard_step_welcome_description">This app connects to your vehicle\'s OBD2 adapter to collect and visualize real-time telemetry data.\n\nWhat you can do:\n\n• Monitor live gauges, dashboards and performance screens\n• Log trips with GPS and review them later\n• Track acceleration with the Drag Racing timer\n• Create and manage vehicle profiles for different cars and adapters\n• Add your own custom PIDs and formulas\n• Back up your settings, custom PIDs and trips to Google Drive\n\nThe next few steps will help you configure the basics - you can change any of it later in Preferences.</string>
+
+    <string name="wizard_step_language_title">Language</string>
+    <string name="wizard_step_language_description">Choose the app language. You can change this anytime in Preferences.</string>
+
+    <string name="pref.app.theme_title">App Theme</string>
+    <string name="pref.app.theme_summary">Choose how the app should look</string>
+
+    <string-array name="pref.app_theme_entries">
+        <item>System Default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="pref.app_theme_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <string name="wizard_step_theme_title">Theme</string>
+    <string name="wizard_step_theme_description">Choose how the app should look. You can change this anytime in Preferences.</string>
+    <string name="wizard_step_theme_system">System Default</string>
+    <string name="wizard_step_theme_light">Light</string>
+    <string name="wizard_step_theme_dark">Dark</string>
+
+    <string name="wizard_step_permissions_title">Permissions</string>
+    <string name="wizard_step_permissions_description">The app needs Location, Bluetooth and Notification permissions to connect to your OBD adapter and log trips.</string>
+    <string name="wizard_step_permissions_status_granted">All permissions granted.</string>
+    <string name="wizard_step_permissions_status_missing">Some permissions are missing.</string>
+    <string name="wizard_step_permissions_grant_button">Grant Permissions</string>
+
+    <string name="wizard_step_profile_title">Vehicle Profile</string>
+    <string name="wizard_step_profile_description">Pick the vehicle profile you want to start with. You can change this anytime in Preferences.</string>
+
+    <string name="wizard_step_adapter_title">OBD Adapter</string>
+
+    <string name="wizard_step_test_connection_title">Test Connection</string>
+    <string name="wizard_step_test_connection_description">Try connecting to your OBD adapter now to make sure everything is configured correctly. You can skip this and connect later.</string>
+    <string name="wizard_step_test_connection_button">Test Connection</string>
+    <string name="wizard_step_test_connection_status_idle">Not tested yet.</string>
+    <string name="wizard_step_test_connection_status_connecting">Connecting…</string>
+    <string name="wizard_step_test_connection_status_connected">Connected successfully!</string>
+    <string name="wizard_step_test_connection_status_no_adapter">No adapter selected. Please go back and configure one.</string>
+    <string name="wizard_step_test_connection_status_failed">Connection failed. Check your adapter settings and try again.</string>
+    <string name="wizard_step_test_connection_status_slow">Still trying to connect… some adapters take longer. Make sure it\'s powered on and in range.</string>
+
+    <string name="wizard_step_gdrive_title">Google Drive</string>
+    <string name="wizard_step_gdrive_description">Connect Google Drive to back up your settings, custom PIDs and trip logs. You can skip this and connect later.</string>
+    <string name="wizard_step_gdrive_wifi_hint">Wi-Fi must be enabled to connect to Google Drive.</string>
+    <string name="wizard_step_gdrive_connect_button">Connect Google Drive</string>
+
+    <string name="wizard_step_views_title">Views &amp; PIDs</string>
+    <string name="wizard_step_views_description">Choose which views to show and, optionally, which PIDs to display on each.</string>
+    <string name="wizard_step_views_select_pids">Select PIDs</string>
+
+    <string name="wizard_step_summary_title">All Set</string>
+    <string name="wizard_step_summary_intro">You\'re all set!</string>
+    <string name="wizard_step_summary_description">Your app is configured and ready to go. You can revisit any of these settings anytime in Preferences, or re-run this wizard from the \"Run Setup Wizard\" entry at the top of Preferences.</string>
 </resources>
