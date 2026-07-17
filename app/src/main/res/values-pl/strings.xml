@@ -690,7 +690,10 @@
     <string name="wizard_step_permissions_grant_button">Przyznaj uprawnienia</string>
 
     <string name="wizard_step_profile_title">Profil pojazdu</string>
-    <string name="wizard_step_profile_description">Wybierz profil pojazdu, od którego chcesz zacząć. Możesz to zmienić w dowolnym momencie w Ustawieniach.</string>
+    <string name="wizard_step_profile_description">Profil łączy w sobie ustawienia pojazdu, adaptera, połączenia oraz wybrane PID-y. Przełączenie profilu zmienia całą konfigurację naraz - przydatne, jeśli jeździsz więcej niż jednym samochodem lub używasz różnych adapterów. Wybierz profil, od którego chcesz zacząć; możesz tworzyć, zmieniać nazwy i przełączać profile w dowolnym momencie w Ustawieniach.</string>
+    <string name="wizard_step_profile_legend">Nazwy profili mogą zawierać: BT = Bluetooth, STN = chipy adaptera oparte na STN (OBDSolutions), AA = Android Auto, USB = połączenie USB, WIFI = połączenie WiFi</string>
+    <string name="wizard_step_profile_detail_title">O tym profilu</string>
+    <string name="wizard_step_profile_detail_no_description">Brak opisu dla tego profilu.</string>
 
     <string name="wizard_step_adapter_title">Adapter OBD</string>
 
