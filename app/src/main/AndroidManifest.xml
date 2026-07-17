@@ -106,6 +106,14 @@
         </activity>
 
         <activity
+            android:name="org.obd.graphs.wizard.SetupWizardActivity"
+            android:label="@string/wizard_title"
+            android:exported="false"
+            android:parentActivityName="org.obd.graphs.activity.MainActivity"
+            android:theme="@style/Theme.DefaultTheme">
+        </activity>
+
+        <activity
             android:name="org.obd.graphs.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.App.Starting"

@@ -8,6 +8,12 @@
         android:summary="@string/pref.language.summary"
         android:persistent="false" />
 
+    <org.obd.graphs.wizard.RunSetupWizardAction
+        android:key="pref.wizard.rerun"
+        android:title="@string/pref.wizard.rerun_title"
+        android:summary="@string/pref.wizard.rerun_summary"
+        android:persistent="false" />
+
     <PreferenceCategory android:title="@string/pref.trips.title">
         <org.obd.graphs.preferences.DriveAutoSyncEnablerCheckBoxPreference
                 android:defaultValue="false"

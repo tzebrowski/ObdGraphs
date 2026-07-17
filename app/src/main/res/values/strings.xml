@@ -885,4 +885,35 @@
         <item>en</item>
         <item>pl</item>
     </string-array>
+
+    <string name="pref.wizard.rerun_title">Run Setup Wizard</string>
+    <string name="pref.wizard.rerun_summary">Re-run the profile, adapter, Google Drive and views setup steps</string>
+
+    <string name="wizard_title">Setup Wizard</string>
+    <string name="wizard.action_back">Back</string>
+    <string name="wizard.action_skip">Skip</string>
+    <string name="wizard.action_next">Next</string>
+    <string name="wizard_action_finish">Finish</string>
+
+    <string name="wizard_step_language_title">Language</string>
+    <string name="wizard_step_language_description">Choose the app language. You can change this anytime in Preferences.</string>
+
+    <string name="wizard_step_permissions_title">Permissions</string>
+    <string name="wizard_step_permissions_description">The app needs Location, Bluetooth and Notification permissions to connect to your OBD adapter and log trips.</string>
+    <string name="wizard_step_permissions_status_granted">All permissions granted.</string>
+    <string name="wizard_step_permissions_status_missing">Some permissions are missing.</string>
+    <string name="wizard_step_permissions_grant_button">Grant Permissions</string>
+
+    <string name="wizard_step_profile_title">Vehicle Profile</string>
+    <string name="wizard_step_profile_description">Pick the vehicle profile you want to start with. You can change this anytime in Preferences.</string>
+
+    <string name="wizard_step_adapter_title">OBD Adapter</string>
+
+    <string name="wizard_step_gdrive_title">Google Drive</string>
+    <string name="wizard_step_gdrive_description">Connect Google Drive to back up your settings, custom PIDs and trip logs. You can skip this and connect later.</string>
+    <string name="wizard_step_gdrive_connect_button">Connect Google Drive</string>
+
+    <string name="wizard_step_views_title">Views &amp; PIDs</string>
+    <string name="wizard_step_views_description">Choose which views to show and, optionally, which PIDs to display on each.</string>
+    <string name="wizard_step_views_select_pids">Select PIDs</string>
 </resources>

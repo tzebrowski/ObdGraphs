@@ -60,6 +60,8 @@ import org.obd.graphs.ui.BackupManager
 import org.obd.graphs.ui.CustomPidsBackupManager
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.withDataLogger
+import org.obd.graphs.wizard.SetupWizardActivity
+import org.obd.graphs.wizard.SetupWizardManager
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -182,6 +184,12 @@ class MainActivity :
         super.onResume()
         screen.setupWindowManager(this)
         screen.changeScreenBrightness(this, 1f)
+
+        // Language may have been changed by the setup wizard while this Activity was paused underneath it.
+        val storedLanguage = LanguageManager.getStoredLanguage(this)
+        if (storedLanguage.isNotEmpty() && resources.configuration.locales[0].language != storedLanguage) {
+            recreate()
+        }
     }
 
     override fun onPause() {
@@ -298,7 +306,8 @@ class MainActivity :
     }
 
     private fun runWizardFlow() {
-        if (!LanguageManager.isLanguageSelected(this)) {
+        // Fresh installs pick a language as the wizard's first step instead - asking here too would be redundant.
+        if (!LanguageManager.isLanguageSelected(this) && !SetupWizardManager.shouldShowWizard(this)) {
             LanguageManager.showLanguageSelectionDialog(this) { localeTag ->
                 DataLoggerRepository.updateTranslations(localeTag)
                 recreate()
@@ -306,9 +315,15 @@ class MainActivity :
             return
         }
 
-        if (Permissions.isAnyPermissionMissing(this)) {
+        // Fresh installs grant permissions as a wizard step instead - asking here too would be redundant.
+        if (Permissions.isAnyPermissionMissing(this) && !SetupWizardManager.shouldShowWizard(this)) {
             Permissions.showPermissionOnboarding(this, onDeclined = {
             })
+            return
+        }
+
+        if (SetupWizardManager.shouldShowWizard(this)) {
+            startActivity(Intent(this, SetupWizardActivity::class.java))
             return
         }
     }

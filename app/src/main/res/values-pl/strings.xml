@@ -652,4 +652,35 @@
     <string name="gps.debug_log">Dziennik debugowania</string>
     <string name="gps.initializing">Inicjalizacja&#8230;</string>
 
+    <string name="pref.wizard.rerun_title">Uruchom kreatora konfiguracji</string>
+    <string name="pref.wizard.rerun_summary">Uruchom ponownie konfigurację profilu, adaptera, Dysku Google i widoków</string>
+
+    <string name="wizard_title">Kreator konfiguracji</string>
+    <string name="wizard.action_back">Wstecz</string>
+    <string name="wizard.action_skip">Pomiń</string>
+    <string name="wizard.action_next">Dalej</string>
+    <string name="wizard_action_finish">Zakończ</string>
+
+    <string name="wizard_step_language_title">Język</string>
+    <string name="wizard_step_language_description">Wybierz język aplikacji. Możesz to zmienić w dowolnym momencie w Ustawieniach.</string>
+
+    <string name="wizard_step_permissions_title">Uprawnienia</string>
+    <string name="wizard_step_permissions_description">Aplikacja potrzebuje uprawnień lokalizacji, Bluetooth i powiadomień, aby połączyć się z adapterem OBD i rejestrować trasy.</string>
+    <string name="wizard_step_permissions_status_granted">Wszystkie uprawnienia przyznane.</string>
+    <string name="wizard_step_permissions_status_missing">Brakuje niektórych uprawnień.</string>
+    <string name="wizard_step_permissions_grant_button">Przyznaj uprawnienia</string>
+
+    <string name="wizard_step_profile_title">Profil pojazdu</string>
+    <string name="wizard_step_profile_description">Wybierz profil pojazdu, od którego chcesz zacząć. Możesz to zmienić w dowolnym momencie w Ustawieniach.</string>
+
+    <string name="wizard_step_adapter_title">Adapter OBD</string>
+
+    <string name="wizard_step_gdrive_title">Dysk Google</string>
+    <string name="wizard_step_gdrive_description">Połącz Dysk Google, aby tworzyć kopie zapasowe ustawień, własnych PID-ów i tras. Możesz pominąć ten krok i połączyć się później.</string>
+    <string name="wizard_step_gdrive_connect_button">Połącz Dysk Google</string>
+
+    <string name="wizard_step_views_title">Widoki i PID-y</string>
+    <string name="wizard_step_views_description">Wybierz, które widoki mają być widoczne oraz, opcjonalnie, jakie PID-y mają być na nich wyświetlane.</string>
+    <string name="wizard_step_views_select_pids">Wybierz PID-y</string>
+
 </resources>
