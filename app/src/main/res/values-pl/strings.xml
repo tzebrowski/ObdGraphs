@@ -679,6 +679,16 @@
 
     <string name="wizard_step_adapter_title">Adapter OBD</string>
 
+    <string name="wizard_step_test_connection_title">Test połączenia</string>
+    <string name="wizard_step_test_connection_description">Spróbuj teraz połączyć się z adapterem OBD, aby upewnić się, że wszystko jest poprawnie skonfigurowane. Możesz pominąć ten krok i połączyć się później.</string>
+    <string name="wizard_step_test_connection_button">Testuj połączenie</string>
+    <string name="wizard_step_test_connection_status_idle">Jeszcze nie testowano.</string>
+    <string name="wizard_step_test_connection_status_connecting">Łączenie…</string>
+    <string name="wizard_step_test_connection_status_connected">Połączono pomyślnie!</string>
+    <string name="wizard_step_test_connection_status_no_adapter">Nie wybrano adaptera. Wróć i skonfiguruj go.</string>
+    <string name="wizard_step_test_connection_status_failed">Połączenie nie powiodło się. Sprawdź ustawienia adaptera i spróbuj ponownie.</string>
+    <string name="wizard_step_test_connection_status_slow">Nadal trwa łączenie… niektóre adaptery potrzebują więcej czasu. Upewnij się, że jest włączony i w zasięgu.</string>
+
     <string name="wizard_step_gdrive_title">Dysk Google</string>
     <string name="wizard_step_gdrive_description">Połącz Dysk Google, aby tworzyć kopie zapasowe ustawień, własnych PID-ów i tras. Możesz pominąć ten krok i połączyć się później.</string>
     <string name="wizard_step_gdrive_wifi_hint">Aby połączyć się z Dyskiem Google, musi być włączone Wi-Fi.</string>
