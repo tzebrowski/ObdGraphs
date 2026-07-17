@@ -661,6 +661,10 @@
     <string name="wizard.action_next">Dalej</string>
     <string name="wizard_action_finish">Zakończ</string>
 
+    <string name="wizard_step_welcome_title">Witamy</string>
+    <string name="wizard_step_welcome_intro">Witamy! Skonfigurujmy aplikację.</string>
+    <string name="wizard_step_welcome_description">Ta aplikacja łączy się z adapterem OBD2 pojazdu, aby zbierać i wizualizować dane telemetryczne w czasie rzeczywistym.\n\nCo możesz zrobić:\n\n• Śledzić na żywo wskaźniki, dashboard i ekrany wydajności\n• Rejestrować trasy z GPS i przeglądać je później\n• Mierzyć przyspieszenie za pomocą stopera Drag Racing\n• Tworzyć i zarządzać profilami pojazdów dla różnych samochodów i adapterów\n• Dodawać własne PID-y i formuły\n• Tworzyć kopie zapasowe ustawień, własnych PID-ów i tras na Dysku Google\n\nKolejne kroki pomogą skonfigurować podstawy - wszystko możesz później zmienić w Ustawieniach.</string>
+
     <string name="wizard_step_language_title">Język</string>
     <string name="wizard_step_language_description">Wybierz język aplikacji. Możesz to zmienić w dowolnym momencie w Ustawieniach.</string>
 
@@ -677,6 +681,7 @@
 
     <string name="wizard_step_gdrive_title">Dysk Google</string>
     <string name="wizard_step_gdrive_description">Połącz Dysk Google, aby tworzyć kopie zapasowe ustawień, własnych PID-ów i tras. Możesz pominąć ten krok i połączyć się później.</string>
+    <string name="wizard_step_gdrive_wifi_hint">Aby połączyć się z Dyskiem Google, musi być włączone Wi-Fi.</string>
     <string name="wizard_step_gdrive_connect_button">Połącz Dysk Google</string>
 
     <string name="wizard_step_views_title">Widoki i PID-y</string>

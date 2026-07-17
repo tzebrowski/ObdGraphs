@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.language.LanguageAdapter
 import org.obd.graphs.language.LanguageManager
 
@@ -42,7 +43,9 @@ class LanguageStepFragment : Fragment(R.layout.fragment_wizard_language) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter =
             LanguageAdapter(names, selectedIndex) { index ->
-                LanguageManager.saveLanguage(requireContext(), codes[index])
+                val localeTag = codes[index]
+                LanguageManager.saveLanguage(requireContext(), localeTag)
+                DataLoggerRepository.updateTranslations(localeTag)
                 requireActivity().recreate()
             }
     }

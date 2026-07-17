@@ -42,6 +42,7 @@ class SetupWizardActivity :
     EasyPermissions.PermissionCallbacks {
     private val steps =
         listOf(
+            WizardStep(R.string.wizard_step_welcome_title) { WelcomeStepFragment() },
             WizardStep(R.string.wizard_step_language_title) { LanguageStepFragment() },
             WizardStep(R.string.wizard_step_permissions_title) { PermissionsStepFragment() },
             WizardStep(R.string.wizard_step_profile_title) { ProfileStepFragment() },

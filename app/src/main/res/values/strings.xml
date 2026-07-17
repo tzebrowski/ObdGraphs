@@ -895,6 +895,10 @@
     <string name="wizard.action_next">Next</string>
     <string name="wizard_action_finish">Finish</string>
 
+    <string name="wizard_step_welcome_title">Welcome</string>
+    <string name="wizard_step_welcome_intro">Welcome! Let\'s get your app set up.</string>
+    <string name="wizard_step_welcome_description">This app connects to your vehicle\'s OBD2 adapter to collect and visualize real-time telemetry data.\n\nWhat you can do:\n\n• Monitor live gauges, dashboards and performance screens\n• Log trips with GPS and review them later\n• Track acceleration with the Drag Racing timer\n• Create and manage vehicle profiles for different cars and adapters\n• Add your own custom PIDs and formulas\n• Back up your settings, custom PIDs and trips to Google Drive\n\nThe next few steps will help you configure the basics - you can change any of it later in Preferences.</string>
+
     <string name="wizard_step_language_title">Language</string>
     <string name="wizard_step_language_description">Choose the app language. You can change this anytime in Preferences.</string>
 
@@ -911,6 +915,7 @@
 
     <string name="wizard_step_gdrive_title">Google Drive</string>
     <string name="wizard_step_gdrive_description">Connect Google Drive to back up your settings, custom PIDs and trip logs. You can skip this and connect later.</string>
+    <string name="wizard_step_gdrive_wifi_hint">Wi-Fi must be enabled to connect to Google Drive.</string>
     <string name="wizard_step_gdrive_connect_button">Connect Google Drive</string>
 
     <string name="wizard_step_views_title">Views &amp; PIDs</string>
