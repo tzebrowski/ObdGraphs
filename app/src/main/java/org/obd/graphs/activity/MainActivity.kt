@@ -56,6 +56,7 @@ import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
+import org.obd.graphs.theme.ThemeManager
 import org.obd.graphs.ui.BackupManager
 import org.obd.graphs.ui.CustomPidsBackupManager
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -103,6 +104,7 @@ class MainActivity :
         setupStrictMode()
         setActivityContext(this)
         setPreferencesContext(this)
+        ThemeManager.applyStoredTheme(this)
 
         val splashScreen = installSplashScreen()
 

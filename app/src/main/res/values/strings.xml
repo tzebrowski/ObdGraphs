@@ -902,6 +902,27 @@
     <string name="wizard_step_language_title">Language</string>
     <string name="wizard_step_language_description">Choose the app language. You can change this anytime in Preferences.</string>
 
+    <string name="pref.app.theme_title">App Theme</string>
+    <string name="pref.app.theme_summary">Choose how the app should look</string>
+
+    <string-array name="pref.app_theme_entries">
+        <item>System Default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="pref.app_theme_values">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <string name="wizard_step_theme_title">Theme</string>
+    <string name="wizard_step_theme_description">Choose how the app should look. You can change this anytime in Preferences.</string>
+    <string name="wizard_step_theme_system">System Default</string>
+    <string name="wizard_step_theme_light">Light</string>
+    <string name="wizard_step_theme_dark">Dark</string>
+
     <string name="wizard_step_permissions_title">Permissions</string>
     <string name="wizard_step_permissions_description">The app needs Location, Bluetooth and Notification permissions to connect to your OBD adapter and log trips.</string>
     <string name="wizard_step_permissions_status_granted">All permissions granted.</string>

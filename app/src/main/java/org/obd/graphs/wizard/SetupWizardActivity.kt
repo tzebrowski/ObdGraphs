@@ -44,6 +44,7 @@ class SetupWizardActivity :
         listOf(
             WizardStep(R.string.wizard_step_welcome_title) { WelcomeStepFragment() },
             WizardStep(R.string.wizard_step_language_title) { LanguageStepFragment() },
+            WizardStep(R.string.wizard_step_theme_title) { ThemeStepFragment() },
             WizardStep(R.string.wizard_step_permissions_title) { PermissionsStepFragment() },
             WizardStep(R.string.wizard_step_profile_title) { ProfileStepFragment() },
             WizardStep(R.string.wizard_step_adapter_title) { AdapterStepFragment() },

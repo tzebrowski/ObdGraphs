@@ -668,6 +668,21 @@
     <string name="wizard_step_language_title">Język</string>
     <string name="wizard_step_language_description">Wybierz język aplikacji. Możesz to zmienić w dowolnym momencie w Ustawieniach.</string>
 
+    <string name="pref.app.theme_title">Motyw aplikacji</string>
+    <string name="pref.app.theme_summary">Wybierz wygląd aplikacji</string>
+
+    <string-array name="pref.app_theme_entries">
+        <item>Domyślny systemowy</item>
+        <item>Jasny</item>
+        <item>Ciemny</item>
+    </string-array>
+
+    <string name="wizard_step_theme_title">Motyw</string>
+    <string name="wizard_step_theme_description">Wybierz wygląd aplikacji. Możesz to zmienić w dowolnym momencie w Ustawieniach.</string>
+    <string name="wizard_step_theme_system">Domyślny systemowy</string>
+    <string name="wizard_step_theme_light">Jasny</string>
+    <string name="wizard_step_theme_dark">Ciemny</string>
+
     <string name="wizard_step_permissions_title">Uprawnienia</string>
     <string name="wizard_step_permissions_description">Aplikacja potrzebuje uprawnień lokalizacji, Bluetooth i powiadomień, aby połączyć się z adapterem OBD i rejestrować trasy.</string>
     <string name="wizard_step_permissions_status_granted">Wszystkie uprawnienia przyznane.</string>
