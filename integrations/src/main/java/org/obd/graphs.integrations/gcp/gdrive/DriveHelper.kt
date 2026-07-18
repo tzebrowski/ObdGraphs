@@ -61,12 +61,16 @@ internal object DriveHelper {
         localFile: File,
         fileName: String,
         parentFolderId: String,
-        mimeType: String = "text/plain"
+        mimeType: String = "text/plain",
+        appProperties: Map<String, String>? = null
     ): DriveFile {
-        Log.i(TAG, "Uploading file ${localFile.absolutePath} to $fileName")
+        Log.i(TAG, "Uploading file ${localFile.absolutePath} to $fileName appProperties=$appProperties")
         val metadata = DriveFile().apply {
             name = fileName
             parents = listOf(parentFolderId)
+            if (appProperties != null) {
+                this.appProperties = appProperties
+            }
         }
         val content = FileContent(mimeType, localFile)
 

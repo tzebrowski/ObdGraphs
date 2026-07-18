@@ -78,7 +78,8 @@
                 <Button
                     android:id="@+id/trip_load"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/trip_action_load"
                     android:textSize="10sp"
@@ -87,7 +88,8 @@
                 <Button
                     android:id="@+id/trip_delete"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:backgroundTint="@color/cardinal"
                     android:gravity="center"
                     android:text="@string/trip_action_delete"

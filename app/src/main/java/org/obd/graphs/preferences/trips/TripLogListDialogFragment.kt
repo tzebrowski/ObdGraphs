@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -41,7 +42,11 @@ import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.integrations.gcp.gdrive.TripLogDriveManager
+import org.obd.graphs.integrations.gcp.gdrive.TripTags
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getString
+import org.obd.graphs.profile.profile
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
@@ -155,12 +160,18 @@ class TripLogListDialogFragment(
         if (enableUploadCloudButton) {
             uploadToCloud.apply {
                 setOnClickListener {
-                    val builder = AlertDialog.Builder(context)
-                    val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
+                    val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_trip_upload_tags, null)
+                    val tagsInput = dialogView.findViewById<EditText>(R.id.etUploadTags)
+                    val defaultTags = Prefs.getString("${profile.getCurrentProfile()}.pref.profile.tags")
+                    if (!defaultTags.isNullOrBlank()) {
+                        tagsInput.setText(defaultTags)
+                    }
                     val yes = context.getString(R.string.dialog_ask_question_yes)
                     val no = context.getString(R.string.dialog_ask_question_no)
+
+                    val builder = AlertDialog.Builder(context)
                     builder
-                        .setMessage(title)
+                        .setView(dialogView)
                         .setCancelable(false)
                         .setPositiveButton(yes) { _, _ ->
                             val directory = tripManager.getTripsDirectory(context)
@@ -169,8 +180,10 @@ class TripLogListDialogFragment(
                                 Log.w("TripsListDialogFragment", "User selected no tripe")
                                 sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                             } else {
+                                val tags = TripTags.parse(tagsInput.text.toString())
+
                                 lifecycleScope.launch {
-                                    tripLogDriveManager.uploadTrips(files)
+                                    tripLogDriveManager.uploadTrips(files, tags)
                                 }
                             }
                         }.setNegativeButton(no) { dialog, _ ->

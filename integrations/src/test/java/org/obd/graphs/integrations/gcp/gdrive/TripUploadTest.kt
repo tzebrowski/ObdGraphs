@@ -16,22 +16,24 @@
  */
 package org.obd.graphs.integrations.gcp.gdrive
 
-import android.app.Activity
-import androidx.fragment.app.Fragment
-import java.io.File
+import org.junit.Test
+import kotlin.test.assertEquals
 
-interface TripLogDriveManager {
-    suspend fun uploadTrips(
-        files: List<File>,
-        tags: List<String> = emptyList()
-    )
+class TripUploadTest {
 
-    suspend fun authenticate()
-    companion object {
-        fun instance(
-            webClientId: String,
-            activity: Activity,
-            fragment: Fragment?
-        ): TripLogDriveManager = ManualTripLogUpload(webClientId, activity, fragment)
+    @Test
+    fun `driveTripFileName strips the trip-profile_ prefix and appends json gz`() {
+        assertEquals(
+            "device123-1-1234567890-120.jsonl.json.gz",
+            TripUpload.driveTripFileName("device123", "trip-profile_1-1234567890-120.jsonl")
+        )
+    }
+
+    @Test
+    fun `driveTripFileName leaves the name untouched if the prefix is absent`() {
+        assertEquals(
+            "device123-some-other-name.json.gz",
+            TripUpload.driveTripFileName("device123", "some-other-name")
+        )
     }
 }

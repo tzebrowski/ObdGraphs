@@ -23,6 +23,8 @@ import org.junit.runners.Suite.SuiteClasses
 @RunWith(Suite::class)
 @SuiteClasses(
     TripLogTransformerTest::class,
-    TripLogDriveManagerTest::class
+    TripLogDriveManagerTest::class,
+    TripTagsTest::class,
+    TripUploadTest::class
 )
 class GDriveTestSuite

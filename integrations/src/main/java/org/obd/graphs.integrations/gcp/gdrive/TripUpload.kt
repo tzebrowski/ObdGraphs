@@ -48,6 +48,17 @@ internal object TripUpload {
     }
 
     /**
+     * The Drive file name a local trip file is uploaded under.
+     */
+    fun driveTripFileName(
+        deviceId: String,
+        localFileName: String
+    ): String {
+        val originalName = localFileName.removePrefix("trip-profile_")
+        return "$deviceId-$originalName.json.gz"
+    }
+
+    /**
      * Transforms, compresses, and uploads a single trip file to Google Drive.
      */
     fun Drive.transformAndUploadTrip(
@@ -56,7 +67,8 @@ internal object TripUpload {
         folderId: String,
         deviceId: String,
         transformer: TripLogTransformer,
-        tripDescParser: TripDescParser
+        tripDescParser: TripDescParser,
+        tags: List<String> = emptyList()
     ) {
         val metadata = mutableMapOf<String, String>()
         val tripDesc = tripDescParser.getTripDesc(inFile.name)
@@ -76,9 +88,9 @@ internal object TripUpload {
             }
         }
 
-        val originalName = inFile.name.removePrefix("trip-profile_")
-        val fileName = "$deviceId-$originalName.json.gz"
-        this.uploadFile(tempGzipFile, fileName, folderId, "application/gzip")
+        val fileName = driveTripFileName(deviceId, inFile.name)
+        val appProperties = if (tags.isNotEmpty()) mapOf("tags" to TripTags.format(tags)) else null
+        this.uploadFile(tempGzipFile, fileName, folderId, "application/gzip", appProperties)
 
         tempGzipFile.delete()
         transformedFile.delete()

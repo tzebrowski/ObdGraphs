@@ -16,22 +16,10 @@
  */
 package org.obd.graphs.integrations.gcp.gdrive
 
-import android.app.Activity
-import androidx.fragment.app.Fragment
-import java.io.File
+// Shared by the upload path (TripUpload, writing Drive appProperties) and the upload dialog's
+// tag input (TripLogListDialogFragment) - one place for the comma-separated tag convention.
+object TripTags {
+    fun parse(raw: String?): List<String> = raw?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
 
-interface TripLogDriveManager {
-    suspend fun uploadTrips(
-        files: List<File>,
-        tags: List<String> = emptyList()
-    )
-
-    suspend fun authenticate()
-    companion object {
-        fun instance(
-            webClientId: String,
-            activity: Activity,
-            fragment: Fragment?
-        ): TripLogDriveManager = ManualTripLogUpload(webClientId, activity, fragment)
-    }
+    fun format(tags: List<String>): String = tags.joinToString(",")
 }
