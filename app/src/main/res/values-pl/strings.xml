@@ -569,6 +569,8 @@
     <string name="trip_dialog_delete_all_trips">Usuń\nwszystkie</string>
     <string name="trip_delete_dialog_ask_question">Czy na pewno chcesz usunąć?</string>
     <string name="trip_send_to_cloud_dialog_ask_question">Czy na pewno chcesz przesłać wybrane pliki do katalogu giulia/trips na Google Drive?</string>
+    <string name="trip_upload_tags_hint">Tagi (opcjonalnie)</string>
+    <string name="trip_upload_tags_helper_text">Oddzielone przecinkami, np. dojazdy, tor</string>
 
     <string name="dialog_ask_question_yes">Tak</string>
     <string name="dialog_ask_question_no">nie</string>

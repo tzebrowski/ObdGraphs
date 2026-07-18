@@ -41,41 +41,44 @@ internal open class ManualTripLogUpload(
             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
         }
 
-    override suspend fun uploadTrips(files: List<File>) =
-        signInAndExecute("exportTrips") { token ->
-            executeDriveOperation(
-                accessToken = token,
-                onFailure = { sendBroadcastEvent(TRIPS_UPLOAD_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
-            ) { drive ->
-                if (files.isEmpty()) {
-                    sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
-                } else {
-                    val folderId = drive.findFolderIdRecursive("mygiulia/trips")
+    override suspend fun uploadTrips(
+        files: List<File>,
+        tags: List<String>
+    ) = signInAndExecute("exportTrips") { token ->
+        executeDriveOperation(
+            accessToken = token,
+            onFailure = { sendBroadcastEvent(TRIPS_UPLOAD_FAILED) },
+            onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+        ) { drive ->
+            if (files.isEmpty()) {
+                sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
+            } else {
+                val folderId = drive.findFolderIdRecursive("mygiulia/trips")
 
-                    val transformer = TripUpload.buildTransformer()
-                    val tripDescParser = TripDescParser()
-                    val deviceId = Device.id()
+                val transformer = TripUpload.buildTransformer()
+                val tripDescParser = TripDescParser()
+                val deviceId = Device.id()
 
-                    files.forEach { inFile ->
-                        with(TripUpload) {
-                            drive.transformAndUploadTrip(
-                                inFile = inFile,
-                                cacheDir = activity.cacheDir,
-                                folderId = folderId,
-                                deviceId = deviceId,
-                                transformer = transformer,
-                                tripDescParser = tripDescParser
-                            )
-                        }
-
-                        if (!inFile.path.endsWith(".synced")) {
-                            inFile.renameTo(File(inFile.absolutePath + ".synced"))
-                        }
+                files.forEach { inFile ->
+                    with(TripUpload) {
+                        drive.transformAndUploadTrip(
+                            inFile = inFile,
+                            cacheDir = activity.cacheDir,
+                            folderId = folderId,
+                            deviceId = deviceId,
+                            transformer = transformer,
+                            tripDescParser = tripDescParser,
+                            tags = tags
+                        )
                     }
 
-                    sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
+                    if (!inFile.path.endsWith(".synced")) {
+                        inFile.renameTo(File(inFile.absolutePath + ".synced"))
+                    }
                 }
+
+                sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
             }
         }
+    }
 }
