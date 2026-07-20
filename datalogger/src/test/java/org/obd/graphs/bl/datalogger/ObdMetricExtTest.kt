@@ -139,6 +139,19 @@ class ObdMetricExtTest : TestSetup() {
     }
 
     @Test
+    fun `PidDefinition scaleToRange falls back to 0-9999 range when pid has no min or max`() {
+        // Regression test: min/max are a platform-typed java.lang.Number in the underlying
+        // library, so a custom PID saved without them previously NPE'd here during trip upload.
+        val pid = PidDefinition(1L, "010C", "atsh6f1", "Test PID", "01", "SomeCodec")
+
+        val result = pid.scaleToRange(1750f)
+
+        // 1750.mapRange(0, 3500, 0, 9999)
+        val expected = 1750f.let { (it - 0f) * (9999f - 0f) / (3500f - 0f) }
+        assertEquals(expected, result, 0.01f)
+    }
+
+    @Test
     fun `ObdMetric scaleToRange maps the metric value into the 0-3500 range`() {
         val pid = pidWithRange(id = 1L, min = 0, max = 100)
         val metric = metricFor(pid, 50)
