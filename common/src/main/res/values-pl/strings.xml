@@ -25,7 +25,8 @@
     <string name="main_activity.toast.custom_pids.download.successful">Własne PID-y zostały pobrane z Dysku Google.</string>
     <string name="main_activity.toast.custom_pids.download.no_files">Na Dysku Google nie znaleziono pliku z własnymi PID-ami.</string>
 
-    <string name="main_activity.toast.trips.upload.failed">Wysyłanie tras nie powiodło się.</string>
+    <string name="main_activity.toast.trips.upload.failed">Wysyłanie tras nie powiodło się. %1$s</string>
+    <string name="main_activity.dialog.trips_upload_failed.title">Przesyłanie trasy nie powiodło się</string>
     <string name="main_activity.toast.trips.upload.successful">Wysyłanie tras zakończone pomyślnie.</string>
     <string name="main_activity.toast.trips.upload.no_files_selected">Nie wybrano plików. Nic nie zostało wysłane.</string>
     <string name="main_activity.toast.google.signin.failed_restart">Logowanie Google obecnie nie działa. Uruchom ponownie aplikację.</string>

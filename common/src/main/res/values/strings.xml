@@ -25,7 +25,8 @@
     <string name="main_activity.toast.custom_pids.download.successful">Custom PIDs downloaded from Google Drive successfully.</string>
     <string name="main_activity.toast.custom_pids.download.no_files">There is no custom PIDs file available in Google Drive.</string>
 
-    <string name="main_activity.toast.trips.upload.failed">Trips upload operation failed. </string>
+    <string name="main_activity.toast.trips.upload.failed">Trips upload operation failed. %1$s</string>
+    <string name="main_activity.dialog.trips_upload_failed.title">Trip Upload Failed</string>
     <string name="main_activity.toast.trips.upload.successful">Trips upload operation completed successfully.</string>
     <string name="main_activity.toast.trips.upload.no_files_selected">There is no files selected. Nothing was uploaded.</string>
     <string name="main_activity.toast.google.signin.failed_restart">Google sign-in isn"t working at the moment. Please restart application.</string>

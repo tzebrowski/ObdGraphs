@@ -98,6 +98,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.showCopyableErrorDialog
 import org.obd.graphs.ui.common.toast
 import org.obd.graphs.ui.withDataLogger
 
@@ -132,7 +133,14 @@ internal fun MainActivity.receive(intent: Intent?) {
         NAVIGATION_BUTTONS_VISIBILITY_CHANGED -> setupNavigationBar()
         GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed)
         GOOGLE_SIGN_IN_GENERAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed_restart)
-        TRIPS_UPLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed)
+        TRIPS_UPLOAD_FAILED -> {
+            val detail = intent.getSerializableCompat<String>() ?: ""
+            showCopyableErrorDialog(
+                title = getString(org.obd.graphs.commons.R.string.main_activity_dialog_trips_upload_failed_title),
+                message = getString(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed, detail),
+                clipLabel = "Trip upload error"
+            )
+        }
         TRIPS_UPLOAD_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_successful)
         TRIPS_UPLOAD_NO_FILES_SELECTED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_no_files_selected)
 
