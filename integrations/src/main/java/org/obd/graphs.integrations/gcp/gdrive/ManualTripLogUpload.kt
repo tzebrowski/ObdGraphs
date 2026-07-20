@@ -47,7 +47,7 @@ internal open class ManualTripLogUpload(
     ) = signInAndExecute("exportTrips") { token ->
         executeDriveOperation(
             accessToken = token,
-            onFailure = { sendBroadcastEvent(TRIPS_UPLOAD_FAILED) },
+            onFailure = { message -> sendBroadcastEvent(TRIPS_UPLOAD_FAILED, message) },
             onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
         ) { drive ->
             if (files.isEmpty()) {

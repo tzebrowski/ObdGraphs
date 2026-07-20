@@ -643,6 +643,7 @@
     <string name="dtc.action_refresh">Odśwież</string>
     <string name="dtc.action_clear_codes">Skasuj kody</string>
     <string name="dtc.action_share">Udostępnij</string>
+    <string name="error_dialog.copied_to_clipboard">Skopiowano do schowka</string>
     <string name="dialog.screen_lock.cancel">Anuluj</string>
     <string name="gps.title">DIAGNOSTYKA GPS</string>
     <string name="gps.status_label">Status</string>

@@ -865,6 +865,7 @@
     <string name="dtc.action_refresh">Refresh</string>
     <string name="dtc.action_clear_codes">Clear Codes</string>
     <string name="dtc.action_share">Share</string>
+    <string name="error_dialog.copied_to_clipboard">Copied to clipboard</string>
     <string name="dialog.screen_lock.cancel">Cancel</string>
     <string name="gps.title">GPS DIAGNOSTICS</string>
     <string name="gps.status_label">Status</string>

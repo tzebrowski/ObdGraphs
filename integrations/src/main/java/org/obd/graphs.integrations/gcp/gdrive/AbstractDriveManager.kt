@@ -67,7 +67,7 @@ internal abstract class AbstractDriveManager(
      */
     open suspend fun <T> executeDriveOperation(
         accessToken: String,
-        onFailure: () -> Unit,
+        onFailure: (message: String) -> Unit,
         onFinally: () -> Unit,
         block: suspend (Drive) -> T
     ) {
@@ -91,14 +91,14 @@ internal abstract class AbstractDriveManager(
                     } catch (clearEx: Exception) {
                         Log.e(TAG, "Failed to invalidate token", clearEx)
                     }
-                    onFailure()
+                    onFailure("Session expired (401). Please sign in again.")
                 } else {
                     Log.e(TAG, "Drive API error: ${e.statusCode}", e)
-                    onFailure()
+                    onFailure("Google Drive error ${e.statusCode}: ${e.details?.message ?: e.message}")
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "General Drive error", e)
-                onFailure()
+                onFailure(e.message ?: e.javaClass.simpleName)
             } finally {
                 onFinally()
             }
