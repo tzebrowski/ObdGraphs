@@ -32,9 +32,15 @@ class GaugeSettings : ScreenSettings {
 
             override fun getGaugeContainerColor(): Int = Prefs.getInt("pref.gauge_background_color", COLOR_RAINBOW_INDIGO)
 
+            override fun isPIDsSortOrderEnabled(): Boolean = Prefs.isEnabled("pref.pids.custom_order.enabled")
+
             override fun getPIDsSortOrder(): Map<Long, Int>? =
-                ViewPreferencesSerializer("${gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()}.view.settings")
-                    .getItemsSortOrder()
+                if (isPIDsSortOrderEnabled()) {
+                    ViewPreferencesSerializer("${gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()}.view.settings")
+                        .getItemsSortOrder()
+                } else {
+                    null
+                }
         }
 
     override fun getGaugeScreenSettings(): GaugeScreenSettings =

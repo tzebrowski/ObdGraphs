@@ -21,6 +21,7 @@ import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.isEnabled
 
 data class GraphPreferences(
     val xAxisStartMovingAfter: Float,
@@ -45,8 +46,12 @@ class GraphPreferencesReader {
         val cacheEnabled = Prefs.getBoolean("$prefixKey.cache.enabled", true)
 
         val sortOrder =
-            ViewPreferencesSerializer("${tripVirtualScreenManager.getVirtualScreenPrefKey()}.view.settings")
-                .getItemsSortOrder()
+            if (Prefs.isEnabled("pref.pids.custom_order.enabled")) {
+                ViewPreferencesSerializer("${tripVirtualScreenManager.getVirtualScreenPrefKey()}.view.settings")
+                    .getItemsSortOrder()
+            } else {
+                null
+            }
 
         // Prefs.getStringSet() is an unordered HashSet under the hood, so the ids need an explicit
         // sort here - .toSet() below preserves this order (LinkedHashSet), unlike the source set.
