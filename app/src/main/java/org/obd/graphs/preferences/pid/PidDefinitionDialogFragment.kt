@@ -45,6 +45,7 @@ import org.obd.metrics.pid.PidDefinition
 open class PidDefinitionDialogFragment(
     private val key: String,
     source: String,
+    private val orderPrefKey: String? = null,
     private val onDialogCloseListener: (() -> Unit) = {}
 ) : CoreDialogFragment() {
 
@@ -53,7 +54,7 @@ open class PidDefinitionDialogFragment(
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
-        PidViewModelFactory(key, dialogMode, CustomPidRepository(requireContext().applicationContext))
+        PidViewModelFactory(key, dialogMode, CustomPidRepository(requireContext().applicationContext), orderPrefKey)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

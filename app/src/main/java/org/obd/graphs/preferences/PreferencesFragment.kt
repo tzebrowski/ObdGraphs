@@ -99,7 +99,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     "dash" -> {
                         openPIDsDialog(
                             "pref.dash.pids.selected",
-                            PREFERENCE_SCREEN_SOURCE_DASHBOARD
+                            PREFERENCE_SCREEN_SOURCE_DASHBOARD,
+                            orderPrefKey = "prefs.dash.pids.settings"
                         ) { navigateToScreen(R.id.nav_dashboard) }
                     }
 
@@ -304,7 +305,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 ) { navigateToScreen(R.id.nav_performance) }
 
             PREFERENCE_SCREEN_KEY_DASH ->
-                openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD) { navigateToScreen(R.id.nav_dashboard) }
+                openPIDsDialog(
+                    "pref.dash.pids.selected",
+                    PREFERENCE_SCREEN_SOURCE_DASHBOARD,
+                    orderPrefKey = "prefs.dash.pids.settings"
+                ) { navigateToScreen(R.id.nav_dashboard) }
 
             PREFERENCE_SCREEN_KEY_GAUGE ->
                 openPIDsDialog(
@@ -328,11 +333,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPIDsDialog(
         key: String,
         source: String,
+        orderPrefKey: String? = null,
         onDialogCloseListener: (() -> Unit) = {}
     ) {
         PidDefinitionDialogFragment(
             key = key,
             source = source,
+            orderPrefKey = orderPrefKey,
             onDialogCloseListener = onDialogCloseListener
         ).show(parentFragmentManager, null)
     }
