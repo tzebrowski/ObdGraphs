@@ -34,8 +34,8 @@ fun PidDefinition.scaleToRange(value: Float): Float =
     value.mapRange(
         NEW_RANGE_MIN_VAL,
         NEW_RANGE_MAX_VAL,
-        min.toFloat(),
-        max.toFloat()
+        min?.toFloat() ?: 0f,
+        max?.toFloat() ?: 9999f
     )
 
 fun ObdMetric.scaleToRange(): Float =
