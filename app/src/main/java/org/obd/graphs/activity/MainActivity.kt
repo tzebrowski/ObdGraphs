@@ -53,6 +53,7 @@ import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.integrations.gcp.gdrive.TripLogDriveManager
 import org.obd.graphs.language.LanguageManager
 import org.obd.graphs.preferences.setPreferencesContext
+import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
@@ -84,6 +85,7 @@ class MainActivity :
     val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
 
     private var isAppReady = false
+    private var pendingNavigateTo: String? = null
 
     internal var activityBroadcastReceiver =
         object : BroadcastReceiver() {
@@ -111,6 +113,8 @@ class MainActivity :
         super.onCreate(savedInstanceState)
 
         splashScreen.setKeepOnScreenCondition { !isAppReady }
+
+        pendingNavigateTo = intent?.getStringExtra(EXTRA_NAVIGATE_TO)
 
         runWizardFlow()
 
@@ -182,6 +186,12 @@ class MainActivity :
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        pendingNavigateTo = intent.getStringExtra(EXTRA_NAVIGATE_TO)
+    }
+
     override fun onResume() {
         super.onResume()
         screen.setupWindowManager(this)
@@ -191,6 +201,20 @@ class MainActivity :
         val storedLanguage = LanguageManager.getStoredLanguage(this)
         if (storedLanguage.isNotEmpty() && resources.configuration.locales[0].language != storedLanguage) {
             recreate()
+        }
+
+        pendingNavigateTo?.let {
+            pendingNavigateTo = null
+            handleShortcutNavigation(it)
+        }
+    }
+
+    private fun handleShortcutNavigation(target: String) {
+        when (target) {
+            "graph" -> navigateToScreen(R.id.nav_graph)
+            "gauge" -> navigateToScreen(R.id.nav_gauge)
+            "trip_logs" -> TripLogListDialogFragment().show(supportFragmentManager, null)
+            "trip_upload" -> TripLogListDialogFragment(enableDeleteButtons = false).show(supportFragmentManager, null)
         }
     }
 
@@ -362,5 +386,9 @@ class MainActivity :
                 it.visibility = View.GONE
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_NAVIGATE_TO = "org.obd.graphs.EXTRA_NAVIGATE_TO"
     }
 }

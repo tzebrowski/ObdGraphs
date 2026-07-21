@@ -2,6 +2,15 @@
     <string name="nav_open">Otwórz</string>
     <string name="nav_close">Zamknij</string>
     <string name="app_name">My Giulia</string>
+
+    <string name="shortcut.graph.short_label">Wykres</string>
+    <string name="shortcut.graph.long_label">Otwórz Wykres</string>
+    <string name="shortcut.gauge.short_label">Zegary</string>
+    <string name="shortcut.gauge.long_label">Otwórz Zegary</string>
+    <string name="shortcut.trip_logs.short_label">Trasy</string>
+    <string name="shortcut.trip_logs.long_label">Zobacz trasy</string>
+    <string name="shortcut.trip_upload.short_label">Prześlij trasy</string>
+    <string name="shortcut.trip_upload.long_label">Prześlij trasy do chmury</string>
     <string name="pref.about_title">O aplikacji</string>
 
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> górny margines etykiety</string>

@@ -2,6 +2,15 @@
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
 
+    <string name="shortcut.graph.short_label">Graph</string>
+    <string name="shortcut.graph.long_label">Open Graph</string>
+    <string name="shortcut.gauge.short_label">Gauges</string>
+    <string name="shortcut.gauge.long_label">Open Gauges</string>
+    <string name="shortcut.trip_logs.short_label">Trip Logs</string>
+    <string name="shortcut.trip_logs.long_label">View Trip Logs</string>
+    <string name="shortcut.trip_upload.short_label">Upload Trips</string>
+    <string name="shortcut.trip_upload.long_label">Upload Trips to Cloud</string>
+
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> label top offset</string>
     <string name="pref.performance.screen_top_margin">Top margin</string>
 
