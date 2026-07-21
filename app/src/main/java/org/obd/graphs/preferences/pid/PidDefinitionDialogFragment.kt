@@ -46,6 +46,7 @@ open class PidDefinitionDialogFragment(
     private val key: String,
     source: String,
     private val orderPrefKey: String? = null,
+    private val dragReorderEnabled: Boolean = true,
     private val onDialogCloseListener: (() -> Unit) = {}
 ) : CoreDialogFragment() {
 
@@ -83,7 +84,9 @@ open class PidDefinitionDialogFragment(
         recyclerView.adapter = adapter
 
         attachSearchView()
-        attachDragManager(recyclerView)
+        if (dragReorderEnabled) {
+            attachDragManager(recyclerView)
+        }
         attachActionButtons()
 
         val fabAddPid = root.findViewById<View>(R.id.fab_add_pid)
