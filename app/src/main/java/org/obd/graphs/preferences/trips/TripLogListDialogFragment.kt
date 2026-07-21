@@ -32,7 +32,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
@@ -114,7 +116,7 @@ class TripLogListDialogFragment(
                 context,
                 tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList(),
                 enableDeleteButtons
-            )
+            ) { details -> loadTripSummary(details) }
 
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
@@ -197,5 +199,12 @@ class TripLogListDialogFragment(
             uploadToCloud.visibility = View.GONE
         }
         return root
+    }
+
+    private fun loadTripSummary(details: TripLogDetails) {
+        lifecycleScope.launch {
+            val summary = withContext(Dispatchers.IO) { tripManager.readTripSummary(details.source.fileName) }
+            adapter.setTripSummary(details.source.fileName, summary)
+        }
     }
 }

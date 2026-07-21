@@ -162,6 +162,31 @@ internal class DefaultTripManager : TripManager {
         }
     }
 
+    override fun readTripSummary(tripName: String): Map<Long, SensorData> {
+        val trip = Trip(startTs = 0)
+
+        return try {
+            repository.loadTrip(tripName) { metric ->
+                val key = metric.entry.data
+                trip.entries.getOrPut(key) { SensorData(id = key) }.metrics.add(metric)
+            }
+
+            trip.entries.values.forEach { sensorData ->
+                val values = sensorData.metrics.mapNotNull { it.entry.y.toString().toFloatOrNull() }
+                if (values.isNotEmpty()) {
+                    sensorData.min = values.minOrNull() ?: 0f
+                    sensorData.max = values.maxOrNull() ?: 0f
+                    sensorData.mean = values.average()
+                }
+            }
+
+            trip.entries
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to read trip summary for '$tripName'.", e)
+            emptyMap()
+        }
+    }
+
     override fun saveCurrentTrip() {
         sendBroadcastEvent(
             SCREEN_LOCK_PROGRESS_EVENT,

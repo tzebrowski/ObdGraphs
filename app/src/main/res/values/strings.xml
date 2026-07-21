@@ -467,7 +467,6 @@
     <string name="pref.view.navigation.navigate_to_last_visited_view">Navigate to last visited view</string>
     <string name="pref.view.navigation.navigate_to_last_visited_view_summary">When enabled, app during startup opens last visited view</string>
 
-    <string name="pref.graph.trips_recordings_display_info">Display trip info</string>
     <string name="pref.graph.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
     <string name="pref.graph.x_axis_start_moving_after_time">X-Axis start moving after</string>
     <string name="pref.graph.x_axis_minimum_shift_time">X-Axis moving time</string>

@@ -5,9 +5,20 @@
     android:layout_height="wrap_content"
     android:background="@drawable/transparent_window_background">
 
+    <TextView
+        android:id="@+id/marker_timestamp"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:paddingStart="4dp"
+        android:paddingTop="2dp"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
     <TableRow
-        android:layout_width="260dp"
+        android:layout_width="340dp"
         android:layout_height="fill_parent"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,5 +50,5 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="26dp" />
+        android:layout_marginTop="46dp" />
 </RelativeLayout>
