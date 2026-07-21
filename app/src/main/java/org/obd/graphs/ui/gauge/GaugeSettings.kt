@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.ui.gauge
 
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
@@ -30,6 +31,16 @@ class GaugeSettings : ScreenSettings {
             override fun getFontSize(): Int = Prefs.getS("pref.gauge.font_size", "42").toInt()
 
             override fun getGaugeContainerColor(): Int = Prefs.getInt("pref.gauge_background_color", COLOR_RAINBOW_INDIGO)
+
+            override fun isPIDsSortOrderEnabled(): Boolean = Prefs.isEnabled("pref.pids.custom_order.enabled")
+
+            override fun getPIDsSortOrder(): Map<Long, Int>? =
+                if (isPIDsSortOrderEnabled()) {
+                    ViewPreferencesSerializer("${gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()}.view.settings")
+                        .getItemsSortOrder()
+                } else {
+                    null
+                }
         }
 
     override fun getGaugeScreenSettings(): GaugeScreenSettings =

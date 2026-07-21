@@ -65,7 +65,8 @@ data class PidUiState(
 class PidDefinitionViewModel(
     private val key: String,
     val dialogMode: PidDefinitionDialogMode,
-    private val customPidRepository: CustomPidRepository
+    private val customPidRepository: CustomPidRepository,
+    private val orderPrefKey: String? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PidUiState())
@@ -285,7 +286,7 @@ class PidDefinitionViewModel(
         return (userPids + checkedStandard + uncheckedStandard).toMutableList()
     }
 
-    private fun viewPreferencesSerializer(): ViewPreferencesSerializer = ViewPreferencesSerializer("$key.view.settings")
+    private fun viewPreferencesSerializer(): ViewPreferencesSerializer = ViewPreferencesSerializer(orderPrefKey ?: "$key.view.settings")
 
     private fun map(all: MutableCollection<PidDefinition>): List<PidDefinitionDetails> {
         val source = Prefs.getStringSet(HIGH_PRIO_PID_PREF).map { s -> s.toLong() } +
@@ -324,12 +325,13 @@ class PidDefinitionViewModel(
 class PidViewModelFactory(
     private val key: String,
     private val dialogMode: PidDefinitionDialogMode,
-    private val customPidRepository: CustomPidRepository
+    private val customPidRepository: CustomPidRepository,
+    private val orderPrefKey: String? = null
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PidDefinitionViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PidDefinitionViewModel(key, dialogMode, customPidRepository) as T
+            return PidDefinitionViewModel(key, dialogMode, customPidRepository, orderPrefKey) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

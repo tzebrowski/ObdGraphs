@@ -45,6 +45,8 @@ import org.obd.metrics.pid.PidDefinition
 open class PidDefinitionDialogFragment(
     private val key: String,
     source: String,
+    private val orderPrefKey: String? = null,
+    private val dragReorderEnabled: Boolean = true,
     private val onDialogCloseListener: (() -> Unit) = {}
 ) : CoreDialogFragment() {
 
@@ -53,7 +55,7 @@ open class PidDefinitionDialogFragment(
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
-        PidViewModelFactory(key, dialogMode, CustomPidRepository(requireContext().applicationContext))
+        PidViewModelFactory(key, dialogMode, CustomPidRepository(requireContext().applicationContext), orderPrefKey)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -82,7 +84,9 @@ open class PidDefinitionDialogFragment(
         recyclerView.adapter = adapter
 
         attachSearchView()
-        attachDragManager(recyclerView)
+        if (dragReorderEnabled) {
+            attachDragManager(recyclerView)
+        }
         attachActionButtons()
 
         val fabAddPid = root.findViewById<View>(R.id.fab_add_pid)

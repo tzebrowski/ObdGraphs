@@ -123,6 +123,14 @@
                     app:experimental="true"
                     app:singleLineTitle="false" />
 
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.pids.custom_order.enabled"
+                    android:summary="@string/pref.pids.custom_order.enabled_summary"
+                    android:title="@string/pref.pids.custom_order.enabled"
+                    app:experimental="true"
+                    app:singleLineTitle="false" />
+
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.pid.custom.category">

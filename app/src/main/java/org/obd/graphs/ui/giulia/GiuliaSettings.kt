@@ -16,9 +16,11 @@
  */
 package org.obd.graphs.ui.giulia
 
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.renderer.api.GiuliaScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 
@@ -28,6 +30,16 @@ class GiuliaSettings : ScreenSettings {
     private val giuliaScreenSettings =
         object : GiuliaScreenSettings() {
             override fun getFontSize(): Int = giuliaVirtualScreenPreferences.getFontSize()
+
+            override fun isPIDsSortOrderEnabled(): Boolean = Prefs.isEnabled("pref.pids.custom_order.enabled")
+
+            override fun getPIDsSortOrder(): Map<Long, Int>? =
+                if (isPIDsSortOrderEnabled()) {
+                    ViewPreferencesSerializer("${giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()}.view.settings")
+                        .getItemsSortOrder()
+                } else {
+                    null
+                }
         }
 
     override fun getGiuliaScreenSettings(): GiuliaScreenSettings = giuliaScreenSettings.apply {

@@ -17,9 +17,11 @@
 package org.obd.graphs.ui.graph
 
 import android.util.Log
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.isEnabled
 
 data class GraphPreferences(
     val xAxisStartMovingAfter: Float,
@@ -43,7 +45,25 @@ class GraphPreferencesReader {
 
         val cacheEnabled = Prefs.getBoolean("$prefixKey.cache.enabled", true)
 
-        val metrics = tripVirtualScreenManager.getCurrentMetrics().map { it.toLong() }.toSet()
+        val sortOrder =
+            if (Prefs.isEnabled("pref.pids.custom_order.enabled")) {
+                ViewPreferencesSerializer("${tripVirtualScreenManager.getVirtualScreenPrefKey()}.view.settings")
+                    .getItemsSortOrder()
+            } else {
+                null
+            }
+
+        // Prefs.getStringSet() is an unordered HashSet under the hood, so the ids need an explicit
+        // sort here - .toSet() below preserves this order (LinkedHashSet), unlike the source set.
+        val metrics =
+            tripVirtualScreenManager.getCurrentMetrics().map { it.toLong() }
+                .sortedWith { id1, id2 ->
+                    if (sortOrder != null && sortOrder.containsKey(id1) && sortOrder.containsKey(id2)) {
+                        sortOrder[id1]!!.compareTo(sortOrder[id2]!!)
+                    } else {
+                        id1.compareTo(id2)
+                    }
+                }.toSet()
 
         val toggleVirtualPanel = Prefs.getBoolean("$prefixKey.toggle_virtual_screens_double_click", true)
 

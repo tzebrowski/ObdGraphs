@@ -99,28 +99,32 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     "dash" -> {
                         openPIDsDialog(
                             "pref.dash.pids.selected",
-                            PREFERENCE_SCREEN_SOURCE_DASHBOARD
+                            PREFERENCE_SCREEN_SOURCE_DASHBOARD,
+                            orderPrefKey = "prefs.dash.pids.settings"
                         ) { navigateToScreen(R.id.nav_dashboard) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GRAPH -> {
                         openPIDsDialog(
                             tripVirtualScreenManager.getVirtualScreenPrefKey(),
-                            preference.source
+                            preference.source,
+                            dragReorderEnabled = Prefs.isEnabled("pref.pids.custom_order.enabled")
                         ) { navigateToScreen(R.id.nav_graph) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GIULIA -> {
                         openPIDsDialog(
                             giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(),
-                            preference.source
+                            preference.source,
+                            dragReorderEnabled = Prefs.isEnabled("pref.pids.custom_order.enabled")
                         ) { navigateToScreen(R.id.nav_giulia) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GAUGE -> {
                         openPIDsDialog(
                             gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(),
-                            preference.source
+                            preference.source,
+                            dragReorderEnabled = Prefs.isEnabled("pref.pids.custom_order.enabled")
                         ) { navigateToScreen(R.id.nav_gauge) }
                     }
 
@@ -304,23 +308,33 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 ) { navigateToScreen(R.id.nav_performance) }
 
             PREFERENCE_SCREEN_KEY_DASH ->
-                openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD) { navigateToScreen(R.id.nav_dashboard) }
+                openPIDsDialog(
+                    "pref.dash.pids.selected",
+                    PREFERENCE_SCREEN_SOURCE_DASHBOARD,
+                    orderPrefKey = "prefs.dash.pids.settings"
+                ) { navigateToScreen(R.id.nav_dashboard) }
 
             PREFERENCE_SCREEN_KEY_GAUGE ->
                 openPIDsDialog(
                     gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(),
-                    PREFERENCE_SCREEN_SOURCE_GAUGE
+                    PREFERENCE_SCREEN_SOURCE_GAUGE,
+                    dragReorderEnabled = Prefs.isEnabled("pref.pids.custom_order.enabled")
                 ) { navigateToScreen(R.id.nav_gauge) }
 
             PREFERENCE_SCREEN_KEY_GIULIA ->
-                openPIDsDialog(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA) {
+                openPIDsDialog(
+                    giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(),
+                    PREFERENCE_SCREEN_SOURCE_GIULIA,
+                    dragReorderEnabled = Prefs.isEnabled("pref.pids.custom_order.enabled")
+                ) {
                     navigateToScreen(R.id.nav_giulia)
                 }
 
             PREFERENCE_SCREEN_KEY_GRAPH ->
                 openPIDsDialog(
                     tripVirtualScreenManager.getVirtualScreenPrefKey(),
-                    PREFERENCE_SCREEN_SOURCE_GRAPH
+                    PREFERENCE_SCREEN_SOURCE_GRAPH,
+                    dragReorderEnabled = Prefs.isEnabled("pref.pids.custom_order.enabled")
                 ) { navigateToScreen(R.id.nav_graph) }
         }
     }
@@ -328,11 +342,15 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPIDsDialog(
         key: String,
         source: String,
+        orderPrefKey: String? = null,
+        dragReorderEnabled: Boolean = true,
         onDialogCloseListener: (() -> Unit) = {}
     ) {
         PidDefinitionDialogFragment(
             key = key,
             source = source,
+            orderPrefKey = orderPrefKey,
+            dragReorderEnabled = dragReorderEnabled,
             onDialogCloseListener = onDialogCloseListener
         ).show(parentFragmentManager, null)
     }

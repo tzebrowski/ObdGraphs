@@ -292,6 +292,8 @@
     <string name="pref.aa.connect_dialog.enabled">Wyświetl okno dialogowe połączenia podczas nawiązywania połączenia z adapterem OBD2</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled">Włącz sortowanie PID</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled_summary">To jest funkcja EKSPERYMENTALNA.\nPozwala zdefiniować kolejność PID na ekranie za pomocą przeciągania i upuszczania na liście wyboru PID. Po włączeniu tej opcji wymagane jest ponowne uruchomienie aplikacji.</string>
+    <string name="pref.pids.custom_order.enabled">Włącz niestandardową kolejność PID</string>
+    <string name="pref.pids.custom_order.enabled_summary">To jest funkcja EKSPERYMENTALNA.\nStosuje kolejność ustawioną poprzez przeciąganie i upuszczanie PID na liście wyboru PID do ekranów Dashboard, Wykres, Zegary i Giulia.</string>
 
     <string name="pref.aa.title">Android Auto</string>
 

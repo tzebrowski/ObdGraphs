@@ -288,6 +288,8 @@
     <string name="pref.aa.connect_dialog.enabled">Display the connection dialog while establishing a connection with the OBD2 adapter</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled">Enable PIDs sort order</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled_summary">This is an EXPERIMENTAL feature.\nIt allows you to define the order of PIDs on the screen using drag-and-drop within the PID selection list. An app restart is required after enabling this option.</string>
+    <string name="pref.pids.custom_order.enabled">Enable custom PID order</string>
+    <string name="pref.pids.custom_order.enabled_summary">This is an EXPERIMENTAL feature.\nApplies the order you set by dragging and dropping PIDs in the PID selection list to the Dashboard, Graph, Gauge, and Giulia screens.</string>
 
     <string name="pref.aa.title">Android Auto</string>
 
