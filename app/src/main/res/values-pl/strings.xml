@@ -476,7 +476,6 @@
     <string name="pref.view.navigation.navigate_to_last_visited_view">Przejdź do ostatnio odwiedzonego widoku</string>
     <string name="pref.view.navigation.navigate_to_last_visited_view_summary">Po włączeniu aplikacja podczas uruchamiania otwiera ostatnio odwiedzony widok</string>
 
-    <string name="pref.graph.trips_recordings_display_info">Wyświetl informacje o trasie</string>
     <string name="pref.graph.trips_recordings_save_short_trip">Rejestruj trasy krótsze niż 5s (start silnika)</string>
     <string name="pref.graph.x_axis_start_moving_after_time">Oś X zaczyna się przesuwać po</string>
     <string name="pref.graph.x_axis_minimum_shift_time">Czas przesuwania osi X</string>

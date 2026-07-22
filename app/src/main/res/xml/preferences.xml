@@ -2050,11 +2050,6 @@
                 <PreferenceCategory android:title="@string/pref.trips_category">
                     <SwitchPreferenceCompat
                         android:defaultValue="false"
-                        android:key="pref.trips.recordings.display_info"
-                        android:title="@string/pref.graph.trips_recordings_display_info" />
-
-                    <SwitchPreferenceCompat
-                        android:defaultValue="false"
                         android:key="pref.trips.recordings.save.short.trip"
                         android:title="@string/pref.graph.trips_recordings_save_short_trip"
                         app:singleLineTitle="false" />

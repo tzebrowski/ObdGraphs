@@ -34,8 +34,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.format
 import org.obd.graphs.profile.profile
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
@@ -47,11 +51,29 @@ private const val LOGGER_KEY = "TripsViewAdapter"
 class TripViewAdapter internal constructor(
     context: Context?,
     var data: MutableCollection<TripLogDetails>,
-    private val showDeleteButton: Boolean = true
+    private val showDeleteButton: Boolean = true,
+    private val onDetailsRequested: (TripLogDetails) -> Unit = {}
 ) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault())
+
+    // Only one row expanded at a time, mirroring DiagnosticTroubleCodeViewAdapter's pattern.
+    private var expandedPosition = RecyclerView.NO_POSITION
+
+    // Keyed by trip file name rather than position, so a cached summary survives list reordering.
+    private val summaryCache = mutableMapOf<String, Map<Long, SensorData>>()
+
+    fun setTripSummary(
+        fileName: String,
+        summary: Map<Long, SensorData>
+    ) {
+        summaryCache[fileName] = summary
+        val position = data.indexOfFirst { it.source.fileName == fileName }
+        if (position != -1) {
+            notifyItemChanged(position)
+        }
+    }
 
     private val profileColors =
         mutableMapOf<String, Int>().apply {
@@ -125,6 +147,50 @@ class TripViewAdapter internal constructor(
 
                 it.setText(text, Color.GRAY, Typeface.BOLD, 0.9f)
             }
+
+            val isExpanded = position == expandedPosition
+            holder.expandedContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
+
+            if (isExpanded) {
+                val summary = summaryCache[source.fileName]
+                if (summary == null) {
+                    holder.expandedContainer.removeAllViews()
+                    onDetailsRequested(this)
+                } else {
+                    bindSummary(holder.expandedContainer, summary)
+                }
+            }
+
+            holder.itemView.setOnClickListener {
+                val previousExpandedPosition = expandedPosition
+                expandedPosition = if (isExpanded) RecyclerView.NO_POSITION else position
+
+                notifyItemChanged(previousExpandedPosition)
+                notifyItemChanged(expandedPosition)
+            }
+        }
+    }
+
+    // Inflates one item_metric.xml row per PID directly into the expanded container - a nested
+    // RecyclerView isn't worth it here since only one trip row is ever expanded at a time.
+    private fun bindSummary(
+        container: LinearLayout,
+        summary: Map<Long, SensorData>
+    ) {
+        container.removeAllViews()
+        val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
+
+        summary.values.forEach { sensorData ->
+            val pid = pidRegistry.findBy(sensorData.id)
+            val row = mInflater.inflate(R.layout.item_metric, container, false)
+
+            row.findViewById<TextView>(R.id.metric_name).setText(pid.description, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 1.0f)
+            row.findViewById<TextView>(R.id.metric_min_value).setText(sensorData.min.format(pid), Color.GRAY, Typeface.NORMAL, 1.0f)
+            row.findViewById<TextView>(R.id.metric_max_value).setText(sensorData.max.format(pid), Color.GRAY, Typeface.NORMAL, 1.0f)
+            row.findViewById<TextView>(R.id.metric_avg_value).setText(sensorData.mean.format(pid), Color.GRAY, Typeface.NORMAL, 1.0f)
+            row.findViewById<TextView>(R.id.metric_value).visibility = View.GONE
+
+            container.addView(row)
         }
     }
 
@@ -137,6 +203,7 @@ class TripViewAdapter internal constructor(
         val vehicleProfile: TextView = binding.findViewById(R.id.vehicle_profile)
         val tripStartDate: TextView = binding.findViewById(R.id.trip_start_date)
         val tripTime: TextView = binding.findViewById(R.id.trip_length)
+        val expandedContainer: LinearLayout = binding.findViewById(R.id.trip_expanded_details_container)
         private val loadTrip: Button = binding.findViewById(R.id.trip_load)
         private val deleteTrip: Button = binding.findViewById(R.id.trip_delete)
         private val actionsContainer: LinearLayout = binding.findViewById(R.id.actions_container)

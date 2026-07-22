@@ -29,4 +29,8 @@ interface TripManager : MetricsProcessor {
     fun findAllTripsBy(filter: String = ""): MutableCollection<TripFileDesc>
     fun deleteTrip(trip: TripFileDesc)
     fun loadTrip(tripName: String)
+
+    // Pure read - unlike loadTrip(), does not touch the active trip cache, lock the screen, or
+    // require logging to be stopped. Safe to call for any trip just to inspect its stats.
+    fun readTripSummary(tripName: String): Map<Long, SensorData>
 }

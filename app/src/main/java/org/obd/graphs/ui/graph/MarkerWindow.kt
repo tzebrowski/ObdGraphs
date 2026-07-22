@@ -18,12 +18,14 @@ package org.obd.graphs.ui.graph
 
 import android.content.Context
 import android.util.Log
+import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.MPPointF
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
@@ -31,9 +33,17 @@ import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
+import java.util.Locale
 
 private const val SEARCH_SCOPE = 300
 private const val LOG_KEY = "MarkerWindow"
+
+data class MarkerMetric(
+    val obdMetric: ObdMetric,
+    val min: Double,
+    val max: Double,
+    val mean: Double
+)
 
 class MarkerWindow(
     context: Context?,
@@ -45,6 +55,8 @@ class MarkerWindow(
         e: Entry,
         highlight: Highlight?
     ) {
+        findViewById<TextView>(R.id.marker_timestamp)?.text = formatElapsedTime(e.x)
+
         val metrics = findClosestMetrics(e)
         val adapter = MarkerWindowViewAdapter(context, metrics)
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
@@ -55,30 +67,35 @@ class MarkerWindow(
 
     override fun getOffset(): MPPointF = MPPointF.getInstance(-(width / 2).toFloat(), -height.toFloat())
 
-    private fun findClosestMetrics(e: Entry): MutableCollection<ObdMetric> {
-        val metricsMap = mutableMapOf<Long, ObdMetric>()
+    private fun formatElapsedTime(elapsedMs: Float): String {
+        val totalSeconds = (elapsedMs / 1000).toInt()
+        return String.format(Locale.getDefault(), "%02d:%02d", totalSeconds / 60, totalSeconds % 60)
+    }
+
+    private fun findClosestMetrics(e: Entry): MutableCollection<MarkerMetric> {
+        val metricsMap = mutableMapOf<Long, MarkerMetric>()
         e.data?.let {
             metricsMap[(e.data.toString().toLong())] =
-                buildMetrics((e.data.toString().toLong()), e.y)
+                buildMetrics((e.data.toString().toLong()), e.y, listOf(e.y))
         }
 
         var time = System.currentTimeMillis()
-        chart.data.dataSets.forEach {
+        chart.data.dataSets.forEach { dataSet ->
             var x = 0
 
             do {
-                val entriesForXValue = it.getEntriesForXValue(e.x + x)
+                val entriesForXValue = dataSet.getEntriesForXValue(e.x + x)
                 if (entriesForXValue.isNotEmpty()) {
                     entriesForXValue.forEach { entry ->
                         e.data?.let {
                             val id = entry.data.toString().toLong()
                             metricsMap[id] =
-                                buildMetrics(id, entry.y)
+                                buildMetrics(id, entry.y, valuesUpTo(dataSet, entry.x))
                         }
                     }
                 } else {
                     if (x > SEARCH_SCOPE) {
-                        Log.d(LOG_KEY, "Did not find entry for=${it.label}.")
+                        Log.d(LOG_KEY, "Did not find entry for=${dataSet.label}.")
                         break
                     }
                     x = updateXValue(x)
@@ -87,8 +104,19 @@ class MarkerWindow(
         }
         time = System.currentTimeMillis() - time
         Log.d(LOG_KEY, "Build map, time: ${time}ms , values: ${metricsMap.values}.")
-        return metricsMap.values.sortedBy { i -> i.command.pid.description }.toMutableList()
+        return metricsMap.values.sortedBy { i -> i.obdMetric.command.pid.description }.toMutableList()
     }
+
+    // The trip's running min/max/mean up to this point in time - not the trip-wide stats
+    // already shown in the side panel, which is why this is computed per-tap rather than reused.
+    private fun valuesUpTo(
+        dataSet: ILineDataSet,
+        x: Float
+    ): List<Float> =
+        (0 until dataSet.entryCount)
+            .map { dataSet.getEntryForIndex(it) }
+            .filter { it.x <= x }
+            .map { it.y }
 
     private fun updateXValue(x: Int): Int {
         var x1 = x
@@ -109,15 +137,25 @@ class MarkerWindow(
 
     private fun buildMetrics(
         id: Long,
-        v: Float
-    ): ObdMetric {
+        v: Float,
+        rawValuesUpToNow: List<Float>
+    ): MarkerMetric {
         val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)
         val value = pid.scaleToRange(v)
-        return ObdMetric
-            .builder()
-            .command(ObdCommand(pid))
-            .value(value)
-            .build()
+        val obdMetric =
+            ObdMetric
+                .builder()
+                .command(ObdCommand(pid))
+                .value(value)
+                .build()
+
+        val values = rawValuesUpToNow.ifEmpty { listOf(v) }
+        return MarkerMetric(
+            obdMetric = obdMetric,
+            min = pid.scaleToRange(values.min()).toDouble(),
+            max = pid.scaleToRange(values.max()).toDouble(),
+            mean = pid.scaleToRange(values.average().toFloat()).toDouble()
+        )
     }
 }

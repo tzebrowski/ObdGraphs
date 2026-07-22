@@ -12,7 +12,6 @@
         android:background="@color/dialog_card_background"
         android:paddingStart="0dp"
         android:paddingEnd="2dip"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -111,4 +110,19 @@
                 android:padding="2dip" />
         </TableRow>
     </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/trip_expanded_details_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_variant"
+        android:orientation="vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tablelayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

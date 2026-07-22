@@ -31,8 +31,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -59,7 +57,6 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
-import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
@@ -209,69 +206,18 @@ class GraphFragment : Fragment() {
 
         initializeChart(root)
         registerMetricsObserver()
-        initializeTripDetails()
         loadCurrentTrip()
         registerReceivers()
-        configureRecyclerView()
         setupVirtualViewPanel()
         configureActionButton(query())
         configureActionButton(query())
         return root
     }
 
-    private fun configureRecyclerView() {
-        val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)
-        configureRecyclerView(R.id.graph_view_chart, true, 5f)
-        configureRecyclerView(R.id.graph_view_table_layout, displayInfoPanel, 0.2f)
-        configureRecyclerView(R.id.recycler_view, displayInfoPanel, 1.3f)
-    }
-
-    private fun configureRecyclerView(
-        id: Int,
-        visible: Boolean,
-        weight: Float
-    ) {
-        val view: View = root.findViewById(id)
-        view.visibility = if (visible) View.VISIBLE else View.GONE
-        (view.layoutParams as LinearLayout.LayoutParams).run {
-            this.weight = weight
-            this.width = LinearLayout.LayoutParams.MATCH_PARENT
-        }
-    }
-
     private fun registerMetricsObserver() {
         DataLoggerRepository.observe(viewLifecycleOwner) {
             if (preferences.metrics.contains(it.command.pid.id)) {
                 addEntry(it)
-            }
-        }
-    }
-
-    private fun initializeTripDetails() {
-        val data: MutableList<SensorData> = arrayListOf()
-        val adapter = TripDetailsViewAdapter(root.context, data)
-        val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-
-        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
-        recyclerView.adapter = adapter
-
-        DataLoggerRepository.observe(viewLifecycleOwner) {
-            DataLoggerRepository.findHistogramFor(it).let { hist ->
-                val sensorData =
-                    SensorData(
-                        id = it.command.pid.id,
-                        min = hist.min,
-                        max = hist.max,
-                        mean = hist.mean
-                    )
-                val indexOf = data.indexOf(sensorData)
-                if (indexOf == -1) {
-                    data.add(sensorData)
-                    adapter.notifyItemInserted(data.indexOf(sensorData))
-                } else {
-                    data[indexOf] = sensorData
-                    adapter.notifyItemChanged(indexOf, sensorData)
-                }
             }
         }
     }
@@ -323,11 +269,6 @@ class GraphFragment : Fragment() {
             val trip = tripManager.getCurrentTrip()
             val registry = DataLoggerRepository.getPidDefinitionRegistry()
             tripStartTs = trip.startTs
-
-            val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-            val adapter = recyclerView.adapter as TripDetailsViewAdapter
-            adapter.mData.addAll(trip.entries.values)
-            adapter.notifyDataSetChanged()
 
             trip.entries.let { cache ->
                 chart.run {
@@ -506,7 +447,6 @@ class GraphFragment : Fragment() {
                 preferences = graphPreferencesReader.read()
 
                 initializeChart(root)
-                initializeTripDetails()
                 loadCurrentTrip()
             }
         }
