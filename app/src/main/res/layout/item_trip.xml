@@ -115,7 +115,7 @@
         android:id="@+id/trip_expanded_details_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/dialog_card_background"
+        android:background="@color/surface_variant"
         android:orientation="vertical"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
