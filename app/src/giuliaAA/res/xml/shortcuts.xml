@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="graph"
+        android:enabled="true"
+        android:icon="@drawable/ic_graph"
+        android:shortcutShortLabel="@string/shortcut.graph.short_label"
+        android:shortcutLongLabel="@string/shortcut.graph.long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.obd.graphs.my.giulia.aa"
+            android:targetClass="org.obd.graphs.activity.MainActivity">
+            <extra
+                android:name="org.obd.graphs.EXTRA_NAVIGATE_TO"
+                android:value="graph" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="gauge"
+        android:enabled="true"
+        android:icon="@drawable/ic_gauge"
+        android:shortcutShortLabel="@string/shortcut.gauge.short_label"
+        android:shortcutLongLabel="@string/shortcut.gauge.long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.obd.graphs.my.giulia.aa"
+            android:targetClass="org.obd.graphs.activity.MainActivity">
+            <extra
+                android:name="org.obd.graphs.EXTRA_NAVIGATE_TO"
+                android:value="gauge" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="trip_logs"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut.trip_logs.short_label"
+        android:shortcutLongLabel="@string/shortcut.trip_logs.long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.obd.graphs.my.giulia.aa"
+            android:targetClass="org.obd.graphs.activity.MainActivity">
+            <extra
+                android:name="org.obd.graphs.EXTRA_NAVIGATE_TO"
+                android:value="trip_logs" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="trip_upload"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_execute"
+        android:shortcutShortLabel="@string/shortcut.trip_upload.short_label"
+        android:shortcutLongLabel="@string/shortcut.trip_upload.long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.obd.graphs.my.giulia.aa"
+            android:targetClass="org.obd.graphs.activity.MainActivity">
+            <extra
+                android:name="org.obd.graphs.EXTRA_NAVIGATE_TO"
+                android:value="trip_upload" />
+        </intent>
+    </shortcut>
+
+</shortcuts>
