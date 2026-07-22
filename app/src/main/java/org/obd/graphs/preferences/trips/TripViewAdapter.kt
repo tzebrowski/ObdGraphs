@@ -39,6 +39,7 @@ import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.format
 import org.obd.graphs.profile.profile
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
@@ -183,7 +184,7 @@ class TripViewAdapter internal constructor(
             val pid = pidRegistry.findBy(sensorData.id)
             val row = mInflater.inflate(R.layout.item_metric, container, false)
 
-            row.findViewById<TextView>(R.id.metric_name).setText(pid.description, Color.WHITE, Typeface.NORMAL, 1.0f)
+            row.findViewById<TextView>(R.id.metric_name).setText(pid.description, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 1.0f)
             row.findViewById<TextView>(R.id.metric_min_value).setText(sensorData.min.format(pid), Color.GRAY, Typeface.NORMAL, 1.0f)
             row.findViewById<TextView>(R.id.metric_max_value).setText(sensorData.max.format(pid), Color.GRAY, Typeface.NORMAL, 1.0f)
             row.findViewById<TextView>(R.id.metric_avg_value).setText(sensorData.mean.format(pid), Color.GRAY, Typeface.NORMAL, 1.0f)
