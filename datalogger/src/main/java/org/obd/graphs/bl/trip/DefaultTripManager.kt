@@ -135,14 +135,7 @@ internal class DefaultTripManager : TripManager {
                                 trip.entries[key]!!.metrics.add(metric)
                             }
 
-                            trip.entries.values.forEach { sensorData ->
-                                val values = sensorData.metrics.mapNotNull { it.entry.y.toString().toFloatOrNull() }
-                                if (values.isNotEmpty()) {
-                                    sensorData.min = values.minOrNull() ?: 0f
-                                    sensorData.max = values.maxOrNull() ?: 0f
-                                    sensorData.mean = values.average()
-                                }
-                            }
+                            aggregateMinMaxMean(trip.entries)
 
                             Log.i(LOG_TAG, "Trip loaded successfully. PIDs: ${trip.entries.keys}")
 
@@ -171,14 +164,7 @@ internal class DefaultTripManager : TripManager {
                 trip.entries.getOrPut(key) { SensorData(id = key) }.metrics.add(metric)
             }
 
-            trip.entries.values.forEach { sensorData ->
-                val values = sensorData.metrics.mapNotNull { it.entry.y.toString().toFloatOrNull() }
-                if (values.isNotEmpty()) {
-                    sensorData.min = values.minOrNull() ?: 0f
-                    sensorData.max = values.maxOrNull() ?: 0f
-                    sensorData.mean = values.average()
-                }
-            }
+            aggregateMinMaxMean(trip.entries)
 
             trip.entries
         } catch (e: Throwable) {
@@ -229,6 +215,27 @@ internal class DefaultTripManager : TripManager {
 
     override fun deleteTrip(trip: TripFileDesc) {
         repository.deleteTrip(trip.fileName)
+    }
+
+    // postValue() persists numeric metrics through scaleToRange(), normalizing them into the chart's
+    // 0-3500 plotting range - so min/max/mean must be reverse-mapped back to real units via
+    // PidDefinition.scaleToRange() before being shown to the user (mirrors GraphFragment's marker tooltip).
+    private fun aggregateMinMaxMean(entries: Map<Long, SensorData>) {
+        val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
+
+        entries.values.forEach { sensorData ->
+            val pid = pidRegistry.findBy(sensorData.id)
+            val values =
+                sensorData.metrics
+                    .mapNotNull { it.entry.y.toString().toFloatOrNull() }
+                    .map { pid.scaleToRange(it) }
+
+            if (values.isNotEmpty()) {
+                sensorData.min = values.minOrNull() ?: 0f
+                sensorData.max = values.maxOrNull() ?: 0f
+                sensorData.mean = values.average()
+            }
+        }
     }
 
     private fun updateCache(newTs: Long) {
