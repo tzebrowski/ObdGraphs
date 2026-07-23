@@ -386,6 +386,10 @@
 
     <string name="pref.dtc.no_connection_established">Brak połączenia z ECU. Najpierw nawiąż połączenie.</string>
 
+    <string name="pref.dtc.select_modules.title">Wybierz moduły do skanowania</string>
+    <string name="pref.dtc.select_modules.confirm">Skanuj</string>
+    <string name="pref.dtc.select_modules.cancel">Anuluj</string>
+
     <string name="pref.vehicle.metadata_title">Metadane pojazdu</string>
     <string name="pref.vehicle.metadata.name">Nazwa</string>
     <string name="pref.vehicle.metadata.value">Wartość</string>

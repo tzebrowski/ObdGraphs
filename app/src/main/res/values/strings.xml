@@ -382,6 +382,10 @@
 
     <string name="pref.dtc.no_connection_established">There is no ECU connection established. Please connect first.</string>
 
+    <string name="pref.dtc.select_modules.title">Select Modules to Scan</string>
+    <string name="pref.dtc.select_modules.confirm">Scan</string>
+    <string name="pref.dtc.select_modules.cancel">Cancel</string>
+
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>
     <string name="pref.vehicle.metadata.value">Value</string>

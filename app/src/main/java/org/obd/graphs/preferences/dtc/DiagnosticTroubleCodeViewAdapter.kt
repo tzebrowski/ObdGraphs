@@ -39,24 +39,47 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 
+private const val VIEW_TYPE_HEADER = 0
+private const val VIEW_TYPE_DTC = 1
+
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?
-) : ListAdapter<DiagnosticTroubleCode, DiagnosticTroubleCodeViewAdapter.ViewHolder>(DiffCallback) {
+) : ListAdapter<DtcListItem, RecyclerView.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     private var expandedPosition = RecyclerView.NO_POSITION
 
+    override fun getItemViewType(position: Int): Int =
+        when (getItem(position)) {
+            is DtcListItem.ModuleHeader -> VIEW_TYPE_HEADER
+            is DtcListItem.DtcRow -> VIEW_TYPE_DTC
+        }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewHolder = ViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
+    ): RecyclerView.ViewHolder =
+        if (viewType == VIEW_TYPE_HEADER) {
+            HeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
+        } else {
+            DtcViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
+        }
 
     override fun onBindViewHolder(
-        holder: ViewHolder,
+        holder: RecyclerView.ViewHolder,
         position: Int
     ) {
-        val dtc = getItem(position)
+        when (val item = getItem(position)) {
+            is DtcListItem.ModuleHeader -> (holder as HeaderViewHolder).bind(item)
+            is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item.dtc, position)
+        }
+    }
 
+    private fun bindDtc(
+        holder: DtcViewHolder,
+        dtc: DiagnosticTroubleCode,
+        position: Int
+    ) {
         val formattedCode =
             if (!dtc.failureType?.code.isNullOrEmpty()) {
                 "${dtc.standardCode}-${dtc.failureType.code}"
@@ -170,9 +193,15 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         }
     }
 
-    inner class ViewHolder internal constructor(
-        itemView: View
-    ) : RecyclerView.ViewHolder(itemView) {
+    internal class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val name: TextView = itemView.findViewById(R.id.dtc_module_header_name)
+
+        fun bind(header: DtcListItem.ModuleHeader) {
+            name.text = header.module
+        }
+    }
+
+    internal class DtcViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
 
@@ -190,15 +219,22 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 
     companion object {
         private val DiffCallback =
-            object : DiffUtil.ItemCallback<DiagnosticTroubleCode>() {
+            object : DiffUtil.ItemCallback<DtcListItem>() {
                 override fun areItemsTheSame(
-                    oldItem: DiagnosticTroubleCode,
-                    newItem: DiagnosticTroubleCode
-                ): Boolean = oldItem.standardCode == newItem.standardCode && oldItem.rawHex == newItem.rawHex
+                    oldItem: DtcListItem,
+                    newItem: DtcListItem
+                ): Boolean =
+                    when {
+                        oldItem is DtcListItem.ModuleHeader && newItem is DtcListItem.ModuleHeader ->
+                            oldItem.module == newItem.module
+                        oldItem is DtcListItem.DtcRow && newItem is DtcListItem.DtcRow ->
+                            oldItem.dtc.standardCode == newItem.dtc.standardCode && oldItem.dtc.rawHex == newItem.dtc.rawHex
+                        else -> false
+                    }
 
                 override fun areContentsTheSame(
-                    oldItem: DiagnosticTroubleCode,
-                    newItem: DiagnosticTroubleCode
+                    oldItem: DtcListItem,
+                    newItem: DtcListItem
                 ): Boolean = oldItem == newItem
             }
     }

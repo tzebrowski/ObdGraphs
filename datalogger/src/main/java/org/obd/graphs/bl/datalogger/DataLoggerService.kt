@@ -40,6 +40,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 private const val ACTION_DTC_CLEANUP = "org.obd.graphs.logger.DTC.cleanup"
 private const val ACTION_DTC_READ = "org.obd.graphs.logger.DTC.read"
+private const val DTC_SELECTED_MODULES = "org.obd.graphs.logger.DTC.selected_modules"
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
@@ -87,11 +88,13 @@ class DataLoggerService : Service() {
             }
 
             ACTION_DTC_CLEANUP -> {
-                DataLoggerRepository.workflowOrchestrator.scheduleDTCCleanup()
+                val selectedModules = intent.getStringArrayListExtra(DTC_SELECTED_MODULES)?.toSet() ?: emptySet()
+                DataLoggerRepository.workflowOrchestrator.scheduleDTCCleanup(selectedModules)
             }
 
             ACTION_DTC_READ -> {
-                DataLoggerRepository.workflowOrchestrator.scheduleDTCRead()
+                val selectedModules = intent.getStringArrayListExtra(DTC_SELECTED_MODULES)?.toSet() ?: emptySet()
+                DataLoggerRepository.workflowOrchestrator.scheduleDTCRead(selectedModules)
             }
 
             EXECUTE_ROUTINE -> {
@@ -138,12 +141,12 @@ class DataLoggerService : Service() {
         enqueueWork(ACTION_START) { it.putExtra(QUERY, query) }
     }
 
-    fun scheduleDTCCleanup() {
-        enqueueWork(ACTION_DTC_CLEANUP)
+    fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) {
+        enqueueWork(ACTION_DTC_CLEANUP) { it.putStringArrayListExtra(DTC_SELECTED_MODULES, ArrayList(selectedModules)) }
     }
 
-    fun scheduleDTCRead() {
-        enqueueWork(ACTION_DTC_READ)
+    fun scheduleDTCRead(selectedModules: Set<String> = emptySet()) {
+        enqueueWork(ACTION_DTC_READ) { it.putStringArrayListExtra(DTC_SELECTED_MODULES, ArrayList(selectedModules)) }
     }
 
     fun stop() {

@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
@@ -72,7 +73,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         recyclerView = root.findViewById(R.id.recycler_view)
 
         adapter = DiagnosticTroubleCodeViewAdapter(context)
-        adapter.submitList(sortedDtcList)
+        adapter.submitList(sortedDtcList.toDtcListItems())
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
@@ -104,9 +105,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         refreshButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
-                setLoadingState(true)
-                withDataLogger {
-                    scheduleDTCRead()
+                pickDtcModules { selectedModules ->
+                    setLoadingState(true)
+                    withDataLogger {
+                        scheduleDTCRead(selectedModules)
+                    }
                 }
             } else {
                 toast(R.string.pref_dtc_no_connection_established)
@@ -114,27 +117,57 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
         clearButton.setOnClickListener {
-            android.app.AlertDialog
-                .Builder(requireContext())
-                .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
-                .setMessage(
-                    resources.getString(R.string.pref_dtc_clean_dialog_confirm_message)
-                ).setPositiveButton("Clear Codes") { dialog, _ ->
-                    if (DataLoggerRepository.isRunning()) {
-                        setLoadingState(true)
-                        withDataLogger {
-                            scheduleDTCCleanup()
-                        }
+            if (DataLoggerRepository.isRunning()) {
+                pickDtcModules { selectedModules ->
+                    android.app.AlertDialog
+                        .Builder(requireContext())
+                        .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
+                        .setMessage(
+                            resources.getString(R.string.pref_dtc_clean_dialog_confirm_message)
+                        ).setPositiveButton("Clear Codes") { dialog, _ ->
+                            setLoadingState(true)
+                            withDataLogger {
+                                scheduleDTCCleanup(selectedModules)
+                            }
 
-                        toast(R.string.pref_dtc_clean_dialog_send_message)
-                        clearButton.text = "Clearing..."
-                        dialog.dismiss()
-                    } else {
-                        toast(R.string.pref_dtc_no_connection_established)
-                    }
-                }.setNegativeButton("Cancel", null)
-                .show()
+                            toast(R.string.pref_dtc_clean_dialog_send_message)
+                            clearButton.text = "Clearing..."
+                            dialog.dismiss()
+                        }.setNegativeButton("Cancel", null)
+                        .show()
+                }
+            } else {
+                toast(R.string.pref_dtc_no_connection_established)
+            }
         }
+    }
+
+    // Lets the user restrict a DTC read/clear to a subset of the configured Diagnostic Request ID
+    // modules for this action only (not persisted). Skips straight to onPicked when there's
+    // nothing configured, matching the plain default single-ECU behavior from before this feature.
+    private fun pickDtcModules(onPicked: (Set<String>) -> Unit) {
+        val mappings = DiagnosticRequestIDManager.getMappings().filter { it.headerValue.isNotEmpty() }
+
+        if (mappings.isEmpty()) {
+            onPicked(emptySet())
+            return
+        }
+
+        val labels = mappings.map { it.requestKey }.toTypedArray()
+        val checked = BooleanArray(labels.size) { true }
+
+        android.app.AlertDialog
+            .Builder(requireContext())
+            .setTitle(R.string.pref_dtc_select_modules_title)
+            .setMultiChoiceItems(labels, checked) { _, which, isChecked ->
+                checked[which] = isChecked
+            }
+            .setPositiveButton(R.string.pref_dtc_select_modules_confirm) { dialog, _ ->
+                dialog.dismiss()
+                onPicked(labels.filterIndexed { index, _ -> checked[index] }.toSet())
+            }
+            .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
+            .show()
     }
 
     private fun setLoadingState(isLoading: Boolean) =
@@ -227,6 +260,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 }
             }.sortedWith(
                 compareBy<DiagnosticTroubleCode> { code ->
+                    code.module ?: ""
+                }.thenBy { code ->
                     val desc = code.description
                     val isUnknown =
                         desc.isNullOrBlank() ||
@@ -257,7 +292,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         setLoadingState(false)
 
         val newCodes = diagnosticTroubleCodes()
-        adapter.submitList(newCodes)
+        adapter.submitList(newCodes.toDtcListItems())
 
         if (isDtcAvailable(newCodes)) {
             shareButton.isEnabled = false
