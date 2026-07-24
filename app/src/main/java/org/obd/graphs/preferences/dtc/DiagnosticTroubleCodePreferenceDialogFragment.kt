@@ -153,7 +153,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             return
         }
 
-        val labels = mappings.map { it.requestKey }.toTypedArray()
+        val labels = mappings.map { it.displayName }.toTypedArray()
+        val requestKeys = mappings.map { it.requestKey }
         val checked = BooleanArray(labels.size) { true }
 
         android.app.AlertDialog
@@ -164,7 +165,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             }
             .setPositiveButton(R.string.pref_dtc_select_modules_confirm) { dialog, _ ->
                 dialog.dismiss()
-                onPicked(labels.filterIndexed { index, _ -> checked[index] }.toSet())
+                onPicked(requestKeys.filterIndexed { index, _ -> checked[index] }.toSet())
             }
             .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
             .show()

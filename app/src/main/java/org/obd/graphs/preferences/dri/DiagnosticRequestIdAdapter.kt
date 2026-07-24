@@ -49,12 +49,10 @@ class DiagnosticRequestIdAdapter(
         val item = items[position]
         val context = holder.itemView.context
 
-        holder.tvKey.text = context.getString(
-            R.string.pref_adapter_diagnostic_request_id_key_label,
-            item.requestKey
-        )
+        holder.tvKey.text = item.displayName
         holder.tvValue.text = context.getString(
-            R.string.pref_adapter_diagnostic_request_id_value_label,
+            R.string.pref_adapter_diagnostic_request_id_details_label,
+            item.requestKey,
             item.headerValue
         )
 

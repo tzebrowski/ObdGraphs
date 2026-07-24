@@ -25,15 +25,18 @@ internal sealed class DtcListItem {
     data class DtcRow(val dtc: DiagnosticTroubleCode) : DtcListItem()
 }
 
-// Only worth a section header once there's more than one distinct configured module in the
-// result - keeps the default/no-multi-module-scan case visually identical to before this feature.
+// Always label results with a module header once a real (non-default) module is present, even if
+// only one module ended up reporting codes this scan (eg. you picked 2 modules but only one had
+// codes) - the user explicitly picked modules and wants to see which one each result came from.
+// Falls back to a flat list only for the plain default single-ECU case (no module scanning
+// configured at all), keeping that visually identical to before this feature.
 internal fun List<DiagnosticTroubleCode>.toDtcListItems(): List<DtcListItem> {
     val distinctModules =
         mapNotNull { it.module }
             .filter { it.isNotBlank() && it != DTC_DEFAULT_MODULE }
             .distinct()
 
-    if (distinctModules.size < 2) {
+    if (distinctModules.isEmpty()) {
         return map { DtcListItem.DtcRow(it) }
     }
 

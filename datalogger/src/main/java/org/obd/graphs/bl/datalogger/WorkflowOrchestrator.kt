@@ -246,12 +246,13 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     // Reuses the Diagnostic Request ID table as the DTC scan target list, restricted to whichever
-    // entries the user picked for this scan (by requestKey, eg. "ABS" -> 18DA28F1). Init.Header.mode
-    // is used here as that module label, not a protocol mode.
+    // entries the user picked for this scan (selection is by requestKey, the internal ID). The
+    // module's displayName (description, falling back to requestKey) is what ends up on
+    // Init.Header.mode - not a protocol mode, but the label shown in the DTC list/dialogs.
     private fun getDtcModules(selectedModules: Set<String>): List<Init.Header> =
         DiagnosticRequestIDManager.getMappings()
             .filter { it.headerValue.isNotEmpty() && it.requestKey in selectedModules }
-            .map { Init.Header.builder().mode(it.requestKey).header(it.headerValue).build() }
+            .map { Init.Header.builder().mode(it.displayName).header(it.headerValue).build() }
 
     fun executeRoutine(query: Query) {
         currentQuery = query

@@ -61,12 +61,12 @@ class DiagnosticRequestIdFragment : Fragment() {
     }
 
     private fun showEditDialog(item: DiagnosticMappingItem?) {
-        val dialog = EditDiagnosticRequestIdBottomSheet(item) { requestKey, headerValue ->
+        val dialog = EditDiagnosticRequestIdBottomSheet(item) { requestKey, headerValue, description ->
             if (item != null) {
-                val updatedItem = item.copy(requestKey = requestKey, headerValue = headerValue)
+                val updatedItem = item.copy(requestKey = requestKey, headerValue = headerValue, description = description)
                 DiagnosticRequestIDManager.saveMapping(updatedItem)
             } else {
-                DiagnosticRequestIDManager.addMapping(requestKey, headerValue)
+                DiagnosticRequestIDManager.addMapping(requestKey, headerValue, description)
             }
             refreshList()
         }

@@ -29,6 +29,7 @@ import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import org.obd.graphs.DiagnosticMappingItem
 import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.JS_ENGINE_NAME
@@ -92,8 +93,19 @@ class EditPidBottomSheet(
         val etMode = view.findViewById<AutoCompleteTextView>(R.id.etMode)
         etMode.setupDropdown(listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "1A", "21", "22"), "01")
 
-        val canHeaders = DiagnosticRequestIDManager.getMappings().map { it.requestKey }
-        etCanHeader.setupDropdown(canHeaders, "01")
+        // Suggestions - and the default pre-filled text - show the friendly description, but the
+        // raw requestKey (ID) is what actually needs to be saved as the PID's canMode override and
+        // matched against Init.Header.mode. The box's displayed text is resolved back through
+        // labelToKey both on selection and at save time (extractFormData), so the default label
+        // staying untouched still saves the correct ID instead of the literal label text.
+        val mappings = DiagnosticRequestIDManager.getMappings()
+        val labelToKey = mappings.associate { it.dropdownLabel() to it.requestKey }
+        val defaultLabel = mappings.firstOrNull { it.requestKey == "01" }?.dropdownLabel()
+        etCanHeader.setupDropdown(labelToKey.keys.toList(), defaultLabel)
+        etCanHeader.setOnItemClickListener { parent, _, position, _ ->
+            val label = parent.getItemAtPosition(position) as String
+            etCanHeader.setText(labelToKey[label] ?: label, false)
+        }
 
         val noneCanNetwork = getString(R.string.pref_pid_alert_can_network_none)
         val etCanNetwork = view.findViewById<AutoCompleteTextView>(R.id.etCanNetwork)
@@ -156,7 +168,8 @@ class EditPidBottomSheet(
         }
 
         if (pidItem != null) {
-            etCanHeader.setText(pidItem.source.deductMode(), false)
+            val currentCanHeader = pidItem.source.deductMode()
+            etCanHeader.setText(mappings.firstOrNull { it.requestKey == currentCanHeader }?.dropdownLabel() ?: currentCanHeader, false)
             etCanNetwork.setText(pidItem.source.overrides?.canNetwork?.name ?: noneCanNetwork, false)
             etMode.setText(pidItem.source.mode, false)
             etDescription.setText(pidItem.source.description)
@@ -200,6 +213,7 @@ class EditPidBottomSheet(
                 etLongDescription = etLongDescription,
                 etMode = etMode,
                 etCanHeader = etCanHeader,
+                canHeaderLabelToKey = labelToKey,
                 etCanNetwork = etCanNetwork,
                 noneCanNetwork = noneCanNetwork,
                 etPidCode = etPidCode,
@@ -240,6 +254,7 @@ class EditPidBottomSheet(
         etLongDescription: TextInputEditText,
         etMode: AutoCompleteTextView,
         etCanHeader: AutoCompleteTextView,
+        canHeaderLabelToKey: Map<String, String>,
         etCanNetwork: AutoCompleteTextView,
         noneCanNetwork: String,
         etPidCode: TextInputEditText,
@@ -259,7 +274,11 @@ class EditPidBottomSheet(
             description = if (mode.isEdit) etDescription.text.toString().trim() else null,
             longDescription = if (mode.isEdit) etLongDescription.text.toString().trim() else null,
             mode = if (mode.isEdit) etMode.text.toString().trim() else null,
-            canHeader = if (mode.isEdit) etCanHeader.text.toString().trim() else null,
+            canHeader = if (mode.isEdit) {
+                etCanHeader.text.toString().trim().let { canHeaderLabelToKey[it] ?: it }
+            } else {
+                null
+            },
             canNetwork = if (mode.isEdit) {
                 val selected = etCanNetwork.text.toString().trim()
                 if (selected.isEmpty() || selected == noneCanNetwork) null else CANNetwork.valueOf(selected)
@@ -296,6 +315,9 @@ class EditPidBottomSheet(
             false
         }
     }
+
+    private fun DiagnosticMappingItem.dropdownLabel(): String =
+        if (displayName == requestKey) requestKey else "$displayName ($requestKey)"
 
     private fun AutoCompleteTextView.setupDropdown(
         items: List<String>,
