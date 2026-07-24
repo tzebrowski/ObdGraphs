@@ -227,19 +227,32 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    fun scheduleDTCCleanup() {
+    // selectedModules restricts the scan to the given Diagnostic Request ID entry names (their
+    // requestKey, eg. "ABS") - empty means the plain default single-ECU scan, no module targeting.
+    fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) {
         val readAction = getReadDtcAction()
-        Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction")
-        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction))
+        val modules = getDtcModules(selectedModules)
+        Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction, modules=$modules")
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction), modules)
         Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
     }
 
-    fun scheduleDTCRead() {
+    fun scheduleDTCRead(selectedModules: Set<String> = emptySet()) {
         val readAction = getReadDtcAction()
-        Log.i(LOG_TAG,"Schedule DTC read action=$readAction")
-        val result = workflow.scheduleDTCAction(setOf(readAction))
+        val modules = getDtcModules(selectedModules)
+        Log.i(LOG_TAG,"Schedule DTC read action=$readAction, modules=$modules")
+        val result = workflow.scheduleDTCAction(setOf(readAction), modules)
         Log.i(LOG_TAG,"DTC read is scheduled: $result")
     }
+
+    // Reuses the Diagnostic Request ID table as the DTC scan target list, restricted to whichever
+    // entries the user picked for this scan (selection is by requestKey, the internal ID). The
+    // module's displayName (description, falling back to requestKey) is what ends up on
+    // Init.Header.mode - not a protocol mode, but the label shown in the DTC list/dialogs.
+    private fun getDtcModules(selectedModules: Set<String>): List<Init.Header> =
+        DiagnosticRequestIDManager.getMappings()
+            .filter { it.headerValue.isNotEmpty() && it.requestKey in selectedModules }
+            .map { Init.Header.builder().mode(it.displayName).header(it.headerValue).build() }
 
     fun executeRoutine(query: Query) {
         currentQuery = query

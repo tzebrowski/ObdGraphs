@@ -26,12 +26,19 @@ private const val DRI_MAX_MAPPINGS_ALLOWED = 100
 data class DiagnosticMappingItem(
     val modeIndex: Int,
     val requestKey: String,
-    val headerValue: String
-)
+    val headerValue: String,
+    // Friendly label shown everywhere in the UI. requestKey remains the internal lookup ID
+    // (matched against a PID's mode / used as the DTC module key) and is never itself displayed.
+    val description: String = ""
+) {
+    val displayName: String
+        get() = description.ifBlank { requestKey }
+}
 
 object DiagnosticRequestIDManager {
     private const val PREFIX_ID = "pref.adapter.init.mode.id_value.mode_"
     private const val PREFIX_HEADER = "pref.adapter.init.mode.header_value.mode_"
+    private const val PREFIX_DESCRIPTION = "pref.adapter.init.mode.description_value.mode_"
 
     private const val ACTIVE_ID_KEY = "pref.adapter.init.mode.id"
     private const val ACTIVE_HEADER_KEY = "pref.adapter.init.mode.header"
@@ -45,11 +52,13 @@ object DiagnosticRequestIDManager {
         for (i in 1..DRI_MAX_MAPPINGS_ALLOWED) {
             val key = Prefs.getString("$PREFIX_ID$i", null)
             val value = Prefs.getString("$PREFIX_HEADER$i", null)
+            val description = Prefs.getString("$PREFIX_DESCRIPTION$i", null)
 
             if (key != null && value != null) {
                 val cleanKey = key.replace("\"", "")
                 val cleanValue = value.replace("\"", "")
-                mappings.add(DiagnosticMappingItem(i, cleanKey, cleanValue))
+                val cleanDescription = description?.replace("\"", "") ?: ""
+                mappings.add(DiagnosticMappingItem(i, cleanKey, cleanValue, cleanDescription))
             }
         }
         return mappings
@@ -66,17 +75,18 @@ object DiagnosticRequestIDManager {
 
         Prefs.updateString("$PREFIX_ID${item.modeIndex}", item.requestKey)
         Prefs.updateString("$PREFIX_HEADER${item.modeIndex}", item.headerValue)
+        Prefs.updateString("$PREFIX_DESCRIPTION${item.modeIndex}", item.description)
 
         if (activeId == item.requestKey) {
             Prefs.updateString(ACTIVE_HEADER_KEY, item.headerValue)
         }
     }
 
-    fun addMapping(requestKey: String, headerValue: String) {
+    fun addMapping(requestKey: String, headerValue: String, description: String = "") {
         val existingIndices = getMappings().map { it.modeIndex }
         val nextIndex = if (existingIndices.isEmpty()) 1 else existingIndices.maxOrNull()!! + 1
 
-        val newItem = DiagnosticMappingItem(nextIndex, requestKey, headerValue)
+        val newItem = DiagnosticMappingItem(nextIndex, requestKey, headerValue, description)
         saveMapping(newItem)
     }
 
@@ -84,6 +94,7 @@ object DiagnosticRequestIDManager {
         Prefs.edit()
             .remove("$PREFIX_ID${item.modeIndex}")
             .remove("$PREFIX_HEADER${item.modeIndex}")
+            .remove("$PREFIX_DESCRIPTION${item.modeIndex}")
             .apply()
     }
 
@@ -92,6 +103,7 @@ object DiagnosticRequestIDManager {
             for (i in 1..DRI_MAX_MAPPINGS_ALLOWED) {
                 editor.putString("$PREFIX_HEADER$i", "")
                 editor.putString("$PREFIX_ID$i", "")
+                editor.putString("$PREFIX_DESCRIPTION$i", "")
             }
             editor.putString(ACTIVE_HEADER_KEY, "")
             editor.putString(ACTIVE_ID_KEY, "")

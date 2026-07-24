@@ -184,14 +184,14 @@
     <string name="pref.adapter.diagnostic_request_id.manage_title">Manage Diagnostic CAN Request IDs</string>
     <string name="pref.adapter.diagnostic_request_id.manage_summary"> Configure custom target ECU header mappings in CAN network</string>
     <string name="pref.adapter.diagnostic_request_id.add_new_mapping">Add New Mapping</string>
-    <string name="pref.adapter.diagnostic_request_id.key_label">Key: %1$s</string>
-    <string name="pref.adapter.diagnostic_request_id.value_label">Value: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.details_label">ID: %1$s · Header: %2$s</string>
     <string name="pref.adapter.diagnostic_request_id.edit_title">Edit Request ID Mapping</string>
     <string name="pref.adapter.diagnostic_request_id.add_title">Add New Request ID Mapping</string>
     <string name="pref.adapter.diagnostic_request_id.edit_mapping_desc">Edit Mapping</string>
     <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Delete Mapping</string>
 
     <string name="pref.adapter.diagnostic_request_id.dialog_default_title">Diagnostic Request ID</string>
+    <string name="pref.adapter.diagnostic_request_id.description_hint">Description (e.g. ABS)</string>
     <string name="pref.adapter.diagnostic_request_id.key_hint">Request Key (e.g. 555)</string>
     <string name="pref.adapter.diagnostic_request_id.value_hint">Header Value (e.g. 18DA18F1)</string>
     <string name="pref.adapter.diagnostic_request_id.save_button">Save Mapping</string>
@@ -381,6 +381,10 @@
     <string name="pref.dtc.screen_lock">This might take a while. Please wait…</string>
 
     <string name="pref.dtc.no_connection_established">There is no ECU connection established. Please connect first.</string>
+
+    <string name="pref.dtc.select_modules.title">Select Modules to Scan</string>
+    <string name="pref.dtc.select_modules.confirm">Scan</string>
+    <string name="pref.dtc.select_modules.cancel">Cancel</string>
 
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>

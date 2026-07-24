@@ -138,12 +138,12 @@
     <string name="pref.adapter.diagnostic_request_id.manage_title">Zarządzaj identyfikatorami żądań diagnostycznych w sieci CAN</string>
     <string name="pref.adapter.diagnostic_request_id.manage_summary">Skonfiguruj niestandardowe mapowania nagłówków sieci CAN</string>
     <string name="pref.adapter.diagnostic_request_id.add_new_mapping">Dodaj nowe mapowanie</string>
-    <string name="pref.adapter.diagnostic_request_id.key_label">Klucz: %1$s</string>
-    <string name="pref.adapter.diagnostic_request_id.value_label">Wartość: %1$s</string>
+    <string name="pref.adapter.diagnostic_request_id.details_label">ID: %1$s · Nagłówek: %2$s</string>
     <string name="pref.adapter.diagnostic_request_id.edit_title">Edytuj mapowanie ID żądania</string>
     <string name="pref.adapter.diagnostic_request_id.add_title">Dodaj nowe mapowanie ID żądania</string>
 
     <string name="pref.adapter.diagnostic_request_id.dialog_default_title">ID żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.description_hint">Opis (np. ABS)</string>
     <string name="pref.adapter.diagnostic_request_id.key_hint">Klucz żądania (np. 555)</string>
     <string name="pref.adapter.diagnostic_request_id.value_hint">Wartość nagłówka (np. 18DA18F1)</string>
     <string name="pref.adapter.diagnostic_request_id.save_button">Zapisz mapowanie</string>
@@ -385,6 +385,10 @@
     <string name="pref.dtc.screen_lock">To może chwilę potrwać. Proszę czekać\u2026</string>
 
     <string name="pref.dtc.no_connection_established">Brak połączenia z ECU. Najpierw nawiąż połączenie.</string>
+
+    <string name="pref.dtc.select_modules.title">Wybierz moduły do skanowania</string>
+    <string name="pref.dtc.select_modules.confirm">Skanuj</string>
+    <string name="pref.dtc.select_modules.cancel">Anuluj</string>
 
     <string name="pref.vehicle.metadata_title">Metadane pojazdu</string>
     <string name="pref.vehicle.metadata.name">Nazwa</string>

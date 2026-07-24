@@ -65,7 +65,8 @@ class AdapterTypeListPreference(
             DiagnosticMappingItem(
                 modeIndex = TRW_CLIMATE_CONTROL_MODE_INDEX,
                 requestKey = TRW_CLIMATE_CONTROL_ID,
-                headerValue = TRW_CLIMATE_CONTROL_HEADER
+                headerValue = TRW_CLIMATE_CONTROL_HEADER,
+                description = "TRW Climate Control"
             )
         )
 

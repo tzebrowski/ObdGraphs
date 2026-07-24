@@ -29,7 +29,7 @@ import org.obd.graphs.R
 
 class EditDiagnosticRequestIdBottomSheet(
     private val existingItem: DiagnosticMappingItem? = null,
-    private val onSave: (key: String, value: String) -> Unit
+    private val onSave: (key: String, value: String, description: String) -> Unit
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
@@ -44,12 +44,14 @@ class EditDiagnosticRequestIdBottomSheet(
         super.onViewCreated(view, savedInstanceState)
 
         val tvTitle = view.findViewById<TextView>(R.id.tvDialogTitle)
+        val etDescription = view.findViewById<TextInputEditText>(R.id.etDescription)
         val etKey = view.findViewById<TextInputEditText>(R.id.etKey)
         val etValue = view.findViewById<TextInputEditText>(R.id.etValue)
         val btnSave = view.findViewById<Button>(R.id.btnSave)
 
         if (existingItem != null) {
             tvTitle.text = requireContext().getString(R.string.pref_adapter_diagnostic_request_id_edit_title)
+            etDescription.setText(existingItem.description)
             etKey.setText(existingItem.requestKey)
             etValue.setText(existingItem.headerValue)
         } else {
@@ -57,11 +59,12 @@ class EditDiagnosticRequestIdBottomSheet(
         }
 
         btnSave.setOnClickListener {
+            val description = etDescription.text.toString().trim()
             val key = etKey.text.toString().trim()
             val value = etValue.text.toString().trim().uppercase()
 
             if (key.isNotEmpty() && value.isNotEmpty()) {
-                onSave(key, value)
+                onSave(key, value, description)
                 dismiss()
             }
         }

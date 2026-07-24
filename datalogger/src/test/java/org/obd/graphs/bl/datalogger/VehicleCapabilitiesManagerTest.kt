@@ -136,6 +136,23 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
     }
 
     @Test
+    fun `updateDTC and getDiagnosticTroubleCodes preserve the module tag through the round trip`() {
+        val slot = slot<String>()
+        every { editor.putString(eq(PREF_DTC), capture(slot)) } returns editor
+
+        val abs = dtc("C0035", "Wheel Speed Sensor").apply { module = "ABS" }
+        val engine = dtc("P0300", "Random Misfire").apply { module = "Engine" }
+        VehicleCapabilitiesManager.updateDTC(setOf(abs, engine))
+
+        every { sharedPrefs.getString(eq(PREF_DTC), any()) } returns slot.captured
+
+        val result = VehicleCapabilitiesManager.getDiagnosticTroubleCodes()
+
+        assertEquals(2, result.size)
+        assertEquals(setOf("ABS", "Engine"), result.map { it.module }.toSet())
+    }
+
+    @Test
     fun `getDiagnosticTroubleCodes returns an empty list instead of throwing on malformed json`() {
         every { sharedPrefs.getString(eq(PREF_DTC), any()) } returns "not-json"
 
