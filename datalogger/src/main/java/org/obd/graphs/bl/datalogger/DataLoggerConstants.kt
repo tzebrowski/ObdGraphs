@@ -39,4 +39,6 @@ const val ROUTINE_REJECTED_EVENT = "data.logger.routine.rejected"
 const val ROUTINE_WORKFLOW_NOT_RUNNING_EVENT = "data.logger.routine.workflow_not_running"
 const val ROUTINE_UNKNOWN_STATUS_EVENT = "data.logger.routine.unknown_status"
 
+const val MODULE_DISCOVERY_RESULT_EVENT = "data.logger.module_discovery.result"
+
 internal const val LOG_TAG = "DataLogger"

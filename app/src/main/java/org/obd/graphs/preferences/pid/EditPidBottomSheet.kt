@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences.pid
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +39,16 @@ import org.obd.metrics.pid.ValueType
 import javax.script.Compilable
 import javax.script.ScriptEngineManager
 import javax.script.SimpleBindings
+
+// Modes that can alter vehicle/ECU state rather than just read data. etMode is a free-text
+// AutoCompleteTextView (like etCanHeader), so this guards manually typed modes too, not just the
+// ones offered in the dropdown.
+private val RISKY_MODES = mapOf(
+    "04" to "Clears stored Diagnostic Trouble Codes on the vehicle.",
+    "08" to "Sends a component/actuator control command directly to the ECU.",
+    "2E" to "Writes data to the ECU (WriteDataByIdentifier) — can permanently alter configuration.",
+    "31" to "Starts an ECU routine (RoutineControl) — may trigger actuator tests or resets."
+)
 
 data class PidFormData(
     val description: String?,
@@ -244,9 +255,33 @@ class EditPidBottomSheet(
                 return@setOnClickListener
             }
 
-            onSave(formData)
-            dismiss()
+            val riskyModeReason = RISKY_MODES[formData.mode]
+            if (riskyModeReason != null) {
+                confirmRiskyModeThenSave(formData.mode!!, riskyModeReason) {
+                    onSave(formData)
+                    dismiss()
+                }
+            } else {
+                onSave(formData)
+                dismiss()
+            }
         }
+    }
+
+    private fun confirmRiskyModeThenSave(
+        mode: String,
+        reason: String,
+        onConfirmed: () -> Unit
+    ) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.pref_pid_manage_dialog_risky_mode_title))
+            .setMessage(getString(R.string.pref_pid_manage_dialog_risky_mode_message, mode, reason))
+            .setPositiveButton(R.string.pref_pid_manage_dialog_risky_mode_save_anyway) { dialog, _ ->
+                dialog.dismiss()
+                onConfirmed()
+            }
+            .setNegativeButton(R.string.pref_pid_manage_dialog_risky_mode_cancel, null)
+            .show()
     }
 
     private fun extractFormData(

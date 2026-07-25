@@ -147,6 +147,22 @@
     <string name="pref.adapter.diagnostic_request_id.key_hint">Klucz żądania (np. 555)</string>
     <string name="pref.adapter.diagnostic_request_id.value_hint">Wartość nagłówka (np. 18DA18F1)</string>
     <string name="pref.adapter.diagnostic_request_id.save_button">Zapisz mapowanie</string>
+
+    <string name="pref.adapter.ecu_discovery.fab_content_description">Wykryj moduły</string>
+    <string name="pref.adapter.ecu_discovery.title">Wykryj moduły ECU</string>
+    <string name="pref.adapter.ecu_discovery.prefix_hint">Prefiks nagłówka</string>
+    <string name="pref.adapter.ecu_discovery.suffix_hint">Sufiks nagłówka</string>
+    <string name="pref.adapter.ecu_discovery.range_start_hint">Początek zakresu (hex)</string>
+    <string name="pref.adapter.ecu_discovery.range_end_hint">Koniec zakresu (hex)</string>
+    <string name="pref.adapter.ecu_discovery.status_idle">Brak połączenia z modułem. Wymaga aktywnego połączenia. Pełny zakres 00-FF może potrwać kilka minut - zawęź zakres lub anuluj w dowolnym momencie.</string>
+    <string name="pref.adapter.ecu_discovery.status_scanning">Skanowanie %1$s (%2$d/%3$d)…</string>
+    <string name="pref.adapter.ecu_discovery.status_done">Skanowanie zakończone. Znaleziono %1$d moduł(ów).</string>
+    <string name="pref.adapter.ecu_discovery.start_button">Rozpocznij skanowanie</string>
+    <string name="pref.adapter.ecu_discovery.cancel_button">Anuluj</string>
+    <string name="pref.adapter.ecu_discovery.results_title">Znalezione moduły</string>
+    <string name="pref.adapter.ecu_discovery.add_to_dri_button">Dodaj zaznaczone do tabeli DRI</string>
+    <string name="pref.adapter.ecu_discovery.invalid_range">Podaj prawidłowy zakres hex od 00 do FF, gdzie początek ≤ koniec.</string>
+    <string name="pref.adapter.ecu_discovery.discovered_description">Wykryty moduł</string>
     <string name="pref.adapter.diagnostic_request_id.edit_mapping_desc">Edytuj mapowanie</string>
     <string name="pref.adapter.diagnostic_request_id.delete_mapping_desc">Usuń mapowanie</string>
     <string name="pref.pid.manage_dialog">Zarządzaj PIDami</string>
@@ -171,6 +187,10 @@
     <string name="pref.pid.manage_dialog.edit_pid_title">Edytuj PID</string>
     <string name="pref.pid.manage_dialog.add_new_pid_title">Dodaj nowy PID</string>
     <string name="pref.pid.manage_dialog.validation_required_fields">Opis, Tryb, Kod PID, Formuła, Min i Max są wymagane!</string>
+    <string name="pref.pid.manage_dialog.risky_mode_title">Potencjalnie niebezpieczny tryb</string>
+    <string name="pref.pid.manage_dialog.risky_mode_message">Tryb %1$s może wpłynąć na pojazd: %2$s\n\nCzy na pewno chcesz zapisać ten PID?</string>
+    <string name="pref.pid.manage_dialog.risky_mode_save_anyway">Zapisz mimo to</string>
+    <string name="pref.pid.manage_dialog.risky_mode_cancel">Anuluj</string>
     <string name="pref.pid.manage_dialog.hint_description">Opis (np. Temp. Oleju)</string>
     <string name="pref.pid.manage_dialog.hint_long_description">Długi opis</string>
     <string name="pref.pid.manage_dialog.hint_mode">Tryb (np. 01)</string>
