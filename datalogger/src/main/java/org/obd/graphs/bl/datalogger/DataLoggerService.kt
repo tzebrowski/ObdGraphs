@@ -46,6 +46,8 @@ private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
 private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
+private const val ACTION_MODULE_DISCOVERY = "org.obd.graphs.logger.MODULE_DISCOVERY"
+private const val MODULE_DISCOVERY_HEADER = "org.obd.graphs.logger.MODULE_DISCOVERY.header"
 
 class DataLoggerService : Service() {
     private val binder = LocalBinder()
@@ -102,6 +104,12 @@ class DataLoggerService : Service() {
                 query?.let { DataLoggerRepository.workflowOrchestrator.executeRoutine(it) }
             }
 
+            ACTION_MODULE_DISCOVERY -> {
+                intent.getStringExtra(MODULE_DISCOVERY_HEADER)?.let {
+                    DataLoggerRepository.workflowOrchestrator.discoverModule(it)
+                }
+            }
+
             ACTION_STOP -> {
                 DataLoggerRepository.workflowOrchestrator.stop()
                 serviceStop()
@@ -147,6 +155,10 @@ class DataLoggerService : Service() {
 
     fun scheduleDTCRead(selectedModules: Set<String> = emptySet()) {
         enqueueWork(ACTION_DTC_READ) { it.putStringArrayListExtra(DTC_SELECTED_MODULES, ArrayList(selectedModules)) }
+    }
+
+    fun discoverModule(header: String) {
+        enqueueWork(ACTION_MODULE_DISCOVERY) { it.putExtra(MODULE_DISCOVERY_HEADER, header) }
     }
 
     fun stop() {

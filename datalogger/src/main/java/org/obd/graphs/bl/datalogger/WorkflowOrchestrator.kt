@@ -114,6 +114,20 @@ internal class WorkflowOrchestrator internal constructor() {
             sendBroadcastEvent(event)
         }
 
+        override fun onModuleDiscovered(
+            header: String,
+            status: ModuleDiscoveryStatus
+        ) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received onModuleDiscovered event. Header: $header, status: $status")
+            }
+
+            sendBroadcastEvent(
+                MODULE_DISCOVERY_RESULT_EVENT,
+                ModuleDiscoveryResult(header = header, found = status == ModuleDiscoveryStatus.FOUND)
+            )
+        }
+
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                 Log.d(LOG_TAG, "Received onRunning event. We are connected to the vehicle: $vehicleCapabilities")
@@ -253,6 +267,11 @@ internal class WorkflowOrchestrator internal constructor() {
         DiagnosticRequestIDManager.getMappings()
             .filter { it.headerValue.isNotEmpty() && it.requestKey in selectedModules }
             .map { Init.Header.builder().mode(it.displayName).header(it.headerValue).build() }
+
+    fun discoverModule(header: String) {
+        val result = workflow.discoverModule(header)
+        Log.i(LOG_TAG, "Module discovery for header=$header scheduled: $result")
+    }
 
     fun executeRoutine(query: Query) {
         currentQuery = query

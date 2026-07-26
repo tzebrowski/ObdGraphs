@@ -45,6 +45,7 @@ class DiagnosticRequestIdFragment : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         val fabAdd = view.findViewById<FloatingActionButton>(R.id.fabAdd)
+        val fabDiscover = view.findViewById<FloatingActionButton>(R.id.fabDiscover)
 
         adapter = DiagnosticRequestIdAdapter(
             items = DiagnosticRequestIDManager.getMappings().toMutableList(),
@@ -57,6 +58,11 @@ class DiagnosticRequestIdFragment : Fragment() {
 
         fabAdd.setOnClickListener {
             showEditDialog(null)
+        }
+
+        fabDiscover.setOnClickListener {
+            EcuDiscoveryDialogFragment(onModulesAdded = { refreshList() })
+                .show(childFragmentManager, "EcuDiscoveryDialogFragment")
         }
     }
 
