@@ -166,7 +166,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 android.app.AlertDialog
                     .Builder(requireContext())
                     .setTitle(titleRes)
-                    .setMessage(messageRes)
+                    .setMessage(
+                        "${resources.getString(messageRes)}\n\n" +
+                            resources.getString(R.string.pref_dtc_select_modules_can_headers_hint)
+                    )
                     .setPositiveButton(confirmRes) { d, _ ->
                         d.dismiss()
                         onPicked(emptySet())
@@ -213,6 +216,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         // A shortcut into the CAN header (Diagnostic Request ID) mapping screen, so a user who
         // notices their module list is wrong/missing a header doesn't have to cancel out, dig
         // through preferences, then come back and re-open the scan/clear dialog from scratch.
+        // The hint sits directly beside the button so it reads as "what this button does"
+        // rather than a generic caption floating elsewhere in the dialog.
+        val headersHint =
+            android.widget.TextView(context).apply {
+                text = resources.getString(R.string.pref_dtc_select_modules_can_headers_hint)
+                textSize = 12f
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, android.R.color.darker_gray))
+            }
         val headersButton =
             android.widget.Button(context, null, android.R.attr.borderlessButtonStyle).apply {
                 setText(R.string.pref_dtc_select_modules_can_headers)
@@ -220,13 +231,15 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 setPadding(0, 0, 0, 0)
             }
         container.addView(
-            headersButton,
-            android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = android.view.Gravity.END
-                bottomMargin = padding
+            android.widget.LinearLayout(context).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(0, 0, 0, padding)
+                addView(
+                    headersHint,
+                    android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                )
+                addView(headersButton)
             }
         )
 
