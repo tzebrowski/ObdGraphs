@@ -34,6 +34,7 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.toast
@@ -171,6 +172,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         onPicked(emptySet())
                     }
                     .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
+                    .setNeutralButton(R.string.pref_dtc_select_modules_can_headers) { d, _ ->
+                        d.dismiss()
+                        jumpToCanHeaders()
+                    }
                     .show()
             } else {
                 onPicked(emptySet())
@@ -204,6 +209,26 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 }
             )
         }
+
+        // A shortcut into the CAN header (Diagnostic Request ID) mapping screen, so a user who
+        // notices their module list is wrong/missing a header doesn't have to cancel out, dig
+        // through preferences, then come back and re-open the scan/clear dialog from scratch.
+        val headersButton =
+            android.widget.Button(context, null, android.R.attr.borderlessButtonStyle).apply {
+                setText(R.string.pref_dtc_select_modules_can_headers)
+                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.rainbow_indigo))
+                setPadding(0, 0, 0, 0)
+            }
+        container.addView(
+            headersButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = android.view.Gravity.END
+                bottomMargin = padding
+            }
+        )
 
         val listView =
             android.widget.ListView(context).apply {
@@ -300,6 +325,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         cancelButton.setOnClickListener { dialog.dismiss() }
 
+        headersButton.setOnClickListener {
+            dialog.dismiss()
+            jumpToCanHeaders()
+        }
+
         confirmButton.setOnClickListener {
             dialog.dismiss()
             val selected = requestKeys.filterIndexed { index, _ -> listView.isItemChecked(index) }.toSet()
@@ -307,6 +337,26 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
         dialog.show()
+    }
+
+    // Opens the DRI (CAN header) manager fragment directly rather than routing through the
+    // "pref.init" preference screen, which would just land the user on a list they'd still
+    // have to tap "Manage" from. This mirrors the FragmentTransaction androidx's Preference
+    // library performs for that "Manage" row internally (replace into the NavHostFragment's
+    // own container, on its child FragmentManager - it hosts nav_preferences/nav_graph/etc.),
+    // since there's no dedicated NavGraph destination for the DRI manager to navigate to.
+    // Also closes this DTC dialog itself (not just the module-picker on top of it) - leaving
+    // it open behind the DRI manager would be confusing to come back to.
+    private fun jumpToCanHeaders() {
+        dialog?.dismiss()
+        requireActivity()
+            .supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment)
+            ?.childFragmentManager
+            ?.beginTransaction()
+            ?.replace(R.id.nav_host_fragment, DiagnosticRequestIdFragment())
+            ?.addToBackStack("dri_manager")
+            ?.commit()
     }
 
     private fun setLoadingState(isLoading: Boolean) =

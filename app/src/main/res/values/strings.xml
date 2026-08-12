@@ -409,6 +409,7 @@
     <string name="pref.dtc.select_modules.cancel">Cancel</string>
     <string name="pref.dtc.select_modules.select_all">Select All</string>
     <string name="pref.dtc.select_modules.deselect_all">Deselect All</string>
+    <string name="pref.dtc.select_modules.can_headers">CAN Headers</string>
 
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>
