@@ -105,7 +105,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         refreshButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
-                pickDtcModules(R.string.pref_dtc_select_modules_title) { selectedModules ->
+                pickDtcModules(
+                    R.string.pref_dtc_select_modules_title,
+                    R.string.pref_dtc_select_modules_confirm
+                ) { selectedModules ->
                     setLoadingState(true)
                     withDataLogger {
                         scheduleDTCRead(selectedModules)
@@ -118,7 +121,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         clearButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
-                pickDtcModules(R.string.pref_dtc_select_modules_title_clear) { selectedModules ->
+                pickDtcModules(
+                    R.string.pref_dtc_select_modules_title_clear,
+                    R.string.pref_dtc_select_modules_confirm_clear
+                ) { selectedModules ->
                     android.app.AlertDialog
                         .Builder(requireContext())
                         .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
@@ -147,6 +153,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     // nothing configured, matching the plain default single-ECU behavior from before this feature.
     private fun pickDtcModules(
         titleRes: Int,
+        confirmRes: Int,
         onPicked: (Set<String>) -> Unit
     ) {
         val mappings = DiagnosticRequestIDManager.getMappings().filter { it.headerValue.isNotEmpty() }
@@ -165,7 +172,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 .Builder(requireContext())
                 .setTitle(titleRes)
                 .setMultiChoiceItems(labels, checked, null)
-                .setPositiveButton(R.string.pref_dtc_select_modules_confirm) { d, _ ->
+                .setPositiveButton(confirmRes) { d, _ ->
                     d.dismiss()
                     onPicked(requestKeys.filterIndexed { index, _ -> checked[index] }.toSet())
                 }
