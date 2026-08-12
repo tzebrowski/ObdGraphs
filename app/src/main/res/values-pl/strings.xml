@@ -413,6 +413,8 @@
     <string name="pref.dtc.select_modules.cancel">Anuluj</string>
     <string name="pref.dtc.select_modules.select_all">Zaznacz wszystkie</string>
     <string name="pref.dtc.select_modules.deselect_all">Odznacz wszystkie</string>
+    <string name="pref.dtc.select_modules.can_headers">Nagłówki CAN</string>
+    <string name="pref.dtc.select_modules.can_headers_hint">Brak lub błędny moduł ECU? Skonfiguruj tutaj mapowanie nagłówków.</string>
 
     <string name="pref.vehicle.metadata_title">Metadane pojazdu</string>
     <string name="pref.vehicle.metadata.name">Nazwa</string>
