@@ -105,7 +105,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         refreshButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
-                pickDtcModules { selectedModules ->
+                pickDtcModules(R.string.pref_dtc_select_modules_title) { selectedModules ->
                     setLoadingState(true)
                     withDataLogger {
                         scheduleDTCRead(selectedModules)
@@ -118,7 +118,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         clearButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
-                pickDtcModules { selectedModules ->
+                pickDtcModules(R.string.pref_dtc_select_modules_title_clear) { selectedModules ->
                     android.app.AlertDialog
                         .Builder(requireContext())
                         .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
@@ -145,7 +145,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     // Lets the user restrict a DTC read/clear to a subset of the configured Diagnostic Request ID
     // modules for this action only (not persisted). Skips straight to onPicked when there's
     // nothing configured, matching the plain default single-ECU behavior from before this feature.
-    private fun pickDtcModules(onPicked: (Set<String>) -> Unit) {
+    private fun pickDtcModules(
+        titleRes: Int,
+        onPicked: (Set<String>) -> Unit
+    ) {
         val mappings = DiagnosticRequestIDManager.getMappings().filter { it.headerValue.isNotEmpty() }
 
         if (mappings.isEmpty()) {
@@ -157,18 +160,57 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         val requestKeys = mappings.map { it.requestKey }
         val checked = BooleanArray(labels.size) { true }
 
-        android.app.AlertDialog
-            .Builder(requireContext())
-            .setTitle(R.string.pref_dtc_select_modules_title)
-            .setMultiChoiceItems(labels, checked) { _, which, isChecked ->
-                checked[which] = isChecked
+        val dialog =
+            android.app.AlertDialog
+                .Builder(requireContext())
+                .setTitle(titleRes)
+                .setMultiChoiceItems(labels, checked, null)
+                .setPositiveButton(R.string.pref_dtc_select_modules_confirm) { d, _ ->
+                    d.dismiss()
+                    onPicked(requestKeys.filterIndexed { index, _ -> checked[index] }.toSet())
+                }
+                .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
+                .setNeutralButton(R.string.pref_dtc_select_modules_deselect_all, null)
+                .create()
+
+        // The toggle-all and per-item checkbox listeners are wired up after show() rather than
+        // via the builder callbacks, so they can reach the positive/neutral buttons directly:
+        // the neutral button must flip every checkbox without dismissing the dialog, and both
+        // buttons' state must stay in sync with the checkboxes however selection changes.
+        dialog.setOnShowListener {
+            val toggleButton = dialog.getButton(android.app.AlertDialog.BUTTON_NEUTRAL)
+            val confirmButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+
+            fun updateButtons() {
+                val noneSelected = checked.none { it }
+                toggleButton.setText(
+                    if (checked.all { it }) {
+                        R.string.pref_dtc_select_modules_deselect_all
+                    } else {
+                        R.string.pref_dtc_select_modules_select_all
+                    }
+                )
+                confirmButton.isEnabled = !noneSelected
             }
-            .setPositiveButton(R.string.pref_dtc_select_modules_confirm) { dialog, _ ->
-                dialog.dismiss()
-                onPicked(requestKeys.filterIndexed { index, _ -> checked[index] }.toSet())
+
+            updateButtons()
+
+            dialog.listView.setOnItemClickListener { _, _, which, _ ->
+                checked[which] = dialog.listView.isItemChecked(which)
+                updateButtons()
             }
-            .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
-            .show()
+
+            toggleButton.setOnClickListener {
+                val selectAll = !checked.all { it }
+                for (index in checked.indices) {
+                    checked[index] = selectAll
+                    dialog.listView.setItemChecked(index, selectAll)
+                }
+                updateButtons()
+            }
+        }
+
+        dialog.show()
     }
 
     private fun setLoadingState(isLoading: Boolean) =

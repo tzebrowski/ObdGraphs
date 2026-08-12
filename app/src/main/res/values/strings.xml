@@ -403,8 +403,12 @@
     <string name="pref.dtc.no_connection_established">There is no ECU connection established. Please connect first.</string>
 
     <string name="pref.dtc.select_modules.title">Select Modules to Scan</string>
+    <string name="pref.dtc.select_modules.title_clear">Select Modules to Clear</string>
     <string name="pref.dtc.select_modules.confirm">Scan</string>
+    <string name="pref.dtc.select_modules.confirm_clear">Continue</string>
     <string name="pref.dtc.select_modules.cancel">Cancel</string>
+    <string name="pref.dtc.select_modules.select_all">Select All</string>
+    <string name="pref.dtc.select_modules.deselect_all">Deselect All</string>
 
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>
