@@ -24,20 +24,6 @@
             android:background="@android:color/transparent" />
     </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
-        android:id="@+id/category_index_bar"
-        android:layout_width="44dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar_card"
-        android:layout_above="@id/bottom_panel_card"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="2dp"
-        android:background="@drawable/bg_category_index_bar"
-        android:orientation="vertical"
-        android:padding="2dp"
-        android:visibility="gone" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -47,6 +33,20 @@
         android:clipToPadding="false"
         app:cardBackgroundColor="@color/dialog_card_background"
         android:paddingVertical="4dp" />
+
+    <!-- Transparent, sits aside the list rather than pushing/covering it, see
+         PidDefinitionDialogFragment.updateCategoryIndexBar. -->
+    <LinearLayout
+        android:id="@+id/category_index_bar"
+        android:layout_width="18dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar_card"
+        android:layout_above="@id/bottom_panel_card"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:clipChildren="false"
+        android:orientation="vertical"
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_pid"

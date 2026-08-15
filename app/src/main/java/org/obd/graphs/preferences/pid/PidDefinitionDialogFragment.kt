@@ -27,8 +27,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -134,12 +134,10 @@ open class PidDefinitionDialogFragment(
 
         if (anchors.size < 2) {
             categoryIndexBar.visibility = View.GONE
-            setRecyclerViewIndexBarInset(reserved = false)
             return
         }
 
         categoryIndexBar.visibility = View.VISIBLE
-        setRecyclerViewIndexBarInset(reserved = true)
         anchors.forEach { (section, position) ->
             val label = when (section) {
                 is PidSection.Selected -> getString(R.string.pref_pid_manage_dialog_selected_pids_short)
@@ -149,39 +147,33 @@ open class PidDefinitionDialogFragment(
         }
     }
 
-    // The list itself gets pushed to the right of the index bar rather than having the bar float
-    // on top of it, so the bar never covers the PID checkboxes/text underneath.
-    private fun setRecyclerViewIndexBarInset(reserved: Boolean) {
-        val marginPx = if (reserved) {
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, resources.displayMetrics).toInt()
-        } else {
-            0
-        }
-        (recyclerView.layoutParams as? RelativeLayout.LayoutParams)?.let {
-            if (it.marginStart != marginPx) {
-                it.marginStart = marginPx
-                recyclerView.layoutParams = it
-            }
-        }
-    }
+    // A transparent overlay, not a real layout column -- the list keeps its full width (matching
+    // the search bar above it) instead of being squeezed to make room for this. Each marker is
+    // thin (18dp) so it sits in the sliver of card surface before the checkbox rather than on top
+    // of it. The rotated text is drawn via a TextView whose *unrotated* width/height are swapped
+    // relative to the marker's real (rotated) footprint, centered inside a same-sized container --
+    // that's what keeps the rotated glyphs aligned inside their own marker instead of drifting.
+    private fun createIndexMarker(label: String, targetPosition: Int): View {
+        val thicknessPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18f, resources.displayMetrics).toInt()
+        val lengthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34f, resources.displayMetrics).toInt()
 
-    // Markers are square (matching the bar's own width) so the -90 rotation needed for vertical
-    // text doesn't make the drawn text spill outside its own bounds, and the box is tall enough
-    // to be a comfortable tap target -- the previous single-line horizontal abbreviation was too
-    // short vertically to hit reliably.
-    private fun createIndexMarker(label: String, targetPosition: Int): TextView {
-        val sizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40f, resources.displayMetrics).toInt()
-        return TextView(requireContext()).apply {
+        val labelView = TextView(requireContext()).apply {
             text = label
-            textSize = 11f
+            textSize = 9f
             setTypeface(typeface, Typeface.BOLD)
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
             rotation = -90f
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, sizePx).apply {
-                val marginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, resources.displayMetrics).toInt()
-                bottomMargin = marginPx
-            }
+            layoutParams = FrameLayout.LayoutParams(lengthPx, thicknessPx, Gravity.CENTER)
+        }
+
+        return FrameLayout(requireContext()).apply {
+            clipChildren = false
+            addView(labelView)
+            layoutParams = LinearLayout.LayoutParams(thicknessPx, lengthPx)
+            val outValue = TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+            setBackgroundResource(outValue.resourceId)
             setOnClickListener {
                 (recyclerView.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(targetPosition, 0)
             }
