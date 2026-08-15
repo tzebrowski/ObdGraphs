@@ -26,7 +26,7 @@
 
     <LinearLayout
         android:id="@+id/category_index_bar"
-        android:layout_width="32dp"
+        android:layout_width="44dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar_card"
         android:layout_above="@id/bottom_panel_card"

@@ -153,7 +153,7 @@ open class PidDefinitionDialogFragment(
     // on top of it, so the bar never covers the PID checkboxes/text underneath.
     private fun setRecyclerViewIndexBarInset(reserved: Boolean) {
         val marginPx = if (reserved) {
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36f, resources.displayMetrics).toInt()
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, resources.displayMetrics).toInt()
         } else {
             0
         }
@@ -165,16 +165,23 @@ open class PidDefinitionDialogFragment(
         }
     }
 
+    // Markers are square (matching the bar's own width) so the -90 rotation needed for vertical
+    // text doesn't make the drawn text spill outside its own bounds, and the box is tall enough
+    // to be a comfortable tap target -- the previous single-line horizontal abbreviation was too
+    // short vertically to hit reliably.
     private fun createIndexMarker(label: String, targetPosition: Int): TextView {
-        val paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics).toInt()
+        val sizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40f, resources.displayMetrics).toInt()
         return TextView(requireContext()).apply {
             text = label
-            textSize = 9f
+            textSize = 11f
             setTypeface(typeface, Typeface.BOLD)
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
-            setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            rotation = -90f
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, sizePx).apply {
+                val marginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, resources.displayMetrics).toInt()
+                bottomMargin = marginPx
+            }
             setOnClickListener {
                 (recyclerView.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(targetPosition, 0)
             }
