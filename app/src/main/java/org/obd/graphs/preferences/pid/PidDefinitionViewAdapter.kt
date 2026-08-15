@@ -27,6 +27,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.checkbox.MaterialCheckBox
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
@@ -40,7 +41,8 @@ class PidDefinitionViewAdapter internal constructor(
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
     private val onEditClicked: (PidDefinitionDetails) -> Unit,
-    private val onDeleteClicked: (PidDefinitionDetails) -> Unit
+    private val onDeleteClicked: (PidDefinitionDetails) -> Unit,
+    private val onCategoryToggled: (PidCategory, Boolean) -> Unit = { _, _ -> }
 ) : RecyclerView.Adapter<PidDefinitionViewAdapter.ViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -56,14 +58,54 @@ class PidDefinitionViewAdapter internal constructor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
+        val previousItem = if (position > 0) data[position - 1] else null
 
-        val isSystemPid = !item.source.isUserCustom
-        val previousWasCustom = position > 0 && data[position - 1].source.isUserCustom
+        // Checked PIDs are always collected under one "Selected" header, regardless of category,
+        // so they read as a single group -- only the unchecked/browsable PIDs below get their own
+        // per-category headers. Checked PIDs still keep their own custom drag order within that
+        // one group (see sortItems).
+        val section = sectionFor(item)
+        val previousSection = previousItem?.let { sectionFor(it) }
 
-        if (isSystemPid && previousWasCustom) {
-            holder.separator.visibility = View.VISIBLE
-        } else {
-            holder.separator.visibility = View.GONE
+        when {
+            section != null && section != previousSection -> {
+                holder.separatorContainer.visibility = View.VISIBLE
+
+                when (section) {
+                    is PidSection.Selected -> {
+                        holder.separator.text = context?.getString(R.string.pref_pid_manage_dialog_selected_pids)
+                        holder.categorySelect.visibility = View.GONE
+                        holder.categorySelect.setOnClickListener(null)
+                    }
+                    is PidSection.Category -> {
+                        val category = section.category
+                        holder.separator.text = context?.getString(category.stringRes) ?: category.name
+
+                        if (editModeEnabled) {
+                            holder.categorySelect.visibility = View.GONE
+                            holder.categorySelect.setOnClickListener(null)
+                        } else {
+                            holder.categorySelect.visibility = View.VISIBLE
+                            val categoryItems = data.filter { !it.source.isUserCustom && categoryFor(it.source) == category }
+                            val checkedCount = categoryItems.count { it.checked }
+                            val allChecked = checkedCount > 0 && checkedCount == categoryItems.size
+
+                            holder.categorySelect.checkedState = when {
+                                checkedCount == 0 -> MaterialCheckBox.STATE_UNCHECKED
+                                allChecked -> MaterialCheckBox.STATE_CHECKED
+                                else -> MaterialCheckBox.STATE_INDETERMINATE
+                            }
+                            holder.categorySelect.setOnClickListener {
+                                onCategoryToggled(category, !allChecked)
+                            }
+                        }
+                    }
+                }
+            }
+            else -> {
+                holder.separatorContainer.visibility = View.GONE
+                holder.categorySelect.setOnClickListener(null)
+            }
         }
 
         item.run {
@@ -151,7 +193,9 @@ class PidDefinitionViewAdapter internal constructor(
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder(binding: View) : RecyclerView.ViewHolder(binding) {
+        val separatorContainer: View = binding.findViewById(R.id.separator_container)
         val separator: TextView = binding.findViewById(R.id.tv_separator)
+        val categorySelect: MaterialCheckBox = binding.findViewById(R.id.category_selected)
         val module: TextView = binding.findViewById(R.id.pid_module)
         val description: TextView = binding.findViewById(R.id.pid_description)
         val longDescription: TextView = binding.findViewById(R.id.pid_long_description)

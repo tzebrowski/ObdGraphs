@@ -177,6 +177,17 @@
     <string name="pref.pid.manage_dialog.mode_hint">Mode (e.g. 01)</string>
     <string name="pref.pid.manage_dialog.can_header">Nagłówek CAN</string>
     <string name="pref.pid.manage_dialog.system_pids">PIDy systemowe</string>
+    <string name="pref.pid.manage_dialog.selected_pids">Wybrane</string>
+    <string name="pref.pid.manage_dialog.category_basics">Podstawowe</string>
+    <string name="pref.pid.manage_dialog.category_ignition">Zapłon</string>
+    <string name="pref.pid.manage_dialog.category_fuel_afr">Paliwo / AFR</string>
+    <string name="pref.pid.manage_dialog.category_boost">Doładowanie</string>
+    <string name="pref.pid.manage_dialog.category_load_torque">Obciążenie / Moment</string>
+    <string name="pref.pid.manage_dialog.category_temperature">Temperatura</string>
+    <string name="pref.pid.manage_dialog.category_air_intake">Powietrze / Dolot</string>
+    <string name="pref.pid.manage_dialog.category_electrical">Elektryka</string>
+    <string name="pref.pid.manage_dialog.category_location">Lokalizacja</string>
+    <string name="pref.pid.manage_dialog.category_other">Inne</string>
 
     <string name="pref.pid.manage_dialog.stable_yes">Stabilny: Tak</string>
     <string name="pref.pid.manage_dialog.stable_no">Stabilny: Nie</string>

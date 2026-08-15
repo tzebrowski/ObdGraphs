@@ -76,7 +76,8 @@ open class PidDefinitionDialogFragment(
             data = emptyList(),
             editModeEnabled = dialogMode.isInteractive,
             onEditClicked = { clickedPid -> showEditBottomSheet(clickedPid) },
-            onDeleteClicked = { clickedPid -> viewModel.delete(clickedPid) }
+            onDeleteClicked = { clickedPid -> viewModel.delete(clickedPid) },
+            onCategoryToggled = { category, checked -> viewModel.setCategoryChecked(category, checked) }
         )
 
         recyclerView = root.findViewById(R.id.recycler_view)
