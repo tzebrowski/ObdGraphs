@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The dialog window itself has a transparent background (see
-     CoreDialogFragment.requestWindowFeatures), so anything not covered by an opaque card here
-     reveals whatever screen is behind the dialog. Background covers the whole panel rather than
-     leaving that to each individual card, so the gaps between/around cards (and the category
-     header rows) don't show the Settings screen bleeding through behind them. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/dialog_card_background">
+    android:layout_height="match_parent">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/toolbar_card"

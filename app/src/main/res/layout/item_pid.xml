@@ -11,10 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="4dp"
-        android:background="@color/dialog_card_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingVertical="4dp"
         android:visibility="gone">
 
         <com.google.android.material.checkbox.MaterialCheckBox
