@@ -18,12 +18,20 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
@@ -52,6 +60,11 @@ open class PidDefinitionDialogFragment(
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
+    private lateinit var categoryIndexBar: LinearLayout
+    private lateinit var toolbarCard: View
+    private lateinit var bottomPanelCard: View
+    private var indexMarkers: List<IndexMarker> = emptyList()
+    private var activeIndexMarker: IndexMarker? = null
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
@@ -76,12 +89,33 @@ open class PidDefinitionDialogFragment(
             data = emptyList(),
             editModeEnabled = dialogMode.isInteractive,
             onEditClicked = { clickedPid -> showEditBottomSheet(clickedPid) },
-            onDeleteClicked = { clickedPid -> viewModel.delete(clickedPid) }
+            onDeleteClicked = { clickedPid -> viewModel.delete(clickedPid) },
+            onCategoryToggled = { category, checked -> viewModel.setCategoryChecked(category, checked) }
         )
 
         recyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
+
+        categoryIndexBar = root.findViewById(R.id.category_index_bar)
+        toolbarCard = root.findViewById(R.id.toolbar_card)
+        bottomPanelCard = root.findViewById(R.id.bottom_panel_card)
+
+        // Keeps the RecyclerView's PID cards (which carry their own 8dp margin, unlike the
+        // toolbar/button cards which get theirs directly) aligned to the toolbar's *actual*
+        // rendered edges on every layout pass, not just once -- a one-shot post-layout callback
+        // here was a race against the several layout passes this dialog goes through as its
+        // content loads asynchronously, and could settle on a stale (pre-margin-change) position.
+        // This keeps re-checking and self-corrects until it converges, however many passes it takes.
+        toolbarCard.viewTreeObserver.addOnGlobalLayoutListener { syncRecyclerViewToToolbarEdges() }
+
+        // Highlights whichever group marker corresponds to what's currently scrolled into view,
+        // so the index bar also works as a "you are here" indicator, not just a jump target.
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                updateActiveIndexMarker()
+            }
+        })
 
         attachSearchView()
         if (dragReorderEnabled) {
@@ -104,9 +138,154 @@ open class PidDefinitionDialogFragment(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     adapter.updateData(state.filteredItems)
+                    updateCategoryIndexBar(state.filteredItems)
                 }
             }
         }
+    }
+
+    // A jump-to-group index along the left edge, so a long PID list doesn't require scrolling to
+    // find a specific category (or the Selected group) -- only shown once there's more than one
+    // group to jump between, and rebuilt whenever the visible group set changes (e.g. search).
+    private fun updateCategoryIndexBar(items: List<PidDefinitionDetails>) {
+        val anchors = LinkedHashMap<PidSection, Int>()
+        items.forEachIndexed { index, item ->
+            val section = sectionFor(item) ?: return@forEachIndexed
+            anchors.putIfAbsent(section, index)
+        }
+
+        categoryIndexBar.removeAllViews()
+        activeIndexMarker = null
+
+        if (anchors.size < 2) {
+            categoryIndexBar.visibility = View.GONE
+            indexMarkers = emptyList()
+            setContentIndexBarInset(reserved = false)
+            return
+        }
+
+        categoryIndexBar.visibility = View.VISIBLE
+        setContentIndexBarInset(reserved = true)
+        indexMarkers = anchors.map { (section, position) ->
+            val label = when (section) {
+                is PidSection.Selected -> getString(R.string.pref_pid_manage_dialog_selected_pids_short)
+                is PidSection.Category -> getString(section.category.shortStringRes)
+            }
+            val marker = createIndexMarker(label, position)
+            categoryIndexBar.addView(marker.container)
+            marker
+        }
+        updateActiveIndexMarker()
+    }
+
+    // Finds whichever marker's group the currently-first-visible PID card belongs to and
+    // highlights it, clearing the highlight from whatever was previously active.
+    private fun updateActiveIndexMarker() {
+        if (indexMarkers.isEmpty()) return
+        val layoutManager = recyclerView.layoutManager as? GridLayoutManager ?: return
+        val firstVisible = layoutManager.findFirstVisibleItemPosition()
+        if (firstVisible == RecyclerView.NO_POSITION) return
+
+        val current = indexMarkers.lastOrNull { it.position <= firstVisible } ?: indexMarkers.first()
+        if (current === activeIndexMarker) return
+
+        activeIndexMarker?.let { setIndexMarkerHighlighted(it, false) }
+        setIndexMarkerHighlighted(current, true)
+        activeIndexMarker = current
+    }
+
+    private fun setIndexMarkerHighlighted(marker: IndexMarker, highlighted: Boolean) {
+        if (highlighted) {
+            marker.container.background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics)
+                setColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.philippine_green))
+            }
+            marker.label.setTextColor(Color.WHITE)
+        } else {
+            val outValue = TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+            marker.container.setBackgroundResource(outValue.resourceId)
+            marker.label.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.dialog_text_primary))
+        }
+    }
+
+    private data class IndexMarker(val position: Int, val container: FrameLayout, val label: TextView)
+
+    // The toolbar (search bar) and button row get pushed right by the same amount while the
+    // index bar is showing, so it gets its own real column instead of floating on top of card
+    // content -- only the start margin changes, so neither loses any width, they just move over.
+    // The RecyclerView's own margin is kept in sync separately (see
+    // syncRecyclerViewToToolbarEdges), since dp arithmetic alone doesn't reliably predict where
+    // the toolbar ends up in this wrap-content-sized dialog window.
+    private fun setContentIndexBarInset(reserved: Boolean) {
+        fun dp(value: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics).toInt()
+        val startPx = dp(if (reserved) 36f else 8f)
+
+        applyMarginStart(toolbarCard, startPx)
+        applyMarginStart(bottomPanelCard, startPx)
+    }
+
+    private fun applyMarginStart(view: View, marginPx: Int) {
+        (view.layoutParams as? RelativeLayout.LayoutParams)?.let {
+            if (it.marginStart != marginPx) {
+                it.marginStart = marginPx
+                view.layoutParams = it
+            }
+        }
+    }
+
+    // Aligns the RecyclerView's PID cards (which carry their own 8dp margin, unlike the
+    // toolbar/button cards which get theirs directly from the layout) to the toolbar's *actual
+    // rendered* edges, re-checked on every layout pass rather than assumed from dp math -- this
+    // dialog's wrap-content-sized window doesn't leave the plain end-margin gap dp arithmetic
+    // expects, and the toolbar's margin can go through several passes as content loads
+    // asynchronously, so this keeps re-syncing until it settles instead of guessing once.
+    private fun syncRecyclerViewToToolbarEdges() {
+        val cardOwnMarginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
+        val targetLeft = toolbarCard.left - cardOwnMarginPx
+        val targetRight = toolbarCard.right + cardOwnMarginPx
+        (recyclerView.layoutParams as? RelativeLayout.LayoutParams)?.let {
+            val targetRightMargin = root.width - targetRight
+            if (it.leftMargin != targetLeft || it.rightMargin != targetRightMargin) {
+                it.leftMargin = targetLeft
+                it.rightMargin = targetRightMargin
+                recyclerView.layoutParams = it
+            }
+        }
+    }
+
+    // The rotated text is drawn via a TextView whose *unrotated* width/height are swapped
+    // relative to the marker's real (rotated) footprint, centered inside a same-sized container --
+    // that's what keeps the rotated glyphs aligned inside their own marker instead of drifting.
+    private fun createIndexMarker(label: String, targetPosition: Int): IndexMarker {
+        val thicknessPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22f, resources.displayMetrics).toInt()
+        val lengthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40f, resources.displayMetrics).toInt()
+        val spacingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics).toInt()
+
+        val labelView = TextView(requireContext()).apply {
+            text = label
+            textSize = 12f
+            setTypeface(typeface, Typeface.BOLD)
+            setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.dialog_text_primary))
+            gravity = Gravity.CENTER
+            rotation = -90f
+            layoutParams = FrameLayout.LayoutParams(lengthPx, thicknessPx, Gravity.CENTER)
+        }
+
+        val container = FrameLayout(requireContext()).apply {
+            clipChildren = false
+            addView(labelView)
+            layoutParams = LinearLayout.LayoutParams(thicknessPx, lengthPx).apply { bottomMargin = spacingPx }
+            val outValue = TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+            setBackgroundResource(outValue.resourceId)
+            setOnClickListener {
+                (recyclerView.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(targetPosition, 0)
+            }
+        }
+
+        return IndexMarker(targetPosition, container, labelView)
     }
 
     private fun showAddBottomSheet() {

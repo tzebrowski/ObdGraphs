@@ -104,10 +104,28 @@ class PidDefinitionViewModel(
     fun toggleSelectAll(selectAll: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
             allMasterItems.forEach { it.checked = selectAll }
-            val updated = applyFilter(allMasterItems, _uiState.value.searchQuery)
+            val filtered = applyFilter(allMasterItems, _uiState.value.searchQuery)
+            val sortedAndFiltered = sortItems(filtered)
             _uiState.value = _uiState.value.copy(
                 items = ArrayList(allMasterItems),
-                filteredItems = ArrayList(updated),
+                filteredItems = ArrayList(sortedAndFiltered),
+                lastUpdate = System.currentTimeMillis()
+            )
+        }
+    }
+
+    fun setCategoryChecked(category: PidCategory, checked: Boolean) {
+        viewModelScope.launch(Dispatchers.Default) {
+            allMasterItems.forEach {
+                if (!it.source.isUserCustom && categoryFor(it.source) == category) {
+                    it.checked = checked
+                }
+            }
+            val filtered = applyFilter(allMasterItems, _uiState.value.searchQuery)
+            val sortedAndFiltered = sortItems(filtered)
+            _uiState.value = _uiState.value.copy(
+                items = ArrayList(allMasterItems),
+                filteredItems = ArrayList(sortedAndFiltered),
                 lastUpdate = System.currentTimeMillis()
             )
         }
@@ -264,7 +282,14 @@ class PidDefinitionViewModel(
         val (userPids, standardPids) = input.partition { it.source.isUserCustom }
 
         val checkedStandard = standardPids.filter { it.checked }.toMutableList()
-        val uncheckedStandard = standardPids.filter { !it.checked }
+        // Unchecked PIDs are the "browse to add" portion of the list, so group them by category
+        // to make the large catalog easier to scan; checked PIDs keep their custom drag order.
+        val uncheckedStandard = standardPids.filter { !it.checked }.sortedWith(
+            compareBy(
+                { PID_CATEGORY_DISPLAY_ORDER.indexOf(categoryFor(it.source)) },
+                { it.source.description ?: "" }
+            )
+        )
 
         if (sortOrder == null || sortOrder.isEmpty()) {
             viewSerializer.store(checkedStandard.map { it.source.id })
