@@ -18,7 +18,6 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
@@ -33,7 +32,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -99,6 +97,14 @@ open class PidDefinitionDialogFragment(
         toolbarCard = root.findViewById(R.id.toolbar_card)
         bottomPanelCard = root.findViewById(R.id.bottom_panel_card)
 
+        // Keeps the RecyclerView's PID cards (which carry their own 8dp margin, unlike the
+        // toolbar/button cards which get theirs directly) aligned to the toolbar's *actual*
+        // rendered edges on every layout pass, not just once -- a one-shot post-layout callback
+        // here was a race against the several layout passes this dialog goes through as its
+        // content loads asynchronously, and could settle on a stale (pre-margin-change) position.
+        // This keeps re-checking and self-corrects until it converges, however many passes it takes.
+        toolbarCard.viewTreeObserver.addOnGlobalLayoutListener { syncRecyclerViewToToolbarEdges() }
+
         attachSearchView()
         if (dragReorderEnabled) {
             attachDragManager(recyclerView)
@@ -158,29 +164,15 @@ open class PidDefinitionDialogFragment(
     // The toolbar (search bar) and button row get pushed right by the same amount while the
     // index bar is showing, so it gets its own real column instead of floating on top of card
     // content -- only the start margin changes, so neither loses any width, they just move over.
-    // The RecyclerView's own margin is then derived from the toolbar's *actual rendered* edges
-    // once layout settles, rather than computed from theoretical dp math: this dialog's window
-    // is wrap-content-sized around its widest child, which does not leave the plain end-margin
-    // gap you'd expect, so dp arithmetic alone kept landing the PID cards (which carry their own
-    // 8dp margin, unlike the toolbar/button cards which get theirs directly) a few dp short of
-    // the toolbar's edges. Reading real positions sidesteps that instead of chasing it.
+    // The RecyclerView's own margin is kept in sync separately (see
+    // syncRecyclerViewToToolbarEdges), since dp arithmetic alone doesn't reliably predict where
+    // the toolbar ends up in this wrap-content-sized dialog window.
     private fun setContentIndexBarInset(reserved: Boolean) {
         fun dp(value: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics).toInt()
         val startPx = dp(if (reserved) 36f else 8f)
 
         applyMarginStart(toolbarCard, startPx)
         applyMarginStart(bottomPanelCard, startPx)
-
-        toolbarCard.doOnNextLayout {
-            val cardOwnMarginPx = dp(8f)
-            val targetLeft = toolbarCard.left - cardOwnMarginPx
-            val targetRight = toolbarCard.right + cardOwnMarginPx
-            (recyclerView.layoutParams as? RelativeLayout.LayoutParams)?.let {
-                it.leftMargin = targetLeft
-                it.rightMargin = root.width - targetRight
-                recyclerView.layoutParams = it
-            }
-        }
     }
 
     private fun applyMarginStart(view: View, marginPx: Int) {
@@ -188,6 +180,26 @@ open class PidDefinitionDialogFragment(
             if (it.marginStart != marginPx) {
                 it.marginStart = marginPx
                 view.layoutParams = it
+            }
+        }
+    }
+
+    // Aligns the RecyclerView's PID cards (which carry their own 8dp margin, unlike the
+    // toolbar/button cards which get theirs directly from the layout) to the toolbar's *actual
+    // rendered* edges, re-checked on every layout pass rather than assumed from dp math -- this
+    // dialog's wrap-content-sized window doesn't leave the plain end-margin gap dp arithmetic
+    // expects, and the toolbar's margin can go through several passes as content loads
+    // asynchronously, so this keeps re-syncing until it settles instead of guessing once.
+    private fun syncRecyclerViewToToolbarEdges() {
+        val cardOwnMarginPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
+        val targetLeft = toolbarCard.left - cardOwnMarginPx
+        val targetRight = toolbarCard.right + cardOwnMarginPx
+        (recyclerView.layoutParams as? RelativeLayout.LayoutParams)?.let {
+            val targetRightMargin = root.width - targetRight
+            if (it.leftMargin != targetLeft || it.rightMargin != targetRightMargin) {
+                it.leftMargin = targetLeft
+                it.rightMargin = targetRightMargin
+                recyclerView.layoutParams = it
             }
         }
     }
@@ -204,7 +216,7 @@ open class PidDefinitionDialogFragment(
             text = label
             textSize = 12f
             setTypeface(typeface, Typeface.BOLD)
-            setTextColor(Color.WHITE)
+            setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.dialog_text_primary))
             gravity = Gravity.CENTER
             rotation = -90f
             layoutParams = FrameLayout.LayoutParams(lengthPx, thicknessPx, Gravity.CENTER)
