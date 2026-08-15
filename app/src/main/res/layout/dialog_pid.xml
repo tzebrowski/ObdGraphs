@@ -34,8 +34,9 @@
         app:cardBackgroundColor="@color/dialog_card_background"
         android:paddingVertical="4dp" />
 
-    <!-- Transparent, sits aside the list rather than pushing/covering it, see
-         PidDefinitionDialogFragment.updateCategoryIndexBar. -->
+    <!-- Sits in its own reserved column at the true left edge (see
+         PidDefinitionDialogFragment.setContentIndexBarInset), not overlapping the toolbar/list/
+         button cards, which all get pushed right by the same amount while this is visible. -->
     <LinearLayout
         android:id="@+id/category_index_bar"
         android:layout_width="18dp"
@@ -44,6 +45,7 @@
         android:layout_above="@id/bottom_panel_card"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
         android:clipChildren="false"
         android:orientation="vertical"
         android:visibility="gone" />

@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -59,6 +60,8 @@ open class PidDefinitionDialogFragment(
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
     private lateinit var categoryIndexBar: LinearLayout
+    private lateinit var toolbarCard: View
+    private lateinit var bottomPanelCard: View
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
@@ -92,6 +95,8 @@ open class PidDefinitionDialogFragment(
         recyclerView.adapter = adapter
 
         categoryIndexBar = root.findViewById(R.id.category_index_bar)
+        toolbarCard = root.findViewById(R.id.toolbar_card)
+        bottomPanelCard = root.findViewById(R.id.bottom_panel_card)
 
         attachSearchView()
         if (dragReorderEnabled) {
@@ -134,10 +139,12 @@ open class PidDefinitionDialogFragment(
 
         if (anchors.size < 2) {
             categoryIndexBar.visibility = View.GONE
+            setContentIndexBarInset(reserved = false)
             return
         }
 
         categoryIndexBar.visibility = View.VISIBLE
+        setContentIndexBarInset(reserved = true)
         anchors.forEach { (section, position) ->
             val label = when (section) {
                 is PidSection.Selected -> getString(R.string.pref_pid_manage_dialog_selected_pids_short)
@@ -147,10 +154,31 @@ open class PidDefinitionDialogFragment(
         }
     }
 
-    // A transparent overlay, not a real layout column -- the list keeps its full width (matching
-    // the search bar above it) instead of being squeezed to make room for this. Each marker is
-    // thin (18dp) so it sits in the sliver of card surface before the checkbox rather than on top
-    // of it. The rotated text is drawn via a TextView whose *unrotated* width/height are swapped
+    // The toolbar (search bar), list, and button row all get pushed right by the same visual
+    // amount while the index bar is showing, so it gets its own real column instead of floating
+    // on top of card content -- and the three stay aligned with each other either way, they just
+    // share less of the screen while the bar needs room. The RecyclerView itself carries no
+    // horizontal margin (its PID cards each already have their own 8dp margin), unlike the
+    // toolbar/button cards which get theirs directly -- so its reserved inset is offset by that
+    // 8dp to keep all three edges lined up.
+    private fun setContentIndexBarInset(reserved: Boolean) {
+        fun dp(value: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics).toInt()
+
+        applyMarginStart(toolbarCard, dp(if (reserved) 32f else 8f))
+        applyMarginStart(bottomPanelCard, dp(if (reserved) 32f else 8f))
+        applyMarginStart(recyclerView, dp(if (reserved) 24f else 0f))
+    }
+
+    private fun applyMarginStart(view: View, marginPx: Int) {
+        (view.layoutParams as? RelativeLayout.LayoutParams)?.let {
+            if (it.marginStart != marginPx) {
+                it.marginStart = marginPx
+                view.layoutParams = it
+            }
+        }
+    }
+
+    // The rotated text is drawn via a TextView whose *unrotated* width/height are swapped
     // relative to the marker's real (rotated) footprint, centered inside a same-sized container --
     // that's what keeps the rotated glyphs aligned inside their own marker instead of drifting.
     private fun createIndexMarker(label: String, targetPosition: Int): View {
