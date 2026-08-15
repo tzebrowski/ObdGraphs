@@ -28,6 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -133,16 +134,34 @@ open class PidDefinitionDialogFragment(
 
         if (anchors.size < 2) {
             categoryIndexBar.visibility = View.GONE
+            setRecyclerViewIndexBarInset(reserved = false)
             return
         }
 
         categoryIndexBar.visibility = View.VISIBLE
+        setRecyclerViewIndexBarInset(reserved = true)
         anchors.forEach { (section, position) ->
             val label = when (section) {
                 is PidSection.Selected -> getString(R.string.pref_pid_manage_dialog_selected_pids_short)
                 is PidSection.Category -> getString(section.category.shortStringRes)
             }
             categoryIndexBar.addView(createIndexMarker(label, position))
+        }
+    }
+
+    // The list itself gets pushed to the right of the index bar rather than having the bar float
+    // on top of it, so the bar never covers the PID checkboxes/text underneath.
+    private fun setRecyclerViewIndexBarInset(reserved: Boolean) {
+        val marginPx = if (reserved) {
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36f, resources.displayMetrics).toInt()
+        } else {
+            0
+        }
+        (recyclerView.layoutParams as? RelativeLayout.LayoutParams)?.let {
+            if (it.marginStart != marginPx) {
+                it.marginStart = marginPx
+                recyclerView.layoutParams = it
+            }
         }
     }
 
