@@ -18,7 +18,9 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
@@ -61,6 +63,8 @@ open class PidDefinitionDialogFragment(
     private lateinit var categoryIndexBar: LinearLayout
     private lateinit var toolbarCard: View
     private lateinit var bottomPanelCard: View
+    private var indexMarkers: List<IndexMarker> = emptyList()
+    private var activeIndexMarker: IndexMarker? = null
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
@@ -105,6 +109,14 @@ open class PidDefinitionDialogFragment(
         // This keeps re-checking and self-corrects until it converges, however many passes it takes.
         toolbarCard.viewTreeObserver.addOnGlobalLayoutListener { syncRecyclerViewToToolbarEdges() }
 
+        // Highlights whichever group marker corresponds to what's currently scrolled into view,
+        // so the index bar also works as a "you are here" indicator, not just a jump target.
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                updateActiveIndexMarker()
+            }
+        })
+
         attachSearchView()
         if (dragReorderEnabled) {
             attachDragManager(recyclerView)
@@ -143,23 +155,62 @@ open class PidDefinitionDialogFragment(
         }
 
         categoryIndexBar.removeAllViews()
+        activeIndexMarker = null
 
         if (anchors.size < 2) {
             categoryIndexBar.visibility = View.GONE
+            indexMarkers = emptyList()
             setContentIndexBarInset(reserved = false)
             return
         }
 
         categoryIndexBar.visibility = View.VISIBLE
         setContentIndexBarInset(reserved = true)
-        anchors.forEach { (section, position) ->
+        indexMarkers = anchors.map { (section, position) ->
             val label = when (section) {
                 is PidSection.Selected -> getString(R.string.pref_pid_manage_dialog_selected_pids_short)
                 is PidSection.Category -> getString(section.category.shortStringRes)
             }
-            categoryIndexBar.addView(createIndexMarker(label, position))
+            val marker = createIndexMarker(label, position)
+            categoryIndexBar.addView(marker.container)
+            marker
+        }
+        updateActiveIndexMarker()
+    }
+
+    // Finds whichever marker's group the currently-first-visible PID card belongs to and
+    // highlights it, clearing the highlight from whatever was previously active.
+    private fun updateActiveIndexMarker() {
+        if (indexMarkers.isEmpty()) return
+        val layoutManager = recyclerView.layoutManager as? GridLayoutManager ?: return
+        val firstVisible = layoutManager.findFirstVisibleItemPosition()
+        if (firstVisible == RecyclerView.NO_POSITION) return
+
+        val current = indexMarkers.lastOrNull { it.position <= firstVisible } ?: indexMarkers.first()
+        if (current === activeIndexMarker) return
+
+        activeIndexMarker?.let { setIndexMarkerHighlighted(it, false) }
+        setIndexMarkerHighlighted(current, true)
+        activeIndexMarker = current
+    }
+
+    private fun setIndexMarkerHighlighted(marker: IndexMarker, highlighted: Boolean) {
+        if (highlighted) {
+            marker.container.background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics)
+                setColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.philippine_green))
+            }
+            marker.label.setTextColor(Color.WHITE)
+        } else {
+            val outValue = TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
+            marker.container.setBackgroundResource(outValue.resourceId)
+            marker.label.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.dialog_text_primary))
         }
     }
+
+    private data class IndexMarker(val position: Int, val container: FrameLayout, val label: TextView)
 
     // The toolbar (search bar) and button row get pushed right by the same amount while the
     // index bar is showing, so it gets its own real column instead of floating on top of card
@@ -207,7 +258,7 @@ open class PidDefinitionDialogFragment(
     // The rotated text is drawn via a TextView whose *unrotated* width/height are swapped
     // relative to the marker's real (rotated) footprint, centered inside a same-sized container --
     // that's what keeps the rotated glyphs aligned inside their own marker instead of drifting.
-    private fun createIndexMarker(label: String, targetPosition: Int): View {
+    private fun createIndexMarker(label: String, targetPosition: Int): IndexMarker {
         val thicknessPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22f, resources.displayMetrics).toInt()
         val lengthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40f, resources.displayMetrics).toInt()
         val spacingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics).toInt()
@@ -222,7 +273,7 @@ open class PidDefinitionDialogFragment(
             layoutParams = FrameLayout.LayoutParams(lengthPx, thicknessPx, Gravity.CENTER)
         }
 
-        return FrameLayout(requireContext()).apply {
+        val container = FrameLayout(requireContext()).apply {
             clipChildren = false
             addView(labelView)
             layoutParams = LinearLayout.LayoutParams(thicknessPx, lengthPx).apply { bottomMargin = spacingPx }
@@ -233,6 +284,8 @@ open class PidDefinitionDialogFragment(
                 (recyclerView.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(targetPosition, 0)
             }
         }
+
+        return IndexMarker(targetPosition, container, labelView)
     }
 
     private fun showAddBottomSheet() {
