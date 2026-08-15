@@ -178,16 +178,27 @@
     <string name="pref.pid.manage_dialog.can_header">Nagłówek CAN</string>
     <string name="pref.pid.manage_dialog.system_pids">PIDy systemowe</string>
     <string name="pref.pid.manage_dialog.selected_pids">Wybrane</string>
+    <string name="pref.pid.manage_dialog.selected_pids_short">WYB</string>
     <string name="pref.pid.manage_dialog.category_basics">Podstawowe</string>
+    <string name="pref.pid.manage_dialog.category_basics_short">POD</string>
     <string name="pref.pid.manage_dialog.category_ignition">Zapłon</string>
+    <string name="pref.pid.manage_dialog.category_ignition_short">ZAP</string>
     <string name="pref.pid.manage_dialog.category_fuel_afr">Paliwo / AFR</string>
+    <string name="pref.pid.manage_dialog.category_fuel_afr_short">AFR</string>
     <string name="pref.pid.manage_dialog.category_boost">Doładowanie</string>
+    <string name="pref.pid.manage_dialog.category_boost_short">DOL</string>
     <string name="pref.pid.manage_dialog.category_load_torque">Obciążenie / Moment</string>
+    <string name="pref.pid.manage_dialog.category_load_torque_short">MOM</string>
     <string name="pref.pid.manage_dialog.category_temperature">Temperatura</string>
+    <string name="pref.pid.manage_dialog.category_temperature_short">TEM</string>
     <string name="pref.pid.manage_dialog.category_air_intake">Powietrze / Dolot</string>
+    <string name="pref.pid.manage_dialog.category_air_intake_short">POW</string>
     <string name="pref.pid.manage_dialog.category_electrical">Elektryka</string>
+    <string name="pref.pid.manage_dialog.category_electrical_short">ELE</string>
     <string name="pref.pid.manage_dialog.category_location">Lokalizacja</string>
+    <string name="pref.pid.manage_dialog.category_location_short">LOK</string>
     <string name="pref.pid.manage_dialog.category_other">Inne</string>
+    <string name="pref.pid.manage_dialog.category_other_short">INN</string>
 
     <string name="pref.pid.manage_dialog.stable_yes">Stabilny: Tak</string>
     <string name="pref.pid.manage_dialog.stable_no">Stabilny: Nie</string>

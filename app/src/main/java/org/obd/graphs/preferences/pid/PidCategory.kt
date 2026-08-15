@@ -20,17 +20,17 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.metrics.pid.PidDefinition
 
-enum class PidCategory(val stringRes: Int) {
-    BASICS(R.string.pref_pid_manage_dialog_category_basics),
-    IGNITION(R.string.pref_pid_manage_dialog_category_ignition),
-    FUEL_AFR(R.string.pref_pid_manage_dialog_category_fuel_afr),
-    BOOST(R.string.pref_pid_manage_dialog_category_boost),
-    LOAD_TORQUE(R.string.pref_pid_manage_dialog_category_load_torque),
-    TEMPERATURE(R.string.pref_pid_manage_dialog_category_temperature),
-    AIR_INTAKE(R.string.pref_pid_manage_dialog_category_air_intake),
-    ELECTRICAL(R.string.pref_pid_manage_dialog_category_electrical),
-    LOCATION(R.string.pref_pid_manage_dialog_category_location),
-    OTHER(R.string.pref_pid_manage_dialog_category_other)
+enum class PidCategory(val stringRes: Int, val shortStringRes: Int) {
+    BASICS(R.string.pref_pid_manage_dialog_category_basics, R.string.pref_pid_manage_dialog_category_basics_short),
+    IGNITION(R.string.pref_pid_manage_dialog_category_ignition, R.string.pref_pid_manage_dialog_category_ignition_short),
+    FUEL_AFR(R.string.pref_pid_manage_dialog_category_fuel_afr, R.string.pref_pid_manage_dialog_category_fuel_afr_short),
+    BOOST(R.string.pref_pid_manage_dialog_category_boost, R.string.pref_pid_manage_dialog_category_boost_short),
+    LOAD_TORQUE(R.string.pref_pid_manage_dialog_category_load_torque, R.string.pref_pid_manage_dialog_category_load_torque_short),
+    TEMPERATURE(R.string.pref_pid_manage_dialog_category_temperature, R.string.pref_pid_manage_dialog_category_temperature_short),
+    AIR_INTAKE(R.string.pref_pid_manage_dialog_category_air_intake, R.string.pref_pid_manage_dialog_category_air_intake_short),
+    ELECTRICAL(R.string.pref_pid_manage_dialog_category_electrical, R.string.pref_pid_manage_dialog_category_electrical_short),
+    LOCATION(R.string.pref_pid_manage_dialog_category_location, R.string.pref_pid_manage_dialog_category_location_short),
+    OTHER(R.string.pref_pid_manage_dialog_category_other, R.string.pref_pid_manage_dialog_category_other_short)
 }
 
 // Order in which categories are grouped/sorted when browsing PIDs -- distinct from RULES below,

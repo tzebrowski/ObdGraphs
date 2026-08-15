@@ -34,6 +34,21 @@
         app:cardBackgroundColor="@color/dialog_card_background"
         android:paddingVertical="4dp" />
 
+    <LinearLayout
+        android:id="@+id/category_index_bar"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar_card"
+        android:layout_above="@id/bottom_panel_card"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_category_index_bar"
+        android:elevation="6dp"
+        android:orientation="vertical"
+        android:padding="2dp"
+        android:visibility="gone" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_pid"
         android:layout_width="wrap_content"

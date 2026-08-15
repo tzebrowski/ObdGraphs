@@ -18,12 +18,17 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
@@ -52,6 +57,7 @@ open class PidDefinitionDialogFragment(
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
+    private lateinit var categoryIndexBar: LinearLayout
 
     private val dialogMode: PidDefinitionDialogMode = PidDefinitionDialogMode.fromString(source)
     private val viewModel: PidDefinitionViewModel by viewModels {
@@ -84,6 +90,8 @@ open class PidDefinitionDialogFragment(
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
+        categoryIndexBar = root.findViewById(R.id.category_index_bar)
+
         attachSearchView()
         if (dragReorderEnabled) {
             attachDragManager(recyclerView)
@@ -105,7 +113,51 @@ open class PidDefinitionDialogFragment(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     adapter.updateData(state.filteredItems)
+                    updateCategoryIndexBar(state.filteredItems)
                 }
+            }
+        }
+    }
+
+    // A jump-to-group index along the left edge, so a long PID list doesn't require scrolling to
+    // find a specific category (or the Selected group) -- only shown once there's more than one
+    // group to jump between, and rebuilt whenever the visible group set changes (e.g. search).
+    private fun updateCategoryIndexBar(items: List<PidDefinitionDetails>) {
+        val anchors = LinkedHashMap<PidSection, Int>()
+        items.forEachIndexed { index, item ->
+            val section = sectionFor(item) ?: return@forEachIndexed
+            anchors.putIfAbsent(section, index)
+        }
+
+        categoryIndexBar.removeAllViews()
+
+        if (anchors.size < 2) {
+            categoryIndexBar.visibility = View.GONE
+            return
+        }
+
+        categoryIndexBar.visibility = View.VISIBLE
+        anchors.forEach { (section, position) ->
+            val label = when (section) {
+                is PidSection.Selected -> getString(R.string.pref_pid_manage_dialog_selected_pids_short)
+                is PidSection.Category -> getString(section.category.shortStringRes)
+            }
+            categoryIndexBar.addView(createIndexMarker(label, position))
+        }
+    }
+
+    private fun createIndexMarker(label: String, targetPosition: Int): TextView {
+        val paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics).toInt()
+        return TextView(requireContext()).apply {
+            text = label
+            textSize = 9f
+            setTypeface(typeface, Typeface.BOLD)
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            setOnClickListener {
+                (recyclerView.layoutManager as? GridLayoutManager)?.scrollToPositionWithOffset(targetPosition, 0)
             }
         }
     }
