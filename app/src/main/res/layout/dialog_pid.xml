@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The dialog window itself has a transparent background (see
+     CoreDialogFragment.requestWindowFeatures), so anything not covered by an opaque card here
+     reveals whatever screen is behind the dialog. Background covers the whole panel rather than
+     leaving that to each individual card, so the gaps between/around cards (and the category
+     header rows) don't show the Settings screen bleeding through behind them. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/dialog_card_background">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/toolbar_card"
@@ -36,17 +42,19 @@
 
     <!-- Sits in its own reserved column at the true left edge (see
          PidDefinitionDialogFragment.setContentIndexBarInset), not overlapping the toolbar/list/
-         button cards, which all get pushed right by the same amount while this is visible. -->
+         button cards, which all shrink by the same amount on both sides while this is visible.
+         Fills the full band between the two cards (rather than wrap_content + centerVertical,
+         which left the markers pinned to the top) and centers its children within that band. -->
     <LinearLayout
         android:id="@+id/category_index_bar"
-        android:layout_width="18dp"
-        android:layout_height="wrap_content"
+        android:layout_width="22dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/toolbar_card"
         android:layout_above="@id/bottom_panel_card"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
         android:layout_marginStart="8dp"
         android:clipChildren="false"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:visibility="gone" />
 

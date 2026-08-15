@@ -33,6 +33,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -154,19 +155,32 @@ open class PidDefinitionDialogFragment(
         }
     }
 
-    // The toolbar (search bar), list, and button row all get pushed right by the same visual
-    // amount while the index bar is showing, so it gets its own real column instead of floating
-    // on top of card content -- and the three stay aligned with each other either way, they just
-    // share less of the screen while the bar needs room. The RecyclerView itself carries no
-    // horizontal margin (its PID cards each already have their own 8dp margin), unlike the
-    // toolbar/button cards which get theirs directly -- so its reserved inset is offset by that
-    // 8dp to keep all three edges lined up.
+    // The toolbar (search bar) and button row get pushed right by the same amount while the
+    // index bar is showing, so it gets its own real column instead of floating on top of card
+    // content -- only the start margin changes, so neither loses any width, they just move over.
+    // The RecyclerView's own margin is then derived from the toolbar's *actual rendered* edges
+    // once layout settles, rather than computed from theoretical dp math: this dialog's window
+    // is wrap-content-sized around its widest child, which does not leave the plain end-margin
+    // gap you'd expect, so dp arithmetic alone kept landing the PID cards (which carry their own
+    // 8dp margin, unlike the toolbar/button cards which get theirs directly) a few dp short of
+    // the toolbar's edges. Reading real positions sidesteps that instead of chasing it.
     private fun setContentIndexBarInset(reserved: Boolean) {
         fun dp(value: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics).toInt()
+        val startPx = dp(if (reserved) 36f else 8f)
 
-        applyMarginStart(toolbarCard, dp(if (reserved) 32f else 8f))
-        applyMarginStart(bottomPanelCard, dp(if (reserved) 32f else 8f))
-        applyMarginStart(recyclerView, dp(if (reserved) 24f else 0f))
+        applyMarginStart(toolbarCard, startPx)
+        applyMarginStart(bottomPanelCard, startPx)
+
+        toolbarCard.doOnNextLayout {
+            val cardOwnMarginPx = dp(8f)
+            val targetLeft = toolbarCard.left - cardOwnMarginPx
+            val targetRight = toolbarCard.right + cardOwnMarginPx
+            (recyclerView.layoutParams as? RelativeLayout.LayoutParams)?.let {
+                it.leftMargin = targetLeft
+                it.rightMargin = root.width - targetRight
+                recyclerView.layoutParams = it
+            }
+        }
     }
 
     private fun applyMarginStart(view: View, marginPx: Int) {
@@ -182,12 +196,13 @@ open class PidDefinitionDialogFragment(
     // relative to the marker's real (rotated) footprint, centered inside a same-sized container --
     // that's what keeps the rotated glyphs aligned inside their own marker instead of drifting.
     private fun createIndexMarker(label: String, targetPosition: Int): View {
-        val thicknessPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18f, resources.displayMetrics).toInt()
-        val lengthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34f, resources.displayMetrics).toInt()
+        val thicknessPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22f, resources.displayMetrics).toInt()
+        val lengthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40f, resources.displayMetrics).toInt()
+        val spacingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics).toInt()
 
         val labelView = TextView(requireContext()).apply {
             text = label
-            textSize = 9f
+            textSize = 12f
             setTypeface(typeface, Typeface.BOLD)
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
@@ -198,7 +213,7 @@ open class PidDefinitionDialogFragment(
         return FrameLayout(requireContext()).apply {
             clipChildren = false
             addView(labelView)
-            layoutParams = LinearLayout.LayoutParams(thicknessPx, lengthPx)
+            layoutParams = LinearLayout.LayoutParams(thicknessPx, lengthPx).apply { bottomMargin = spacingPx }
             val outValue = TypedValue()
             requireContext().theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
             setBackgroundResource(outValue.resourceId)
