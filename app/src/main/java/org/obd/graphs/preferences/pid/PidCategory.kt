@@ -28,8 +28,9 @@ enum class PidCategory(val stringRes: Int, val shortStringRes: Int) {
     LOAD_TORQUE(R.string.pref_pid_manage_dialog_category_load_torque, R.string.pref_pid_manage_dialog_category_load_torque_short),
     TEMPERATURE(R.string.pref_pid_manage_dialog_category_temperature, R.string.pref_pid_manage_dialog_category_temperature_short),
     AIR_INTAKE(R.string.pref_pid_manage_dialog_category_air_intake, R.string.pref_pid_manage_dialog_category_air_intake_short),
-    ELECTRICAL(R.string.pref_pid_manage_dialog_category_electrical, R.string.pref_pid_manage_dialog_category_electrical_short),
     LOCATION(R.string.pref_pid_manage_dialog_category_location, R.string.pref_pid_manage_dialog_category_location_short),
+    IBS(R.string.pref_pid_manage_dialog_category_ibs, R.string.pref_pid_manage_dialog_category_ibs_short),
+    OIL(R.string.pref_pid_manage_dialog_category_oil, R.string.pref_pid_manage_dialog_category_oil_short),
     OTHER(R.string.pref_pid_manage_dialog_category_other, R.string.pref_pid_manage_dialog_category_other_short)
 }
 
@@ -43,26 +44,31 @@ val PID_CATEGORY_DISPLAY_ORDER: List<PidCategory> = listOf(
     PidCategory.LOAD_TORQUE,
     PidCategory.TEMPERATURE,
     PidCategory.AIR_INTAKE,
-    PidCategory.ELECTRICAL,
     PidCategory.LOCATION,
+    PidCategory.IBS,
+    PidCategory.OIL,
     PidCategory.OTHER
 )
 
 private data class CategoryRule(val category: PidCategory, val pattern: Regex)
 
 // Ordered most-specific first, e.g. "O2 Voltage" must match FUEL_AFR before the generic
-// "voltage" keyword in ELECTRICAL, and "Calculated horse power" must match LOAD_TORQUE.
+// "voltage" keyword in IBS, and "Calculated horse power" must match LOAD_TORQUE.
 private val RULES: List<CategoryRule> = listOf(
-    CategoryRule(PidCategory.IGNITION, Regex("spark|ignition|timing adv|misfire", RegexOption.IGNORE_CASE)),
+    // Checked first: IAM/IBS readings also mention words like "battery" and "boost status" that
+    // would otherwise be claimed by the BOOST rule below.
+    CategoryRule(PidCategory.IBS, Regex("\\biam\\b|\\bibs\\b|voltage|battery", RegexOption.IGNORE_CASE)),
+    CategoryRule(PidCategory.IGNITION, Regex("spark|ignition|timing adv|misfire|knock|coil|injection", RegexOption.IGNORE_CASE)),
+    // Word-bounded so it doesn't match inside "coil" (already claimed by IGNITION above).
+    CategoryRule(PidCategory.OIL, Regex("\\boil\\b", RegexOption.IGNORE_CASE)),
     CategoryRule(PidCategory.FUEL_AFR, Regex("\\bafr\\b|lambda|fuel|air.?fuel|\\bo2\\b|oxygen", RegexOption.IGNORE_CASE)),
     CategoryRule(
         PidCategory.BOOST,
-        Regex("boost|wastegate|turbo|manifold|intake pressure|\\bmap\\b|atmospheric|baro", RegexOption.IGNORE_CASE)
+        Regex("boost|wastegate|turbo|manifold|intake pressure|\\bmap\\b|atmospheric|baro|throttle position|throttle angle", RegexOption.IGNORE_CASE)
     ),
     CategoryRule(PidCategory.LOAD_TORQUE, Regex("torque|\\bload\\b|horsepower|horse power|\\bhp\\b", RegexOption.IGNORE_CASE)),
     CategoryRule(PidCategory.TEMPERATURE, Regex("temp", RegexOption.IGNORE_CASE)),
     CategoryRule(PidCategory.AIR_INTAKE, Regex("\\bair\\b|\\bmaf\\b|flow", RegexOption.IGNORE_CASE)),
-    CategoryRule(PidCategory.ELECTRICAL, Regex("voltage|battery|\\bibs\\b|oil level|oil degradation", RegexOption.IGNORE_CASE)),
     CategoryRule(PidCategory.LOCATION, Regex("latitude|longitude|\\blat\\b|\\blon\\b|\\blng\\b|gps", RegexOption.IGNORE_CASE)),
     CategoryRule(PidCategory.BASICS, Regex("speed|\\brpm\\b|pedal|throttle|gear|selector|distance|odometer", RegexOption.IGNORE_CASE))
 )
@@ -71,7 +77,9 @@ private val RULES: List<CategoryRule> = listOf(
 // categorization is inferred from the PID's description text, same approach as the web log
 // viewer's signal-categories.ts.
 fun categoryFor(pid: PidDefinition): PidCategory {
-    val text = "${pid.description ?: ""} ${pid.longDescription ?: ""}"
+    // Descriptions in the PID JSON sources often wrap onto multiple lines (e.g. "Measured
+    // Intake\nPressure"), which would otherwise break multi-word keywords like "intake pressure".
+    val text = "${pid.description ?: ""} ${pid.longDescription ?: ""}".replace('\n', ' ')
     for (rule in RULES) {
         if (rule.pattern.containsMatchIn(text)) return rule.category
     }

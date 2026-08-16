@@ -193,10 +193,12 @@
     <string name="pref.pid.manage_dialog.category_temperature_short">TEM</string>
     <string name="pref.pid.manage_dialog.category_air_intake">Powietrze / Dolot</string>
     <string name="pref.pid.manage_dialog.category_air_intake_short">POW</string>
-    <string name="pref.pid.manage_dialog.category_electrical">Elektryka</string>
-    <string name="pref.pid.manage_dialog.category_electrical_short">ELE</string>
     <string name="pref.pid.manage_dialog.category_location">Lokalizacja</string>
     <string name="pref.pid.manage_dialog.category_location_short">LOK</string>
+    <string name="pref.pid.manage_dialog.category_ibs">IBS</string>
+    <string name="pref.pid.manage_dialog.category_ibs_short">IBS</string>
+    <string name="pref.pid.manage_dialog.category_oil">Olej</string>
+    <string name="pref.pid.manage_dialog.category_oil_short">OLE</string>
     <string name="pref.pid.manage_dialog.category_other">Inne</string>
     <string name="pref.pid.manage_dialog.category_other_short">INN</string>
 

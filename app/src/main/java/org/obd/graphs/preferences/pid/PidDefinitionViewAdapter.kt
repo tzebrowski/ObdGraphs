@@ -74,7 +74,9 @@ class PidDefinitionViewAdapter internal constructor(
                 when (section) {
                     is PidSection.Selected -> {
                         holder.separator.text = context?.getString(R.string.pref_pid_manage_dialog_selected_pids)
-                        holder.categorySelect.visibility = View.GONE
+                        // INVISIBLE (not GONE): keeps the same start offset as category headers
+                        // that do show a checkbox, so "Selected" doesn't sit at a different indent.
+                        holder.categorySelect.visibility = View.INVISIBLE
                         holder.categorySelect.setOnClickListener(null)
                     }
                     is PidSection.Category -> {
