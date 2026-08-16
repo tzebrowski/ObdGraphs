@@ -25,9 +25,9 @@ import androidx.fragment.app.DialogFragment
 import org.obd.graphs.R
 
 abstract class CoreDialogFragment : DialogFragment() {
-    protected fun requestWindowFeatures() {
+    protected fun requestWindowFeatures(scrimColor: Int = Color.TRANSPARENT) {
         dialog?.let {
-            it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            it.window?.setBackgroundDrawable(ColorDrawable(scrimColor))
             it.window?.requestFeature(Window.FEATURE_NO_TITLE)
         }
     }

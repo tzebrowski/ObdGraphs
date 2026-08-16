@@ -4,6 +4,7 @@
     <color name="dialog_text_secondary">#A1A1AA</color>
 
     <color name="dialog_card_background">#1E1E1E</color>
+    <color name="dialog_scrim">#80202020</color>
 
     <color name="philippine_green">#4ADE80</color>
     <color name="rainbow_indigo">#818CF8</color>

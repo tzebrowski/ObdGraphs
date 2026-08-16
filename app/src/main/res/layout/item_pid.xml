@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            app:buttonTint="@color/category_checkbox_tint"
             android:visibility="gone" />
 
         <TextView
@@ -27,10 +28,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:background="@drawable/bg_category_header_pill"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
             android:text="@string/pref.pid.manage_dialog.system_pids"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView

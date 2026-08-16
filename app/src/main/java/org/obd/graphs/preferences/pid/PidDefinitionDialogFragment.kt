@@ -34,6 +34,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -81,7 +82,7 @@ open class PidDefinitionDialogFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        requestWindowFeatures()
+        requestWindowFeatures(scrimColor = ContextCompat.getColor(requireContext(), R.color.dialog_scrim))
         root = inflater.inflate(R.layout.dialog_pid, container, false)
 
         val adapter = PidDefinitionViewAdapter(
