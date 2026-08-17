@@ -73,10 +73,16 @@ private val RULES: List<CategoryRule> = listOf(
     CategoryRule(PidCategory.BASICS, Regex("speed|\\brpm\\b|pedal|throttle|gear|selector|distance|odometer", RegexOption.IGNORE_CASE))
 )
 
-// No upstream category field exists on PidDefinition (nor in the ObdMetrics JSON source), so
-// categorization is inferred from the PID's description text, same approach as the web log
-// viewer's signal-categories.ts.
+// PidDefinition.category (ObdMetrics) carries a static, untranslated tag (e.g. "boost") baked
+// into the PID JSON sources, so it stays correct regardless of the active locale -- unlike
+// description/longDescription, which get overwritten with translated text by
+// DefaultPIDsRegistry.applyTranslations(). Only fall back to text matching for PIDs the upstream
+// tag doesn't cover yet (new PIDs added before regeneration, or custom/user PIDs).
 fun categoryFor(pid: PidDefinition): PidCategory {
+    pid.category?.let { tag ->
+        PID_CATEGORY_DISPLAY_ORDER.firstOrNull { it.name.equals(tag, ignoreCase = true) }?.let { return it }
+    }
+
     // Descriptions in the PID JSON sources often wrap onto multiple lines (e.g. "Measured
     // Intake\nPressure"), which would otherwise break multi-word keywords like "intake pressure".
     val text = "${pid.description ?: ""} ${pid.longDescription ?: ""}".replace('\n', ' ')
