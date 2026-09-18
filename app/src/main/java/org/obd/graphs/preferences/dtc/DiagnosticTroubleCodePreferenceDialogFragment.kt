@@ -243,9 +243,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             }
         )
 
+        // Inflated from XML (rather than constructed in code) so it can carry a custom, always-on
+        // scrollbar thumb on every API level - the theme default is thin and barely visible, and
+        // it's the only hint that more modules sit below the fold.
         val listView =
-            android.widget.ListView(context).apply {
-                choiceMode = android.widget.ListView.CHOICE_MODE_MULTIPLE
+            (LayoutInflater.from(context).inflate(R.layout.dtc_module_list, container, false) as MaxHeightListView).apply {
                 adapter =
                     android.widget.ArrayAdapter(
                         context,
