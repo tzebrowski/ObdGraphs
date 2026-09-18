@@ -256,11 +256,15 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     setItemChecked(index, true)
                 }
             }
+        // Zero height + weight lets the LinearLayout shrink the list (which scrolls on its own)
+        // when there are more modules than fit on screen - with WRAP_CONTENT it would claim its
+        // full height and push the button bar below out of the dialog.
         container.addView(
             listView,
             android.widget.LinearLayout.LayoutParams(
                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                0,
+                1f
             )
         )
 
