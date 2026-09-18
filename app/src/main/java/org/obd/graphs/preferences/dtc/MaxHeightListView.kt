@@ -25,26 +25,26 @@ import android.widget.ListView
 // whole dialog height when the module list was long, pushing the button bar out of view - an
 // explicit cap keeps room for the buttons regardless of how the dialog window gets measured.
 class MaxHeightListView
-    @JvmOverloads
-    constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = android.R.attr.listViewStyle
-    ) : ListView(context, attrs, defStyleAttr) {
-        var maxHeightRatio: Float = 0.4f
+@JvmOverloads
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = android.R.attr.listViewStyle
+) : ListView(context, attrs, defStyleAttr) {
+    var maxHeightRatio: Float = 0.4f
 
-        override fun onMeasure(
-            widthMeasureSpec: Int,
-            heightMeasureSpec: Int
-        ) {
-            val maxHeight = (resources.displayMetrics.heightPixels * maxHeightRatio).toInt()
-            val size = MeasureSpec.getSize(heightMeasureSpec)
-            val cappedSpec =
-                when (MeasureSpec.getMode(heightMeasureSpec)) {
-                    MeasureSpec.UNSPECIFIED -> MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST)
-                    MeasureSpec.EXACTLY -> MeasureSpec.makeMeasureSpec(minOf(size, maxHeight), MeasureSpec.EXACTLY)
-                    else -> MeasureSpec.makeMeasureSpec(minOf(size, maxHeight), MeasureSpec.AT_MOST)
-                }
-            super.onMeasure(widthMeasureSpec, cappedSpec)
-        }
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int
+    ) {
+        val maxHeight = (resources.displayMetrics.heightPixels * maxHeightRatio).toInt()
+        val size = MeasureSpec.getSize(heightMeasureSpec)
+        val cappedSpec =
+            when (MeasureSpec.getMode(heightMeasureSpec)) {
+                MeasureSpec.UNSPECIFIED -> MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST)
+                MeasureSpec.EXACTLY -> MeasureSpec.makeMeasureSpec(minOf(size, maxHeight), MeasureSpec.EXACTLY)
+                else -> MeasureSpec.makeMeasureSpec(minOf(size, maxHeight), MeasureSpec.AT_MOST)
+            }
+        super.onMeasure(widthMeasureSpec, cappedSpec)
     }
+}
