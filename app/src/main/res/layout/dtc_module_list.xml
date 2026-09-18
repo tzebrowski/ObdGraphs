@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.obd.graphs.preferences.dtc.MaxHeightListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:choiceMode="multipleChoice"
+    android:fadeScrollbars="false"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbarSize="6dp"
+    android:scrollbarStyle="insideOverlay"
+    android:scrollbarThumbVertical="@drawable/dtc_module_list_scrollbar_thumb"
+    android:scrollbars="vertical" />

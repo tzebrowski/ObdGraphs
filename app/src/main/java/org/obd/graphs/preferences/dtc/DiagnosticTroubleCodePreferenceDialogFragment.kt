@@ -243,9 +243,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             }
         )
 
+        // Inflated from XML (rather than constructed in code) so it can carry a custom, always-on
+        // scrollbar thumb on every API level - the theme default is thin and barely visible, and
+        // it's the only hint that more modules sit below the fold.
         val listView =
-            android.widget.ListView(context).apply {
-                choiceMode = android.widget.ListView.CHOICE_MODE_MULTIPLE
+            (LayoutInflater.from(context).inflate(R.layout.dtc_module_list, container, false) as MaxHeightListView).apply {
                 adapter =
                     android.widget.ArrayAdapter(
                         context,
@@ -256,11 +258,15 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     setItemChecked(index, true)
                 }
             }
+        // Zero height + weight lets the LinearLayout shrink the list (which scrolls on its own)
+        // when there are more modules than fit on screen - with WRAP_CONTENT it would claim its
+        // full height and push the button bar below out of the dialog.
         container.addView(
             listView,
             android.widget.LinearLayout.LayoutParams(
                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                0,
+                1f
             )
         )
 
