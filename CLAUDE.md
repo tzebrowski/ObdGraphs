@@ -81,7 +81,7 @@ This project uses Spotless for automatic code style enforcement. Ensure you form
 
 ## 🔀 Git Workflow
 
-**Never commit directly to `master`.** Always branch (`fix/...`, `feat/...`); the user merges via PR. Run `git branch --show-current` before committing — the user may switch branches outside your visibility. Stage files explicitly; don't sweep in unrelated local edits (e.g. a locally modified `app/build.gradle`).
+**Never commit directly to `master`.** **Do not add Claude attribution (`Co-Authored-By: Claude ...`, "Generated with Claude Code") to commits or PRs.** Always branch (`fix/...`, `feat/...`); the user merges via PR. Run `git branch --show-current` before committing — the user may switch branches outside your visibility. Stage files explicitly; don't sweep in unrelated local edits (e.g. a locally modified `app/build.gradle`).
 
 ## ☕ Build Environment
 
@@ -108,6 +108,10 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * Top grid: labels drawn by `AbstractDrawer.drawTitle`, fixed 6 columns (`MAX_ITEM_IN_THE_ROW`), fixed row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row.
 * Bottom row: drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, visible metric count, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate`, and label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
 * AA label splitting is controlled by `pref.aa.trip_info.break_label` (default `true`), independent of Giulia virtual screens. Phone Trip Info always splits (`TripInfoSettings`).
+
+### Performance screen (AA + phone)
+* `renderer/performance/PerformanceSurfaceRenderer.kt` wraps settings in the internal `PerformanceScreenSettings` delegate (same name as the `api.PerformanceScreenSettings` data class — mind the imports). Its top grid reuses `TripInfoDrawer.drawMetric`; gauges use the gauge drawer.
+* AA label splitting is controlled by `pref.aa.performance.break_label` (default `true`) via that delegate. Phone Performance always splits (`PerformanceSettings`).
 
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.

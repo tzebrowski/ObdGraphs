@@ -28,9 +28,10 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.brake_boosting.BrakeBoostingDrawer
 
 internal class PerformanceScreenSettings(
-    original: ScreenSettings
+    private val original: ScreenSettings
 ) : ScreenSettings by original {
-    override fun isBreakLabelTextEnabled(): Boolean = true
+    // Performance has its own label-break setting, independent of the Giulia virtual screens.
+    override fun isBreakLabelTextEnabled(): Boolean = original.getPerformanceScreenSettings().breakLabelTextEnabled
 }
 
 internal class PerformanceSurfaceRenderer(
