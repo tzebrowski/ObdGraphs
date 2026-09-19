@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Landscape leaves far less vertical room around the list for the title, hint and buttons. -->
+    <integer name="dtc_module_list_max_height_percent">25</integer>
+</resources>

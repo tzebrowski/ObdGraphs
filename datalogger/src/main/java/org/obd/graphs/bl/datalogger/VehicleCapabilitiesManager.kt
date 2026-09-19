@@ -35,6 +35,7 @@ class VehicleMetadata(
 private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_DTC = "pref.datalogger.dtc"
+private const val PREF_DTC_SCANNED_MODULES = "pref.datalogger.dtc.scanned_modules"
 
 object VehicleCapabilitiesManager {
     private val mapper =
@@ -82,16 +83,35 @@ object VehicleCapabilitiesManager {
         }
     }
 
-    internal fun updateDTC(dtc: Set<DiagnosticTroubleCode>) {
+    // scannedModules are the module labels (DiagnosticTroubleCode.module) a user-triggered scan
+    // targeted, kept so the DTC list can tell "scanned, nothing reported" apart from "not scanned".
+    // Empty for the default single-ECU scan and for automatic reads.
+    internal fun updateDTC(
+        dtc: Set<DiagnosticTroubleCode>,
+        scannedModules: List<String> = emptyList()
+    ) {
         Prefs.edit().apply {
             Log.i(
                 LOG_TAG,
-                "Updating DTC, size: ${dtc.size}"
+                "Updating DTC, size: ${dtc.size}, scanned modules: $scannedModules"
             )
             putString(PREF_DTC, mapper.writeValueAsString(dtc))
+            putString(PREF_DTC_SCANNED_MODULES, mapper.writeValueAsString(scannedModules))
             commit()
         }
     }
+
+    fun getDtcScannedModules(): List<String> =
+        try {
+            var preferences = Prefs.getString(PREF_DTC_SCANNED_MODULES, "")!!
+            if (preferences.startsWith("\"") && preferences.endsWith("\"")) {
+                preferences = mapper.readValue<String>(preferences)
+            }
+            if (preferences.isEmpty()) emptyList() else mapper.readValue<List<String>>(preferences)
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to read DTC scanned modules from preferences", e)
+            emptyList()
+        }
 
     fun getSupportedPIDs(): MutableList<String> {
         val pidList = DataLoggerRepository.getPidDefinitionRegistry().findAll()

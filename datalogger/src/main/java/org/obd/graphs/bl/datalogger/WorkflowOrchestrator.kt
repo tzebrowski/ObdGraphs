@@ -93,7 +93,8 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.d(LOG_TAG, "Received onDTCCompleted event.")
             }
 
-            VehicleCapabilitiesManager.updateDTC(dtc)
+            VehicleCapabilitiesManager.updateDTC(dtc, pendingDtcModules.orEmpty())
+            pendingDtcModules = null
             sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
         }
 
@@ -243,9 +244,15 @@ internal class WorkflowOrchestrator internal constructor() {
 
     // selectedModules restricts the scan to the given Diagnostic Request ID entry names (their
     // requestKey, eg. "ABS") - empty means the plain default single-ECU scan, no module targeting.
+    // Module labels of the DTC action in flight, handed to onDTCCompleted so the list can show
+    // scanned modules that reported nothing. Stays null for automatic reads.
+    @Volatile
+    private var pendingDtcModules: List<String>? = null
+
     fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) {
         val readAction = getReadDtcAction()
         val modules = getDtcModules(selectedModules)
+        pendingDtcModules = modules.map { it.mode }
         Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction, modules=$modules")
         val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction), modules)
         Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
@@ -254,6 +261,7 @@ internal class WorkflowOrchestrator internal constructor() {
     fun scheduleDTCRead(selectedModules: Set<String> = emptySet()) {
         val readAction = getReadDtcAction()
         val modules = getDtcModules(selectedModules)
+        pendingDtcModules = modules.map { it.mode }
         Log.i(LOG_TAG,"Schedule DTC read action=$readAction, modules=$modules")
         val result = workflow.scheduleDTCAction(setOf(readAction), modules)
         Log.i(LOG_TAG,"DTC read is scheduled: $result")

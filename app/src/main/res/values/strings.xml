@@ -408,6 +408,7 @@
     <string name="pref.dtc.code">Code</string>
     <string name="pref.dtc.description">Description</string>
     <string name="pref.dtc.no_dtc_found">No Diagnosis Trouble Code (DTC) found.</string>
+    <string name="pref.dtc.no_dtc_found_for_module">No trouble codes reported.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Enable Automatic DTC cleanup</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatically clears Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
     <string name="pref.dtc.settings_summary"><b>Tap</b> to view active Diagnostic Trouble Codes (DTCs) retrieved from the ECU.</string>
@@ -929,6 +930,18 @@
     <string name="dtc.action_refresh">Refresh</string>
     <string name="dtc.action_clear_codes">Clear Codes</string>
     <string name="dtc.action_share">Share</string>
+    <string name="dtc.action_clearing">Clearing…</string>
+    <string name="dtc.share.chooser_title">Share Diagnostic Report</string>
+    <string name="dtc.share.report_title">Vehicle Diagnostic Report</string>
+    <string name="dtc.share.dtc">DTC: %1$s</string>
+    <string name="dtc.share.description">Description: %1$s</string>
+    <string name="dtc.share.unknown">Unknown</string>
+    <string name="dtc.share.not_available">N/A</string>
+    <string name="dtc.share.none">None</string>
+    <string name="dtc.share.system_category">System: %1$s | Category: %2$s</string>
+    <string name="dtc.share.status">Status: %1$s (Hex: %2$s)</string>
+    <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
+    <string name="dtc.share.unknown_did">Unknown DID</string>
     <string name="error_dialog.copied_to_clipboard">Copied to clipboard</string>
     <string name="dialog.screen_lock.cancel">Cancel</string>
     <string name="gps.title">GPS DIAGNOSTICS</string>

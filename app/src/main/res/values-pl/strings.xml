@@ -412,6 +412,7 @@
     <string name="pref.dtc.code">Kod</string>
     <string name="pref.dtc.description">Opis</string>
     <string name="pref.dtc.no_dtc_found">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
+    <string name="pref.dtc.no_dtc_found_for_module">Brak zgłoszonych kodów błędów.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Włącz automatyczne czyszczenie DTC</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatycznie kasuje kody błędów diagnostycznych (DTC) z pamięci ECU.</string>
     <string name="pref.dtc.settings_summary"><b>Dotknij</b>, aby wyświetlić aktywne kody błędów diagnostycznych (DTC) pobrane z ECU.</string>
@@ -707,6 +708,18 @@
     <string name="dtc.action_refresh">Odśwież</string>
     <string name="dtc.action_clear_codes">Skasuj kody</string>
     <string name="dtc.action_share">Udostępnij</string>
+    <string name="dtc.action_clearing">Kasowanie…</string>
+    <string name="dtc.share.chooser_title">Udostępnij raport diagnostyczny</string>
+    <string name="dtc.share.report_title">Raport diagnostyczny pojazdu</string>
+    <string name="dtc.share.dtc">DTC: %1$s</string>
+    <string name="dtc.share.description">Opis: %1$s</string>
+    <string name="dtc.share.unknown">Nieznany</string>
+    <string name="dtc.share.not_available">Brak</string>
+    <string name="dtc.share.none">Brak</string>
+    <string name="dtc.share.system_category">System: %1$s | Kategoria: %2$s</string>
+    <string name="dtc.share.status">Status: %1$s (Hex: %2$s)</string>
+    <string name="dtc.share.snapshot">Migawka (rekord %1$d):</string>
+    <string name="dtc.share.unknown_did">Nieznany DID</string>
     <string name="error_dialog.copied_to_clipboard">Skopiowano do schowka</string>
     <string name="dialog.screen_lock.cancel">Anuluj</string>
     <string name="gps.title">DIAGNOSTYKA GPS</string>
