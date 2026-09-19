@@ -26,21 +26,28 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.ScreenLock
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_ACTION_COMPLETED
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
+import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.toast
 import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.DiagnosticTroubleCode
-import org.obd.metrics.command.dtc.DtcComponent
+
+private const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
 
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
@@ -55,8 +62,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 context: android.content.Context?,
                 intent: Intent?
             ) {
-                if (intent?.action == DATA_LOGGER_DTC_ACTION_COMPLETED) {
-                    handleDTCChangedNotification()
+                when (intent?.action) {
+                    DATA_LOGGER_DTC_ACTION_COMPLETED -> handleDTCChangedNotification()
+                    // The read/clear will never report back after the user cancels the progress
+                    // overlay or the connection drops, so restore the idle state here instead of
+                    // leaving the Clear button stuck on "Clearing...".
+                    SCREEN_LOCK_DIALOG_CANCELLED_EVENT,
+                    DATA_LOGGER_ERROR_EVENT,
+                    DATA_LOGGER_STOPPED_EVENT -> resetActionState()
                 }
             }
         }
@@ -69,36 +82,37 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
-        val sortedDtcList = diagnosticTroubleCodes()
 
         recyclerView = root.findViewById(R.id.recycler_view)
 
         adapter = DiagnosticTroubleCodeViewAdapter(context)
-        adapter.submitList(sortedDtcList.toDtcListItems())
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
-        attachButtons(root, sortedDtcList)
+        attachButtons(root)
         attachCloseButton(root)
+        refreshList()
+
+        // Registered for the whole view lifetime (not just while resumed) so a result arriving
+        // while the dialog is paused - e.g. behind the share chooser - isn't dropped, leaving a
+        // stale list and a stuck progress overlay.
+        registerReceiver(requireContext(), dtcNotificationsReceiver) {
+            it.addAction(DATA_LOGGER_DTC_ACTION_COMPLETED)
+            it.addAction(SCREEN_LOCK_DIALOG_CANCELLED_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+        }
 
         return root
     }
 
-    private fun attachButtons(
-        root: View,
-        sortedDtcList: List<DiagnosticTroubleCode>
-    ) {
+    private fun attachButtons(root: View) {
         refreshButton = root.findViewById(R.id.action_refresh_dtc)
         shareButton = root.findViewById(R.id.action_share)
         clearButton = root.findViewById(R.id.action_clear_dtc)
 
         shareButton.visibility = View.VISIBLE
         clearButton.visibility = View.VISIBLE
-
-        if (isDtcAvailable(sortedDtcList)) {
-            shareButton.isEnabled = false
-            clearButton.isEnabled = false
-        }
 
         shareButton.setOnClickListener {
             shareDtcReport(diagnosticTroubleCodes())
@@ -136,7 +150,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     }
 
                     toast(R.string.pref_dtc_clean_dialog_send_message)
-                    clearButton.text = "Clearing..."
+                    clearButton.setText(R.string.dtc_action_clearing)
                 }
             } else {
                 toast(R.string.pref_dtc_no_connection_established)
@@ -195,129 +209,45 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         // setMessage()/setMultiChoiceItems(), letting one dialog cover both module selection
         // and the destructive-action confirmation.
         val context = requireContext()
-        val density = resources.displayMetrics.density
-        val padding = (16 * density).toInt()
+        val content = LayoutInflater.from(context).inflate(R.layout.dialog_dtc_module_picker, null)
 
-        val container =
-            android.widget.LinearLayout(context).apply {
-                orientation = android.widget.LinearLayout.VERTICAL
-                setPadding(padding, padding, padding, 0)
+        content.findViewById<android.widget.TextView>(R.id.dtc_picker_message).apply {
+            if (messageRes != null) {
+                setText(messageRes)
+                visibility = View.VISIBLE
             }
-
-        if (messageRes != null) {
-            container.addView(
-                android.widget.TextView(context).apply {
-                    text = resources.getString(messageRes)
-                    setPadding(0, 0, 0, padding)
-                }
-            )
         }
 
-        // A shortcut into the CAN header (Diagnostic Request ID) mapping screen, so a user who
-        // notices their module list is wrong/missing a header doesn't have to cancel out, dig
-        // through preferences, then come back and re-open the scan/clear dialog from scratch.
-        // The hint sits directly beside the button so it reads as "what this button does"
-        // rather than a generic caption floating elsewhere in the dialog.
-        val headersHint =
-            android.widget.TextView(context).apply {
-                text = resources.getString(R.string.pref_dtc_select_modules_can_headers_hint)
-                textSize = 12f
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, android.R.color.darker_gray))
-            }
-        val headersButton =
-            android.widget.Button(context, null, android.R.attr.borderlessButtonStyle).apply {
-                setText(R.string.pref_dtc_select_modules_can_headers)
-                setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.rainbow_indigo))
-                setPadding(0, 0, 0, 0)
-            }
-        container.addView(
-            android.widget.LinearLayout(context).apply {
-                orientation = android.widget.LinearLayout.HORIZONTAL
-                gravity = android.view.Gravity.CENTER_VERTICAL
-                setPadding(0, 0, 0, padding)
-                addView(
-                    headersHint,
-                    android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                )
-                addView(headersButton)
-            }
-        )
-
-        // Inflated from XML (rather than constructed in code) so it can carry a custom, always-on
-        // scrollbar thumb on every API level - the theme default is thin and barely visible, and
-        // it's the only hint that more modules sit below the fold.
+        // Stored as the *deselected* keys so a module added later starts out checked.
+        val deselected = Prefs.getStringSet(PREF_DTC_DESELECTED_MODULES)
         val listView =
-            (LayoutInflater.from(context).inflate(R.layout.dtc_module_list, container, false) as MaxHeightListView).apply {
+            content.findViewById<MaxHeightListView>(R.id.dtc_picker_modules).apply {
                 adapter =
                     android.widget.ArrayAdapter(
                         context,
                         android.R.layout.simple_list_item_multiple_choice,
                         labels
                     )
-                for (index in labels.indices) {
-                    setItemChecked(index, true)
+                requestKeys.forEachIndexed { index, key ->
+                    setItemChecked(index, key !in deselected)
                 }
             }
-        // Zero height + weight lets the LinearLayout shrink the list (which scrolls on its own)
-        // when there are more modules than fit on screen - with WRAP_CONTENT it would claim its
-        // full height and push the button bar below out of the dialog.
-        container.addView(
-            listView,
-            android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                1f
-            )
-        )
 
-        // The platform's own button bar auto-stacks into a vertical column once it estimates
-        // the combined button text won't fit on one line - which is exactly what happened here
-        // with three buttons (Cancel / Select-Deselect All / Clear Codes). Building the row
-        // ourselves with equal-weight buttons keeps it horizontal unconditionally.
-        fun barButton(textRes: Int): android.widget.Button =
-            android.widget.Button(context, null, android.R.attr.buttonBarButtonStyle).apply {
-                setText(textRes)
-                layoutParams =
-                    android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            }
-
-        val cancelButton = barButton(R.string.pref_dtc_select_modules_cancel)
-        val toggleButton = barButton(R.string.pref_dtc_select_modules_deselect_all)
-        val confirmButton =
-            barButton(confirmRes).apply {
-                // A plain solid color would stay just as bright when the button is disabled
-                // (no modules selected), losing that visual cue - a ColorStateList keeps the
-                // brand color for the enabled state while still dimming on disable.
-                val enabledColor = androidx.core.content.ContextCompat.getColor(context, R.color.rainbow_indigo)
-                val disabledColor = androidx.core.content.ContextCompat.getColor(context, android.R.color.darker_gray)
-                setTextColor(
-                    android.content.res.ColorStateList(
-                        arrayOf(intArrayOf(-android.R.attr.state_enabled), intArrayOf()),
-                        intArrayOf(disabledColor, enabledColor)
-                    )
-                )
-            }
-
-        container.addView(
-            android.widget.LinearLayout(context).apply {
-                orientation = android.widget.LinearLayout.HORIZONTAL
-                setPadding(0, padding, 0, 0)
-                addView(cancelButton)
-                addView(toggleButton)
-                addView(confirmButton)
-            }
-        )
+        val headersButton = content.findViewById<Button>(R.id.dtc_picker_can_headers)
+        val cancelButton = content.findViewById<Button>(R.id.dtc_picker_cancel)
+        val toggleButton = content.findViewById<Button>(R.id.dtc_picker_toggle_all)
+        val confirmButton = content.findViewById<Button>(R.id.dtc_picker_confirm).apply { setText(confirmRes) }
 
         val dialog =
             android.app.AlertDialog
                 .Builder(context)
                 .setTitle(titleRes)
-                .setView(container)
+                .setView(content)
                 .create()
 
-        fun allChecked() = (0 until labels.size).all { listView.isItemChecked(it) }
+        fun allChecked() = labels.indices.all { listView.isItemChecked(it) }
 
-        fun noneChecked() = (0 until labels.size).none { listView.isItemChecked(it) }
+        fun noneChecked() = labels.indices.none { listView.isItemChecked(it) }
 
         fun updateButtons() {
             toggleButton.setText(
@@ -352,6 +282,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         confirmButton.setOnClickListener {
             dialog.dismiss()
             val selected = requestKeys.filterIndexed { index, _ -> listView.isItemChecked(index) }.toSet()
+            Prefs.updateStringSet(PREF_DTC_DESELECTED_MODULES, requestKeys.filter { it !in selected })
             onPicked(selected)
         }
 
@@ -394,9 +325,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
     private fun shareDtcReport(dtcList: List<DiagnosticTroubleCode>) {
+        val notAvailable = getString(R.string.dtc_share_not_available)
+        val reportTitle = getString(R.string.dtc_share_report_title)
         val reportBuilder = StringBuilder()
-        reportBuilder.append("Vehicle Diagnostic Report\n")
-        reportBuilder.append("-------------------------\n\n")
+        reportBuilder.append("$reportTitle\n")
+        reportBuilder.append("-".repeat(reportTitle.length)).append("\n\n")
 
         for (code in dtcList) {
             if (code.standardCode.isEmpty()) continue
@@ -408,26 +341,30 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     code.standardCode
                 }
 
-            reportBuilder.append("DTC: $formattedCode\n")
-            reportBuilder.append("Description: ${code.description ?: "Unknown"}\n")
+            reportBuilder.append(getString(R.string.dtc_share_dtc, formattedCode)).append("\n")
+            reportBuilder
+                .append(getString(R.string.dtc_share_description, code.description ?: getString(R.string.dtc_share_unknown)))
+                .append("\n")
 
             val systemTxt = code.system?.description
             val categoryTxt = code.category?.description
             if (!systemTxt.isNullOrBlank() || !categoryTxt.isNullOrBlank()) {
-                reportBuilder.append("System: ${systemTxt ?: "N/A"} | Category: ${categoryTxt ?: "N/A"}\n")
+                reportBuilder
+                    .append(getString(R.string.dtc_share_system_category, systemTxt ?: notAvailable, categoryTxt ?: notAvailable))
+                    .append("\n")
             }
 
-            val hex = code.rawHex ?: "N/A"
-            val activeStatuses = code.activeStatuses?.joinToString(", ") ?: "None"
-            reportBuilder.append("Status: $activeStatuses (Hex: $hex)\n")
+            val hex = code.rawHex ?: notAvailable
+            val activeStatuses = code.activeStatuses?.joinToString(", ") ?: getString(R.string.dtc_share_none)
+            reportBuilder.append(getString(R.string.dtc_share_status, activeStatuses, hex)).append("\n")
 
             val snapshot = code.snapshot
             if (snapshot != null && dataLoggerSettings.instance().adapter.dtcReadSnapshots) {
-                reportBuilder.append("Snapshot (Record ${snapshot.size}):\n")
+                reportBuilder.append(getString(R.string.dtc_share_snapshot, snapshot.size)).append("\n")
                 snapshot.forEach { did ->
-                    val value = did.decodedValue ?: "N/A"
+                    val value = did.decodedValue ?: notAvailable
                     val unit = did.definition?.units ?: ""
-                    val desc = did.definition?.description ?: "Unknown DID"
+                    val desc = did.definition?.description ?: getString(R.string.dtc_share_unknown_did)
                     reportBuilder.append("  - $desc: $value $unit\n")
                 }
             }
@@ -442,31 +379,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 type = "text/plain"
             }
 
-        val shareIntent = Intent.createChooser(sendIntent, "Share Diagnostic Report")
+        val shareIntent = Intent.createChooser(sendIntent, getString(R.string.dtc_share_chooser_title))
         startActivity(shareIntent)
     }
 
     private fun diagnosticTroubleCodes(): List<DiagnosticTroubleCode> =
         VehicleCapabilitiesManager
             .getDiagnosticTroubleCodes()
-            .apply {
-                if (isEmpty()) {
-                    add(
-                        DiagnosticTroubleCode(
-                            "",
-                            "",
-                            null,
-                            resources.getString(R.string.pref_dtc_no_dtc_found),
-                            0,
-                            null,
-                            null,
-                            null,
-                            null,
-                            DtcComponent("", "")
-                        )
-                    )
-                }
-            }.sortedWith(
+            .sortedWith(
                 compareBy<DiagnosticTroubleCode> { code ->
                     code.module ?: ""
                 }.thenBy { code ->
@@ -483,36 +403,34 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 }
             ).toMutableList()
 
-    override fun onResume() {
-        super.onResume()
-        registerReceiver(requireContext(), dtcNotificationsReceiver) {
-            it.addAction(DATA_LOGGER_DTC_ACTION_COMPLETED)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroyView() {
         requireContext().unregisterReceiver(dtcNotificationsReceiver)
         setLoadingState(false)
+        super.onDestroyView()
     }
 
     private fun handleDTCChangedNotification() {
-        setLoadingState(false)
-
-        val newCodes = diagnosticTroubleCodes()
-        adapter.submitList(newCodes.toDtcListItems())
-
-        if (isDtcAvailable(newCodes)) {
-            shareButton.isEnabled = false
-            clearButton.isEnabled = false
-        } else {
-            shareButton.isEnabled = true
-            clearButton.isEnabled = true
-        }
-
-        clearButton.text = "Clear Codes"
+        refreshList()
+        resetActionState()
     }
 
-    private fun isDtcAvailable(newCodes: List<DiagnosticTroubleCode>): Boolean =
-        newCodes.size == 1 && newCodes.first().standardCode.isEmpty()
+    private fun refreshList() {
+        val codes = diagnosticTroubleCodes()
+        adapter.submitList(
+            codes.toDtcListItems(
+                scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
+                noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
+                noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module)
+            )
+        )
+
+        // Nothing to share or clear without codes.
+        shareButton.isEnabled = codes.isNotEmpty()
+        clearButton.isEnabled = codes.isNotEmpty()
+    }
+
+    private fun resetActionState() {
+        setLoadingState(false)
+        clearButton.setText(R.string.dtc_action_clear_codes)
+    }
 }

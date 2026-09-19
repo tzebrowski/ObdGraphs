@@ -41,6 +41,7 @@ import org.obd.metrics.api.model.DiagnosticTroubleCode
 
 private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DTC = 1
+private const val VIEW_TYPE_MESSAGE = 2
 
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?
@@ -53,16 +54,17 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         when (getItem(position)) {
             is DtcListItem.ModuleHeader -> VIEW_TYPE_HEADER
             is DtcListItem.DtcRow -> VIEW_TYPE_DTC
+            is DtcListItem.Message -> VIEW_TYPE_MESSAGE
         }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder =
-        if (viewType == VIEW_TYPE_HEADER) {
-            HeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
-        } else {
-            DtcViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
+        when (viewType) {
+            VIEW_TYPE_HEADER -> HeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
+            VIEW_TYPE_MESSAGE -> MessageViewHolder(mInflater.inflate(R.layout.item_dtc_message, parent, false))
+            else -> DtcViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
         }
 
     override fun onBindViewHolder(
@@ -72,6 +74,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         when (val item = getItem(position)) {
             is DtcListItem.ModuleHeader -> (holder as HeaderViewHolder).bind(item)
             is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item.dtc, position)
+            is DtcListItem.Message -> (holder as MessageViewHolder).bind(item)
         }
     }
 
@@ -201,6 +204,14 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         }
     }
 
+    internal class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val text: TextView = itemView.findViewById(R.id.dtc_message)
+
+        fun bind(message: DtcListItem.Message) {
+            text.text = message.text
+        }
+    }
+
     internal class DtcViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
@@ -229,6 +240,8 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                             oldItem.module == newItem.module
                         oldItem is DtcListItem.DtcRow && newItem is DtcListItem.DtcRow ->
                             oldItem.dtc.standardCode == newItem.dtc.standardCode && oldItem.dtc.rawHex == newItem.dtc.rawHex
+                        oldItem is DtcListItem.Message && newItem is DtcListItem.Message ->
+                            oldItem.key == newItem.key
                         else -> false
                     }
 

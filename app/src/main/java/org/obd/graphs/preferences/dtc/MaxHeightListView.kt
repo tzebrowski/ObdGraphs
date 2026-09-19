@@ -19,6 +19,7 @@ package org.obd.graphs.preferences.dtc
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ListView
+import org.obd.graphs.R
 
 // A ListView that never grows beyond a fraction of the screen height. Inside the DTC module
 // picker (an AlertDialog custom view) a plain wrap_content/weighted ListView still claimed the
@@ -31,7 +32,7 @@ constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = android.R.attr.listViewStyle
 ) : ListView(context, attrs, defStyleAttr) {
-    var maxHeightRatio: Float = 0.4f
+    var maxHeightRatio: Float = resources.getInteger(R.integer.dtc_module_list_max_height_percent) / 100f
 
     override fun onMeasure(
         widthMeasureSpec: Int,
