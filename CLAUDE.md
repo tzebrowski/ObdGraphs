@@ -1,5 +1,11 @@
 # CLAUDE.md (org.obd.graphs)
 
+Project-specific knowledge for agents. **Maintained incrementally — when you
+learn something non-obvious (a finding, a pitfall, an architecture decision
+you made), add it here as part of the same change/PR.** Keep entries terse:
+a rule, its reason, and the file it lives in. Cut narrative history; keep the
+lesson. Update or delete entries that turn out to be wrong.
+
 ## 🤖 AI Assistant Directives (Token & Context Management)
 * **Aggressive Context Management:**
     * You MUST monitor context size. Prompt the user to use `/compact` mid-task if the conversation history grows too long (to prevent >150k token context bloat and expensive cache reads).
@@ -69,3 +75,40 @@ This app depends heavily on a modularized local architecture:
 This project uses Spotless for automatic code style enforcement. Ensure you format before submitting PRs:
 ```bash
 ./gradlew spotlessApply
+```
+
+---
+
+## 🔀 Git Workflow
+
+**Never commit directly to `master`.** Always branch (`fix/...`, `feat/...`); the user merges via PR. Run `git branch --show-current` before committing — the user may switch branches outside your visibility. Stage files explicitly; don't sweep in unrelated local edits (e.g. a locally modified `app/build.gradle`).
+
+## ☕ Build Environment
+
+Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and fails at configuration. Use e.g. `JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ./gradlew ...`. Quick compile check for a module: `./gradlew :screen_renderer:compileDebugKotlin`.
+
+---
+
+## 📚 Findings & Architecture Decisions
+
+### Screen rendering: settings, drawers, renderers (`:screen_renderer`)
+* Each screen = `*SurfaceRenderer` (orchestrates a frame) + `*Drawer` (extends `AbstractDrawer`, does the Canvas work). Drawers read everything through the `ScreenSettings` interface passed to their constructor (`renderer/api/ScreenSettings.kt`).
+* The same `ScreenSettings` implementation serves several screens: on AA it is `CarSettings` (`automotive/.../aa/CarSettings.kt`); on phone each screen has its own (e.g. `app/.../ui/trip_info/TripInfoSettings.kt`). Screen-specific values live in per-screen data classes (`TripInfoScreenSettings`, `GiuliaScreenSettings`, ...) returned by `get*ScreenSettings()`.
+* **Pitfall:** global-looking methods on `ScreenSettings` (e.g. `isBreakLabelTextEnabled()`) are implemented in `CarSettings` with keys scoped to the *current Giulia virtual screen* (`pref.aa.break_label.<id>`). Any other screen that calls them silently inherits Giulia's setting.
+* **Decision (per-screen override pattern):** to give a screen its own value for a shared `ScreenSettings` method, add the field to that screen's data class and wrap the settings in the renderer via delegation:
+  ```kotlin
+  object : ScreenSettings by settings {
+      override fun isBreakLabelTextEnabled() = settings.getTripInfoScreenSettings().breakLabelTextEnabled
+  }
+  ```
+  Pass the wrapper to the drawer; nested drawers created from it (e.g. `TripInfoDrawer`'s internal `GiuliaDrawer`) inherit the override. Prefer this over adding screen-specific branches in `AbstractDrawer`/`GiuliaDrawer`.
+
+### Trip Info screen (AA + phone)
+* Files: `renderer/trip/TripInfoSurfaceRenderer.kt`, `TripInfoDrawer.kt` (layout + `TripInfoLayoutCache`), `TripInfoDetails.kt`; query in `datalogger/.../query/TripInfoQueryStrategy.kt`. There is no class named `TripInfoRenderer`.
+* Top grid: labels drawn by `AbstractDrawer.drawTitle`, fixed 6 columns (`MAX_ITEM_IN_THE_ROW`), fixed row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row.
+* Bottom row: drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, visible metric count, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate`, and label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
+* AA label splitting is controlled by `pref.aa.trip_info.break_label` (default `true`), independent of Giulia virtual screens. Phone Trip Info always splits (`TripInfoSettings`).
+
+### Preferences & localization
+* Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.
+* Strings exist only in `values/strings.xml` (EN) and `values-pl/strings.xml` (PL). Every new user-facing string must be added to **both**.
