@@ -148,6 +148,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getPerformanceScreenSettings(): PerformanceScreenSettings = performanceScreenSettings.apply {
         fontSize = Prefs.getS("pref.aa.performance.font_size", "24").toInt()
         viewEnabled = Prefs.getBoolean("pref.aa.performance.enabled", true)
+        breakLabelTextEnabled = Prefs.getBoolean("pref.aa.performance.break_label", true)
         brakeBoostingSettings.viewEnabled = Prefs.getBoolean("pref.aa.performance.break_boosting.enabled", true)
     }
 

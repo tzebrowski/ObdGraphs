@@ -1777,6 +1777,13 @@
 
                     <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                         android:defaultValue="true"
+                        android:key="pref.aa.performance.break_label"
+                        android:title="@string/pref.aa.performance.break_label"
+                        android:summary="@string/pref.aa.performance.break_label_summary"
+                        app:singleLineTitle="false" />
+
+                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                        android:defaultValue="true"
                         android:key="pref.aa.performance.break_boosting.enabled"
                         android:title="@string/pref.aa.performance.brake_boosting.enabled"
                         android:summary="@string/pref.aa.performance.brake_boosting.enabled_summary"
