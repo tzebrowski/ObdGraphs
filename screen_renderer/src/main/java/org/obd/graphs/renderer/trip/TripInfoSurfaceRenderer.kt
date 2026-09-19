@@ -35,7 +35,14 @@ internal class TripInfoSurfaceRenderer(
 ) : AbstractSurfaceRenderer(context) {
     private val tripInfo = TripInfoDetails()
 
-    private val tripInfoDrawer = TripInfoDrawer(context, settings)
+    // Trip Info has its own label-break setting, independent of the Giulia virtual screens.
+    private val tripInfoDrawer =
+        TripInfoDrawer(
+            context,
+            object : ScreenSettings by settings {
+                override fun isBreakLabelTextEnabled(): Boolean = settings.getTripInfoScreenSettings().breakLabelTextEnabled
+            }
+        )
 
     override fun invalidate() {
         tripInfoDrawer.invalidate()

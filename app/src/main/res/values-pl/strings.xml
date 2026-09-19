@@ -369,6 +369,8 @@
     <string name="pref.aa.trip_info.category">Ekran informacji o trasie</string>
     <string name="pref.aa.trip_info.enabled">Włącz ekran informacji o trasie</string>
     <string name="pref.aa.trip_info.enabled_summary">Aktywuje ekran informacji o trasie, który wyświetla predefiniowany zestaw metryk dostosowany do silników 2.0 GME.</string>
+    <string name="pref.aa.trip_info.break_label">Podziel etykiety PID na 2 linie</string>
+    <string name="pref.aa.trip_info.break_label_summary">Wyświetla etykiety PID na ekranie informacji o trasie w dwóch liniach. Po wyłączeniu etykiety są wyświetlane w jednej linii.</string>
     <string name="pref.aa.trip_info.select_pids">Wybierz OBD2 PID informacji o trasie</string>
 
     <string name="pref.aa.routines.category">Procedury</string>

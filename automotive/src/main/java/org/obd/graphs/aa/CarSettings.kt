@@ -142,6 +142,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getTripInfoScreenSettings(): TripInfoScreenSettings = tripInfoScreenSettings.apply {
         fontSize = Prefs.getS("pref.aa.trip_info.font_size", "24").toInt()
         viewEnabled = Prefs.getBoolean("pref.aa.trip_info.enabled", true)
+        breakLabelTextEnabled = Prefs.getBoolean("pref.aa.trip_info.break_label", true)
     }
 
     override fun getPerformanceScreenSettings(): PerformanceScreenSettings = performanceScreenSettings.apply {

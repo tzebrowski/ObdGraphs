@@ -60,9 +60,11 @@ internal class TripInfoLayoutCache {
     var bottomRowTextSizeBase: Float = 0f
     var bottomColWidth: Float = 0f
     var activeBottomMetricsCount: Int = -1
+    var breakLabelTextEnabled: Boolean? = null
 
-    fun requiresLayoutUpdate(newArea: Rect, newBottomMetricsCount: Int): Boolean {
-        return area != newArea || activeBottomMetricsCount != newBottomMetricsCount
+    fun requiresLayoutUpdate(newArea: Rect, newBottomMetricsCount: Int, newBreakLabelTextEnabled: Boolean): Boolean {
+        return area != newArea || activeBottomMetricsCount != newBottomMetricsCount ||
+            breakLabelTextEnabled != newBreakLabelTextEnabled
     }
 }
 
@@ -109,6 +111,7 @@ internal class TripInfoDrawer(
         textCache.clear()
         layoutCache.area.setEmpty()
         layoutCache.activeBottomMetricsCount = -1
+        layoutCache.breakLabelTextEnabled = null
     }
 
     override fun recycle() {
@@ -131,8 +134,9 @@ internal class TripInfoDrawer(
             }
         }
 
-        if (layoutCache.requiresLayoutUpdate(area, currentBottomCount)) {
-            calculateLayout(area, tripInfo, currentBottomCount)
+        val breakLabelTextEnabled = settings.isBreakLabelTextEnabled()
+        if (layoutCache.requiresLayoutUpdate(area, currentBottomCount, breakLabelTextEnabled)) {
+            calculateLayout(area, tripInfo, currentBottomCount, breakLabelTextEnabled)
         }
 
         val textSizeBase = layoutCache.textSizeBase
@@ -202,9 +206,10 @@ internal class TripInfoDrawer(
         }
     }
 
-    private fun calculateLayout(area: Rect, tripInfo: TripInfoDetails, validBottomMetricsCount: Int) {
+    private fun calculateLayout(area: Rect, tripInfo: TripInfoDetails, validBottomMetricsCount: Int, breakLabelTextEnabled: Boolean) {
         layoutCache.area.set(area)
         layoutCache.activeBottomMetricsCount = validBottomMetricsCount
+        layoutCache.breakLabelTextEnabled = breakLabelTextEnabled
 
         val scaleRatio = getScaleRatio()
         val areaWidth = area.width()
@@ -223,7 +228,12 @@ internal class TripInfoDrawer(
                 val pid = metric.source.command.pid
 
                 val description = pid.longDescription?.takeIf { it.isNotEmpty() } ?: pid.description
-                val longestLine = description.split("\n").maxByOrNull { it.length } ?: description
+                val longestLine =
+                    if (breakLabelTextEnabled) {
+                        description.split("\n").maxByOrNull { it.length } ?: description
+                    } else {
+                        description.replace("\n", " ")
+                    }
 
                 titlePaint.textSize = layoutCache.textSizeBase
                 val titleWidth = getTextWidth(longestLine, titlePaint)

@@ -132,7 +132,8 @@ data class DragRacingScreenSettings(
 
 data class TripInfoScreenSettings(
     var fontSize: Int = 24,
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
+    var breakLabelTextEnabled: Boolean = true
 )
 
 data class BrakeBoostingSettings(
