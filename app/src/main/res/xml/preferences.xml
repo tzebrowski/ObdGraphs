@@ -1728,6 +1728,13 @@
                         android:summary="@string/pref.aa.trip_info.enabled_summary"
                         app:singleLineTitle="false" />
 
+                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.trip_info.break_label"
+                        android:title="@string/pref.aa.trip_info.break_label"
+                        android:summary="@string/pref.aa.trip_info.break_label_summary"
+                        app:singleLineTitle="false" />
+
 
                     <PreferenceScreen
                         android:key="pref.trip_info.displayed_parameter_ids"
