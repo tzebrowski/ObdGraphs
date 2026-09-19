@@ -341,8 +341,12 @@ class MainActivity :
             return
         }
 
-        // Fresh installs grant permissions as a wizard step instead - asking here too would be redundant.
-        if (Permissions.isAnyPermissionMissing(this) && !SetupWizardManager.shouldShowWizard(this)) {
+        // Fresh installs grant permissions as a wizard step instead - asking here too would be redundant,
+        // as would asking again right after the wizard, where the user may have just declined them.
+        if (Permissions.isAnyPermissionMissing(this) &&
+            !SetupWizardManager.shouldShowWizard(this) &&
+            !SetupWizardManager.completedInThisSession
+        ) {
             Permissions.showPermissionOnboarding(this, onDeclined = {
             })
             return

@@ -22,6 +22,14 @@ private const val PREFS_FILE = "setup_wizard_prefs"
 private const val KEY_COMPLETED = "setup_wizard_completed"
 
 object SetupWizardManager {
+    // In-memory only: true for the rest of the process after the wizard finishes, so MainActivity
+    // (often recreated right after, e.g. for a language change) doesn't immediately re-ask for
+    // permissions the user just declined in the wizard's permissions step. The next app launch
+    // starts with a fresh process and asks again as usual.
+    @Volatile
+    var completedInThisSession: Boolean = false
+        private set
+
     fun shouldShowWizard(context: Context): Boolean {
         if (isCompleted(context)) return false
         val info = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -31,6 +39,7 @@ object SetupWizardManager {
     fun isCompleted(context: Context): Boolean = prefs(context).getBoolean(KEY_COMPLETED, false)
 
     fun markCompleted(context: Context) {
+        completedInThisSession = true
         prefs(context).edit().putBoolean(KEY_COMPLETED, true).apply()
     }
 

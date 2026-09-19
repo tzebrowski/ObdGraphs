@@ -72,6 +72,18 @@ object LanguageManager {
             .putBoolean(KEY_SELECTED, true)
             .apply()
     }
+
+    // Records that the user has confirmed the current language without changing it - e.g. they
+    // moved past the wizard's language step keeping the preselected (system) language, so the
+    // standalone language dialog must not ask them again later.
+    fun markLanguageSelected(context: Context) {
+        context
+            .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_SELECTED, true)
+            .apply()
+    }
+
     fun isLanguageSelected(context: Context): Boolean =
         context
             .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
