@@ -123,6 +123,12 @@ class SetupWizardActivity :
     }
 
     private fun advance() {
+        // Tapping a language saves it, but moving on with the preselected one saves nothing - so
+        // MainActivity would later treat the language as never chosen and pop its own dialog.
+        if (supportFragmentManager.findFragmentById(R.id.wizardStepContainer) is LanguageStepFragment) {
+            LanguageManager.markLanguageSelected(this)
+        }
+
         if (currentStep == steps.lastIndex) {
             SetupWizardManager.markCompleted(this)
             finish()
