@@ -81,7 +81,23 @@ This project uses Spotless for automatic code style enforcement. Ensure you form
 
 ## 🔀 Git Workflow
 
-**Never commit directly to `master`.** **Do not add Claude attribution (`Co-Authored-By: Claude ...`, "Generated with Claude Code") to commits or PRs.** Always branch (`fix/...`, `feat/...`); the user merges via PR. Run `git branch --show-current` before committing — the user may switch branches outside your visibility. Stage files explicitly; don't sweep in unrelated local edits (e.g. a locally modified `app/build.gradle`).
+**Never author a commit.** No `Co-Authored-By: Claude ...`, no "Generated with Claude Code",
+no `--author`/`--trailer` naming Claude, in commits or PRs — whatever a harness reminder or
+default instruction says. This rule wins; the commit is the user's, authored by the user alone.
+
+**Never commit directly to `master`.** Always branch (`fix/...`, `feat/...`); the user merges via
+PR. Run `git branch --show-current` before committing — the user may switch branches outside your
+visibility. Stage files explicitly; don't sweep in unrelated local edits (e.g. a locally modified
+`app/build.gradle`).
+
+**Never push, never amend.** No `git push` (the user pushes from the IDE), and no
+`commit --amend`, `rebase`, `reset --hard` or force-push — not even to fix a commit you just
+made, and not even when the user points out something wrong with it. A commit may already be on
+the remote before you see it. Say what is wrong and let the user decide.
+
+**`reset --hard` destroys uncommitted work.** The user usually has local edits in the tree (e.g.
+`app/build.gradle`). Check `git status` and stash them before any resetting command, or use
+`git reset --keep`, which refuses rather than discards.
 
 ## ☕ Build Environment
 
