@@ -36,6 +36,23 @@ data class Adapter(
     @XmlPreference("pref.adapter.connection.timeout", "2000", Int::class)
     var connectionTimeout: Int = 2000,
 
+    // BLE lives on its own keys so that switching connection type never disturbs the Classic
+    // adapter stored under pref.adapter.id.
+    @XmlPreference("pref.adapter.connection.ble.id", "", String::class)
+    var bleDeviceAddress: String = "",
+
+    @XmlPreference("pref.adapter.connection.ble.profile", "AUTO", String::class)
+    var bleProfile: String = "AUTO",
+
+    @XmlPreference("pref.adapter.connection.ble.service_uuid", "", String::class)
+    var bleServiceUUID: String = "",
+
+    @XmlPreference("pref.adapter.connection.ble.notify_uuid", "", String::class)
+    var bleNotifyUUID: String = "",
+
+    @XmlPreference("pref.adapter.connection.ble.write_uuid", "", String::class)
+    var bleWriteUUID: String = "",
+
     @XmlPreference("pref.adapter.stn.ignore_pids_priorities", "false", Boolean::class)
     var stnIgnorePIDsPriorities: Boolean = false,
 

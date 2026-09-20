@@ -20,6 +20,8 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -34,10 +36,14 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import pub.devrel.easypermissions.EasyPermissions
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 const val REQUEST_LOCATION_PERMISSIONS = "REQUEST_LOCATION_PERMISSION"
+private const val BLE_SCAN_DURATION_MS = 6000L
 
 object Network {
 
@@ -115,6 +121,85 @@ object Network {
             requestBluetoothPermissions()
             return null
         }
+    }
+
+    /**
+     * Resolves a device straight from its MAC, without requiring it to be bonded.
+     *
+     * Most BLE OBD dongles are never paired in the system Bluetooth settings, so
+     * [findBluetoothAdapterByName] - which only searches bonded devices - cannot find them.
+     */
+    fun bluetoothDeviceByAddress(deviceAddress: String): BluetoothDevice? =
+        try {
+            if (BluetoothAdapter.checkBluetoothAddress(deviceAddress)) {
+                bluetoothAdapter()?.getRemoteDevice(deviceAddress)
+            } else {
+                Log.w(TAG, "Not a valid Bluetooth MAC address: $deviceAddress")
+                null
+            }
+        } catch (_: SecurityException) {
+            requestBluetoothPermissions()
+            null
+        } catch (e: IllegalArgumentException) {
+            Log.e(TAG, "Failed to resolve Bluetooth device: $deviceAddress", e)
+            null
+        }
+
+    /**
+     * Collects BLE devices for the adapter picker: a time-boxed active scan merged with the
+     * bonded LE/dual devices, deduplicated by MAC.
+     *
+     * The scan is deliberately unfiltered. Filtering on a service UUID only matches devices that
+     * ADVERTISE it, and OBD adapters advertise a local name and expose their GATT services only
+     * once connected - filtering that way yields an empty list against a working adapter.
+     *
+     * Blocks the calling thread for [scanDurationMs]; callers run it off the main thread.
+     */
+    fun scanBleDevices(scanDurationMs: Long = BLE_SCAN_DURATION_MS): List<BluetoothDevice> {
+        // Filled from the scanner's binder thread while this one waits on the latch.
+        val found = ConcurrentHashMap<String, BluetoothDevice>()
+
+        try {
+            val adapter = bluetoothAdapter() ?: return emptyList()
+
+            adapter.bondedDevices
+                ?.filter { it.type == BluetoothDevice.DEVICE_TYPE_LE || it.type == BluetoothDevice.DEVICE_TYPE_DUAL }
+                ?.forEach { found[it.address] = it }
+
+            val scanner = adapter.bluetoothLeScanner
+            if (scanner == null || !adapter.isEnabled) {
+                Log.w(TAG, "BLE scanner is not available. Bluetooth enabled=${adapter.isEnabled}")
+                return found.values.toList()
+            }
+
+            val latch = CountDownLatch(1)
+            val callback =
+                object : ScanCallback() {
+                    override fun onScanResult(
+                        callbackType: Int,
+                        result: ScanResult?
+                    ) {
+                        result?.device?.let { found.putIfAbsent(it.address, it) }
+                    }
+
+                    override fun onScanFailed(errorCode: Int) {
+                        Log.e(TAG, "BLE scan failed, errorCode=$errorCode")
+                        latch.countDown()
+                    }
+                }
+
+            scanner.startScan(callback)
+            latch.await(scanDurationMs, TimeUnit.MILLISECONDS)
+            scanner.stopScan(callback)
+
+            Log.i(TAG, "BLE scan completed. Found ${found.size} device(s)")
+        } catch (_: SecurityException) {
+            requestBluetoothPermissions()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to scan for BLE devices", e)
+        }
+
+        return found.values.toList()
     }
 
     fun findWifiSSID(): List<String> =
@@ -236,7 +321,7 @@ object Network {
         }
     }
 
-    fun startBackgroundBleScanForMac(
+    fun startBondedDeviceMonitor(
         context: Context,
         targetMacAddress: String,
         func: () -> Unit

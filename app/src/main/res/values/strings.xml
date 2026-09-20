@@ -197,7 +197,14 @@
     <string name="pref.connection.connection_type"><b><font color='#01804F'>OBD adapter connection type</font></b></string>
     <string name="pref.connection.connection_timeout">Connection timeout</string>
 
-    <string name="pref.adapter_id">Available bluetooth devices</string>
+    <string name="pref.adapter_id">Available Bluetooth Classic devices</string>
+    <string name="pref.ble.adapter_id">Available Bluetooth LE devices</string>
+    <string name="pref.ble.profile">GATT profile</string>
+    <string name="pref.ble.profile_summary">Leave on AUTO to probe every known adapter profile after connecting. Pick CUSTOM to enter the service and characteristic UUIDs yourself.</string>
+    <string name="pref.ble.service_uuid">Custom service UUID</string>
+    <string name="pref.ble.notify_uuid">Custom notify characteristic UUID</string>
+    <string name="pref.ble.write_uuid">Custom write characteristic UUID</string>
+    <string name="pref.ble.write_uuid_summary">Leave empty when the adapter reads and writes on a single characteristic.</string>
     <string name="pref.gauge.number_of_columns">Number of columns</string>
     <string name="pref.gauge.font_size">Font size</string>
 
@@ -499,7 +506,8 @@
     </string>
 
     <string name="pref.adapter_category">OBD2 Adapter Settings</string>
-    <string name="pref.bluetooth_category">Bluetooth</string>
+    <string name="pref.bluetooth_category">Bluetooth Classic</string>
+    <string name="pref.ble_category">Bluetooth LE</string>
     <string name="pref.usb_category">USB</string>
     <string name="pref.usb.baud_rate">This parameter allows to set desired baud rate</string>
     <string name="pref.usb.device_attached">USB OBD2 adapter %s has been attached</string>
@@ -593,11 +601,23 @@
     <string-array name="pref.empty_array" />
     <string name="pref.theme">Theme</string>
 
+    <!-- Persisted values. NEVER localize or reorder these: they are what lands in
+         pref.adapter.connection.type on the user's device. "bluetooth" means Classic. -->
     <string-array name="pref.connection_type_array">
         <item name="connection.bluetooth">bluetooth</item>
+        <item name="connection.ble">ble</item>
         <item name="connection.wifi">wifi</item>
         <item name="connection.usb">usb</item>
         <item name="connection.mock">mock</item>
+    </string-array>
+
+    <!-- Displayed labels, index-aligned with pref.connection_type_array above. -->
+    <string-array name="pref.connection_type_entries">
+        <item>Bluetooth Classic</item>
+        <item>Bluetooth LE</item>
+        <item>Wifi</item>
+        <item>USB</item>
+        <item>mock</item>
     </string-array>
 
     <string name="pref.settings">Settings</string>

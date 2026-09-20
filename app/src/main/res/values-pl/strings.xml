@@ -123,7 +123,14 @@
     <string name="pref.adapter.error.continue_on_error">Ignoruj błedy</string>
     <string name="pref.adapter.error.continue_on_error_summary">Nie przerywaj komunikacji z adapterem podczas błędów</string>
 
-    <string name="pref.adapter_id">Dostępne urządzenia Bluetooth</string>
+    <string name="pref.adapter_id">Dostępne urządzenia Bluetooth Classic</string>
+    <string name="pref.ble.adapter_id">Dostępne urządzenia Bluetooth LE</string>
+    <string name="pref.ble.profile">Profil GATT</string>
+    <string name="pref.ble.profile_summary">Zostaw AUTO, aby po połączeniu sprawdzić wszystkie znane profile adapterów. Wybierz CUSTOM, aby samodzielnie podać UUID usługi i charakterystyk.</string>
+    <string name="pref.ble.service_uuid">Własny UUID usługi</string>
+    <string name="pref.ble.notify_uuid">Własny UUID charakterystyki powiadomień</string>
+    <string name="pref.ble.write_uuid">Własny UUID charakterystyki zapisu</string>
+    <string name="pref.ble.write_uuid_summary">Zostaw puste, gdy adapter odczytuje i zapisuje na jednej charakterystyce.</string>
     <string name="pref.gauge.number_of_columns">Liczba kolumn</string>
     <string name="pref.gauge.font_size">Rozmiar czcionki</string>
 
@@ -499,7 +506,17 @@
     </string>
 
     <string name="pref.adapter_category">Ustawienia adaptera OBD2</string>
-    <string name="pref.bluetooth_category">Bluetooth</string>
+    <string name="pref.bluetooth_category">Bluetooth Classic</string>
+    <string name="pref.ble_category">Bluetooth LE</string>
+
+    <!-- Index-aligned with pref.connection_type_array in values/strings.xml. -->
+    <string-array name="pref.connection_type_entries">
+        <item>Bluetooth Classic</item>
+        <item>Bluetooth LE</item>
+        <item>Wifi</item>
+        <item>USB</item>
+        <item>mock</item>
+    </string-array>
     <string name="pref.usb_category">USB</string>
     <string name="pref.usb.baud_rate">Ten parametr pozwala ustawić żądaną prędkość transmisji</string>
     <string name="pref.usb.device_attached">Adapter USB OBD2 %s został podłączony</string>

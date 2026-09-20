@@ -42,11 +42,13 @@ class AdapterStepFragment : PreferenceFragmentCompat() {
     private fun registerConnectionTypeListener() {
         val connectionType = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
         val bluetoothCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.bluetooth")
+        val bleCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.ble")
         val wifiCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
         val usbCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.usb")
 
         fun applyVisibility(type: String?) {
             bluetoothCategory?.isVisible = type == "bluetooth"
+            bleCategory?.isVisible = type == "ble"
             wifiCategory?.isVisible = type == "wifi"
             usbCategory?.isVisible = type == "usb"
         }

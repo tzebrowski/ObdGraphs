@@ -25,17 +25,21 @@ import java.io.OutputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-private const val LOGGER_TAG = "BluetoothConnection"
+private const val LOGGER_TAG = "BluetoothClassicConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-internal class BluetoothConnection(private val deviceAddress: String) : AdapterConnection {
+/**
+ * Bluetooth Classic (RFCOMM/SPP) transport. Reaches only bonded devices - a BLE-only adapter has
+ * no SPP record at all and is unreachable here; those go through [BleConnection].
+ */
+internal class BluetoothClassicConnection(private val deviceAddress: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null
     private lateinit var socket: BluetoothSocket
 
     init {
-        Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $deviceAddress")
+        Log.i(LOGGER_TAG, "Created instance of BluetoothClassicConnection with devices: $deviceAddress")
     }
 
     override fun reconnect() {
@@ -51,19 +55,12 @@ internal class BluetoothConnection(private val deviceAddress: String) : AdapterC
     }
 
     override fun close() {
-        try {
-            input?.close()
-        } catch (_: Throwable) {}
+        input.closeQuietly()
+        output.closeQuietly()
 
-        try {
-            output?.close()
-        } catch (_: Throwable) {}
-
-        try {
-            if (::socket.isInitialized) {
-                socket.close()
-            }
-        } catch (_: Throwable) {}
+        if (::socket.isInitialized) {
+            socket.closeQuietly()
+        }
 
         Log.i(LOGGER_TAG, "Socket for the device: $deviceAddress is closed.")
     }
@@ -83,7 +80,7 @@ internal class BluetoothConnection(private val deviceAddress: String) : AdapterC
                 "Found bounded connections, size: ${Network.bluetoothAdapter()?.bondedDevices?.size}"
             )
 
-            Network.findBluetoothAdapterByName(deviceAddress)?.let { adapter ->
+            resolveBluetoothDevice(deviceAddress, requireBonded = true)?.let { adapter ->
                 Log.i(
                     LOGGER_TAG,
                     "Opening connection to bounded device: ${adapter.name}"
@@ -107,7 +104,7 @@ internal class BluetoothConnection(private val deviceAddress: String) : AdapterC
                 }
             }
         } catch (e: SecurityException) {
-            Log.e("BluetoothAdaptersListPreferences", "Failed to obtain BT Permissions", e)
+            Log.e(LOGGER_TAG, "Failed to obtain BT Permissions", e)
             Network.requestBluetoothPermissions()
         }
     }

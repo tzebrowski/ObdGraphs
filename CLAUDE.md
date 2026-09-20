@@ -113,6 +113,34 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * `renderer/performance/PerformanceSurfaceRenderer.kt` wraps settings in the internal `PerformanceScreenSettings` delegate (same name as the `api.PerformanceScreenSettings` data class — mind the imports). Its top grid reuses `TripInfoDrawer.drawMetric`; gauges use the gauge drawer.
 * AA label splitting is controlled by `pref.aa.performance.break_label` (default `true`) via that delegate. Phone Performance always splits (`PerformanceSettings`).
 
+### Connectors (`:datalogger/.../connectors`)
+* One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
+  `pref.adapter.connection.type`. Two Bluetooth transports, deliberately separate:
+  `BluetoothClassicConnection` (RFCOMM/SPP, bonded devices only) and `BleConnection`
+  (GATT). A BLE-only dongle has no SPP record, so Classic can never reach it.
+* **The persisted value `"bluetooth"` means Classic and must never be repurposed** — it is on
+  users' devices. BLE is the separate value `"ble"` and keeps its MAC/UUIDs under new
+  `pref.adapter.connection.ble.*` keys, so switching type never disturbs `pref.adapter.id`.
+* **Stream contract:** ObdMetrics' `StreamingConnector.receive()` reads **byte by byte** via
+  `in.read()` and stops on `'>'` or `-1`. A transport's `InputStream` must therefore return `-1`
+  (on a read timeout or close) rather than block forever; framing on `'>'` is the connector's job,
+  not the stream's. `BleInputStream`/`UsbInputStream` both work this way.
+* BLE GATT profiles (`BleProfiles.kt`) are **probed after connecting**, never used to filter the
+  device scan: OBD adapters advertise a local name and expose their services only once connected,
+  so scanning with a service filter matches nothing. Same reason `Network.scanBleDevices()` scans
+  unfiltered.
+* BLE writes are capped at the negotiated MTU and GATT allows one outstanding operation, so
+  `BleOutputStream` chunks (20-byte floor) and waits for each `onCharacteristicWrite`.
+* `Network.startBondedDeviceMonitor()` does **no** scanning despite what its old name said — it
+  checks bonded devices and registers a broadcast receiver. The real scan is `scanBleDevices()`.
+
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.
+* `preferences.xml` references custom preference classes by **fully-qualified name**, so renaming
+  one and missing the XML fails at *runtime*, not compile time. `assembleGiuliaDebug` plus opening
+  the settings screen is the real check.
+* The connection type uses **two** arrays: `pref.connection_type_array` (persisted values, never
+  localized or reordered) and `pref.connection_type_entries` (display labels). They are
+  index-aligned, and `ConnectionTypeListPreference` drops `mock` in release builds by *index* to
+  keep them so.
 * Strings exist only in `values/strings.xml` (EN) and `values-pl/strings.xml` (PL). Every new user-facing string must be added to **both**.
