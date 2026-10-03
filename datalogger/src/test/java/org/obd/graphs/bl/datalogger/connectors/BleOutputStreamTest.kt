@@ -17,10 +17,12 @@
 package org.obd.graphs.bl.datalogger.connectors
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.IOException
 
 /**
  * A BLE write cannot exceed the negotiated MTU, so the chunking here is what keeps long commands
@@ -70,17 +72,32 @@ class BleOutputStreamTest {
         assertEquals(listOf(20, 10), written.map { it.size })
     }
 
+    // A half-written command has to surface as an IOException: StreamingConnector.transmit()
+    // reconnects on one, and without it the adapter is left holding a partial command while the
+    // connector carries on reading responses against the wrong request.
     @Test
-    fun `stops writing once a chunk fails`() {
+    fun `fails the write once a chunk fails`() {
         val stream =
             BleOutputStream(chunkSize = { 20 }, writeChunk = { chunk ->
                 written.add(chunk)
                 written.size < 2
             })
 
-        stream.write(ByteArray(100))
+        assertThrows(IOException::class.java) { stream.write(ByteArray(100)) }
 
         assertEquals(2, written.size)
+    }
+
+    // OutputStream's inherited write(b, off, len) calls write(int) per byte, and each of those is
+    // a GATT write that waits for its own completion callback.
+    @Test
+    fun `writes a range as one chunk rather than one write per byte`() {
+        val stream = streamWith(mtu = 23)
+
+        stream.write("XXATZ\rYY".toByteArray(), 2, 4)
+
+        assertEquals(1, written.size)
+        assertEquals("ATZ\r", String(written.first()))
     }
 
     @Test

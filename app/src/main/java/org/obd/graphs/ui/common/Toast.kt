@@ -16,38 +16,41 @@
  */
 package org.obd.graphs.ui.common
 
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
 import android.widget.Toast
 import org.obd.graphs.getContext
-import org.obd.graphs.runAsync
 
 private var toast: Toast? = null
 
+private val mainHandler = Handler(Looper.getMainLooper())
+
+/**
+ * A Toast may only be constructed and shown on a Looper thread, and the one being replaced is
+ * shared state - so the whole thing is done on the main thread. Call sites are not all on it: the
+ * BLE adapter scan reports its outcome from a background coroutine, which used to crash with
+ * "Can't toast on a thread that has not called Looper.prepare()".
+ */
 fun toast(
     id: Int,
     vararg formatArgs: String
 ) {
-    getContext()?.let {
-        val text = it.resources.getString(id, *formatArgs)
+    val context = getContext() ?: return
+    val text = context.resources.getString(id, *formatArgs)
+
+    mainHandler.post {
         val biggerText = SpannableStringBuilder(text)
         biggerText.setSpan(RelativeSizeSpan(1.0f), 0, text.length, 0)
 
-        if (toast != null) {
-            toast?.cancel()
-        }
-
+        toast?.cancel()
         toast =
-            Toast.makeText(
-                it,
-                biggerText,
-                Toast.LENGTH_LONG
-            )
-
-        toast?.run {
-            runAsync {
-                show()
-            }
-        }
+            Toast
+                .makeText(
+                    context,
+                    biggerText,
+                    Toast.LENGTH_LONG
+                ).also { it.show() }
     }
 }

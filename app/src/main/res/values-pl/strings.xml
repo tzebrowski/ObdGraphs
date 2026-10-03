@@ -125,6 +125,9 @@
 
     <string name="pref.adapter_id">Dostępne urządzenia Bluetooth Classic</string>
     <string name="pref.ble.adapter_id">Dostępne urządzenia Bluetooth LE</string>
+    <string name="pref.ble.scan_needs_location">Skanowanie Bluetooth LE wymaga włączonej lokalizacji. Bez niej Android nie zwraca żadnych wyników. Pokazano tylko sparowane urządzenia.</string>
+    <string name="pref.ble.scan_found_nothing">Żadne urządzenie Bluetooth LE nie rozgłasza się w pobliżu. Upewnij się, że adapter jest zasilany (zapłon włączony) i nie jest połączony z innym telefonem ani aplikacją.</string>
+    <string name="pref.ble.scanning">Wyszukiwanie urządzeń Bluetooth LE…</string>
     <string name="pref.ble.profile">Profil GATT</string>
     <string name="pref.ble.profile_summary">Zostaw AUTO, aby po połączeniu sprawdzić wszystkie znane profile adapterów. Wybierz CUSTOM, aby samodzielnie podać UUID usługi i charakterystyk.</string>
     <string name="pref.ble.service_uuid">Własny UUID usługi</string>

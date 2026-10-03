@@ -54,7 +54,9 @@ When writing new tests, use the natively provided libraries within the `androidT
 * **Test Execution & Rules:** AndroidX Test Runner (v1.5.2) and Rules (v1.5.0)
 * **Kotlin Extensions:** AndroidX Core KTX (v1.5.0) and JUnit KTX (v1.1.5)
 
-> **Note on Unit Tests:** The current `build.gradle` configuration strictly defines `androidTestImplementation` dependencies. If local JVM unit tests are required, standard `testImplementation` dependencies (like JUnit 4/5) must be added first.
+> **Note on Unit Tests:** `:datalogger` does have a local JVM suite under `src/test` running on
+> Robolectric (`./gradlew :datalogger:testDebugUnitTest`). Other modules define only
+> `androidTestImplementation`, so a new local suite there needs `testImplementation` added first.
 
 ---
 
@@ -149,6 +151,82 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   `BleOutputStream` chunks (20-byte floor) and waits for each `onCharacteristicWrite`.
 * `Network.startBondedDeviceMonitor()` does **no** scanning despite what its old name said — it
   checks bonded devices and registers a broadcast receiver. The real scan is `scanBleDevices()`.
+
+### BLE / GATT (`:datalogger/.../connectors/BleConnection.kt`)
+* **The GATT callback is the only authority on whether *this* client connected.**
+  `BluetoothManager.getConnectionState(device, GATT)` is device-global and updated
+  asynchronously: it reports CONNECTED whenever anything on the phone holds a link to that MAC,
+  so for a dual-mode adapter connected from system settings it made every *failed* attempt look
+  successful. Success is `newState == STATE_CONNECTED && status == GATT_SUCCESS`, nothing else —
+  the stack also reports CONNECTED with a failure status.
+* `onConnectionStateChange` fires with `STATE_DISCONNECTED` on a failed connect, so a latch that
+  is counted down by both states cannot on its own distinguish success from failure.
+* **Everything the callback touches must be `@Volatile`.** Callbacks arrive on a binder thread,
+  `connect()` runs on the caller's, and there is no happens-before edge otherwise: a stale latch
+  looks like a connect timeout, a stale `input` silently drops notifications.
+* One `BluetoothGattCallback` **per attempt**. A shared instance let a late event from a client
+  already given up on count down the current attempt's latch.
+* `close()` must not follow `disconnect()` immediately — wait for the DISCONNECTED callback (or
+  ~600 ms). Closing early is the usual reason the *next* `connectGatt` returns status 133.
+* Create the streams and assign `gatt` **before** enabling notifications: adapters push their
+  banner the moment the CCCD is written.
+* `connectGatt` does **not** need the main thread. Posting to the main looper and blocking on the
+  result deadlocks whenever `connect()` is itself called from the main thread —
+  `DataLoggerService.onStartCommand` dispatches on the main thread, so anything it calls that
+  opens a transport (`executeRoutine`, `start`) must go through `runAsync` first.
+* **"Connected, zero services" is a cache problem, not a link problem.** The platform keeps a
+  per-device GATT service database, and for an adapter bonded over Classic it can be empty or from
+  the wrong transport — discovery then completes with `GATT_SUCCESS` and no services. `awaitServices`
+  retries and calls the hidden `BluetoothGatt.refresh()` between attempts to drop that cache.
+* **`BluetoothAdapter.getRemoteDevice(mac)` always labels the address PUBLIC.** An adapter using a
+  random address is then connected as the wrong address type — the link comes up and exposes
+  nothing. `Network.bluetoothDeviceByAddress()` therefore prefers a `BluetoothDevice` from the
+  bonded/connected lists, which carries its real address type, and only synthesises one as a
+  fallback.
+* **The adapter's banner answers no command.** Many adapters push their version string the moment
+  the CCCD is written, i.e. before anything was transmitted. Left in the queue it is read as the
+  reply to the *first* command and every response after that is matched against the wrong request —
+  an adapter that connects and never initialises. `connect()` calls `BleInputStream.discardPending()`
+  after enabling notifications for exactly this reason.
+* **The read timeout has to cover the slowest ELM327 command, not a typical PID reply.** `ATZ` and
+  `AT SP 0` routinely take many seconds; a read that gives up first truncates the reply and shifts
+  every later one. Nothing pays for a long timeout in the steady state, because replies end in `'>'`
+  and the read returns on it — the timeout only fires on genuine silence.
+* **A UUID match is not a profile match.** Clones reuse well-known UUIDs on characteristics that
+  cannot notify or cannot be written. `resolveProfile` checks `properties` as well, and falls back
+  to `discoverSerialProfile` — any non-generic service exposing a notifiable characteristic plus a
+  writable one — so an unlisted module connects instead of being refused. Its UUIDs are logged so
+  the pair can be promoted into `BLE_PROFILES`.
+* **A characteristic that only INDICATES needs `ENABLE_INDICATION_VALUE`.** Writing the notify
+  value subscribes to nothing: the CCCD write reports success and not one byte is ever delivered.
+* **Resolve the device by scanning for its MAC when it is neither bonded nor connected.**
+  `Network.findAdvertisingBleDevice()` returns the scanner's own `BluetoothDevice`, which carries
+  the real address type, and proves the adapter is in range before ~100s are spent connecting
+  blind. A scan finding nothing is *not* a verdict — an adapter the phone is already connected to
+  does not advertise — so a synthesised device stays the fallback.
+* **`BleGatt.refresh()` only on a discovery RETRY.** On a healthy first attempt it throws away a
+  valid service database for nothing, and discovery started in the same breath as `refresh()` fails.
+* `requestConnectionPriority(CONNECTION_PRIORITY_HIGH)` right after connecting: an ELM327 is
+  strictly request/response, so the default interval costs a full round trip per command.
+* **Override `OutputStream.write(b, off, len)`.** The inherited one calls `write(int)` per byte, and
+  each of those is a GATT write awaiting its own completion callback.
+* **Stream contract, BLE specifics:** a quiet line returns `-1` (framing is the connector's job),
+  but a *dropped link* must throw `IOException` — `StreamingConnector.receive()` reads `-1` as an
+  ordinary end-of-message and would never reconnect. `BleOutputStream` throws on a failed chunk
+  for the same reason: a silent return leaves a partial command in the adapter and mis-frames
+  every later response.
+* A write that times out must be reported as failed; `writeStatus` is pre-set to `GATT_SUCCESS`,
+  so `latch.await()`'s result has to be checked too.
+* **A dual-mode adapter has TWO addresses.** CCY STN-2120: bonded Classic record `…:34:38:35`
+  (type=1) and an unbonded advertising LE device `…:35:38:35` ("CCY STN-2120 4.0"). Connecting the
+  Classic record over TRANSPORT_AUTO lands on BR/EDR in ~20ms and discovery returns zero services,
+  which `refresh()` cannot fix. Only the LE address works, so `BleAdaptersListPreferences` hides
+  `DEVICE_TYPE_CLASSIC` devices and keeps the stored address in its entries, otherwise the summary
+  reads "Not set" once the scan results are gone.
+* **Failures are invisible unless broadcast.** ObdMetrics' `Lifecycle.onConnecting()` catches and
+  logs whatever `connect()` throws, leaving `connector` null and `CommandLoop` spinning — the UI
+  shows "connecting" forever. `BleConnection` sends `DATA_LOGGER_BLE_NOT_REACHABLE` (no adapter
+  answered) or `DATA_LOGGER_ERROR_CONNECT_EVENT` (discovery/profile failure) itself.
 
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.

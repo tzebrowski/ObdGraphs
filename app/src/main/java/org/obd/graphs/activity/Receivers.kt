@@ -68,6 +68,7 @@ import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.TRIP_LOG_WRITE_COMPLETED
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_BLE_NOT_REACHABLE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_AVAILABLE
@@ -271,6 +272,8 @@ internal fun MainActivity.receive(intent: Intent?) {
         SCREEN_ON_EVENT -> screen.changeScreenBrightness(this, 1f)
 
         DATA_LOGGER_ERROR_CONNECT_EVENT -> toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
+
+        DATA_LOGGER_BLE_NOT_REACHABLE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_ble_not_reachable)
 
         DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
             screenLockManager.dismiss()

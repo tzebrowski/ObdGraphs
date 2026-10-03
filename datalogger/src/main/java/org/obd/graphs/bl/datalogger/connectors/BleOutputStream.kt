@@ -16,10 +16,8 @@
  */
 package org.obd.graphs.bl.datalogger.connectors
 
-import android.util.Log
+import java.io.IOException
 import java.io.OutputStream
-
-private const val LOGGER_TAG = "BLE_CONNECTION"
 
 /**
  * The floor every BLE stack supports: the default 23-byte MTU minus the 3-byte ATT header. Used
@@ -43,22 +41,46 @@ internal class BleOutputStream(
 ) : OutputStream() {
 
     override fun write(p0: Int) {
-        write(byteArrayOf(p0.toByte()))
+        write(byteArrayOf(p0.toByte()), 0, 1)
     }
 
+    @Throws(IOException::class)
     override fun write(b: ByteArray) {
-        val size = chunkSize().coerceAtLeast(BLE_DEFAULT_CHUNK_SIZE)
+        write(b, 0, b.size)
+    }
 
-        var offset = 0
-        while (offset < b.size) {
-            val end = minOf(offset + size, b.size)
-            val chunk = b.copyOfRange(offset, end)
+    /**
+     * Overridden rather than inherited. `OutputStream`'s own implementation of this calls
+     * [write] byte by byte, and each of those is a separate GATT write that waits for its own
+     * completion callback - a four-byte `ATZ\r` would take four round trips instead of one.
+     */
+    @Throws(IOException::class)
+    override fun write(
+        b: ByteArray,
+        off: Int,
+        len: Int
+    ) {
+        if (off < 0 || len < 0 || off + len > b.size) {
+            throw IndexOutOfBoundsException("off=$off, len=$len, size=${b.size}")
+        }
+
+        val size = chunkSize().coerceAtLeast(BLE_DEFAULT_CHUNK_SIZE)
+        val end = off + len
+
+        var offset = off
+        while (offset < end) {
+            val chunkEnd = minOf(offset + size, end)
+            val chunk = b.copyOfRange(offset, chunkEnd)
 
             if (!writeChunk(chunk)) {
-                Log.e(LOGGER_TAG, "Failed to write command ${String(b)}")
-                return
+                // Returning quietly left the adapter holding a partial command while
+                // StreamingConnector.transmit() believed the write had succeeded - so it never
+                // reconnected, and every later response was read against the wrong command.
+                throw IOException(
+                    "Failed to write ${end - offset} of $len bytes to the BLE adapter"
+                )
             }
-            offset = end
+            offset = chunkEnd
         }
     }
 }

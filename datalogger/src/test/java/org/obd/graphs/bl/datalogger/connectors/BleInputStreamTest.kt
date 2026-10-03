@@ -17,11 +17,16 @@
 package org.obd.graphs.bl.datalogger.connectors
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.IOException
+
+// Keeps the suite fast: these cases exercise ordering and failure, never the real wait.
+private const val TEST_READ_TIMEOUT_MS = 200L
 
 /**
  * Guards the contract [org.obd.metrics.transport.StreamingConnector] relies on: bytes arrive in
@@ -33,7 +38,7 @@ class BleInputStreamTest {
 
     @Test
     fun `serves bytes in order across notification chunks`() {
-        val stream = BleInputStream()
+        val stream = BleInputStream(readTimeoutMs = TEST_READ_TIMEOUT_MS)
 
         stream.onBytesReceived("41 0C ".toByteArray())
         stream.onBytesReceived("1AF0>".toByteArray())
@@ -43,7 +48,7 @@ class BleInputStreamTest {
 
     @Test
     fun `returns -1 once closed`() {
-        val stream = BleInputStream()
+        val stream = BleInputStream(readTimeoutMs = TEST_READ_TIMEOUT_MS)
         stream.onBytesReceived("AT".toByteArray())
         stream.close()
 
@@ -53,7 +58,9 @@ class BleInputStreamTest {
 
     @Test
     fun `returns -1 rather than blocking when the adapter goes quiet`() {
-        val stream = BleInputStream()
+        // The production timeout is sized for an ELM327 reboot; the test only needs the behaviour.
+        val timeout = TEST_READ_TIMEOUT_MS
+        val stream = BleInputStream(readTimeoutMs = timeout)
 
         val elapsed =
             System.currentTimeMillis().let { start ->
@@ -61,12 +68,51 @@ class BleInputStreamTest {
                 System.currentTimeMillis() - start
             }
 
-        assertTrue("Expected the read to wait for the timeout, waited ${elapsed}ms", elapsed >= BLE_READ_TIMEOUT_MS)
+        assertTrue("Expected the read to wait for the timeout, waited ${elapsed}ms", elapsed >= timeout)
+    }
+
+    // ELM327 reboots and protocol searches routinely outrun a few seconds. A read that gives up
+    // first hands StreamingConnector a truncated reply, and every later response is then matched
+    // against the wrong command.
+    @Test
+    fun `waits long enough for the slowest ELM327 command`() {
+        assertTrue("BLE read timeout is too short for ATZ / AT SP 0", BLE_READ_TIMEOUT_MS >= 10_000L)
+    }
+
+    // A dropped link must NOT look like an ordinary end-of-message, or StreamingConnector keeps
+    // reading empty responses instead of reconnecting.
+    @Test
+    fun `fails the read once the link is lost`() {
+        val stream = BleInputStream(readTimeoutMs = TEST_READ_TIMEOUT_MS)
+        stream.onLinkLost()
+
+        assertThrows(IOException::class.java) { stream.read() }
+    }
+
+    @Test
+    fun `serves buffered bytes before failing on a lost link`() {
+        val stream = BleInputStream(readTimeoutMs = TEST_READ_TIMEOUT_MS)
+        stream.onBytesReceived("OK".toByteArray())
+        stream.onLinkLost()
+
+        assertEquals('O'.code, stream.read())
+        assertEquals('K'.code, stream.read())
+        assertThrows(IOException::class.java) { stream.read() }
+    }
+
+    // A deliberate close is a shutdown, not a fault - it still ends the stream quietly.
+    @Test
+    fun `returns -1 when closed after the link was lost`() {
+        val stream = BleInputStream(readTimeoutMs = TEST_READ_TIMEOUT_MS)
+        stream.onLinkLost()
+        stream.close()
+
+        assertEquals(-1, stream.read())
     }
 
     @Test
     fun `reports unread bytes of the current chunk as available`() {
-        val stream = BleInputStream()
+        val stream = BleInputStream(readTimeoutMs = TEST_READ_TIMEOUT_MS)
         stream.onBytesReceived("ABC".toByteArray())
 
         assertEquals('A'.code, stream.read())

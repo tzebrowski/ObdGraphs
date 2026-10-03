@@ -281,34 +281,39 @@ internal class WorkflowOrchestrator internal constructor() {
         Log.i(LOG_TAG, "Module discovery for header=$header scheduled: $result")
     }
 
+    // Runs off the caller's thread for the same reason start() does: DataLoggerService dispatches
+    // this from onStartCommand, i.e. on the MAIN thread, and executeRoutine opens the transport -
+    // AdapterConnection.connect() blocks for as long as the adapter takes to answer.
     fun executeRoutine(query: Query) {
-        currentQuery = query
-        val init = init()
-        val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
-        val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+        runAsync (wait=false) {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND)
+            currentQuery = query
+            val init = init()
+            val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
+            val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
 
-        ConnectionManager.obtain(pidDefinitionRegistry(), dataLoggerQuery, adjustments, init)?.run {
-            Log.i(
-                LOG_TAG,
-                "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}"
-            )
-
-            val status = workflow.executeRoutine(dataLoggerQuery.pids.first(), init)
-            Log.i(
-                LOG_TAG,
-                "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status"
-            )
-
-            when (status) {
-                WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
-                WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(
-                    ROUTINE_WORKFLOW_NOT_RUNNING_EVENT
+            ConnectionManager.obtain(pidDefinitionRegistry(), dataLoggerQuery, adjustments, init)?.run {
+                Log.i(
+                    LOG_TAG,
+                    "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}"
                 )
 
-                else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
+                val status = workflow.executeRoutine(dataLoggerQuery.pids.first(), init)
+                Log.i(
+                    LOG_TAG,
+                    "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status"
+                )
+
+                when (status) {
+                    WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
+                    WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(
+                        ROUTINE_WORKFLOW_NOT_RUNNING_EVENT
+                    )
+
+                    else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
+                }
             }
         }
-
     }
 
     private lateinit var currentQuery: Query

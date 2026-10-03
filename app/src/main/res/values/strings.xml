@@ -199,6 +199,9 @@
 
     <string name="pref.adapter_id">Available Bluetooth Classic devices</string>
     <string name="pref.ble.adapter_id">Available Bluetooth LE devices</string>
+    <string name="pref.ble.scan_needs_location">Bluetooth LE scanning needs location services switched on. Without them Android returns no scan results at all. Only paired devices are listed.</string>
+    <string name="pref.ble.scan_found_nothing">No Bluetooth LE devices are broadcasting nearby. Make sure the adapter is powered (ignition on) and not connected to another phone or app.</string>
+    <string name="pref.ble.scanning">Scanning for Bluetooth LE devices…</string>
     <string name="pref.ble.profile">GATT profile</string>
     <string name="pref.ble.profile_summary">Leave on AUTO to probe every known adapter profile after connecting. Pick CUSTOM to enter the service and characteristic UUIDs yourself.</string>
     <string name="pref.ble.service_uuid">Custom service UUID</string>

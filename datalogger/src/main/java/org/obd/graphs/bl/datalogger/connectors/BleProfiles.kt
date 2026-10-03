@@ -37,6 +37,19 @@ const val BLE_PROFILE_AUTO = "AUTO"
 const val BLE_PROFILE_CUSTOM = "CUSTOM"
 
 /**
+ * Services that are part of every BLE device and never carry a serial bridge: GAP, GATT, Device
+ * Information and Battery. Excluded from the generic profile search so it cannot latch onto, say,
+ * the Service Changed characteristic of 1801 and call it an OBD link.
+ */
+internal val BLE_GENERIC_SERVICES: Set<UUID> =
+    setOf(
+        uuid("00001800-0000-1000-8000-00805f9b34fb"),
+        uuid("00001801-0000-1000-8000-00805f9b34fb"),
+        uuid("0000180a-0000-1000-8000-00805f9b34fb"),
+        uuid("0000180f-0000-1000-8000-00805f9b34fb")
+    )
+
+/**
  * Known profiles, most specific first. Ported from the sibling tuning-tools project, where each
  * entry was confirmed against real hardware.
  */
