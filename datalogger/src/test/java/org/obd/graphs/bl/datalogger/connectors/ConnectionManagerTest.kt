@@ -122,6 +122,44 @@ class ConnectionManagerTest : TestSetup() {
     }
 
     @Test
+    fun `ble connection is rejected and broadcasts when device address is empty`() {
+        settingsWith("ble", Adapter(bleDeviceAddress = ""))
+
+        val result = ConnectionManager.obtain(registry, query, adjustments, init)
+
+        assertNull(result)
+        verify { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT) }
+    }
+
+    // A CUSTOM profile whose UUIDs do not parse leaves nothing to probe. Caught up front so the
+    // user sees "adapter not set" rather than a GATT failure several seconds later.
+    @Test
+    fun `ble connection is rejected and broadcasts when a custom profile has unparsable uuids`() {
+        settingsWith(
+            "ble",
+            Adapter(
+                bleDeviceAddress = "AA:BB:CC:DD:EE:FF",
+                bleProfile = "CUSTOM",
+                bleServiceUUID = "not-a-uuid"
+            )
+        )
+
+        val result = ConnectionManager.obtain(registry, query, adjustments, init)
+
+        assertNull(result)
+        verify { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT) }
+    }
+
+    @Test
+    fun `ble connection type builds a ble connection with every known profile when set to AUTO`() {
+        settingsWith("ble", Adapter(bleDeviceAddress = "AA:BB:CC:DD:EE:FF"))
+
+        val result = ConnectionManager.obtain(registry, query, adjustments, init)
+
+        assertNotNull(result)
+    }
+
+    @Test
     fun `usb connection type builds a usb connection from preferences`() {
         settingsWith("usb")
 

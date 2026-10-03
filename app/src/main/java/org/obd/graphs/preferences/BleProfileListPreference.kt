@@ -18,36 +18,25 @@ package org.obd.graphs.preferences
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.ListPreference
-import org.obd.graphs.BuildConfig
+import org.obd.graphs.bl.datalogger.connectors.BLE_PROFILES
+import org.obd.graphs.bl.datalogger.connectors.BLE_PROFILE_AUTO
+import org.obd.graphs.bl.datalogger.connectors.BLE_PROFILE_CUSTOM
 
-private const val TAG = "ConnectionType"
-private const val MOCK_CONNECTION_TYPE = "mock"
-
-class ConnectionTypeListPreference(
+/**
+ * AUTO, the known profile names, then CUSTOM. Built in code rather than as a string array so the
+ * list cannot drift from [BLE_PROFILES], which is what the connection actually probes.
+ */
+class BleProfileListPreference(
     context: Context,
     attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
     init {
-        if (BuildConfig.DEBUG) {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Keeping mock connection type")
-            }
-        } else {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Filtering out mock connection type")
-            }
+        val values = listOf(BLE_PROFILE_AUTO) + BLE_PROFILES.map { it.name } + BLE_PROFILE_CUSTOM
 
-            // entries hold display labels and entryValues the persisted ones, so the index of
-            // "mock" has to be located in the VALUES and then dropped from both, or the two
-            // arrays fall out of alignment and the list shows the wrong label per value.
-            val index = entryValues.indexOfFirst { p -> p == MOCK_CONNECTION_TYPE }
-
-            if (index >= 0) {
-                entries = entries.filterIndexed { i, _ -> i != index }.toTypedArray()
-                entryValues = entryValues.filterIndexed { i, _ -> i != index }.toTypedArray()
-            }
-        }
+        // No SimpleSummaryProvider here: the XML summary explains what AUTO and CUSTOM do,
+        // which is more useful than echoing the selected value back.
+        entries = values.toTypedArray()
+        entryValues = values.toTypedArray()
     }
 }

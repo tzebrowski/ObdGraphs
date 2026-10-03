@@ -32,8 +32,9 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Robolectric gives each test method a fresh Sandbox classloader, so the [AutoConnect] object's
- * debounce state (a static AtomicLong) is reset between test methods here.
+ * [AutoConnect]'s debounce is static state that Robolectric does NOT reliably reset between
+ * methods sharing an SDK config, so every test here pins the window to 0 rather than depending on
+ * execution order.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, sdk = [29])
@@ -44,7 +45,7 @@ class AutoConnectTest : TestSetup() {
         super.setup()
         mockkObject(dataLoggerSettings)
         mockkObject(Network)
-        every { Network.startBackgroundBleScanForMac(any(), any(), any()) } just Runs
+        every { Network.startBondedDeviceMonitor(any(), any(), any()) } just Runs
     }
 
     @After
@@ -55,9 +56,28 @@ class AutoConnectTest : TestSetup() {
         every { dataLoggerSettings.instance() } returns
             DataLoggerSettings(adapter = Adapter(deviceAddress = "aa:bb:cc:dd:ee:ff"))
 
-        AutoConnect.schedule(context, autoConnectEnabled = true)
+        AutoConnect.schedule(context, autoConnectEnabled = true, debounceWindowMs = 0)
 
-        verify { Network.startBackgroundBleScanForMac(context, "AA:BB:CC:DD:EE:FF", any()) }
+        verify { Network.startBondedDeviceMonitor(context, "AA:BB:CC:DD:EE:FF", any()) }
+    }
+
+    // Each Bluetooth transport stores its MAC under its own key, so watching the Classic address
+    // while BLE is selected would monitor a device the user is not connecting to.
+    @Test
+    fun `schedule watches the ble address when the ble connection type is selected`() {
+        every { dataLoggerSettings.instance() } returns
+            DataLoggerSettings(
+                adapter =
+                Adapter(
+                    connectionType = "ble",
+                    deviceAddress = "11:22:33:44:55:66",
+                    bleDeviceAddress = "aa:bb:cc:dd:ee:ff"
+                )
+            )
+
+        AutoConnect.schedule(context, autoConnectEnabled = true, debounceWindowMs = 0)
+
+        verify { Network.startBondedDeviceMonitor(context, "AA:BB:CC:DD:EE:FF", any()) }
     }
 
     @Test
@@ -65,18 +85,18 @@ class AutoConnectTest : TestSetup() {
         every { dataLoggerSettings.instance() } returns
             DataLoggerSettings(adapter = Adapter(deviceAddress = "aa:bb:cc:dd:ee:ff"))
 
-        AutoConnect.schedule(context, autoConnectEnabled = false)
+        AutoConnect.schedule(context, autoConnectEnabled = false, debounceWindowMs = 0)
 
-        verify(exactly = 0) { Network.startBackgroundBleScanForMac(any(), any(), any()) }
+        verify(exactly = 0) { Network.startBondedDeviceMonitor(any(), any(), any()) }
     }
 
     @Test
     fun `schedule does nothing when the device address is empty`() {
         every { dataLoggerSettings.instance() } returns DataLoggerSettings(adapter = Adapter(deviceAddress = ""))
 
-        AutoConnect.schedule(context, autoConnectEnabled = true)
+        AutoConnect.schedule(context, autoConnectEnabled = true, debounceWindowMs = 0)
 
-        verify(exactly = 0) { Network.startBackgroundBleScanForMac(any(), any(), any()) }
+        verify(exactly = 0) { Network.startBondedDeviceMonitor(any(), any(), any()) }
     }
 
     @Test
@@ -85,8 +105,8 @@ class AutoConnectTest : TestSetup() {
         every { dataLoggerSettings.instance() } returns
             DataLoggerSettings(adapter = Adapter(deviceAddress = "aa:bb:cc:dd:ee:ff"))
 
-        AutoConnect.schedule(context, autoConnectEnabled = true)
+        AutoConnect.schedule(context, autoConnectEnabled = true, debounceWindowMs = 0)
 
-        verify(exactly = 0) { Network.startBackgroundBleScanForMac(any(), any(), any()) }
+        verify(exactly = 0) { Network.startBondedDeviceMonitor(any(), any(), any()) }
     }
 }

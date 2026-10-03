@@ -18,10 +18,6 @@ package org.obd.graphs.preferences
 
 import android.content.Context
 import android.graphics.Typeface
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.ListPreference
@@ -32,12 +28,11 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 import java.util.LinkedList
 
-private class Device(
-    val address: String,
-    val label: Spanned
-)
-
-class BluetoothAdaptersListPreferences(
+/**
+ * Lists BONDED devices: a Classic adapter has to be paired before an RFCOMM socket can open.
+ * BLE adapters are usually unbonded and are picked by [BleAdaptersListPreferences] instead.
+ */
+class BluetoothClassicAdaptersListPreferences(
     context: Context,
     attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
@@ -95,36 +90,11 @@ class BluetoothAdaptersListPreferences(
                 bondedDevices
                     .sortedBy { currentDevice -> currentDevice.name }
                     .forEach { currentDevice ->
-                        handler(Device(address = currentDevice.address, label = format("${currentDevice.name} (${currentDevice.address})")))
+                        handler(Device(address = currentDevice.address, label = formatDeviceLabel(currentDevice.name, currentDevice.address)))
                     }
             }
         } catch (e: SecurityException) {
-            Log.e("BluetoothAdaptersListPreferences", "Failed to obtain BT Permissions", e)
+            Log.e("BluetoothClassicAdaptersListPreferences", "Failed to obtain BT Permissions", e)
             Network.requestBluetoothPermissions()
         }
-
-    private fun format(text: String): Spanned {
-        val spanned = SpannableString(text)
-        return try {
-            spanned.apply {
-                val endIndexOf = text.indexOf(")") + 1
-                val startIndexOf = text.indexOf("(")
-                setSpan(
-                    RelativeSizeSpan(0.5f),
-                    startIndexOf,
-                    endIndexOf,
-                    0
-                )
-
-                setSpan(
-                    ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
-                    startIndexOf,
-                    endIndexOf,
-                    0
-                )
-            }
-        } catch (e: Throwable) {
-            spanned
-        }
-    }
 }

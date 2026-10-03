@@ -205,7 +205,7 @@
                     <org.obd.graphs.preferences.ConnectionTypeListPreference
                         android:defaultValue="bluetooth"
                         android:dialogTitle="@string/pref.connection.connection_type_dialog"
-                        android:entries="@array/pref.connection_type_array"
+                        android:entries="@array/pref.connection_type_entries"
                         android:entryValues="@array/pref.connection_type_array"
                         android:key="pref.adapter.connection.type"
                         android:title="@string/pref.connection.connection_type"
@@ -215,12 +215,56 @@
                         android:key="pref.adapter.connection.type.bluetooth"
                         android:title="@string/pref.bluetooth_category">
 
-                        <org.obd.graphs.preferences.BluetoothAdaptersListPreferences
+                        <org.obd.graphs.preferences.BluetoothClassicAdaptersListPreferences
                             android:defaultValue="@array/pref.empty_array"
                             android:dialogTitle="@string/pref.adapter_id"
                             android:key="pref.adapter.id"
                             android:title="@string/pref.adapter_id"
                             app:useSimpleSummaryProvider="true" />
+                    </PreferenceCategory>
+
+                    <PreferenceCategory
+                        android:key="pref.adapter.connection.type.ble"
+                        android:title="@string/pref.ble_category">
+
+                        <org.obd.graphs.preferences.BleAdaptersListPreferences
+                            android:defaultValue="@array/pref.empty_array"
+                            android:dialogTitle="@string/pref.ble.adapter_id"
+                            android:key="pref.adapter.connection.ble.id"
+                            android:title="@string/pref.ble.adapter_id"
+                            app:useSimpleSummaryProvider="true" />
+
+                        <org.obd.graphs.preferences.BleProfileListPreference
+                            android:defaultValue="AUTO"
+                            android:dialogTitle="@string/pref.ble.profile"
+                            android:key="pref.adapter.connection.ble.profile"
+                            android:summary="@string/pref.ble.profile_summary"
+                            android:title="@string/pref.ble.profile"
+                            app:singleLineTitle="false" />
+
+                        <EditTextPreference
+                            android:defaultValue=""
+                            android:dialogTitle="@string/pref.ble.service_uuid"
+                            android:key="pref.adapter.connection.ble.service_uuid"
+                            android:title="@string/pref.ble.service_uuid"
+                            app:singleLineTitle="false"
+                            app:useSimpleSummaryProvider="true" />
+
+                        <EditTextPreference
+                            android:defaultValue=""
+                            android:dialogTitle="@string/pref.ble.notify_uuid"
+                            android:key="pref.adapter.connection.ble.notify_uuid"
+                            android:title="@string/pref.ble.notify_uuid"
+                            app:singleLineTitle="false"
+                            app:useSimpleSummaryProvider="true" />
+
+                        <EditTextPreference
+                            android:defaultValue=""
+                            android:dialogTitle="@string/pref.ble.write_uuid"
+                            android:key="pref.adapter.connection.ble.write_uuid"
+                            android:summary="@string/pref.ble.write_uuid_summary"
+                            android:title="@string/pref.ble.write_uuid"
+                            app:singleLineTitle="false" />
                     </PreferenceCategory>
 
                     <PreferenceCategory

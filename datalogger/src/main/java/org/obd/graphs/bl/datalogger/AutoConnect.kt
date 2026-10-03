@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
 private const val SCHEDULE_DELAY_SEC = 2L
+private const val DEBOUNCE_WINDOW_MS = 5000L
 private const val TAG = "AutoConnect"
 
 object AutoConnect {
@@ -36,26 +37,29 @@ object AutoConnect {
     private var future: ScheduledFuture<*>? = null
 
     private val lastScheduleAttempt = AtomicLong(0)
-    private const val DEBOUNCE_WINDOW_MS = 5000L
 
     fun schedule(
         context: Context,
         autoConnectEnabled: Boolean = dataLoggerSettings.instance().adapter.autoConnectEnabled,
-        scheduleDelaySec: Long = SCHEDULE_DELAY_SEC
+        scheduleDelaySec: Long = SCHEDULE_DELAY_SEC,
+        debounceWindowMs: Long = DEBOUNCE_WINDOW_MS
     ) {
         val now = System.currentTimeMillis()
-        if (now - lastScheduleAttempt.get() < DEBOUNCE_WINDOW_MS) {
+        if (now - lastScheduleAttempt.get() < debounceWindowMs) {
             Log.i(TAG, "AutoConnect scheduled recently. Skipping to prevent duplicate runs.")
             return
         }
         lastScheduleAttempt.set(now)
 
         try {
+            // Each Bluetooth transport keeps its MAC under its own preference key, so the
+            // address to watch depends on which one is selected.
+            val adapter = dataLoggerSettings.instance().adapter
             val macAddress =
-                dataLoggerSettings
-                    .instance()
-                    .adapter.deviceAddress
-                    .uppercase()
+                when (adapter.connectionType) {
+                    "ble" -> adapter.bleDeviceAddress
+                    else -> adapter.deviceAddress
+                }.uppercase()
 
             Log.i(
                 TAG,
@@ -63,7 +67,7 @@ object AutoConnect {
             )
 
             if (autoConnectEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
-                Network.startBackgroundBleScanForMac(
+                Network.startBondedDeviceMonitor(
                     context,
                     macAddress
                 ) {

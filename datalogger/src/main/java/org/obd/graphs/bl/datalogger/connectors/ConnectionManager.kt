@@ -42,7 +42,8 @@ internal object ConnectionManager {
         when (dataLoggerSettings.instance().adapter.connectionType) {
             "mock" -> mockConnection(registry, query, adjustments, init)
             "wifi" -> wifiConnection()
-            "bluetooth" -> bluetoothConnection()
+            "bluetooth" -> bluetoothClassicConnection()
+            "ble" -> bleConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
             else -> {
                 null
@@ -59,22 +60,61 @@ internal object ConnectionManager {
             .strategy(Strategy.SmartSawtooth)
             .responseCount(500)
             .build()
-    private fun bluetoothConnection(): AdapterConnection? =
+    private fun bluetoothClassicConnection(): AdapterConnection? =
         try {
             val deviceAddress = dataLoggerSettings.instance().adapter.deviceAddress
-            Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceAddress ...")
+            Log.i(LOG_TAG, "Connecting Bluetooth Classic Adapter: $deviceAddress ...")
 
             if (deviceAddress.isEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                 null
             } else {
                 if (Network.findBluetoothAdapterByName(deviceAddress) == null) {
-                    Log.e(LOG_TAG, "Did not find Bluetooth Adapter: $deviceAddress")
+                    Log.e(LOG_TAG, "Did not find Bluetooth Classic Adapter: $deviceAddress")
                     sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                     null
                 } else {
-                    BluetoothConnection(deviceAddress)
+                    BluetoothClassicConnection(deviceAddress)
                 }
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Error occurred during establishing the connection $e")
+            sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
+            null
+        }
+
+    private fun bleConnection(preferences: DataLoggerSettings = dataLoggerSettings.instance()): AdapterConnection? =
+        try {
+            val deviceAddress = preferences.adapter.bleDeviceAddress
+            Log.i(LOG_TAG, "Connecting BLE Adapter: $deviceAddress, profile: ${preferences.adapter.bleProfile} ...")
+
+            val profiles =
+                bleProfileCandidates(
+                    selected = preferences.adapter.bleProfile,
+                    customService = preferences.adapter.bleServiceUUID,
+                    customNotify = preferences.adapter.bleNotifyUUID,
+                    customWrite = preferences.adapter.bleWriteUUID
+                )
+
+            when {
+                deviceAddress.isEmpty() -> {
+                    Log.e(LOG_TAG, "BLE Adapter is not set")
+                    sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+                    null
+                }
+
+                // Only reachable with a CUSTOM profile whose UUIDs do not parse - probing nothing
+                // would fail later with a far less obvious message.
+                profiles.isEmpty() -> {
+                    Log.e(LOG_TAG, "No BLE profile to probe. Check the custom service/characteristic UUIDs.")
+                    sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+                    null
+                }
+
+                else ->
+                    getContext()?.let {
+                        BleConnection(context = it, deviceAddress = deviceAddress, profiles = profiles)
+                    }
             }
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Error occurred during establishing the connection $e")

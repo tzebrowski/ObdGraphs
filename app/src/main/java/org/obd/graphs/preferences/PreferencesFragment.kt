@@ -216,76 +216,28 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         registerViewsPreferenceChangeListeners()
     }
 
+    // Narrows the visible sub-category to the currently selected connection type. Mirrored in
+    // wizard/AdapterStepFragment, which inflates the same XML subtree.
     private fun registerConnectionTypeListener() {
-        val bluetooth = "bluetooth"
-
         val connectionType = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
-        val p1 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.$bluetooth")
-        val p2 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
-        val p3 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.usb")
+        val bluetoothCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.bluetooth")
+        val bleCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.ble")
+        val wifiCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
+        val usbCategory = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.usb")
 
-        when (Prefs.getString(PREFERENCE_CONNECTION_TYPE)) {
-            bluetooth -> {
-                p1?.isVisible = true
-                p2?.isVisible = false
-                p3?.isVisible = false
-            }
-
-            "wifi" -> {
-                p1?.isVisible = false
-                p2?.isVisible = true
-                p3?.isVisible = false
-            }
-
-            "usb" -> {
-                p1?.isVisible = false
-                p2?.isVisible = false
-                p3?.isVisible = true
-            }
-
-            "mock" -> {
-                p1?.isVisible = false
-                p2?.isVisible = false
-                p3?.isVisible = false
-            }
-
-            else -> {
-            }
+        fun applyVisibility(type: String?) {
+            bluetoothCategory?.isVisible = type == "bluetooth"
+            bleCategory?.isVisible = type == "ble"
+            wifiCategory?.isVisible = type == "wifi"
+            usbCategory?.isVisible = type == "usb"
         }
+
+        applyVisibility(Prefs.getString(PREFERENCE_CONNECTION_TYPE))
 
         connectionType?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 sendBroadcastEvent(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
-                when (newValue) {
-                    bluetooth -> {
-                        p1?.isVisible = true
-                        p2?.isVisible = false
-                        p3?.isVisible = false
-                    }
-
-                    "wifi" -> {
-                        p1?.isVisible = false
-                        p2?.isVisible = true
-                        p3?.isVisible = false
-                    }
-
-                    "usb" -> {
-                        p1?.isVisible = false
-                        p2?.isVisible = false
-                        p3?.isVisible = true
-                    }
-
-                    "mock" -> {
-                        p1?.isVisible = false
-                        p2?.isVisible = false
-                        p3?.isVisible = false
-                    }
-
-                    else -> {
-                        p1?.isVisible = false
-                        p2?.isVisible = true
-                    }
-                }
+                applyVisibility(newValue as? String)
                 true
             }
     }
