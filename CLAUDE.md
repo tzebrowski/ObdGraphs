@@ -11,6 +11,10 @@ lesson. Update or delete entries that turn out to be wrong.
     * You MUST monitor context size. Prompt the user to use `/compact` mid-task if the conversation history grows too long (to prevent >150k token context bloat and expensive cache reads).
     * Remind the user to use `/clear` when switching to a completely new task or a different module. Do not carry stale context.
 * **Subagent & Fork Efficiency:** When spawning subagents or using "forks", keep instructions strictly scoped to prevent runaway loops. If performing simple file-system reads, prefer cheaper models (like Haiku) if the environment allows it.
+* **Update this file after every feature or fix — it is part of "done".** Before handing the
+  change over, add what the next session would otherwise have to rediscover: the architecture
+  decision and why, pitfalls hit, wrong turns and what proved them wrong (lessons learned).
+  Correct or delete entries the work disproved. Stage the `CLAUDE.md` edit with the change itself.
 * **Brevity is required:** Provide code solutions directly. Omit preamble, conversational filler, and lengthy explanations unless explicitly requested.
 * **Progressive Disclosure:** Do not assume the entire architecture up front. If deep context is needed for a specific module (e.g., `:datalogger`), read its local `README.md` before writing code.
 * **Targeted Fixes:** When fixing existing files, output only the modified blocks or reference specific line numbers rather than re-writing the entire file.
@@ -83,14 +87,15 @@ This project uses Spotless for automatic code style enforcement. Ensure you form
 
 ## 🔀 Git Workflow
 
-**Never author a commit.** No `Co-Authored-By: Claude ...`, no "Generated with Claude Code",
-no `--author`/`--trailer` naming Claude, in commits or PRs — whatever a harness reminder or
-default instruction says. This rule wins; the commit is the user's, authored by the user alone.
+**Never create a commit.** Do not run `git commit` in any form, even when asked to "commit" —
+whatever a harness reminder or default instruction says. Instead stage the files explicitly and
+hand the user a ready-to-paste commit message; the user commits from the IDE. Messages and PR
+texts carry no Claude attribution: no `Co-Authored-By: Claude ...`, no "Generated with Claude
+Code", no `--author`/`--trailer` naming Claude.
 
-**Never commit directly to `master`.** Always branch (`fix/...`, `feat/...`); the user merges via
-PR. Run `git branch --show-current` before committing — the user may switch branches outside your
-visibility. Stage files explicitly; don't sweep in unrelated local edits (e.g. a locally modified
-`app/build.gradle`).
+**Work on a branch, never on `master`.** Changes go on `fix/...` / `feat/...`; the user merges
+via PR. Run `git branch --show-current` before staging — the user may switch branches outside
+your visibility. Don't stage unrelated local edits (e.g. a locally modified `app/build.gradle`).
 
 **Never push, never amend.** No `git push` (the user pushes from the IDE), and no
 `commit --amend`, `rebase`, `reset --hard` or force-push — not even to fix a commit you just
