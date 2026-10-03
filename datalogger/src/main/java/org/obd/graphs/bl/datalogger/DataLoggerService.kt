@@ -63,9 +63,20 @@ class DataLoggerService : Service() {
         flags: Int,
         startId: Int
     ): Int {
+        // A null intent is the system restarting the service after the process was killed. It
+        // carries no command, and from the background Android 12+ refuses startForeground() with
+        // ForegroundServiceStartNotAllowedException - which crashed the app.
+        if (intent == null) {
+            Log.w(LOG_TAG, "Ignoring a restart without a command")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         Log.i(LOG_TAG, "Starting DataLoggerService in the Foreground Mode")
 
-        startForegroundServiceSafe()
+        if (!startForegroundServiceSafe()) {
+            return START_NOT_STICKY
+        }
 
         // Fail-fast if permissions are missing
         if (!Permissions.hasNotificationPermissions(this)) {
@@ -75,7 +86,7 @@ class DataLoggerService : Service() {
             return START_NOT_STICKY
         }
 
-        val action = intent?.action
+        val action = intent.action
         // Because of the "Loopback" pattern, this is executed on the Main Thread,
         // effectively serializing these commands.
         when (action) {
@@ -116,7 +127,8 @@ class DataLoggerService : Service() {
             }
         }
 
-        return START_STICKY
+        // Every command arrives as its own intent; a sticky restart would only ever redeliver null.
+        return START_NOT_STICKY
     }
 
     fun updateQuery(query: Query) {
@@ -165,7 +177,8 @@ class DataLoggerService : Service() {
         enqueueWork(ACTION_STOP)
     }
 
-    private fun startForegroundServiceSafe() {
+    /** False when the service could not go foreground and has been stopped. */
+    private fun startForegroundServiceSafe(): Boolean {
         val notification = createNotification()
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -185,6 +198,7 @@ class DataLoggerService : Service() {
             } else {
                 startForeground(NOTIFICATION_ID, notification)
             }
+            return true
         } catch (e: SecurityException) {
             Log.e(LOG_TAG, "Failed to start FGS with requested types. Retrying with basic type.", e)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -194,13 +208,20 @@ class DataLoggerService : Service() {
                         notification,
                         ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
                     )
+                    return true
                 } catch (e2: Exception) {
                     Log.e(LOG_TAG, "CRITICAL: Failed to start FGS even with fallback.", e2)
                     sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
-                    serviceStop()
                 }
             }
+        } catch (e: IllegalStateException) {
+            // ForegroundServiceStartNotAllowedException (API 31+): started while the app is in
+            // the background. Not recoverable from here; stopping beats crashing the process.
+            Log.e(LOG_TAG, "Not allowed to start the foreground service from the background.", e)
         }
+
+        serviceStop()
+        return false
     }
 
     private fun enqueueWork(
