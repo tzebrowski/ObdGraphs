@@ -58,6 +58,10 @@ When writing new tests, use the natively provided libraries within the `androidT
 > Robolectric (`./gradlew :datalogger:testDebugUnitTest`). Other modules define only
 > `androidTestImplementation`, so a new local suite there needs `testImplementation` added first.
 
+**Every new feature and bug fix ships with test coverage** — not done until it does. Extend the
+existing test class for the code under change before creating a new one. For a bug fix, the test
+must reproduce the bug: check that it fails against the unfixed code, otherwise it pins nothing.
+
 ---
 
 ## 🏗 Codebase Architecture
@@ -227,6 +231,13 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   logs whatever `connect()` throws, leaving `connector` null and `CommandLoop` spinning — the UI
   shows "connecting" forever. `BleConnection` sends `DATA_LOGGER_BLE_NOT_REACHABLE` (no adapter
   answered) or `DATA_LOGGER_ERROR_CONNECT_EVENT` (discovery/profile failure) itself.
+
+### DataLoggerService (`:datalogger/.../DataLoggerService.kt`)
+* **A null intent in `onStartCommand` is a system restart, not a command — stop, don't go
+  foreground.** From the background Android 12+ refuses `startForeground()` with
+  `ForegroundServiceStartNotAllowedException` (an `IllegalStateException`, not a
+  `SecurityException`), which crashed production. Commands always arrive as explicit intents, so
+  the service returns `START_NOT_STICKY`; `START_STICKY` only ever bought those null restarts.
 
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.

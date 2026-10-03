@@ -16,6 +16,8 @@
  */
 package org.obd.graphs.bl
 
+import android.app.ForegroundServiceStartNotAllowedException
+import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import io.mockk.Runs
@@ -23,11 +25,15 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -170,5 +176,42 @@ class DataLoggerServiceTest : TestSetup() {
         // Assert
         // Verify the specific mock instance we injected received the call
         verify { mockOrchestrator.start(any()) }
+    }
+
+    // A null intent is the system re-creating the service after the process was killed. From the
+    // background Android 12+ refuses startForeground(), which crashed production.
+    @Test
+    fun `onStartCommand without an intent should stop instead of going foreground`() {
+        val service = Robolectric.buildService(DataLoggerService::class.java).create().get()
+
+        val result = service.onStartCommand(null, 0, 1)
+
+        assertEquals(Service.START_NOT_STICKY, result)
+        assertTrue(Shadows.shadowOf(service).isStoppedBySelf)
+        assertNull(Shadows.shadowOf(service).lastForegroundNotification)
+    }
+
+    @Test
+    fun `onStartCommand should stop the service when going foreground is refused`() {
+        val service = spyk(Robolectric.buildService(DataLoggerService::class.java).create().get())
+        every { service.startForeground(any(), any(), any<Int>()) } throws
+            ForegroundServiceStartNotAllowedException("mAllowStartForeground false")
+
+        val result = service.onStartCommand(Intent(), 0, 1)
+
+        assertEquals(Service.START_NOT_STICKY, result)
+        verify { service.stopSelf() }
+        verify(exactly = 0) { mockOrchestrator.start(any()) }
+    }
+
+    @Test
+    fun `onStartCommand should go foreground and not ask to be restarted after a kill`() {
+        val service = Robolectric.buildService(DataLoggerService::class.java).create().get()
+
+        val result = service.onStartCommand(Intent(), 0, 1)
+
+        assertEquals(Service.START_NOT_STICKY, result)
+        assertNotNull(Shadows.shadowOf(service).lastForegroundNotification)
+        assertFalse(Shadows.shadowOf(service).isStoppedBySelf)
     }
 }
