@@ -16,12 +16,14 @@
  */
 package org.obd.graphs.bl.datalogger.connectors
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothStatusCodes
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -405,6 +407,8 @@ internal class BleConnection(
     }
 
     /** Best effort - a stack that refuses just keeps its default interval. */
+    // A revoked permission throws SecurityException, which connect()/close() catch and report.
+    @SuppressLint("MissingPermission")
     private fun requestHighPriority(server: BluetoothGatt) {
         try {
             val accepted = server.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH)
@@ -451,6 +455,8 @@ internal class BleConnection(
      * has reported the disconnect, and closing it early is what leaves the next connectGatt failing
      * with status 133.
      */
+    // A revoked permission throws SecurityException, which connect()/close() catch and report.
+    @SuppressLint("MissingPermission")
     private fun releaseGatt(
         server: BluetoothGatt?,
         callback: GattCallback?
@@ -532,6 +538,8 @@ internal class BleConnection(
     }
 
     @Throws(IOException::class)
+    // A revoked permission throws SecurityException, which connect()/close() catch and report.
+    @SuppressLint("MissingPermission")
     private fun connectWithRetry(
         device: BluetoothDevice,
         onReported: () -> Unit
@@ -602,6 +610,8 @@ internal class BleConnection(
      * Each outcome is logged distinctly because they mean completely different things: refused to
      * start, never answered, or answered with nothing.
      */
+    // A revoked permission throws SecurityException, which connect()/close() catch and report.
+    @SuppressLint("MissingPermission")
     private fun awaitServices(server: BluetoothGatt): Boolean {
         repeat(DISCOVERY_ATTEMPTS) { attempt ->
             // Only on a RETRY. A first attempt over a healthy link discovers fine, and dropping a
@@ -658,6 +668,8 @@ internal class BleConnection(
      * A larger MTU means fewer chunks per command. Best effort: a refusal just leaves the default,
      * which every adapter supports.
      */
+    // A revoked permission throws SecurityException, which connect()/close() catch and report.
+    @SuppressLint("MissingPermission")
     private fun negotiateMtu(server: BluetoothGatt) {
         val latch = CountDownLatch(1)
         mtuLatch = latch
@@ -757,6 +769,8 @@ internal class BleConnection(
      * written too. The write is AWAITED: GATT permits one outstanding operation, so returning
      * while it is still in flight makes the stack reject the first command the connector sends.
      */
+    // A revoked permission throws SecurityException, which connect()/close() catch and report.
+    @SuppressLint("MissingPermission")
     private fun enableNotifications(server: BluetoothGatt) {
         val characteristic = notifyCharacteristic ?: return
 
@@ -783,7 +797,7 @@ internal class BleConnection(
 
         val submitted =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                server.writeDescriptor(descriptor, value) == BluetoothGatt.GATT_SUCCESS
+                server.writeDescriptor(descriptor, value) == BluetoothStatusCodes.SUCCESS
             } else {
                 @Suppress("DEPRECATION")
                 descriptor.value = value
@@ -831,7 +845,7 @@ internal class BleConnection(
 
             val submitted =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    server.writeCharacteristic(characteristic, chunk, writeType) == BluetoothGatt.GATT_SUCCESS
+                    server.writeCharacteristic(characteristic, chunk, writeType) == BluetoothStatusCodes.SUCCESS
                 } else {
                     @Suppress("DEPRECATION")
                     characteristic.writeType = writeType
