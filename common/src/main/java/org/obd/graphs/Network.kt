@@ -167,7 +167,7 @@ object Network {
     fun knownDeviceByAddress(deviceAddress: String): BluetoothDevice? =
         bluetoothCandidates()
             .find { it.address.equals(deviceAddress, ignoreCase = true) }
-            ?.also { Log.i(TAG, "Resolved $deviceAddress from the bonded/connected devices, type=${it.type}") }
+            ?.also { Log.i(TAG, "Resolved $deviceAddress from the bonded/connected devices") }
 
     /**
      * Waits for ONE specific MAC to advertise and returns the scanner's own [BluetoothDevice].
