@@ -79,8 +79,9 @@ jobs:
           ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
         run: |
-          sh ./gradlew app:bundleGiulia app:bundleGiuliaAA
-          sh ./gradlew app:assembleGiulia app:assembleGiuliaAA
+          # 4g + stacktrace: packageGiuliaRelease failed with a cause-less IncrementalSplitterRunnable error
+          sh ./gradlew app:bundleGiulia app:bundleGiuliaAA --stacktrace "-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8"
+          sh ./gradlew app:assembleGiulia app:assembleGiuliaAA --stacktrace "-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
