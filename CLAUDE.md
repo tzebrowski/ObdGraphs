@@ -68,6 +68,8 @@ When writing new tests, use the natively provided libraries within the `androidT
 done until it exists. Follow the existing specs' structure: Summary (problem, scope), Behaviour
 changes (before/after table), Settings/keys touched, Implementation, Backward compatibility, Tests,
 Risks and verification checklist, Out of scope. Update the spec when the feature changes.
+A spec may be written before the code (`Status: proposed, not implemented` in its header); update
+the status and the sections when it is implemented. Screenshots go in `doc/specs/img/`.
 
 **Every new feature and bug fix ships with test coverage** — not done until it does. Extend the
 existing test class for the code under change before creating a new one. For a bug fix, the test
