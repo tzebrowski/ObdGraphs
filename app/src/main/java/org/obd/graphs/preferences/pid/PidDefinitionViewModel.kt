@@ -33,8 +33,10 @@ import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.bl.datalogger.serialize
+import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_SELECTED
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -186,7 +188,7 @@ class PidDefinitionViewModel(
     fun persistSelection() {
         viewModelScope.launch(Dispatchers.IO) {
             val newList = allMasterItems.filter { it.checked }.map { it.source.id.toString() }
-            if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
+            if (persistedSelection().map { it.toString() }.toSet() != newList.toSet()) {
                 Log.i(LOG_TAG, "Persisting PID list for key=$key, new list=$newList")
                 sendBroadcastEvent("$key.event.changed")
                 Prefs.updateStringSet(key, newList)
@@ -195,6 +197,14 @@ class PidDefinitionViewModel(
             }
         }
     }
+
+    // An unset Trip Info bottom row means the default one, so the dialog shows those as checked.
+    private fun persistedSelection(): List<Long> =
+        if (dialogMode is PidDefinitionDialogMode.TripInfoBottom && !Prefs.contains(key)) {
+            TRIP_INFO_DEFAULT_BOTTOM_PIDS
+        } else {
+            Prefs.getStringSet(key).map { s -> s.toLong() }
+        }
 
     fun reorderItems(items: List<PidDefinitionDetails>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -241,8 +251,19 @@ class PidDefinitionViewModel(
         val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
         val sourceList: List<PidDefinitionDetails> = when {
             dialogMode is PidDefinitionDialogMode.TripInfo -> {
-                Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaultPIDs()
-                    .mapNotNull { pidRegistry.findBy(it) }
+                // The defaults and the current selection bypass the registry filters: a selected PID
+                // missing from the list would be dropped from the selection on save.
+                val pinned = (
+                    Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaultPIDs() +
+                        Prefs.getStringSet(key).map { s -> s.toLong() }
+                    ).mapNotNull { pidRegistry.findBy(it) }
+                    .map { PidDefinitionDetails(it, checked = false, supported = true) }
+                val pinnedIds = pinned.map { it.source.id }.toSet()
+                pinned + findPidDefinitionByPriority(all) { !pinnedIds.contains(it.id) }
+            }
+            dialogMode is PidDefinitionDialogMode.TripInfoBottom -> {
+                Prefs.getStringSet(PREF_QUERY_TRIP_INFO_SELECTED)
+                    .mapNotNull { pidRegistry.findBy(it.toLong()) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }
             dialogMode is PidDefinitionDialogMode.Performance -> {
@@ -265,7 +286,7 @@ class PidDefinitionViewModel(
             }
         }
 
-        val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
+        val pref = persistedSelection()
         sourceList.forEach { p ->
             if (pref.contains(p.source.id)) {
                 p.checked = true

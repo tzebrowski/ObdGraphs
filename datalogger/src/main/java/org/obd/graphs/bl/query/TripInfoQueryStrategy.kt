@@ -20,7 +20,19 @@ import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 
-private const val TRIP_INFO_QUERY_PREF_KEY = "pref.aa.trip_info.pids.selected"
+const val PREF_QUERY_TRIP_INFO_SELECTED = "pref.aa.trip_info.pids.selected"
+
+// Which of the selected PIDs go to the bottom row. Unset means TRIP_INFO_DEFAULT_BOTTOM_PIDS;
+// an empty set means the user removed them all.
+const val PREF_QUERY_TRIP_INFO_BOTTOM = "pref.aa.trip_info.bottom.pids.selected"
+
+// The bottom row Trip Info always had, kept as the default so existing setups look the same.
+val TRIP_INFO_DEFAULT_BOTTOM_PIDS =
+    listOf(
+        Pid.INTAKE_PRESSURE_PID_ID.id,
+        Pid.OIL_PRESSURE_PID_ID.id,
+        Pid.ENGINE_TORQUE_PID_ID.id
+    )
 
 internal class TripInfoQueryStrategy : QueryStrategy() {
     private val defaults =
@@ -51,5 +63,5 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
 
     override fun getDefaultPIDs() = defaults
 
-    override fun getPIDs() = Prefs.getLongSet(TRIP_INFO_QUERY_PREF_KEY).toMutableSet()
+    override fun getPIDs() = Prefs.getLongSet(PREF_QUERY_TRIP_INFO_SELECTED).toMutableSet()
 }

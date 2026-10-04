@@ -379,6 +379,8 @@
     <string name="pref.aa.trip_info.enabled_summary">Activates the Trip Info screen, which displays a predefined set of metrics tailored for 2.0 GME engines.</string>
     <string name="pref.aa.trip_info.break_label">Split PIDs label into 2 lines</string>
     <string name="pref.aa.trip_info.break_label_summary">Displays PID labels on the Trip Info screen in two lines. When disabled, labels are shown in a single line.</string>
+    <string name="pref.aa.trip_info.bottom_pids">Bottom row PIDs</string>
+    <string name="pref.aa.trip_info.bottom_pids_summary">PIDs shown enlarged in the bottom row of the Trip Info screen, chosen from the selected PIDs. All other selected PIDs are shown in the top grid.</string>
     <string name="pref.aa.trip_info.select_pids">Select TripInfo OBD2 PIDs</string>
 
     <string name="pref.aa.routines.category">Routines</string>

@@ -39,33 +39,26 @@ private const val NEW_MIN = 0.6f
 
 const val MAX_ITEM_IN_THE_ROW = 6
 
-internal class TripMetricDescriptor(
-    val fetcher: (TripInfoDetails) -> Metric?,
-    val castToInt: Boolean = false,
-    val statsEnabled: Boolean = true,
-    val unitEnabled: Boolean = true,
-    val valueDoublePrecision: Int = 2,
-    val statsDoublePrecision: Int = 2
-)
-
-internal class BottomMetricDescriptor(
-    val fetcher: (TripInfoDetails) -> Metric?,
-    val castToInt: Boolean
-)
-
 internal class TripInfoLayoutCache {
     val area = Rect()
     var valueTextSize: Float = 0f
     var textSizeBase: Float = 0f
     var bottomRowTextSizeBase: Float = 0f
     var bottomColWidth: Float = 0f
+    var activeTopMetricsCount: Int = -1
     var activeBottomMetricsCount: Int = -1
     var breakLabelTextEnabled: Boolean? = null
+    var grid: TripInfoGrid = TripInfoMetrics.grid(0)
 
-    fun requiresLayoutUpdate(newArea: Rect, newBottomMetricsCount: Int, newBreakLabelTextEnabled: Boolean): Boolean {
-        return area != newArea || activeBottomMetricsCount != newBottomMetricsCount ||
+    fun requiresLayoutUpdate(
+        newArea: Rect,
+        newTopMetricsCount: Int,
+        newBottomMetricsCount: Int,
+        newBreakLabelTextEnabled: Boolean
+    ): Boolean =
+        area != newArea || activeTopMetricsCount != newTopMetricsCount ||
+            activeBottomMetricsCount != newBottomMetricsCount ||
             breakLabelTextEnabled != newBreakLabelTextEnabled
-    }
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -80,36 +73,12 @@ internal class TripInfoDrawer(
     private val textCache = TextCache()
     private val defaultTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
 
-    private val topMetricDescriptors = listOf(
-        TripMetricDescriptor({ info: TripInfoDetails -> info.airTemp }, castToInt = true),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.coolantTemp }, castToInt = true),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.oilTemp }, castToInt = true),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.exhaustTemp }, castToInt = true),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.gearboxOilTemp }, castToInt = true),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.distance?.let { d -> metricBuilder.buildDiff(d) } }, statsEnabled = false),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.fuellevel }, valueDoublePrecision = 1, statsDoublePrecision = 1),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.fuelConsumption }, unitEnabled = false, statsDoublePrecision = 1),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.batteryVoltage }),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.ibs }, castToInt = true),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.oilLevel }),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.totalMisfires }, castToInt = true, unitEnabled = false, statsEnabled = false),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.oilDegradation }, unitEnabled = false),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.engineSpeed }, unitEnabled = false),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.vehicleSpeed }, unitEnabled = false),
-        TripMetricDescriptor({ info: TripInfoDetails -> info.gearEngaged }, unitEnabled = false)
-    )
-
-    private val bottomMetricDescriptors = listOf(
-        BottomMetricDescriptor({ info: TripInfoDetails -> info.intakePressure }, true),
-        BottomMetricDescriptor({ info: TripInfoDetails -> info.oilPressure }, false),
-        BottomMetricDescriptor({ info: TripInfoDetails -> info.torque }, true)
-    )
-
     override fun invalidate() {
         super.invalidate()
         giuliaDrawer.invalidate()
         textCache.clear()
         layoutCache.area.setEmpty()
+        layoutCache.activeTopMetricsCount = -1
         layoutCache.activeBottomMetricsCount = -1
         layoutCache.breakLabelTextEnabled = null
     }
@@ -127,33 +96,35 @@ internal class TripInfoDrawer(
         top: Float,
         tripInfo: TripInfoDetails
     ) {
-        var currentBottomCount = 0
-        for (i in bottomMetricDescriptors.indices) {
-            if (bottomMetricDescriptors[i].fetcher.invoke(tripInfo) != null) {
-                currentBottomCount++
-            }
-        }
+        val currentTopCount = countAvailable(tripInfo.top)
+        val currentBottomCount = countAvailable(tripInfo.bottom)
 
         val breakLabelTextEnabled = settings.isBreakLabelTextEnabled()
-        if (layoutCache.requiresLayoutUpdate(area, currentBottomCount, breakLabelTextEnabled)) {
-            calculateLayout(area, tripInfo, currentBottomCount, breakLabelTextEnabled)
+        if (layoutCache.requiresLayoutUpdate(area, currentTopCount, currentBottomCount, breakLabelTextEnabled)) {
+            calculateLayout(area, tripInfo, currentTopCount, currentBottomCount, breakLabelTextEnabled)
         }
 
+        val grid = layoutCache.grid
         val textSizeBase = layoutCache.textSizeBase
+        val gridTextSizeBase = textSizeBase * grid.scale
         val valueTextSize = layoutCache.valueTextSize
-        val dynamicPadding = textSizeBase * 0.1f
+        val dynamicPadding = gridTextSizeBase * 0.1f
         val x = maxItemWidth(area)
 
-        var rowTop = top + (textSizeBase * 0.3f)
+        var rowTop = top + (gridTextSizeBase * 0.3f)
         var colIndex = 0
+        var drawnTopCount = 0
 
-        for (i in topMetricDescriptors.indices) {
-            val descriptor = topMetricDescriptors[i]
-            val metric = descriptor.fetcher.invoke(tripInfo) ?: continue
+        for (i in tripInfo.top.indices) {
+            val descriptor = tripInfo.top[i].descriptor
+            val source = tripInfo.top[i].metric ?: continue
+            if (drawnTopCount >= grid.maxItems) break
 
-            if (colIndex >= MAX_ITEM_IN_THE_ROW) {
+            val metric = if (descriptor.diff) metricBuilder.buildDiff(source) else source
+
+            if (colIndex >= grid.columns) {
                 colIndex = 0
-                rowTop += (textSizeBase * 1.8f)
+                rowTop += (gridTextSizeBase * 1.8f)
             }
 
             drawMetric(
@@ -161,7 +132,7 @@ internal class TripInfoDrawer(
                 top = rowTop,
                 left = left + (colIndex * x) + dynamicPadding,
                 canvas = canvas,
-                textSizeBase = textSizeBase,
+                textSizeBase = gridTextSizeBase,
                 statsEnabled = descriptor.statsEnabled,
                 unitEnabled = descriptor.unitEnabled,
                 area = area,
@@ -170,24 +141,25 @@ internal class TripInfoDrawer(
                 castToInt = descriptor.castToInt
             )
             colIndex++
+            drawnTopCount++
         }
 
-        rowTop += 2.2f * textSizeBase
+        rowTop += 2.2f * gridTextSizeBase
 
         giuliaDrawer.drawDivider(
             canvas = canvas,
             left = left,
             width = area.width().toFloat(),
-            top = rowTop - (textSizeBase * 0.8f),
+            top = rowTop - (gridTextSizeBase * 0.8f),
             color = Color.DKGRAY
         )
 
         rowTop += 6
 
         var drawnBottomCount = 0
-        for (i in bottomMetricDescriptors.indices) {
-            val descriptor = bottomMetricDescriptors[i]
-            val metric = descriptor.fetcher.invoke(tripInfo) ?: continue
+        for (i in tripInfo.bottom.indices) {
+            val descriptor = tripInfo.bottom[i].descriptor
+            val metric = tripInfo.bottom[i].metric ?: continue
 
             drawBottomMetric(
                 metric = metric,
@@ -195,7 +167,7 @@ internal class TripInfoDrawer(
                 left = left,
                 index = drawnBottomCount,
                 area = area,
-                dynamicPadding = dynamicPadding,
+                dynamicPadding = textSizeBase * 0.1f,
                 colWidth = layoutCache.bottomColWidth,
                 canvas = canvas,
                 rowTextSizeBase = layoutCache.bottomRowTextSizeBase,
@@ -206,10 +178,26 @@ internal class TripInfoDrawer(
         }
     }
 
-    private fun calculateLayout(area: Rect, tripInfo: TripInfoDetails, validBottomMetricsCount: Int, breakLabelTextEnabled: Boolean) {
+    private fun countAvailable(items: List<TripInfoItem>): Int {
+        var count = 0
+        for (i in items.indices) {
+            if (items[i].metric != null) count++
+        }
+        return count
+    }
+
+    private fun calculateLayout(
+        area: Rect,
+        tripInfo: TripInfoDetails,
+        validTopMetricsCount: Int,
+        validBottomMetricsCount: Int,
+        breakLabelTextEnabled: Boolean
+    ) {
         layoutCache.area.set(area)
+        layoutCache.activeTopMetricsCount = validTopMetricsCount
         layoutCache.activeBottomMetricsCount = validBottomMetricsCount
         layoutCache.breakLabelTextEnabled = breakLabelTextEnabled
+        layoutCache.grid = TripInfoMetrics.grid(validTopMetricsCount)
 
         val scaleRatio = getScaleRatio()
         val areaWidth = area.width()
@@ -223,8 +211,8 @@ internal class TripInfoDrawer(
 
             var rowTextSizeBase = layoutCache.textSizeBase
 
-            bottomMetricDescriptors.forEach { descriptor ->
-                val metric = descriptor.fetcher.invoke(tripInfo) ?: return@forEach
+            tripInfo.bottom.forEach { item ->
+                val metric = item.metric ?: return@forEach
                 val pid = metric.source.command.pid
 
                 val description = pid.longDescription?.takeIf { it.isNotEmpty() } ?: pid.description
@@ -355,7 +343,8 @@ internal class TripInfoDrawer(
         }
     }
 
-    private inline fun maxItemWidth(area: Rect) = (area.width() / MAX_ITEM_IN_THE_ROW)
+    // Performance reuses drawMetric without drawScreen, so the grid stays at its default 6 columns there.
+    private inline fun maxItemWidth(area: Rect) = (area.width() / layoutCache.grid.columns)
 
     inline fun drawMetric(
         metric: Metric,

@@ -17,23 +17,38 @@
 package org.obd.graphs.renderer.trip
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_BOTTOM
+import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_SELECTED
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
+
+private const val SORT_ORDER_PREF_KEY = "$PREF_QUERY_TRIP_INFO_SELECTED.view.settings"
+private const val BOTTOM_SORT_ORDER_PREF_KEY = "$PREF_QUERY_TRIP_INFO_BOTTOM.view.settings"
 
 internal class TripInfoSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps
-) : AbstractSurfaceRenderer(context) {
+) : AbstractSurfaceRenderer(context),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private val tripInfo = TripInfoDetails()
+
+    // The plan is rebuilt only when the queried PIDs, the bottom row or an order changes.
+    private var plannedIds = LongArray(0)
+
+    @Volatile
+    private var planOutdated = true
 
     // Trip Info has its own label-break setting, independent of the Giulia virtual screens.
     private val tripInfoDrawer =
@@ -44,7 +59,21 @@ internal class TripInfoSurfaceRenderer(
             }
         )
 
+    init {
+        Prefs.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?
+    ) {
+        when (key) {
+            PREF_QUERY_TRIP_INFO_BOTTOM, SORT_ORDER_PREF_KEY, BOTTOM_SORT_ORDER_PREF_KEY -> planOutdated = true
+        }
+    }
+
     override fun invalidate() {
+        planOutdated = true
         tripInfoDrawer.invalidate()
     }
 
@@ -68,40 +97,55 @@ internal class TripInfoSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
+            updatePlan()
+            updateMetrics(tripInfo.top)
+            updateMetrics(tripInfo.bottom)
+
             tripInfoDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
                 left = left,
                 top = top,
-                tripInfo =
-                tripInfo.apply {
-                    airTemp = metricsCollector.getMetric(Pid.POST_IC_AIR_TEMP_PID_ID)
-                    totalMisfires = metricsCollector.getMetric(Pid.TOTAL_MISFIRES_PID_ID)
-                    ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
-                    atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
-                    fuellevel = metricsCollector.getMetric(Pid.FUEL_LEVEL_PID_ID)
-                    fuelConsumption = metricsCollector.getMetric(Pid.FUEL_CONSUMPTION_PID_ID)
-                    coolantTemp = metricsCollector.getMetric(Pid.COOLANT_TEMP_PID_ID)
-                    exhaustTemp = metricsCollector.getMetric(Pid.EXHAUST_TEMP_PID_ID)
-                    oilTemp = metricsCollector.getMetric(Pid.OIL_TEMP_PID_ID)
-                    gearboxOilTemp = metricsCollector.getMetric(Pid.GEARBOX_OIL_TEMP_PID_ID)
-                    oilLevel = metricsCollector.getMetric(Pid.OIL_LEVEL_PID_ID)
-                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                    intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                    distance = metricsCollector.getMetric(Pid.DISTANCE_PID_ID)
-                    ibs = metricsCollector.getMetric(Pid.IBS_PID_ID)
-                    batteryVoltage = metricsCollector.getMetric(Pid.BATTERY_VOLTAGE_PID_ID)
-                    oilPressure = metricsCollector.getMetric(Pid.OIL_PRESSURE_PID_ID)
-                    oilDegradation = metricsCollector.getMetric(Pid.OIL_DEGRADATION_PID_ID)
-                    vehicleSpeed = metricsCollector.getMetric(Pid.VEHICLE_SPEED_PID_ID)
-                    engineSpeed = metricsCollector.getMetric(Pid.ENGINE_SPEED_PID_ID)
-                    gearEngaged = metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID)
-                }
+                tripInfo = tripInfo
             )
         }
     }
 
     override fun recycle() {
         tripInfoDrawer.recycle()
+    }
+
+    private fun updateMetrics(items: List<TripInfoItem>) {
+        for (i in items.indices) {
+            val item = items[i]
+            item.metric = metricsCollector.getMetric(item.descriptor.id)
+        }
+    }
+
+    private fun updatePlan() {
+        val metrics = metricsCollector.getMetrics()
+        if (!planOutdated && plannedIds.size == metrics.size) {
+            var same = true
+            for (i in metrics.indices) {
+                if (plannedIds[i] != metrics[i].pid.id) {
+                    same = false
+                    break
+                }
+            }
+            if (same) return
+        }
+
+        planOutdated = false
+        plannedIds = LongArray(metrics.size) { i -> metrics[i].pid.id }
+
+        val plan =
+            TripInfoMetrics.plan(
+                available = plannedIds.toList(),
+                bottomSelection = if (Prefs.contains(PREF_QUERY_TRIP_INFO_BOTTOM)) Prefs.getLongSet(PREF_QUERY_TRIP_INFO_BOTTOM) else null,
+                sortOrder = ViewPreferencesSerializer(SORT_ORDER_PREF_KEY).getItemsSortOrder(),
+                bottomSortOrder = ViewPreferencesSerializer(BOTTOM_SORT_ORDER_PREF_KEY).getItemsSortOrder()
+            )
+        tripInfo.top = plan.top.map { d -> TripInfoItem(d) }
+        tripInfo.bottom = plan.bottom.map { d -> TripInfoItem(d) }
     }
 }

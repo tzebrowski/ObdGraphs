@@ -1793,6 +1793,15 @@
                                 android:title="@string/pref.displayed_parameter_ids"
                                 app:source="trip_info"
                                 app:useSimpleSummaryProvider="true" />
+
+                            <!-- No defaultValue: an unset key means the default bottom row. -->
+                            <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
+                                android:dialogTitle="@string/pref.aa.trip_info.bottom_pids"
+                                android:key="pref.aa.trip_info.bottom.pids.selected"
+                                android:summary="@string/pref.aa.trip_info.bottom_pids_summary"
+                                android:title="@string/pref.aa.trip_info.bottom_pids"
+                                app:source="trip_info_bottom"
+                                app:singleLineTitle="false" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>

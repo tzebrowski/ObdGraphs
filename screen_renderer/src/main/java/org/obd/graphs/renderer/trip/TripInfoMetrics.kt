@@ -1,0 +1,136 @@
+/*
+ * Copyright 2019-2026, Tomasz Żebrowski
+ *
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.obd.graphs.renderer.trip
+
+import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
+
+internal const val MAX_BOTTOM_ITEMS = 4
+
+private const val DEFAULT_GRID_ROWS = 3
+private const val MIN_GRID_SCALE = 0.5f
+private const val GRID_SCALE_STEP = 0.05f
+private const val EPSILON = 0.001f
+
+internal class TripMetricDescriptor(
+    val id: Long,
+    val castToInt: Boolean = false,
+    val statsEnabled: Boolean = true,
+    val unitEnabled: Boolean = true,
+    val valueDoublePrecision: Int = 2,
+    val statsDoublePrecision: Int = 2,
+    // Draws the change since the trip started instead of the raw value (odometer).
+    val diff: Boolean = false
+)
+
+internal class TripInfoPlan(
+    val top: List<TripMetricDescriptor>,
+    val bottom: List<TripMetricDescriptor>
+)
+
+internal class TripInfoGrid(
+    val columns: Int,
+    val maxItems: Int,
+    val scale: Float
+)
+
+internal object TripInfoMetrics {
+    // The top grid Trip Info always drew, in its order and with its formatting.
+    private val defaultTop =
+        listOf(
+            TripMetricDescriptor(Pid.POST_IC_AIR_TEMP_PID_ID.id, castToInt = true),
+            TripMetricDescriptor(Pid.COOLANT_TEMP_PID_ID.id, castToInt = true),
+            TripMetricDescriptor(Pid.OIL_TEMP_PID_ID.id, castToInt = true),
+            TripMetricDescriptor(Pid.EXHAUST_TEMP_PID_ID.id, castToInt = true),
+            TripMetricDescriptor(Pid.GEARBOX_OIL_TEMP_PID_ID.id, castToInt = true),
+            TripMetricDescriptor(Pid.DISTANCE_PID_ID.id, statsEnabled = false, diff = true),
+            TripMetricDescriptor(Pid.FUEL_LEVEL_PID_ID.id, valueDoublePrecision = 1, statsDoublePrecision = 1),
+            TripMetricDescriptor(Pid.FUEL_CONSUMPTION_PID_ID.id, unitEnabled = false, statsDoublePrecision = 1),
+            TripMetricDescriptor(Pid.BATTERY_VOLTAGE_PID_ID.id),
+            TripMetricDescriptor(Pid.IBS_PID_ID.id, castToInt = true),
+            TripMetricDescriptor(Pid.OIL_LEVEL_PID_ID.id),
+            TripMetricDescriptor(Pid.TOTAL_MISFIRES_PID_ID.id, castToInt = true, unitEnabled = false, statsEnabled = false),
+            TripMetricDescriptor(Pid.OIL_DEGRADATION_PID_ID.id, unitEnabled = false),
+            TripMetricDescriptor(Pid.ENGINE_SPEED_PID_ID.id, unitEnabled = false),
+            TripMetricDescriptor(Pid.VEHICLE_SPEED_PID_ID.id, unitEnabled = false),
+            TripMetricDescriptor(Pid.GEAR_ENGAGED_PID_ID.id, unitEnabled = false)
+        )
+
+    private val defaultTopIds = defaultTop.map { it.id }.toSet()
+
+    private val bottomCastToInt = setOf(Pid.INTAKE_PRESSURE_PID_ID.id, Pid.ENGINE_TORQUE_PID_ID.id)
+
+    // Queried for the status panel and the dynamic selector theme, never drawn in the grid.
+    private val notDrawn =
+        setOf(
+            Pid.AMBIENT_TEMP_PID_ID.id,
+            Pid.ATM_PRESSURE_PID_ID.id,
+            Pid.DYNAMIC_SELECTOR_PID_ID.id
+        )
+
+    /**
+     * Splits the queried PIDs between the top grid and the bottom row.
+     *
+     * @param bottomSelection the user's bottom row, or null when never set (the default row is used).
+     */
+    fun plan(
+        available: Collection<Long>,
+        bottomSelection: Set<Long>?,
+        sortOrder: Map<Long, Int>?,
+        bottomSortOrder: Map<Long, Int>?
+    ): TripInfoPlan {
+        val bottomIds =
+            if (bottomSelection == null) {
+                TRIP_INFO_DEFAULT_BOTTOM_PIDS.filter { available.contains(it) }
+            } else {
+                bottomSelection.filter { available.contains(it) }.sortedWith(byOrder(bottomSortOrder))
+            }.take(MAX_BOTTOM_ITEMS)
+
+        // Default PIDs keep their fixed place so existing layouts do not move; any other PID
+        // follows in the order set in the PID dialog.
+        val top =
+            defaultTop.filter { available.contains(it.id) && !bottomIds.contains(it.id) } +
+                available
+                    .filter { !bottomIds.contains(it) && !notDrawn.contains(it) && !defaultTopIds.contains(it) }
+                    .sortedWith(byOrder(sortOrder))
+                    .map { TripMetricDescriptor(it) }
+
+        return TripInfoPlan(
+            top = top,
+            bottom = bottomIds.map { TripMetricDescriptor(it, castToInt = bottomCastToInt.contains(it)) }
+        )
+    }
+
+    /**
+     * Fits [itemCount] items into the height of the default three-row grid by shrinking the text
+     * and adding columns. Up to 18 items nothing changes; beyond the minimum scale the rest is cut.
+     */
+    fun grid(itemCount: Int): TripInfoGrid {
+        var scale = 1f
+        while (true) {
+            val columns = (MAX_ITEM_IN_THE_ROW / scale + EPSILON).toInt()
+            val maxItems = columns * (DEFAULT_GRID_ROWS / scale + EPSILON).toInt()
+            if (maxItems >= itemCount || scale - GRID_SCALE_STEP < MIN_GRID_SCALE - EPSILON) {
+                return TripInfoGrid(columns = columns, maxItems = maxItems, scale = scale)
+            }
+            scale -= GRID_SCALE_STEP
+        }
+    }
+
+    private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
+        compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
+}

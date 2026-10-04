@@ -59,8 +59,15 @@ When writing new tests, use the natively provided libraries within the `androidT
 * **Kotlin Extensions:** AndroidX Core KTX (v1.5.0) and JUnit KTX (v1.1.5)
 
 > **Note on Unit Tests:** `:datalogger` does have a local JVM suite under `src/test` running on
-> Robolectric (`./gradlew :datalogger:testDebugUnitTest`). Other modules define only
+> Robolectric (`./gradlew :datalogger:testDebugUnitTest`). `:screen_renderer` has plain JUnit
+> tests for pure layout logic (`./gradlew :screen_renderer:testDebugUnitTest`) — keep Canvas-free
+> logic in testable functions such as `TripInfoMetrics`. Other modules define only
 > `androidTestImplementation`, so a new local suite there needs `testImplementation` added first.
+
+**Every new feature ships with a spec** in `doc/specs/<feature>.md`, staged with the change — not
+done until it exists. Follow the existing specs' structure: Summary (problem, scope), Behaviour
+changes (before/after table), Settings/keys touched, Implementation, Backward compatibility, Tests,
+Risks and verification checklist, Out of scope. Update the spec when the feature changes.
 
 **Every new feature and bug fix ships with test coverage** — not done until it does. Extend the
 existing test class for the code under change before creating a new one. For a bug fix, the test
@@ -132,8 +139,22 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 
 ### Trip Info screen (AA + phone)
 * Files: `renderer/trip/TripInfoSurfaceRenderer.kt`, `TripInfoDrawer.kt` (layout + `TripInfoLayoutCache`), `TripInfoDetails.kt`; query in `datalogger/.../query/TripInfoQueryStrategy.kt`. There is no class named `TripInfoRenderer`.
-* Top grid: labels drawn by `AbstractDrawer.drawTitle`, fixed 6 columns (`MAX_ITEM_IN_THE_ROW`), fixed row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row.
-* Bottom row: drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, visible metric count, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate`, and label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
+* **What is drawn comes from the queried PIDs, not from fields.** `TripInfoMetrics.plan()` splits
+  `metricsCollector.getMetrics()` into top grid and bottom row; any selected PID is drawn. Per-PID
+  formatting (decimals, units, min/max, odometer `diff`) lives in its `defaultTop` descriptors; other
+  PIDs get generic formatting. The plan is cached in `TripInfoSurfaceRenderer` and rebuilt when the
+  queried ids or the bottom/order prefs change.
+* **Backward compatibility rules (keep them):** the 16 former grid PIDs keep their fixed order ahead
+  of any other PID, so an old stale drag order cannot move them; only extra PIDs follow the dialog
+  order. Ambient temp, atm pressure and dynamic selector are queried for the status panel/theme and
+  never drawn in the grid. The bottom row pref `pref.aa.trip_info.bottom.pids.selected` has **no
+  XML defaultValue**: *unset* means `TRIP_INFO_DEFAULT_BOTTOM_PIDS` (the former row), an *empty set*
+  means no bottom row — a defaultValue would get persisted and wipe the row. The bottom dialog
+  (`trip_info_bottom`) lists only the PIDs selected for Trip Info, so it never changes the query.
+* The Trip Info PID dialog offers the full registry, but the defaults and the current selection are
+  added unfiltered: a selected PID hidden by the ECU/stable filters would be dropped on save.
+* Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.5, max 72 items, the rest is cut); up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns` — Performance calls `drawMetric` without `drawScreen`, so it keeps 6.
+* Bottom row: max 4 (`MAX_BOTTOM_ITEMS`, extras go to the grid), drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, top/bottom metric counts, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate`, and label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
 * AA label splitting is controlled by `pref.aa.trip_info.break_label` (default `true`), independent of Giulia virtual screens. Phone Trip Info always splits (`TripInfoSettings`).
 
 ### Performance screen (AA + phone)
