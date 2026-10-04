@@ -201,6 +201,32 @@ class TripInfoMetricsTest {
     }
 
     @Test
+    fun `swapping a bottom PID at the same count requires a layout update`() {
+        // The bottom row text size is fitted to its labels; the same count with another PID must refit.
+        val labels = TripInfoLabelLayout()
+        labels.update(topCount = 16, bottomCount = 3, bottom = items(legacyBottom), breakLabelTextEnabled = true)
+
+        val swapped = items(legacyBottom - Pid.OIL_PRESSURE_PID_ID.id + CUSTOM_PID_1)
+        assertTrue(labels.requiresUpdate(16, 3, swapped, true))
+    }
+
+    @Test
+    fun `unchanged label inputs require no layout update`() {
+        val labels = TripInfoLabelLayout()
+        labels.update(16, 3, items(legacyBottom), true)
+
+        assertFalse(labels.requiresUpdate(16, 3, items(legacyBottom), true))
+        assertTrue(labels.requiresUpdate(17, 3, items(legacyBottom), true))
+        assertTrue(labels.requiresUpdate(16, 2, items(legacyBottom), true))
+        assertTrue(labels.requiresUpdate(16, 3, items(legacyBottom), false))
+
+        labels.reset()
+        assertTrue(labels.requiresUpdate(16, 3, items(legacyBottom), true))
+    }
+
+    private fun items(ids: List<Long>) = ids.map { TripInfoItem(TripMetricDescriptor(it)) }
+
+    @Test
     fun `grid stops shrinking at the minimum scale`() {
         val grid = TripInfoMetrics.grid(500)
 

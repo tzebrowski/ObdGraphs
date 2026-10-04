@@ -45,20 +45,18 @@ internal class TripInfoLayoutCache {
     var textSizeBase: Float = 0f
     var bottomRowTextSizeBase: Float = 0f
     var bottomColWidth: Float = 0f
-    var activeTopMetricsCount: Int = -1
-    var activeBottomMetricsCount: Int = -1
-    var breakLabelTextEnabled: Boolean? = null
+    val labels = TripInfoLabelLayout()
     var grid: TripInfoGrid = TripInfoMetrics.grid(0)
 
     fun requiresLayoutUpdate(
         newArea: Rect,
         newTopMetricsCount: Int,
         newBottomMetricsCount: Int,
+        newBottom: List<TripInfoItem>,
         newBreakLabelTextEnabled: Boolean
     ): Boolean =
-        area != newArea || activeTopMetricsCount != newTopMetricsCount ||
-            activeBottomMetricsCount != newBottomMetricsCount ||
-            breakLabelTextEnabled != newBreakLabelTextEnabled
+        area != newArea ||
+            labels.requiresUpdate(newTopMetricsCount, newBottomMetricsCount, newBottom, newBreakLabelTextEnabled)
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -78,9 +76,7 @@ internal class TripInfoDrawer(
         giuliaDrawer.invalidate()
         textCache.clear()
         layoutCache.area.setEmpty()
-        layoutCache.activeTopMetricsCount = -1
-        layoutCache.activeBottomMetricsCount = -1
-        layoutCache.breakLabelTextEnabled = null
+        layoutCache.labels.reset()
     }
 
     override fun recycle() {
@@ -100,7 +96,7 @@ internal class TripInfoDrawer(
         val currentBottomCount = countAvailable(tripInfo.bottom)
 
         val breakLabelTextEnabled = settings.isBreakLabelTextEnabled()
-        if (layoutCache.requiresLayoutUpdate(area, currentTopCount, currentBottomCount, breakLabelTextEnabled)) {
+        if (layoutCache.requiresLayoutUpdate(area, currentTopCount, currentBottomCount, tripInfo.bottom, breakLabelTextEnabled)) {
             calculateLayout(area, tripInfo, currentTopCount, currentBottomCount, breakLabelTextEnabled)
         }
 
@@ -195,9 +191,7 @@ internal class TripInfoDrawer(
         breakLabelTextEnabled: Boolean
     ) {
         layoutCache.area.set(area)
-        layoutCache.activeTopMetricsCount = validTopMetricsCount
-        layoutCache.activeBottomMetricsCount = validBottomMetricsCount
-        layoutCache.breakLabelTextEnabled = breakLabelTextEnabled
+        layoutCache.labels.update(validTopMetricsCount, validBottomMetricsCount, tripInfo.bottom, breakLabelTextEnabled)
         layoutCache.grid = TripInfoMetrics.grid(validTopMetricsCount)
 
         val scaleRatio = getScaleRatio()

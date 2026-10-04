@@ -45,7 +45,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 3. **`TripMetricDescriptor`** moved to `TripInfoMetrics.kt` and became id-based, with a `diff` flag for the odometer (`MetricsBuilder.buildDiff`). `BottomMetricDescriptor` was removed.
 4. **`TripInfoDetails`** is now two lists of `TripInfoItem` (descriptor plus the current `Metric?`) instead of 21 named fields.
 5. **`TripInfoSurfaceRenderer`** caches the plan. It rebuilds the plan when the queried ids change (compared element-wise against a `LongArray`, with no per-frame allocation), when the bottom-row pref or either order pref changes (`OnSharedPreferenceChangeListener`), or on `invalidate()`. Each frame it only refreshes `item.metric` from the collector. `recycle()` unregisters the listener.
-6. **`TripInfoDrawer`** iterates the items. `TripInfoLayoutCache` also tracks the top item count and the `TripInfoGrid`, and `requiresLayoutUpdate` includes the top count. `maxItemWidth` uses `grid.columns`; `PerformanceDrawer` calls `drawMetric` without `drawScreen`, so it keeps 6 columns.
+6. **`TripInfoDrawer`** iterates the items. `TripInfoLayoutCache` also tracks the `TripInfoGrid`; every input besides the area that changes label geometry (top and bottom counts, bottom PID ids, break-label flag) lives in `TripInfoLabelLayout`, which `requiresLayoutUpdate` consults. The bottom ids are needed because the bottom text size is fitted to the labels: swapping one bottom PID for another keeps the count but changes the widths. `maxItemWidth` uses `grid.columns`; `PerformanceDrawer` calls `drawMetric` without `drawScreen`, so it keeps 6 columns.
 7. **`PidDefinitionViewModel` (`:app`).**
    - The `TripInfo` source is the defaults plus the current selection (unfiltered, so a selected PID hidden by a filter is not dropped on save), plus the filtered registry.
    - The new `TripInfoBottom` source is the PIDs in the main selection, minus `TRIP_INFO_STATUS_PIDS`.
@@ -77,6 +77,8 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 | grid is unchanged up to three full rows | 0–18 items: 6 columns, scale 1 |
 | grid shrinks and adds columns to fit more items | 19–72 items fit, scale < 1, more than 6 columns |
 | grid stops shrinking at the minimum scale | 500 items: scale 0.5, 12 columns, capacity 72 |
+| swapping a bottom PID at the same count requires a layout update | Same count, another bottom PID: the layout is recalculated (failed with the count-only check) |
+| unchanged label inputs require no layout update | Same inputs: no update; any changed count, break flag or a reset: update |
 
 `TripInfoQueryStrategyTest` (`:datalogger`) pins the main pref key literal and `tripInfoBottomDialogSelection`: unset means the default row limited to the listed PIDs; a stored row is limited the same way.
 
@@ -89,7 +91,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 
 Verification:
 
-- [x] `./gradlew :screen_renderer:testDebugUnitTest` passes (11 tests)
+- [x] `./gradlew :screen_renderer:testDebugUnitTest` passes (15 tests)
 - [x] `./gradlew :datalogger:testDebugUnitTest --tests '*TripInfo*'` passes
 - [x] `./gradlew assembleGiuliaDebug` builds; `spotlessApply` applied
 - [ ] Manual: with an existing selection, Trip Info on phone and AA looks identical to `master`

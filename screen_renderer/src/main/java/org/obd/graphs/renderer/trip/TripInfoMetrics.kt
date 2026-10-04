@@ -137,3 +137,51 @@ internal object TripInfoMetrics {
     private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
         compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
 }
+
+/**
+ * The inputs besides the drawing area that change label geometry: the grid follows the top count,
+ * the bottom row text size the width of the bottom labels and how they break.
+ */
+internal class TripInfoLabelLayout {
+    private var topCount = -1
+    private var bottomCount = -1
+    private var bottomIds = LongArray(0)
+    private var breakLabelTextEnabled: Boolean? = null
+
+    // Called every frame, so it compares in place instead of building a key.
+    fun requiresUpdate(
+        topCount: Int,
+        bottomCount: Int,
+        bottom: List<TripInfoItem>,
+        breakLabelTextEnabled: Boolean
+    ): Boolean =
+        this.topCount != topCount || this.bottomCount != bottomCount ||
+            this.breakLabelTextEnabled != breakLabelTextEnabled || !sameIds(bottom)
+
+    fun update(
+        topCount: Int,
+        bottomCount: Int,
+        bottom: List<TripInfoItem>,
+        breakLabelTextEnabled: Boolean
+    ) {
+        this.topCount = topCount
+        this.bottomCount = bottomCount
+        this.bottomIds = LongArray(bottom.size) { i -> bottom[i].descriptor.id }
+        this.breakLabelTextEnabled = breakLabelTextEnabled
+    }
+
+    fun reset() {
+        topCount = -1
+        bottomCount = -1
+        bottomIds = LongArray(0)
+        breakLabelTextEnabled = null
+    }
+
+    private fun sameIds(bottom: List<TripInfoItem>): Boolean {
+        if (bottomIds.size != bottom.size) return false
+        for (i in bottom.indices) {
+            if (bottomIds[i] != bottom[i].descriptor.id) return false
+        }
+        return true
+    }
+}
