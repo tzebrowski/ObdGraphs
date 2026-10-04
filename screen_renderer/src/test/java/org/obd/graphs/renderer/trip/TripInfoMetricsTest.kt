@@ -103,6 +103,14 @@ class TripInfoMetricsTest {
     }
 
     @Test
+    fun `vehicle status PID added to every query by the status panel is not drawn`() {
+        val plan = TripInfoMetrics.plan(legacySelection + Pid.VEHICLE_STATUS_PID_ID.id, null, null, null)
+
+        assertEquals(legacyTop, plan.top.map { it.id })
+        assertEquals(legacyBottom, plan.bottom.map { it.id })
+    }
+
+    @Test
     fun `other PIDs follow the default ones in the dialog order`() {
         val plan =
             TripInfoMetrics.plan(

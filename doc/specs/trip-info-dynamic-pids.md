@@ -22,6 +22,7 @@ The Trip Info screen (Android Auto and phone) can now show any PID the user sele
 | Bottom row | Always intake pressure, oil pressure, torque (when selected) | New setting **Bottom row PIDs**, max 4, chosen from the selected PIDs; unset = the former row; empty = no bottom row |
 | More than 18 grid PIDs | Rows grow down and overlap the bottom row | Text shrinks and columns are added within the same 3-row height; up to 72 PIDs at half size; the rest is cut |
 | Ambient temp, atm pressure, dynamic selector | Queried, never drawn in the grid | Unchanged (status panel and theme only) |
+| Vehicle status (status panel / disconnect-when-off on) | Queried, never drawn | Unchanged: listed in `TRIP_INFO_STATUS_PIDS` |
 
 ## Settings
 
@@ -72,6 +73,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 | selected bottom row is ordered, capped and the rest moves to the grid | Order honoured, max 4, overflow and unchosen default bottom PIDs appear in the grid |
 | empty bottom selection means no bottom row | Empty set means no bottom row; former bottom PIDs move to the grid |
 | odometer in the bottom row still shows the trip distance | Distance chosen for the bottom row keeps `diff` |
+| vehicle status PID added to every query by the status panel is not drawn | `VEHICLE_STATUS` (added by `QueryStrategyOrchestrator` when the status panel or disconnect-when-off is on) leaves both rows unchanged |
 | status panel and theme PIDs chosen for the bottom row are not drawn | Status PIDs in the bottom selection are dropped from both rows |
 | bottom PIDs that are not queried are skipped | Only queried ids are placed |
 | grid is unchanged up to three full rows | 0–18 items: 6 columns, scale 1 |

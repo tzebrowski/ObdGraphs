@@ -35,11 +35,13 @@ val TRIP_INFO_DEFAULT_BOTTOM_PIDS =
     )
 
 // Queried for the status panel and the dynamic selector theme, never drawn in the grid or bottom row.
+// VEHICLE_STATUS is added to every query by QueryStrategyOrchestrator when the status panel is on.
 val TRIP_INFO_STATUS_PIDS =
     setOf(
         Pid.AMBIENT_TEMP_PID_ID.id,
         Pid.ATM_PRESSURE_PID_ID.id,
-        Pid.DYNAMIC_SELECTOR_PID_ID.id
+        Pid.DYNAMIC_SELECTOR_PID_ID.id,
+        Pid.VEHICLE_STATUS_PID_ID.id
     )
 
 /**
