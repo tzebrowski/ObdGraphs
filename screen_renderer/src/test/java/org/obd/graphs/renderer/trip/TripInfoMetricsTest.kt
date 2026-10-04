@@ -158,6 +158,22 @@ class TripInfoMetricsTest {
     }
 
     @Test
+    fun `odometer in the bottom row still shows the trip distance`() {
+        val plan = TripInfoMetrics.plan(legacySelection, setOf(Pid.DISTANCE_PID_ID.id), null, null)
+
+        assertTrue(plan.bottom.single().diff)
+    }
+
+    @Test
+    fun `status panel and theme PIDs chosen for the bottom row are not drawn`() {
+        val statusPids = listOf(Pid.AMBIENT_TEMP_PID_ID.id, Pid.ATM_PRESSURE_PID_ID.id, Pid.DYNAMIC_SELECTOR_PID_ID.id)
+        val plan = TripInfoMetrics.plan(legacySelection, statusPids.toSet() + Pid.OIL_PRESSURE_PID_ID.id, null, null)
+
+        assertEquals(listOf(Pid.OIL_PRESSURE_PID_ID.id), plan.bottom.map { it.id })
+        assertFalse(plan.top.map { it.id }.any { statusPids.contains(it) })
+    }
+
+    @Test
     fun `bottom PIDs that are not queried are skipped`() {
         val plan = TripInfoMetrics.plan(listOf(Pid.OIL_PRESSURE_PID_ID.id), null, null, null)
 

@@ -39,17 +39,17 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 1. **`TripInfoQueryStrategy.kt` (`:datalogger`).** Adds public `PREF_QUERY_TRIP_INFO_SELECTED`, `PREF_QUERY_TRIP_INFO_BOTTOM` and `TRIP_INFO_DEFAULT_BOTTOM_PIDS`. The query itself is unchanged: `getPIDs()` returns the main selection only.
 2. **`TripInfoMetrics.kt` (new, `:screen_renderer`).** Pure, Canvas-free functions:
    - `plan(available, bottomSelection, sortOrder, bottomSortOrder)` splits the queried ids into `top` and `bottom` descriptors.
-     - **Bottom:** the user's selection in bottom-row order, or `TRIP_INFO_DEFAULT_BOTTOM_PIDS` when unset; only queried ids; at most `MAX_BOTTOM_ITEMS = 4`.
-     - **Top:** the 16 former grid PIDs in their fixed order with their former formatting, then every other queried id in dialog order (unordered ids last, by id). Bottom ids and the not-drawn set are excluded.
+     - **Bottom:** the user's selection in bottom-row order, or `TRIP_INFO_DEFAULT_BOTTOM_PIDS` when unset; only queried ids, never `TRIP_INFO_STATUS_PIDS`; at most `MAX_BOTTOM_ITEMS = 4`. A bottom PID keeps the `diff` flag of its top descriptor, so the odometer shows the trip distance there too (the drawer applies `buildDiff` in both rows).
+     - **Top:** the 16 former grid PIDs in their fixed order with their former formatting, then every other queried id in dialog order (unordered ids last, by id). Bottom ids and `TRIP_INFO_STATUS_PIDS` (shared from `TripInfoQueryStrategy.kt`) are excluded.
    - `grid(itemCount)` returns columns, capacity and scale. At scale 1 the grid is 6 columns and the layout is unchanged; at most 18 items fit there. Above that, the scale steps down by 0.05 until `floor(6/s) × floor(3/s)` items fit, with a floor of 0.5 (12 × 6 = 72).
 3. **`TripMetricDescriptor`** moved to `TripInfoMetrics.kt` and became id-based, with a `diff` flag for the odometer (`MetricsBuilder.buildDiff`). `BottomMetricDescriptor` was removed.
 4. **`TripInfoDetails`** is now two lists of `TripInfoItem` (descriptor plus the current `Metric?`) instead of 21 named fields.
-5. **`TripInfoSurfaceRenderer`** caches the plan. It rebuilds the plan when the queried ids change (compared element-wise against a `LongArray`, with no per-frame allocation), when the bottom-row pref or either order pref changes (`OnSharedPreferenceChangeListener`), or on `invalidate()`. Each frame it only refreshes `item.metric` from the collector.
+5. **`TripInfoSurfaceRenderer`** caches the plan. It rebuilds the plan when the queried ids change (compared element-wise against a `LongArray`, with no per-frame allocation), when the bottom-row pref or either order pref changes (`OnSharedPreferenceChangeListener`), or on `invalidate()`. Each frame it only refreshes `item.metric` from the collector. `recycle()` unregisters the listener.
 6. **`TripInfoDrawer`** iterates the items. `TripInfoLayoutCache` also tracks the top item count and the `TripInfoGrid`, and `requiresLayoutUpdate` includes the top count. `maxItemWidth` uses `grid.columns`; `PerformanceDrawer` calls `drawMetric` without `drawScreen`, so it keeps 6 columns.
 7. **`PidDefinitionViewModel` (`:app`).**
    - The `TripInfo` source is the defaults plus the current selection (unfiltered, so a selected PID hidden by a filter is not dropped on save), plus the filtered registry.
-   - The new `TripInfoBottom` source is the PIDs in the main selection.
-   - A shared `persistedSelection()` treats an unset bottom key as the default row, both for the checked state and for the "did it change" check on save. Opening and closing the dialog without changes therefore writes nothing.
+   - The new `TripInfoBottom` source is the PIDs in the main selection, minus `TRIP_INFO_STATUS_PIDS`.
+   - For the bottom dialog, `persistedSelection()` uses `tripInfoBottomDialogSelection(persisted, listed)` (`:datalogger`): the stored row, or the default row when unset, **limited to the PIDs the dialog lists**. It drives both the checked state and the "did it change" check on save, so saving the dialog unchanged writes nothing — even when a default bottom PID is not selected for Trip Info, which would otherwise persist a shortened row and lose that PID for good.
 
 ## Backward compatibility
 
@@ -71,12 +71,14 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 | other PIDs get the generic formatting | Generic descriptor defaults |
 | selected bottom row is ordered, capped and the rest moves to the grid | Order honoured, max 4, overflow and unchosen default bottom PIDs appear in the grid |
 | empty bottom selection means no bottom row | Empty set means no bottom row; former bottom PIDs move to the grid |
+| odometer in the bottom row still shows the trip distance | Distance chosen for the bottom row keeps `diff` |
+| status panel and theme PIDs chosen for the bottom row are not drawn | Status PIDs in the bottom selection are dropped from both rows |
 | bottom PIDs that are not queried are skipped | Only queried ids are placed |
 | grid is unchanged up to three full rows | 0–18 items: 6 columns, scale 1 |
 | grid shrinks and adds columns to fit more items | 19–72 items fit, scale < 1, more than 6 columns |
 | grid stops shrinking at the minimum scale | 500 items: scale 0.5, 12 columns, capacity 72 |
 
-The existing `TripInfoQueryStrategyTest` (`:datalogger`) still passes. It pins the main pref key literal.
+`TripInfoQueryStrategyTest` (`:datalogger`) pins the main pref key literal and `tripInfoBottomDialogSelection`: unset means the default row limited to the listed PIDs; a stored row is limited the same way.
 
 ## Risks and verification
 

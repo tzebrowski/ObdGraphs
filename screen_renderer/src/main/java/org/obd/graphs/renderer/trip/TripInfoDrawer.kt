@@ -159,7 +159,8 @@ internal class TripInfoDrawer(
         var drawnBottomCount = 0
         for (i in tripInfo.bottom.indices) {
             val descriptor = tripInfo.bottom[i].descriptor
-            val metric = tripInfo.bottom[i].metric ?: continue
+            val source = tripInfo.bottom[i].metric ?: continue
+            val metric = if (descriptor.diff) metricBuilder.buildDiff(source) else source
 
             drawBottomMetric(
                 metric = metric,

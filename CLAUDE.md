@@ -153,6 +153,12 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   XML defaultValue**: *unset* means `TRIP_INFO_DEFAULT_BOTTOM_PIDS` (the former row), an *empty set*
   means no bottom row — a defaultValue would get persisted and wipe the row. The bottom dialog
   (`trip_info_bottom`) lists only the PIDs selected for Trip Info, so it never changes the query.
+  Its checked state and its save comparison both go through `tripInfoBottomDialogSelection()`
+  (stored/default row ∩ listed PIDs); comparing against the full default instead made an unchanged
+  save persist a shortened row whenever a default bottom PID was not selected.
+* Per-PID formatting must follow the PID into the bottom row: a bottom descriptor without `diff`
+  drew the raw odometer instead of the trip distance. Status PIDs (`TRIP_INFO_STATUS_PIDS`) are
+  excluded from both rows and from the bottom dialog.
 * The Trip Info PID dialog offers the full registry, but the defaults and the current selection are
   added unfiltered: a selected PID hidden by the ECU/stable filters would be dropped on save.
 * Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.5, max 72 items, the rest is cut); up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns` — Performance calls `drawMetric` without `drawScreen`, so it keeps 6.

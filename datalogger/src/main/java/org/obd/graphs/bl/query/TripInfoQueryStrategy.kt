@@ -34,6 +34,26 @@ val TRIP_INFO_DEFAULT_BOTTOM_PIDS =
         Pid.ENGINE_TORQUE_PID_ID.id
     )
 
+// Queried for the status panel and the dynamic selector theme, never drawn in the grid or bottom row.
+val TRIP_INFO_STATUS_PIDS =
+    setOf(
+        Pid.AMBIENT_TEMP_PID_ID.id,
+        Pid.ATM_PRESSURE_PID_ID.id,
+        Pid.DYNAMIC_SELECTOR_PID_ID.id
+    )
+
+/**
+ * The bottom row as the bottom row dialog shows it checked: only the PIDs it lists can be.
+ * Saving the dialog unchanged must compare equal to this, otherwise a bottom PID that is not
+ * currently selected for Trip Info (or the whole default row) would be dropped from the pref.
+ *
+ * @param persisted the bottom row pref, or null when never set.
+ */
+fun tripInfoBottomDialogSelection(
+    persisted: Set<Long>?,
+    listed: Collection<Long>
+): Set<Long> = (persisted ?: TRIP_INFO_DEFAULT_BOTTOM_PIDS).filter { listed.contains(it) }.toSet()
+
 internal class TripInfoQueryStrategy : QueryStrategy() {
     private val defaults =
         setOf(

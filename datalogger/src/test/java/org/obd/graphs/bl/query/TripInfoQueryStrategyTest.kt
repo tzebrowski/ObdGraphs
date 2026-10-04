@@ -62,4 +62,25 @@ class TripInfoQueryStrategyTest : TestSetup() {
 
         assertEquals(setOf(13L, 14L), strategy.getPIDs())
     }
+
+    @Test
+    fun `bottom dialog shows the default row limited to the listed PIDs when never set`() {
+        val listed = TRIP_INFO_DEFAULT_BOTTOM_PIDS - Pid.OIL_PRESSURE_PID_ID.id + Pid.COOLANT_TEMP_PID_ID.id
+
+        // Saving the dialog unchanged must equal this, otherwise the unset pref gets persisted
+        // without oil pressure and selecting it for Trip Info later no longer restores it.
+        assertEquals(
+            setOf(Pid.INTAKE_PRESSURE_PID_ID.id, Pid.ENGINE_TORQUE_PID_ID.id),
+            tripInfoBottomDialogSelection(persisted = null, listed = listed)
+        )
+    }
+
+    @Test
+    fun `bottom dialog shows the persisted row limited to the listed PIDs`() {
+        assertEquals(
+            setOf(13L),
+            tripInfoBottomDialogSelection(persisted = setOf(13L, 14L), listed = listOf(13L, 15L))
+        )
+        assertEquals(emptySet<Long>(), tripInfoBottomDialogSelection(persisted = emptySet(), listed = listOf(13L)))
+    }
 }

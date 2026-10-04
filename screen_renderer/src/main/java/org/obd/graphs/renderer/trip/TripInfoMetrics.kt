@@ -18,6 +18,7 @@ package org.obd.graphs.renderer.trip
 
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
+import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
 
 internal const val MAX_BOTTOM_ITEMS = 4
 
@@ -70,17 +71,9 @@ internal object TripInfoMetrics {
             TripMetricDescriptor(Pid.GEAR_ENGAGED_PID_ID.id, unitEnabled = false)
         )
 
-    private val defaultTopIds = defaultTop.map { it.id }.toSet()
+    private val defaultTopById = defaultTop.associateBy { it.id }
 
     private val bottomCastToInt = setOf(Pid.INTAKE_PRESSURE_PID_ID.id, Pid.ENGINE_TORQUE_PID_ID.id)
-
-    // Queried for the status panel and the dynamic selector theme, never drawn in the grid.
-    private val notDrawn =
-        setOf(
-            Pid.AMBIENT_TEMP_PID_ID.id,
-            Pid.ATM_PRESSURE_PID_ID.id,
-            Pid.DYNAMIC_SELECTOR_PID_ID.id
-        )
 
     /**
      * Splits the queried PIDs between the top grid and the bottom row.
@@ -97,7 +90,9 @@ internal object TripInfoMetrics {
             if (bottomSelection == null) {
                 TRIP_INFO_DEFAULT_BOTTOM_PIDS.filter { available.contains(it) }
             } else {
-                bottomSelection.filter { available.contains(it) }.sortedWith(byOrder(bottomSortOrder))
+                bottomSelection
+                    .filter { available.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) }
+                    .sortedWith(byOrder(bottomSortOrder))
             }.take(MAX_BOTTOM_ITEMS)
 
         // Default PIDs keep their fixed place so existing layouts do not move; any other PID
@@ -105,13 +100,21 @@ internal object TripInfoMetrics {
         val top =
             defaultTop.filter { available.contains(it.id) && !bottomIds.contains(it.id) } +
                 available
-                    .filter { !bottomIds.contains(it) && !notDrawn.contains(it) && !defaultTopIds.contains(it) }
+                    .filter { !bottomIds.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) && !defaultTopById.containsKey(it) }
                     .sortedWith(byOrder(sortOrder))
                     .map { TripMetricDescriptor(it) }
 
         return TripInfoPlan(
             top = top,
-            bottom = bottomIds.map { TripMetricDescriptor(it, castToInt = bottomCastToInt.contains(it)) }
+            // The bottom row draws no stats or units, but a diff PID (odometer) must still show the trip delta.
+            bottom =
+                bottomIds.map {
+                    TripMetricDescriptor(
+                        it,
+                        castToInt = bottomCastToInt.contains(it),
+                        diff = defaultTopById[it]?.diff ?: false
+                    )
+                }
         )
     }
 
