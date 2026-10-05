@@ -45,20 +45,18 @@ internal class TripInfoLayoutCache {
     var textSizeBase: Float = 0f
     var bottomRowTextSizeBase: Float = 0f
     var bottomColWidth: Float = 0f
-    var activeTopMetricsCount: Int = -1
-    var activeBottomMetricsCount: Int = -1
-    var breakLabelTextEnabled: Boolean? = null
+    val labels = TripInfoLabelLayout()
     var grid: TripInfoGrid = TripInfoMetrics.grid(0)
 
     fun requiresLayoutUpdate(
         newArea: Rect,
         newTopMetricsCount: Int,
         newBottomMetricsCount: Int,
+        newBottom: List<TripInfoItem>,
         newBreakLabelTextEnabled: Boolean
     ): Boolean =
-        area != newArea || activeTopMetricsCount != newTopMetricsCount ||
-            activeBottomMetricsCount != newBottomMetricsCount ||
-            breakLabelTextEnabled != newBreakLabelTextEnabled
+        area != newArea ||
+            labels.requiresUpdate(newTopMetricsCount, newBottomMetricsCount, newBottom, newBreakLabelTextEnabled)
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -78,9 +76,7 @@ internal class TripInfoDrawer(
         giuliaDrawer.invalidate()
         textCache.clear()
         layoutCache.area.setEmpty()
-        layoutCache.activeTopMetricsCount = -1
-        layoutCache.activeBottomMetricsCount = -1
-        layoutCache.breakLabelTextEnabled = null
+        layoutCache.labels.reset()
     }
 
     override fun recycle() {
@@ -100,7 +96,7 @@ internal class TripInfoDrawer(
         val currentBottomCount = countAvailable(tripInfo.bottom)
 
         val breakLabelTextEnabled = settings.isBreakLabelTextEnabled()
-        if (layoutCache.requiresLayoutUpdate(area, currentTopCount, currentBottomCount, breakLabelTextEnabled)) {
+        if (layoutCache.requiresLayoutUpdate(area, currentTopCount, currentBottomCount, tripInfo.bottom, breakLabelTextEnabled)) {
             calculateLayout(area, tripInfo, currentTopCount, currentBottomCount, breakLabelTextEnabled)
         }
 
@@ -118,7 +114,7 @@ internal class TripInfoDrawer(
         for (i in tripInfo.top.indices) {
             val descriptor = tripInfo.top[i].descriptor
             val source = tripInfo.top[i].metric ?: continue
-            if (drawnTopCount >= grid.maxItems) break
+            if (drawnTopCount >= grid.shown) break
 
             val metric = if (descriptor.diff) metricBuilder.buildDiff(source) else source
 
@@ -144,6 +140,14 @@ internal class TripInfoDrawer(
             drawnTopCount++
         }
 
+        if (grid.hidden > 0) {
+            if (colIndex >= grid.columns) {
+                colIndex = 0
+                rowTop += (gridTextSizeBase * 1.8f)
+            }
+            drawHiddenCount(canvas, grid.hidden, left + (colIndex * x) + dynamicPadding, rowTop, gridTextSizeBase * 0.8f)
+        }
+
         rowTop += 2.2f * gridTextSizeBase
 
         giuliaDrawer.drawDivider(
@@ -159,7 +163,8 @@ internal class TripInfoDrawer(
         var drawnBottomCount = 0
         for (i in tripInfo.bottom.indices) {
             val descriptor = tripInfo.bottom[i].descriptor
-            val metric = tripInfo.bottom[i].metric ?: continue
+            val source = tripInfo.bottom[i].metric ?: continue
+            val metric = if (descriptor.diff) metricBuilder.buildDiff(source) else source
 
             drawBottomMetric(
                 metric = metric,
@@ -178,6 +183,21 @@ internal class TripInfoDrawer(
         }
     }
 
+    // Selected PIDs the grid has no room for; the user has to deselect some to see them.
+    private fun drawHiddenCount(
+        canvas: Canvas,
+        hidden: Int,
+        left: Float,
+        top: Float,
+        textSize: Float
+    ) {
+        valuePaint.typeface = defaultTypeface
+        valuePaint.color = Color.LTGRAY
+        valuePaint.clearShadowLayer()
+        valuePaint.textSize = textSize
+        canvas.drawText("+$hidden", left, top, valuePaint)
+    }
+
     private fun countAvailable(items: List<TripInfoItem>): Int {
         var count = 0
         for (i in items.indices) {
@@ -194,9 +214,7 @@ internal class TripInfoDrawer(
         breakLabelTextEnabled: Boolean
     ) {
         layoutCache.area.set(area)
-        layoutCache.activeTopMetricsCount = validTopMetricsCount
-        layoutCache.activeBottomMetricsCount = validBottomMetricsCount
-        layoutCache.breakLabelTextEnabled = breakLabelTextEnabled
+        layoutCache.labels.update(validTopMetricsCount, validBottomMetricsCount, tripInfo.bottom, breakLabelTextEnabled)
         layoutCache.grid = TripInfoMetrics.grid(validTopMetricsCount)
 
         val scaleRatio = getScaleRatio()

@@ -36,7 +36,8 @@ import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_SELECTED
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
+import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
+import org.obd.graphs.bl.query.tripInfoBottomDialogSelection
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -188,7 +189,8 @@ class PidDefinitionViewModel(
     fun persistSelection() {
         viewModelScope.launch(Dispatchers.IO) {
             val newList = allMasterItems.filter { it.checked }.map { it.source.id.toString() }
-            if (persistedSelection().map { it.toString() }.toSet() != newList.toSet()) {
+            val listed = allMasterItems.map { it.source.id }
+            if (persistedSelection(listed).map { it.toString() }.toSet() != newList.toSet()) {
                 Log.i(LOG_TAG, "Persisting PID list for key=$key, new list=$newList")
                 sendBroadcastEvent("$key.event.changed")
                 Prefs.updateStringSet(key, newList)
@@ -198,10 +200,13 @@ class PidDefinitionViewModel(
         }
     }
 
-    // An unset Trip Info bottom row means the default one, so the dialog shows those as checked.
-    private fun persistedSelection(): List<Long> =
-        if (dialogMode is PidDefinitionDialogMode.TripInfoBottom && !Prefs.contains(key)) {
-            TRIP_INFO_DEFAULT_BOTTOM_PIDS
+    // The bottom row dialog lists only the selected Trip Info PIDs; see tripInfoBottomDialogSelection.
+    private fun persistedSelection(listed: Collection<Long>): Collection<Long> =
+        if (dialogMode is PidDefinitionDialogMode.TripInfoBottom) {
+            tripInfoBottomDialogSelection(
+                persisted = if (Prefs.contains(key)) Prefs.getStringSet(key).map { s -> s.toLong() }.toSet() else null,
+                listed = listed
+            )
         } else {
             Prefs.getStringSet(key).map { s -> s.toLong() }
         }
@@ -263,7 +268,9 @@ class PidDefinitionViewModel(
             }
             dialogMode is PidDefinitionDialogMode.TripInfoBottom -> {
                 Prefs.getStringSet(PREF_QUERY_TRIP_INFO_SELECTED)
-                    .mapNotNull { pidRegistry.findBy(it.toLong()) }
+                    .map { it.toLong() }
+                    .filter { !TRIP_INFO_STATUS_PIDS.contains(it) }
+                    .mapNotNull { pidRegistry.findBy(it) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }
             dialogMode is PidDefinitionDialogMode.Performance -> {
@@ -286,7 +293,7 @@ class PidDefinitionViewModel(
             }
         }
 
-        val pref = persistedSelection()
+        val pref = persistedSelection(sourceList.map { it.source.id })
         sourceList.forEach { p ->
             if (pref.contains(p.source.id)) {
                 p.checked = true

@@ -68,6 +68,8 @@ When writing new tests, use the natively provided libraries within the `androidT
 done until it exists. Follow the existing specs' structure: Summary (problem, scope), Behaviour
 changes (before/after table), Settings/keys touched, Implementation, Backward compatibility, Tests,
 Risks and verification checklist, Out of scope. Update the spec when the feature changes.
+A spec may be written before the code (`Status: proposed, not implemented` in its header); update
+the status and the sections when it is implemented. Screenshots go in `doc/specs/img/`.
 
 **Every new feature and bug fix ships with test coverage** — not done until it does. Extend the
 existing test class for the code under change before creating a new one. For a bug fix, the test
@@ -93,6 +95,9 @@ This project uses Spotless for automatic code style enforcement. Ensure you form
 ```bash
 ./gradlew spotlessApply
 ```
+The build runs `spotlessCheck` and fails on any violation, so run `spotlessCheck` before handing a
+change over. Its Kotlin indentation is not the IDE's: a multi-line value after `name =` stays at
+the argument's own indent level instead of being indented one step further.
 
 ---
 
@@ -151,10 +156,19 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   XML defaultValue**: *unset* means `TRIP_INFO_DEFAULT_BOTTOM_PIDS` (the former row), an *empty set*
   means no bottom row — a defaultValue would get persisted and wipe the row. The bottom dialog
   (`trip_info_bottom`) lists only the PIDs selected for Trip Info, so it never changes the query.
+  Its checked state and its save comparison both go through `tripInfoBottomDialogSelection()`
+  (stored/default row ∩ listed PIDs); comparing against the full default instead made an unchanged
+  save persist a shortened row whenever a default bottom PID was not selected.
+* Per-PID formatting must follow the PID into the bottom row: a bottom descriptor without `diff`
+  drew the raw odometer instead of the trip distance. Status PIDs (`TRIP_INFO_STATUS_PIDS`) are
+  excluded from both rows and from the bottom dialog.
+* **Every PID visible in the collector gets drawn, not only the selected ones.** `QueryStrategyOrchestrator.getIDs()`
+  silently adds `VEHICLE_STATUS` to every query when the status panel / disconnect-when-off is on,
+  so it must stay in `TRIP_INFO_STATUS_PIDS`. Any PID injected into queries the same way needs adding there too.
 * The Trip Info PID dialog offers the full registry, but the defaults and the current selection are
   added unfiltered: a selected PID hidden by the ECU/stable filters would be dropped on save.
-* Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.5, max 72 items, the rest is cut); up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns` — Performance calls `drawMetric` without `drawScreen`, so it keeps 6.
-* Bottom row: max 4 (`MAX_BOTTOM_ITEMS`, extras go to the grid), drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, top/bottom metric counts, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate`, and label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
+* Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.75 = 8 × 4 = 32 tiles; past that the last cell is "+N" for the undrawn ones). The floor was 0.5 (72 tiles) until "select all" on an 800 × 480 DHU gave ~4 px labels — readability, not capacity, sets the floor; up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns` — Performance calls `drawMetric` without `drawScreen`, so it keeps 6.
+* Bottom row: max 4 (`MAX_BOTTOM_ITEMS`, extras go to the grid), drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, top/bottom metric counts, bottom PID ids, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate` — the non-area ones live in the testable `TripInfoLabelLayout`. A count is not enough once PIDs are user-chosen: swapping a bottom PID keeps the count and left the old text size. Label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
 * AA label splitting is controlled by `pref.aa.trip_info.break_label` (default `true`), independent of Giulia virtual screens. Phone Trip Info always splits (`TripInfoSettings`).
 
 ### Performance screen (AA + phone)

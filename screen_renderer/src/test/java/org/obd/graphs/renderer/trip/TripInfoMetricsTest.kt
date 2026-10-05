@@ -103,6 +103,14 @@ class TripInfoMetricsTest {
     }
 
     @Test
+    fun `vehicle status PID added to every query by the status panel is not drawn`() {
+        val plan = TripInfoMetrics.plan(legacySelection + Pid.VEHICLE_STATUS_PID_ID.id, null, null, null)
+
+        assertEquals(legacyTop, plan.top.map { it.id })
+        assertEquals(legacyBottom, plan.bottom.map { it.id })
+    }
+
+    @Test
     fun `other PIDs follow the default ones in the dialog order`() {
         val plan =
             TripInfoMetrics.plan(
@@ -158,6 +166,22 @@ class TripInfoMetricsTest {
     }
 
     @Test
+    fun `odometer in the bottom row still shows the trip distance`() {
+        val plan = TripInfoMetrics.plan(legacySelection, setOf(Pid.DISTANCE_PID_ID.id), null, null)
+
+        assertTrue(plan.bottom.single().diff)
+    }
+
+    @Test
+    fun `status panel and theme PIDs chosen for the bottom row are not drawn`() {
+        val statusPids = listOf(Pid.AMBIENT_TEMP_PID_ID.id, Pid.ATM_PRESSURE_PID_ID.id, Pid.DYNAMIC_SELECTOR_PID_ID.id)
+        val plan = TripInfoMetrics.plan(legacySelection, statusPids.toSet() + Pid.OIL_PRESSURE_PID_ID.id, null, null)
+
+        assertEquals(listOf(Pid.OIL_PRESSURE_PID_ID.id), plan.bottom.map { it.id })
+        assertFalse(plan.top.map { it.id }.any { statusPids.contains(it) })
+    }
+
+    @Test
     fun `bottom PIDs that are not queried are skipped`() {
         val plan = TripInfoMetrics.plan(listOf(Pid.OIL_PRESSURE_PID_ID.id), null, null, null)
 
@@ -176,7 +200,7 @@ class TripInfoMetricsTest {
 
     @Test
     fun `grid shrinks and adds columns to fit more items`() {
-        for (count in 19..72) {
+        for (count in 19..32) {
             val grid = TripInfoMetrics.grid(count)
             assertTrue("count=$count", grid.maxItems >= count)
             assertTrue("count=$count", grid.scale < 1f)
@@ -185,11 +209,56 @@ class TripInfoMetricsTest {
     }
 
     @Test
-    fun `grid stops shrinking at the minimum scale`() {
+    fun `swapping a bottom PID at the same count requires a layout update`() {
+        // The bottom row text size is fitted to its labels; the same count with another PID must refit.
+        val labels = TripInfoLabelLayout()
+        labels.update(topCount = 16, bottomCount = 3, bottom = items(legacyBottom), breakLabelTextEnabled = true)
+
+        val swapped = items(legacyBottom - Pid.OIL_PRESSURE_PID_ID.id + CUSTOM_PID_1)
+        assertTrue(labels.requiresUpdate(16, 3, swapped, true))
+    }
+
+    @Test
+    fun `unchanged label inputs require no layout update`() {
+        val labels = TripInfoLabelLayout()
+        labels.update(16, 3, items(legacyBottom), true)
+
+        assertFalse(labels.requiresUpdate(16, 3, items(legacyBottom), true))
+        assertTrue(labels.requiresUpdate(17, 3, items(legacyBottom), true))
+        assertTrue(labels.requiresUpdate(16, 2, items(legacyBottom), true))
+        assertTrue(labels.requiresUpdate(16, 3, items(legacyBottom), false))
+
+        labels.reset()
+        assertTrue(labels.requiresUpdate(16, 3, items(legacyBottom), true))
+    }
+
+    private fun items(ids: List<Long>) = ids.map { TripInfoItem(TripMetricDescriptor(it)) }
+
+    @Test
+    fun `grid stops shrinking at a readable scale`() {
+        // Selecting every PID shrank the grid to 0.5: about 4 px labels on an 800 × 480 head unit.
         val grid = TripInfoMetrics.grid(500)
 
-        assertEquals(0.5f, grid.scale, 0.01f)
-        assertEquals(12, grid.columns)
-        assertEquals(72, grid.maxItems)
+        assertEquals(0.75f, grid.scale, 0.01f)
+        assertEquals(8, grid.columns)
+        assertEquals(32, grid.maxItems)
+    }
+
+    @Test
+    fun `every item that fits is drawn and nothing is hidden`() {
+        for (count in 0..32) {
+            val grid = TripInfoMetrics.grid(count)
+            assertEquals("count=$count", count, grid.shown)
+            assertEquals("count=$count", 0, grid.hidden)
+        }
+    }
+
+    @Test
+    fun `items that do not fit are counted in the last cell`() {
+        val grid = TripInfoMetrics.grid(100)
+
+        assertEquals(31, grid.shown)
+        assertEquals(69, grid.hidden)
+        assertEquals(grid.maxItems, grid.shown + 1)
     }
 }

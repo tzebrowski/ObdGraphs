@@ -112,6 +112,7 @@ internal class TripInfoSurfaceRenderer(
     }
 
     override fun recycle() {
+        Prefs.unregisterOnSharedPreferenceChangeListener(this)
         tripInfoDrawer.recycle()
     }
 

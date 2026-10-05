@@ -18,11 +18,14 @@ package org.obd.graphs.renderer.trip
 
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
+import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
 
 internal const val MAX_BOTTOM_ITEMS = 4
 
 private const val DEFAULT_GRID_ROWS = 3
-private const val MIN_GRID_SCALE = 0.5f
+
+// Below this the labels are unreadable on an 800 × 480 head unit.
+private const val MIN_GRID_SCALE = 0.75f
 private const val GRID_SCALE_STEP = 0.05f
 private const val EPSILON = 0.001f
 
@@ -45,7 +48,10 @@ internal class TripInfoPlan(
 internal class TripInfoGrid(
     val columns: Int,
     val maxItems: Int,
-    val scale: Float
+    val scale: Float,
+    // Tiles drawn as metrics; when items do not fit, the last cell shows "+hidden" instead.
+    val shown: Int,
+    val hidden: Int
 )
 
 internal object TripInfoMetrics {
@@ -70,17 +76,9 @@ internal object TripInfoMetrics {
             TripMetricDescriptor(Pid.GEAR_ENGAGED_PID_ID.id, unitEnabled = false)
         )
 
-    private val defaultTopIds = defaultTop.map { it.id }.toSet()
+    private val defaultTopById = defaultTop.associateBy { it.id }
 
     private val bottomCastToInt = setOf(Pid.INTAKE_PRESSURE_PID_ID.id, Pid.ENGINE_TORQUE_PID_ID.id)
-
-    // Queried for the status panel and the dynamic selector theme, never drawn in the grid.
-    private val notDrawn =
-        setOf(
-            Pid.AMBIENT_TEMP_PID_ID.id,
-            Pid.ATM_PRESSURE_PID_ID.id,
-            Pid.DYNAMIC_SELECTOR_PID_ID.id
-        )
 
     /**
      * Splits the queried PIDs between the top grid and the bottom row.
@@ -97,7 +95,9 @@ internal object TripInfoMetrics {
             if (bottomSelection == null) {
                 TRIP_INFO_DEFAULT_BOTTOM_PIDS.filter { available.contains(it) }
             } else {
-                bottomSelection.filter { available.contains(it) }.sortedWith(byOrder(bottomSortOrder))
+                bottomSelection
+                    .filter { available.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) }
+                    .sortedWith(byOrder(bottomSortOrder))
             }.take(MAX_BOTTOM_ITEMS)
 
         // Default PIDs keep their fixed place so existing layouts do not move; any other PID
@@ -105,19 +105,28 @@ internal object TripInfoMetrics {
         val top =
             defaultTop.filter { available.contains(it.id) && !bottomIds.contains(it.id) } +
                 available
-                    .filter { !bottomIds.contains(it) && !notDrawn.contains(it) && !defaultTopIds.contains(it) }
+                    .filter { !bottomIds.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) && !defaultTopById.containsKey(it) }
                     .sortedWith(byOrder(sortOrder))
                     .map { TripMetricDescriptor(it) }
 
         return TripInfoPlan(
             top = top,
-            bottom = bottomIds.map { TripMetricDescriptor(it, castToInt = bottomCastToInt.contains(it)) }
+            // The bottom row draws no stats or units, but a diff PID (odometer) must still show the trip delta.
+            bottom =
+            bottomIds.map {
+                TripMetricDescriptor(
+                    it,
+                    castToInt = bottomCastToInt.contains(it),
+                    diff = defaultTopById[it]?.diff ?: false
+                )
+            }
         )
     }
 
     /**
      * Fits [itemCount] items into the height of the default three-row grid by shrinking the text
-     * and adding columns. Up to 18 items nothing changes; beyond the minimum scale the rest is cut.
+     * and adding columns. Up to 18 items nothing changes; beyond the minimum scale the last cell
+     * becomes a "+N" marker for the items that are not drawn.
      */
     fun grid(itemCount: Int): TripInfoGrid {
         var scale = 1f
@@ -125,7 +134,14 @@ internal object TripInfoMetrics {
             val columns = (MAX_ITEM_IN_THE_ROW / scale + EPSILON).toInt()
             val maxItems = columns * (DEFAULT_GRID_ROWS / scale + EPSILON).toInt()
             if (maxItems >= itemCount || scale - GRID_SCALE_STEP < MIN_GRID_SCALE - EPSILON) {
-                return TripInfoGrid(columns = columns, maxItems = maxItems, scale = scale)
+                val shown = if (itemCount > maxItems) maxItems - 1 else itemCount
+                return TripInfoGrid(
+                    columns = columns,
+                    maxItems = maxItems,
+                    scale = scale,
+                    shown = shown,
+                    hidden = maxOf(itemCount, 0) - shown
+                )
             }
             scale -= GRID_SCALE_STEP
         }
@@ -133,4 +149,52 @@ internal object TripInfoMetrics {
 
     private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
         compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
+}
+
+/**
+ * The inputs besides the drawing area that change label geometry: the grid follows the top count,
+ * the bottom row text size the width of the bottom labels and how they break.
+ */
+internal class TripInfoLabelLayout {
+    private var topCount = -1
+    private var bottomCount = -1
+    private var bottomIds = LongArray(0)
+    private var breakLabelTextEnabled: Boolean? = null
+
+    // Called every frame, so it compares in place instead of building a key.
+    fun requiresUpdate(
+        topCount: Int,
+        bottomCount: Int,
+        bottom: List<TripInfoItem>,
+        breakLabelTextEnabled: Boolean
+    ): Boolean =
+        this.topCount != topCount || this.bottomCount != bottomCount ||
+            this.breakLabelTextEnabled != breakLabelTextEnabled || !sameIds(bottom)
+
+    fun update(
+        topCount: Int,
+        bottomCount: Int,
+        bottom: List<TripInfoItem>,
+        breakLabelTextEnabled: Boolean
+    ) {
+        this.topCount = topCount
+        this.bottomCount = bottomCount
+        this.bottomIds = LongArray(bottom.size) { i -> bottom[i].descriptor.id }
+        this.breakLabelTextEnabled = breakLabelTextEnabled
+    }
+
+    fun reset() {
+        topCount = -1
+        bottomCount = -1
+        bottomIds = LongArray(0)
+        breakLabelTextEnabled = null
+    }
+
+    private fun sameIds(bottom: List<TripInfoItem>): Boolean {
+        if (bottomIds.size != bottom.size) return false
+        for (i in bottom.indices) {
+            if (bottomIds[i] != bottom[i].descriptor.id) return false
+        }
+        return true
+    }
 }
