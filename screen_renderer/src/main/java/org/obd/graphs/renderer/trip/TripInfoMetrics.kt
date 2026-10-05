@@ -108,13 +108,13 @@ internal object TripInfoMetrics {
             top = top,
             // The bottom row draws no stats or units, but a diff PID (odometer) must still show the trip delta.
             bottom =
-                bottomIds.map {
-                    TripMetricDescriptor(
-                        it,
-                        castToInt = bottomCastToInt.contains(it),
-                        diff = defaultTopById[it]?.diff ?: false
-                    )
-                }
+            bottomIds.map {
+                TripMetricDescriptor(
+                    it,
+                    castToInt = bottomCastToInt.contains(it),
+                    diff = defaultTopById[it]?.diff ?: false
+                )
+            }
         )
     }
 

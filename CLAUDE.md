@@ -95,6 +95,9 @@ This project uses Spotless for automatic code style enforcement. Ensure you form
 ```bash
 ./gradlew spotlessApply
 ```
+The build runs `spotlessCheck` and fails on any violation, so run `spotlessCheck` before handing a
+change over. Its Kotlin indentation is not the IDE's: a multi-line value after `name =` stays at
+the argument's own indent level instead of being indented one step further.
 
 ---
 
