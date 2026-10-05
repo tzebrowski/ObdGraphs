@@ -200,7 +200,7 @@ class TripInfoMetricsTest {
 
     @Test
     fun `grid shrinks and adds columns to fit more items`() {
-        for (count in 19..72) {
+        for (count in 19..32) {
             val grid = TripInfoMetrics.grid(count)
             assertTrue("count=$count", grid.maxItems >= count)
             assertTrue("count=$count", grid.scale < 1f)
@@ -235,11 +235,30 @@ class TripInfoMetricsTest {
     private fun items(ids: List<Long>) = ids.map { TripInfoItem(TripMetricDescriptor(it)) }
 
     @Test
-    fun `grid stops shrinking at the minimum scale`() {
+    fun `grid stops shrinking at a readable scale`() {
+        // Selecting every PID shrank the grid to 0.5: about 4 px labels on an 800 × 480 head unit.
         val grid = TripInfoMetrics.grid(500)
 
-        assertEquals(0.5f, grid.scale, 0.01f)
-        assertEquals(12, grid.columns)
-        assertEquals(72, grid.maxItems)
+        assertEquals(0.75f, grid.scale, 0.01f)
+        assertEquals(8, grid.columns)
+        assertEquals(32, grid.maxItems)
+    }
+
+    @Test
+    fun `every item that fits is drawn and nothing is hidden`() {
+        for (count in 0..32) {
+            val grid = TripInfoMetrics.grid(count)
+            assertEquals("count=$count", count, grid.shown)
+            assertEquals("count=$count", 0, grid.hidden)
+        }
+    }
+
+    @Test
+    fun `items that do not fit are counted in the last cell`() {
+        val grid = TripInfoMetrics.grid(100)
+
+        assertEquals(31, grid.shown)
+        assertEquals(69, grid.hidden)
+        assertEquals(grid.maxItems, grid.shown + 1)
     }
 }

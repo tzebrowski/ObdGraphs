@@ -23,7 +23,9 @@ import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
 internal const val MAX_BOTTOM_ITEMS = 4
 
 private const val DEFAULT_GRID_ROWS = 3
-private const val MIN_GRID_SCALE = 0.5f
+
+// Below this the labels are unreadable on an 800 × 480 head unit.
+private const val MIN_GRID_SCALE = 0.75f
 private const val GRID_SCALE_STEP = 0.05f
 private const val EPSILON = 0.001f
 
@@ -46,7 +48,10 @@ internal class TripInfoPlan(
 internal class TripInfoGrid(
     val columns: Int,
     val maxItems: Int,
-    val scale: Float
+    val scale: Float,
+    // Tiles drawn as metrics; when items do not fit, the last cell shows "+hidden" instead.
+    val shown: Int,
+    val hidden: Int
 )
 
 internal object TripInfoMetrics {
@@ -120,7 +125,8 @@ internal object TripInfoMetrics {
 
     /**
      * Fits [itemCount] items into the height of the default three-row grid by shrinking the text
-     * and adding columns. Up to 18 items nothing changes; beyond the minimum scale the rest is cut.
+     * and adding columns. Up to 18 items nothing changes; beyond the minimum scale the last cell
+     * becomes a "+N" marker for the items that are not drawn.
      */
     fun grid(itemCount: Int): TripInfoGrid {
         var scale = 1f
@@ -128,7 +134,14 @@ internal object TripInfoMetrics {
             val columns = (MAX_ITEM_IN_THE_ROW / scale + EPSILON).toInt()
             val maxItems = columns * (DEFAULT_GRID_ROWS / scale + EPSILON).toInt()
             if (maxItems >= itemCount || scale - GRID_SCALE_STEP < MIN_GRID_SCALE - EPSILON) {
-                return TripInfoGrid(columns = columns, maxItems = maxItems, scale = scale)
+                val shown = if (itemCount > maxItems) maxItems - 1 else itemCount
+                return TripInfoGrid(
+                    columns = columns,
+                    maxItems = maxItems,
+                    scale = scale,
+                    shown = shown,
+                    hidden = maxOf(itemCount, 0) - shown
+                )
             }
             scale -= GRID_SCALE_STEP
         }

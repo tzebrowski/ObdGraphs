@@ -114,7 +114,7 @@ internal class TripInfoDrawer(
         for (i in tripInfo.top.indices) {
             val descriptor = tripInfo.top[i].descriptor
             val source = tripInfo.top[i].metric ?: continue
-            if (drawnTopCount >= grid.maxItems) break
+            if (drawnTopCount >= grid.shown) break
 
             val metric = if (descriptor.diff) metricBuilder.buildDiff(source) else source
 
@@ -138,6 +138,14 @@ internal class TripInfoDrawer(
             )
             colIndex++
             drawnTopCount++
+        }
+
+        if (grid.hidden > 0) {
+            if (colIndex >= grid.columns) {
+                colIndex = 0
+                rowTop += (gridTextSizeBase * 1.8f)
+            }
+            drawHiddenCount(canvas, grid.hidden, left + (colIndex * x) + dynamicPadding, rowTop, gridTextSizeBase * 0.8f)
         }
 
         rowTop += 2.2f * gridTextSizeBase
@@ -173,6 +181,21 @@ internal class TripInfoDrawer(
             )
             drawnBottomCount++
         }
+    }
+
+    // Selected PIDs the grid has no room for; the user has to deselect some to see them.
+    private fun drawHiddenCount(
+        canvas: Canvas,
+        hidden: Int,
+        left: Float,
+        top: Float,
+        textSize: Float
+    ) {
+        valuePaint.typeface = defaultTypeface
+        valuePaint.color = Color.LTGRAY
+        valuePaint.clearShadowLayer()
+        valuePaint.textSize = textSize
+        canvas.drawText("+$hidden", left, top, valuePaint)
     }
 
     private fun countAvailable(items: List<TripInfoItem>): Int {
