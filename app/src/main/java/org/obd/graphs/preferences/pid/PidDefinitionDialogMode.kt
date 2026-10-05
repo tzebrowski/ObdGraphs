@@ -20,6 +20,7 @@ sealed class PidDefinitionDialogMode {
     object Edit : PidDefinitionDialogMode()
     object Alert : PidDefinitionDialogMode()
     object TripInfo : PidDefinitionDialogMode()
+    object TripInfoBottom : PidDefinitionDialogMode()
     object Performance : PidDefinitionDialogMode()
     object LowPriority : PidDefinitionDialogMode()
     object HighPriority : PidDefinitionDialogMode()
@@ -44,6 +45,7 @@ sealed class PidDefinitionDialogMode {
             "edit" -> Edit
             "alert" -> Alert
             "trip_info" -> TripInfo
+            "trip_info_bottom" -> TripInfoBottom
             "performance" -> Performance
             "low" -> LowPriority
             "high" -> HighPriority
