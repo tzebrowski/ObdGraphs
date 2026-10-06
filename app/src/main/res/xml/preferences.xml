@@ -1856,6 +1856,15 @@
                                 android:title="@string/pref.displayed_parameter_ids"
                                 app:source="performance"
                                 app:useSimpleSummaryProvider="true" />
+
+                            <!-- No defaultValue: an unset key means the profile's gauges. -->
+                            <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
+                                android:dialogTitle="@string/pref.aa.performance.bottom_pids"
+                                android:key="pref.aa.performance.bottom.pids.selected"
+                                android:summary="@string/pref.aa.performance.bottom_pids_summary"
+                                android:title="@string/pref.aa.performance.bottom_pids"
+                                app:source="performance_bottom"
+                                app:singleLineTitle="false" />
                         </PreferenceCategory>
                     </PreferenceScreen>
 

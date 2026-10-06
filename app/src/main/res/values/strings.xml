@@ -371,6 +371,8 @@
     <string name="pref.aa.performance.enabled_summary">Activates the Performance screen, which displays a predefined set of metrics tailored for 2.0 GME engines.</string>
     <string name="pref.aa.performance.break_label">Split PIDs label into 2 lines</string>
     <string name="pref.aa.performance.break_label_summary">Displays PID labels on the Performance screen in two lines. When disabled, labels are shown in a single line.</string>
+    <string name="pref.aa.performance.bottom_pids">Gauge PIDs</string>
+    <string name="pref.aa.performance.bottom_pids_summary">PIDs shown as gauges at the bottom of the Performance screen (max 5), chosen from the selected PIDs. All other selected PIDs are shown in the top grid.</string>
     <string name="pref.aa.performance.select_pids">Select Performance OBD2 PIDs</string>
 
 

@@ -184,7 +184,7 @@ internal class TripInfoDrawer(
     }
 
     // Selected PIDs the grid has no room for; the user has to deselect some to see them.
-    private fun drawHiddenCount(
+    fun drawHiddenCount(
         canvas: Canvas,
         hidden: Int,
         left: Float,

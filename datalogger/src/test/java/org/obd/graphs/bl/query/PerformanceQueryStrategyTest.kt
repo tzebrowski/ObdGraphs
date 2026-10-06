@@ -72,4 +72,26 @@ class PerformanceQueryStrategyTest : TestSetup() {
 
         assertEquals(setOf(100L, 200L), strategy.getPIDs())
     }
+
+    @Test
+    fun `pref keys keep their persisted names`() {
+        assertEquals(PERFORMANCE_QUERY_PREF_KEY, PREF_QUERY_PERFORMANCE_SELECTED)
+        assertEquals("pref.aa.performance.bottom.pids.selected", PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED)
+        assertEquals("pref.query.performance.hidden", PREF_QUERY_PERFORMANCE_HIDDEN)
+    }
+
+    @Test
+    fun `gauge dialog shows the profile gauges limited to the listed PIDs when never set`() {
+        every { sharedPrefs.getStringSet(PREF_QUERY_PERFORMANCE_BOTTOM, any()) } returns setOf("20", "21", "22")
+
+        assertEquals(setOf(20L, 22L), performanceBottomDialogSelection(persisted = null, listed = listOf(20L, 22L, 30L)))
+    }
+
+    @Test
+    fun `gauge dialog limits a stored selection to the listed PIDs`() {
+        every { sharedPrefs.getStringSet(PREF_QUERY_PERFORMANCE_BOTTOM, any()) } returns setOf("20")
+
+        assertEquals(setOf(30L), performanceBottomDialogSelection(persisted = setOf(30L, 31L), listed = listOf(20L, 30L)))
+        assertEquals(emptySet<Long>(), performanceBottomDialogSelection(persisted = emptySet(), listed = listOf(20L)))
+    }
 }

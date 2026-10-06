@@ -124,15 +124,20 @@ internal object TripInfoMetrics {
     }
 
     /**
-     * Fits [itemCount] items into the height of the default three-row grid by shrinking the text
-     * and adding columns. Up to 18 items nothing changes; beyond the minimum scale the last cell
-     * becomes a "+N" marker for the items that are not drawn.
+     * Fits [itemCount] items into the height of a [baseRows]-row grid by shrinking the text and
+     * adding columns. Up to [baseColumns] × [baseRows] items nothing changes (18 for Trip Info);
+     * beyond the minimum scale the last cell becomes a "+N" marker for the items that are not drawn.
+     * Performance reuses it with its own base grid.
      */
-    fun grid(itemCount: Int): TripInfoGrid {
+    fun grid(
+        itemCount: Int,
+        baseColumns: Int = MAX_ITEM_IN_THE_ROW,
+        baseRows: Int = DEFAULT_GRID_ROWS
+    ): TripInfoGrid {
         var scale = 1f
         while (true) {
-            val columns = (MAX_ITEM_IN_THE_ROW / scale + EPSILON).toInt()
-            val maxItems = columns * (DEFAULT_GRID_ROWS / scale + EPSILON).toInt()
+            val columns = (baseColumns / scale + EPSILON).toInt()
+            val maxItems = columns * (baseRows / scale + EPSILON).toInt()
             if (maxItems >= itemCount || scale - GRID_SCALE_STEP < MIN_GRID_SCALE - EPSILON) {
                 val shown = if (itemCount > maxItems) maxItems - 1 else itemCount
                 return TripInfoGrid(

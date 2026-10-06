@@ -169,11 +169,20 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   added unfiltered: a selected PID hidden by the ECU/stable filters would be dropped on save.
 * Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.75 = 8 × 4 = 32 tiles; past that the last cell is "+N" for the undrawn ones). The floor was 0.5 (72 tiles) until "select all" on an 800 × 480 DHU gave ~4 px labels — readability, not capacity, sets the floor; up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns` — Performance calls `drawMetric` without `drawScreen`, so it keeps 6.
 * Bottom row: max 4 (`MAX_BOTTOM_ITEMS`, extras go to the grid), drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, top/bottom metric counts, bottom PID ids, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate` — the non-area ones live in the testable `TripInfoLabelLayout`. A count is not enough once PIDs are user-chosen: swapping a bottom PID keeps the count and left the old text size. Label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
+* `TripInfoMetrics.grid()` takes base columns/rows so Performance shares it; `drawHiddenCount` is non-private for the same reason.
 * AA label splitting is controlled by `pref.aa.trip_info.break_label` (default `true`), independent of Giulia virtual screens. Phone Trip Info always splits (`TripInfoSettings`).
 
 ### Performance screen (AA + phone)
 * `renderer/performance/PerformanceSurfaceRenderer.kt` wraps settings in the internal `PerformanceScreenSettings` delegate (same name as the `api.PerformanceScreenSettings` data class — mind the imports). Its top grid reuses `TripInfoDrawer.drawMetric`; gauges use the gauge drawer.
 * AA label splitting is controlled by `pref.aa.performance.break_label` (default `true`) via that delegate. Phone Performance always splits (`PerformanceSettings`).
+* **Draws any selected PID, like Trip Info** (`PerformanceMetrics.plan()`, spec `doc/specs/performance-dynamic-pids.md`).
+  Profile lists `pref.query.performance.top`/`bottom`/`hidden` stay the backward-compatible layout: top
+  PIDs first in their order, other selected PIDs after in dialog order. Gauges come from
+  `pref.aa.performance.bottom.pids.selected` (no XML defaultValue; unset = profile `bottom`, empty = none,
+  max `MAX_GAUGES = 5`). `VEHICLE_STATUS` is excluded via `PERFORMANCE_STATUS_PIDS`.
+* `MetricsCache` reads the profile lists from `Prefs` when it rebuilds the plan, not from listener-updated
+  copies: the renderer's listener only flags the plan outdated, and a copy updated by a second listener
+  could be read half-applied. Grid fit reuses `TripInfoMetrics.grid(count, 5, 3)` (unchanged up to 15).
 
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
