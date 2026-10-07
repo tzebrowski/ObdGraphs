@@ -33,12 +33,20 @@ import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.bl.datalogger.serialize
+import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_HIDDEN
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_SELECTED
 import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_SELECTED
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
+import org.obd.graphs.bl.query.performanceBottomDialogSelection
+import org.obd.graphs.bl.query.performanceGaugeOverflow
+import org.obd.graphs.bl.query.prunedPerformanceBottomSelection
 import org.obd.graphs.bl.query.tripInfoBottomDialogSelection
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
@@ -194,22 +202,41 @@ class PidDefinitionViewModel(
                 Log.i(LOG_TAG, "Persisting PID list for key=$key, new list=$newList")
                 sendBroadcastEvent("$key.event.changed")
                 Prefs.updateStringSet(key, newList)
+                if (dialogMode is PidDefinitionDialogMode.Performance) {
+                    pruneGaugeSelection(newList.map { it.toLong() }.toSet())
+                }
             } else {
                 Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not change")
             }
         }
     }
 
-    // The bottom row dialog lists only the selected Trip Info PIDs; see tripInfoBottomDialogSelection.
-    private fun persistedSelection(listed: Collection<Long>): Collection<Long> =
-        if (dialogMode is PidDefinitionDialogMode.TripInfoBottom) {
-            tripInfoBottomDialogSelection(
-                persisted = if (Prefs.contains(key)) Prefs.getStringSet(key).map { s -> s.toLong() }.toSet() else null,
-                listed = listed
-            )
-        } else {
-            Prefs.getStringSet(key).map { s -> s.toLong() }
+    // Checked PIDs the gauge row has no room for; they are drawn in the grid instead.
+    fun gaugeOverflow(): Int =
+        if (dialogMode is PidDefinitionDialogMode.PerformanceBottom) performanceGaugeOverflow(allMasterItems.count { it.checked }) else 0
+
+    private fun pruneGaugeSelection(selected: Set<Long>) {
+        val stored =
+            if (Prefs.contains(PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED)) {
+                Prefs.getStringSet(PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED).map { it.toLong() }.toSet()
+            } else {
+                null
+            }
+        prunedPerformanceBottomSelection(stored, selected)?.let { pruned ->
+            Log.i(LOG_TAG, "Dropping deselected PIDs from the gauges, new list=$pruned")
+            Prefs.updateStringSet(PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED, pruned.map { it.toString() })
         }
+    }
+
+    // The bottom row dialogs list only the PIDs selected for their screen; see tripInfoBottomDialogSelection.
+    private fun persistedSelection(listed: Collection<Long>): Collection<Long> =
+        when (dialogMode) {
+            is PidDefinitionDialogMode.TripInfoBottom -> tripInfoBottomDialogSelection(storedOrNull(), listed)
+            is PidDefinitionDialogMode.PerformanceBottom -> performanceBottomDialogSelection(storedOrNull(), listed)
+            else -> Prefs.getStringSet(key).map { s -> s.toLong() }
+        }
+
+    private fun storedOrNull(): Set<Long>? = if (Prefs.contains(key)) Prefs.getStringSet(key).map { s -> s.toLong() }.toSet() else null
 
     fun reorderItems(items: List<PidDefinitionDetails>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -274,7 +301,20 @@ class PidDefinitionViewModel(
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }
             dialogMode is PidDefinitionDialogMode.Performance -> {
-                Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getDefaultPIDs()
+                // Same as Trip Info: the profile's PIDs and the current selection bypass the registry filters.
+                val pinned = (
+                    Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getDefaultPIDs() +
+                        Prefs.getStringSet(key).map { s -> s.toLong() }
+                    ).mapNotNull { pidRegistry.findBy(it) }
+                    .map { PidDefinitionDetails(it, checked = false, supported = true) }
+                val pinnedIds = pinned.map { it.source.id }.toSet()
+                pinned + findPidDefinitionByPriority(all) { !pinnedIds.contains(it.id) }
+            }
+            dialogMode is PidDefinitionDialogMode.PerformanceBottom -> {
+                val hidden = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN)
+                Prefs.getStringSet(PREF_QUERY_PERFORMANCE_SELECTED)
+                    .map { it.toLong() }
+                    .filter { !PERFORMANCE_STATUS_PIDS.contains(it) && !hidden.contains(it) }
                     .mapNotNull { pidRegistry.findBy(it) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }

@@ -20,6 +20,7 @@ import io.mockk.every
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,5 +72,47 @@ class PerformanceQueryStrategyTest : TestSetup() {
         val strategy = PerformanceQueryStrategy()
 
         assertEquals(setOf(100L, 200L), strategy.getPIDs())
+    }
+
+    @Test
+    fun `pref keys keep their persisted names`() {
+        assertEquals(PERFORMANCE_QUERY_PREF_KEY, PREF_QUERY_PERFORMANCE_SELECTED)
+        assertEquals("pref.aa.performance.bottom.pids.selected", PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED)
+        assertEquals("pref.query.performance.hidden", PREF_QUERY_PERFORMANCE_HIDDEN)
+    }
+
+    @Test
+    fun `gauge dialog shows the profile gauges limited to the listed PIDs when never set`() {
+        every { sharedPrefs.getStringSet(PREF_QUERY_PERFORMANCE_BOTTOM, any()) } returns setOf("20", "21", "22")
+
+        assertEquals(setOf(20L, 22L), performanceBottomDialogSelection(persisted = null, listed = listOf(20L, 22L, 30L)))
+    }
+
+    @Test
+    fun `gauge dialog limits a stored selection to the listed PIDs`() {
+        every { sharedPrefs.getStringSet(PREF_QUERY_PERFORMANCE_BOTTOM, any()) } returns setOf("20")
+
+        assertEquals(setOf(30L), performanceBottomDialogSelection(persisted = setOf(30L, 31L), listed = listOf(20L, 30L)))
+        assertEquals(emptySet<Long>(), performanceBottomDialogSelection(persisted = emptySet(), listed = listOf(20L)))
+    }
+
+    @Test
+    fun `deselecting a PID drops it from the stored gauges`() {
+        assertEquals(setOf(20L), prunedPerformanceBottomSelection(stored = setOf(20L, 21L), selected = setOf(10L, 20L)))
+        assertEquals(emptySet<Long>(), prunedPerformanceBottomSelection(stored = setOf(21L), selected = setOf(10L)))
+    }
+
+    @Test
+    fun `gauges are not written when never set or nothing was dropped`() {
+        assertNull(prunedPerformanceBottomSelection(stored = null, selected = setOf(10L)))
+        assertNull(prunedPerformanceBottomSelection(stored = setOf(20L), selected = setOf(10L, 20L)))
+        assertNull(prunedPerformanceBottomSelection(stored = emptySet(), selected = setOf(10L)))
+    }
+
+    @Test
+    fun `gauge overflow counts the PIDs past the cap`() {
+        assertEquals(0, performanceGaugeOverflow(0))
+        assertEquals(0, performanceGaugeOverflow(PERFORMANCE_MAX_GAUGES))
+        assertEquals(2, performanceGaugeOverflow(PERFORMANCE_MAX_GAUGES + 2))
     }
 }

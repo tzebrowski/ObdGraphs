@@ -17,10 +17,16 @@
 package org.obd.graphs.renderer.performance
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_HIDDEN
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
+import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
@@ -39,7 +45,8 @@ internal class PerformanceSurfaceRenderer(
     settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps
-) : AbstractSurfaceRenderer(context) {
+) : AbstractSurfaceRenderer(context),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private val screenSettings = PerformanceScreenSettings(settings)
     private val performanceInfoDetails = PerformanceInfoDetails()
     private val performanceDrawer: PerformanceDrawer =
@@ -47,6 +54,21 @@ internal class PerformanceSurfaceRenderer(
     private val breakBoostingDrawer = BrakeBoostingDrawer(context, screenSettings)
 
     private val metricsCache = MetricsCache()
+
+    init {
+        Prefs.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?
+    ) {
+        when (key) {
+            PREF_QUERY_PERFORMANCE_TOP, PREF_QUERY_PERFORMANCE_BOTTOM, PREF_QUERY_PERFORMANCE_HIDDEN,
+            PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED, PERFORMANCE_SORT_ORDER_PREF_KEY, PERFORMANCE_BOTTOM_SORT_ORDER_PREF_KEY
+            -> metricsCache.cacheReset()
+        }
+    }
 
     override fun invalidate() {
         metricsCache.cacheReset()
@@ -122,6 +144,7 @@ internal class PerformanceSurfaceRenderer(
     }
 
     override fun recycle() {
+        Prefs.unregisterOnSharedPreferenceChangeListener(this)
         performanceDrawer.recycle()
     }
 }

@@ -32,6 +32,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -421,6 +422,11 @@ open class PidDefinitionDialogFragment(
         val btnSave = root.findViewById<Button>(R.id.pid_list_save)
         btnSave.visibility = if (dialogMode.isInteractive) View.GONE else View.VISIBLE
         btnSave.setOnClickListener {
+            val overflow = viewModel.gaugeOverflow()
+            if (overflow > 0) {
+                val message = getString(R.string.pref_aa_performance_bottom_pids_overflow, overflow)
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+            }
             viewModel.persistSelection()
         }
 

@@ -16,21 +16,14 @@
  */
 package org.obd.graphs.renderer.api
 
-import android.content.SharedPreferences
 import android.graphics.Color
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_ARBITRARY_METRIC
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_VEHICLE_SPEED_METRIC
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getLongList
-import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
-
-private const val PREF_QUERY_PERFORMANCE_HIDDEN = "pref.query.performance.hidden"
 
 interface VirtualScreenConfig {
     val selectedPIDs: Set<Long>
@@ -158,41 +151,7 @@ data class PerformanceScreenSettings(
     var viewEnabled: Boolean = true,
     var breakLabelTextEnabled: Boolean = true,
     var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings()
-) : SharedPreferences.OnSharedPreferenceChangeListener {
-
-    val bottomMetrics: MutableList<Long> =
-        Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM).toMutableList()
-
-    val topMetrics: MutableList<Long> =
-        Prefs.getLongList(PREF_QUERY_PERFORMANCE_TOP).toMutableList()
-
-    val hiddenMetrics: MutableSet<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN)
-
-    init {
-        Prefs.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (sharedPreferences == null) return
-
-        when (key) {
-            PREF_QUERY_PERFORMANCE_BOTTOM -> {
-                bottomMetrics.clear()
-                bottomMetrics.addAll(sharedPreferences.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM))
-            }
-
-            PREF_QUERY_PERFORMANCE_TOP -> {
-                topMetrics.clear()
-                topMetrics.addAll(sharedPreferences.getLongList(PREF_QUERY_PERFORMANCE_TOP))
-            }
-
-            PREF_QUERY_PERFORMANCE_HIDDEN -> {
-                hiddenMetrics.clear()
-                hiddenMetrics.addAll(sharedPreferences.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN))
-            }
-        }
-    }
-}
+)
 
 data class RoutinesScreenSettings(
     var viewEnabled: Boolean = true

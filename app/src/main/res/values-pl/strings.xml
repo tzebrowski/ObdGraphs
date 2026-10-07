@@ -375,6 +375,9 @@
     <string name="pref.aa.performance.enabled_summary">Aktywuje ekran wydajności, który wyświetla predefiniowany zestaw metryk dostosowany do silników 2.0 GME.</string>
     <string name="pref.aa.performance.break_label">Podziel etykiety PID na 2 linie</string>
     <string name="pref.aa.performance.break_label_summary">Wyświetla etykiety PID na ekranie wydajności w dwóch liniach. Po wyłączeniu etykiety są wyświetlane w jednej linii.</string>
+    <string name="pref.aa.performance.bottom_pids">PID wskaźników</string>
+    <string name="pref.aa.performance.bottom_pids_summary">PID wyświetlane jako wskaźniki w dolnej części ekranu wydajności (maks. 5), wybierane spośród zaznaczonych PID. Pozostałe zaznaczone PID są wyświetlane w górnej siatce.</string>
+    <string name="pref.aa.performance.bottom_pids_overflow">Mieści się tylko 5 wskaźników; nadmiarowe (%1$d) zostaną wyświetlone w górnej siatce.</string>
     <string name="pref.aa.performance.select_pids">Wybierz OBD2 PID wydajności</string>
 
 

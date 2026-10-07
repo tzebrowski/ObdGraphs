@@ -106,6 +106,6 @@ Verification:
 
 ## Out of scope / follow-ups
 
-- **Performance screen:** its layout is already driven by the profile's `pref.query.performance.top`/`bottom` lists. Only its dialog is still limited to those lists.
+- **Performance screen:** done in `performance-dynamic-pids.md`.
 - **Paging** the grid via the AA virtual-screen actions instead of the "+N" cell beyond 32.
 - Allowing ambient temp and atm pressure in the grid as an explicit opt-in.

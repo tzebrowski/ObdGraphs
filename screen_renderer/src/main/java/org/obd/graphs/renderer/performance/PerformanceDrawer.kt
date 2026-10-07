@@ -25,10 +25,9 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
+import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.isNumber
 import org.obd.metrics.pid.ValueType
-
- private const val MAX_ITEMS_IN_ROW = 5
 
 @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
@@ -42,6 +41,9 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
     )
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
+
+    // Rebuilt only when the grid item count changes, not every frame.
+    private var grid: TripInfoGrid = PerformanceMetrics.grid(0)
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(
@@ -81,24 +83,30 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
             fontSize = performanceScreenSettings.fontSize
         )
 
-        val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
-        var rowTop = top + 2f
         val topMetrics = performanceInfoDetails.topMetrics
         val topMetricsSize = topMetrics.size
+        if (grid.shown + grid.hidden != topMetricsSize) {
+            grid = PerformanceMetrics.grid(topMetricsSize)
+        }
 
-        for (i in 0 until topMetricsSize) {
+        val gridTextSize = textSize * grid.scale
+        val itemWidth = area.width() / grid.columns.toFloat()
+        var rowTop = top + 2f
+        val drawnCount = grid.shown
+
+        for (i in 0 until drawnCount) {
             val metric = topMetrics[i]
-            val columnIndex = i % MAX_ITEMS_IN_ROW
+            val columnIndex = i % grid.columns
 
             if (columnIndex == 0 && i > 0) {
                 drawDivider(
                     canvas,
                     left,
                     area.width().toFloat(),
-                    rowTop + textSize  * 0.8f,
+                    rowTop + gridTextSize * 0.8f,
                     Color.DKGRAY
                 )
-                rowTop += 2 * textSize
+                rowTop += 2 * gridTextSize
             }
 
             val itemLeft = left + (columnIndex * itemWidth)
@@ -108,22 +116,35 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
                 rowTop,
                 itemLeft,
                 canvas,
-                textSize,
+                gridTextSize,
                 statsEnabled = metric.source.isNumber(),
                 area = area,
-                castToInt = metric.pid.type != ValueType.DOUBLE
+                castToInt = metric.pid.type != ValueType.DOUBLE,
+                maxWidth = itemWidth.toInt()
             )
 
-            if (columnIndex < MAX_ITEMS_IN_ROW - 1 && i < topMetricsSize - 1) {
+            if (columnIndex < grid.columns - 1 && i < topMetricsSize - 1) {
                 val lineX = itemLeft + itemWidth
                 canvas.drawLine(
                     lineX,
                     rowTop,
                     lineX,
-                    rowTop + textSize * 0.8f,
+                    rowTop + gridTextSize * 0.8f,
                     dividerPaint
                 )
             }
+        }
+
+        if (grid.hidden > 0) {
+            // shown is capacity - 1, so the marker always lands in the last cell of the current row.
+            val columnIndex = drawnCount % grid.columns
+            tripInfoDrawer.drawHiddenCount(
+                canvas,
+                grid.hidden,
+                left + (columnIndex * itemWidth),
+                rowTop,
+                gridTextSize * 0.8f
+            )
         }
 
         if (topMetricsSize > 0) {
@@ -131,10 +152,10 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
                 canvas,
                 left,
                 area.width().toFloat(),
-                rowTop + textSize * 0.8f,
+                rowTop + gridTextSize * 0.8f,
                 Color.DKGRAY
             )
-            rowTop += 1.8f * textSize
+            rowTop += 1.8f * gridTextSize
         }
 
         rowTop -= textSize * 0.7f
