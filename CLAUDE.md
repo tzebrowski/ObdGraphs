@@ -183,6 +183,8 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * `MetricsCache` reads the profile lists from `Prefs` when it rebuilds the plan, not from listener-updated
   copies: the renderer's listener only flags the plan outdated, and a copy updated by a second listener
   could be read half-applied. Grid fit reuses `TripInfoMetrics.grid(count, 5, 3)` (unchanged up to 15).
+* `MetricsCache` serves phone and AA alike, so the AA gauge pref and order keys also drive the phone
+  screen, which has no setting of its own. Gauges past `MAX_GAUGES` fall back into the grid, not nowhere.
 
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on

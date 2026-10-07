@@ -65,7 +65,7 @@ class PerformanceMetricsTest {
     }
 
     @Test
-    fun `every profile PID selected keeps the former layout`() {
+    fun `every profile PID selected keeps the former order`() {
         val all = profileTop + profileBottom
         val (top, bottom) = legacy(all)
 

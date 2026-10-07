@@ -31,6 +31,8 @@ layout for any selection the old dialog could produce.
 | `pref.query.performance.hidden` | Never drawn | Unchanged; also excluded from the gauge dialog |
 | Vehicle status (status panel / disconnect-when-off on) | Never drawn (not in the profile lists) | Unchanged: listed in `PERFORMANCE_STATUS_PIDS` |
 | Brake boosting | Unchanged | Unchanged |
+| Phone Performance screen | Drew the profile lists | Same plan as AA: follows the AA selection, gauge choice and drag order (no phone-side gauge setting) |
+| More than 5 gauges checked | n/a | The dialog does not stop at 5; the first 5 in gauge order are drawn, the rest go to the grid |
 
 ## Settings
 
@@ -93,7 +95,7 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
 | Test | Asserts |
 | --- | --- |
 | profile PIDs keep the former layout when no gauges were ever set | Shuffled bundled selection and a stale drag order give the former grid and gauges |
-| every profile PID selected keeps the former layout | Same, with all top + bottom PIDs |
+| every profile PID selected keeps the former order | Same grid and gauge order, with all top + bottom PIDs (21 grid PIDs now shrink, see below) |
 | selected PIDs outside the profile follow its grid PIDs in the dialog order | Profile PIDs first, then by sort order, unordered last |
 | hidden PIDs are drawn nowhere | Hidden in neither grid nor gauges, even if chosen as a gauge |
 | vehicle status PID added to every query by the status panel is not drawn | Grid unchanged, never a gauge |
@@ -112,7 +114,9 @@ literals and `performanceBottomDialogSelection` (unset → profile gauges ∩ li
 - **Dialog changes have no unit test** (`:app` has no JVM setup); verify manually.
 - **Gauge height is not budgeted.** The grid is capped at 3 rows' height as before; on very small AA
   displays the gauges below may still be tight with a large font setting.
-- **Phone shares the AA keys**, as for Trip Info: the gauge setting is in the AA section.
+- **Phone shares the AA keys**, as for Trip Info. `MetricsCache` serves both screens and reads
+  `pref.aa.performance.bottom.pids.selected` and both `.view.settings` order keys, so a gauge choice or
+  drag order made in the AA section also changes the phone screen; the phone has no setting of its own.
 - Profile switching loads the new profile's keys; a gauge selection saved under one profile follows the
   generic profile save/load like any other pref.
 
