@@ -20,6 +20,7 @@ import io.mockk.every
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,5 +94,25 @@ class PerformanceQueryStrategyTest : TestSetup() {
 
         assertEquals(setOf(30L), performanceBottomDialogSelection(persisted = setOf(30L, 31L), listed = listOf(20L, 30L)))
         assertEquals(emptySet<Long>(), performanceBottomDialogSelection(persisted = emptySet(), listed = listOf(20L)))
+    }
+
+    @Test
+    fun `deselecting a PID drops it from the stored gauges`() {
+        assertEquals(setOf(20L), prunedPerformanceBottomSelection(stored = setOf(20L, 21L), selected = setOf(10L, 20L)))
+        assertEquals(emptySet<Long>(), prunedPerformanceBottomSelection(stored = setOf(21L), selected = setOf(10L)))
+    }
+
+    @Test
+    fun `gauges are not written when never set or nothing was dropped`() {
+        assertNull(prunedPerformanceBottomSelection(stored = null, selected = setOf(10L)))
+        assertNull(prunedPerformanceBottomSelection(stored = setOf(20L), selected = setOf(10L, 20L)))
+        assertNull(prunedPerformanceBottomSelection(stored = emptySet(), selected = setOf(10L)))
+    }
+
+    @Test
+    fun `gauge overflow counts the PIDs past the cap`() {
+        assertEquals(0, performanceGaugeOverflow(0))
+        assertEquals(0, performanceGaugeOverflow(PERFORMANCE_MAX_GAUGES))
+        assertEquals(2, performanceGaugeOverflow(PERFORMANCE_MAX_GAUGES + 2))
     }
 }

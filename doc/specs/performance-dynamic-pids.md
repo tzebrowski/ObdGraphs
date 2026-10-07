@@ -32,7 +32,9 @@ layout for any selection the old dialog could produce.
 | Vehicle status (status panel / disconnect-when-off on) | Never drawn (not in the profile lists) | Unchanged: listed in `PERFORMANCE_STATUS_PIDS` |
 | Brake boosting | Unchanged | Unchanged |
 | Phone Performance screen | Drew the profile lists | Same plan as AA: follows the AA selection, gauge choice and drag order (no phone-side gauge setting) |
-| More than 5 gauges checked | n/a | The dialog does not stop at 5; the first 5 in gauge order are drawn, the rest go to the grid |
+| More than 5 gauges checked | n/a | The dialog does not stop at 5; saving shows a toast with how many go to the grid. The first 5 in gauge order are drawn, the rest go to the grid |
+| PID deselected in the Performance dialog | n/a | Also dropped from a stored gauge selection, so selecting it again later does not bring it back as a gauge. An unset gauge pref stays unset |
+| Min/max stats next to a grid value | Hidden once wider than `width / 6` (Trip Info's column count) | Hidden once wider than the Performance column (`width / grid.columns`) |
 
 ## Settings
 
@@ -47,7 +49,8 @@ layout for any selection the old dialog could produce.
 The setting is in `preferences.xml` under AA → Performance → displayed PIDs, dialog source
 `performance_bottom`. Saving broadcasts `pref.aa.performance.bottom.pids.selected.event.changed`,
 handled by `SurfaceRendererScreen` like a Performance selection change. New strings
-`pref.aa.performance.bottom_pids` and `pref.aa.performance.bottom_pids_summary`, EN and PL.
+`pref.aa.performance.bottom_pids`, `pref.aa.performance.bottom_pids_summary` and
+`pref.aa.performance.bottom_pids_overflow`, EN and PL.
 
 ## Implementation
 
@@ -56,10 +59,12 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
    `PERFORMANCE_STATUS_PIDS`, and `performanceBottomDialogSelection(persisted, listed)`: the stored gauges,
    or the profile's when unset, limited to the PIDs the dialog lists — the same rule as
    `tripInfoBottomDialogSelection`, so saving the dialog unchanged persists nothing. The query is unchanged.
+   Also `PERFORMANCE_MAX_GAUGES = 5`, `performanceGaugeOverflow(count)` and
+   `prunedPerformanceBottomSelection(stored, selected)` (null = nothing to write: unset or nothing dropped).
 2. **`PerformanceMetrics.kt` (new, `:screen_renderer`).** Pure functions:
    - `plan(available, profileTop, profileBottom, hidden, bottomSelection, sortOrder, bottomSortOrder)`.
      Only queried, non-hidden, non-status PIDs are placed. **Gauges:** the user's selection in gauge order,
-     or the profile's bottom list when unset; at most `MAX_GAUGES = 5` (bundled profiles define ≤ 5).
+     or the profile's bottom list when unset; at most `PERFORMANCE_MAX_GAUGES = 5` (bundled profiles define ≤ 5).
      **Grid:** the profile's top list in its order, then every other queried PID in dialog order
      (unordered last, by id); gauge PIDs are excluded.
    - `grid(itemCount)` reuses `TripInfoMetrics.grid`, now parameterised by base columns/rows
@@ -72,11 +77,13 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
    cache; `recycle()` unregisters it.
 5. **`PerformanceDrawer`** draws `grid.shown` items with `textSize × grid.scale` over `grid.columns`
    columns, and the "+N" cell via `TripInfoDrawer.drawHiddenCount` (now non-private). The grid is
-   recomputed only when the item count changes.
+   recomputed only when the item count changes. It passes its column width to `TripInfoDrawer.drawMetric`
+   (`maxWidth`): the default comes from the Trip Info layout cache, which Performance never lays out.
 6. **`PidDefinitionViewModel` (`:app`).** The `Performance` source is the profile PIDs plus the current
    selection (unfiltered), plus the filtered registry. The new `PerformanceBottom` source is the
    selection minus status and hidden PIDs; its checked state and save check use
-   `performanceBottomDialogSelection`.
+   `performanceBottomDialogSelection`. Saving the `Performance` selection prunes the stored gauges;
+   saving the gauge dialog with more than 5 checked shows the overflow toast (`gaugeOverflow()`).
 
 ## Backward compatibility
 
@@ -107,7 +114,9 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
 | items that do not fit are counted in the last cell | 100 items: capacity − 1 shown, rest hidden |
 
 `./gradlew :datalogger:testDebugUnitTest --tests '*PerformanceQueryStrategy*'` pins the pref key
-literals and `performanceBottomDialogSelection` (unset → profile gauges ∩ listed; stored ∩ listed).
+literals, `performanceBottomDialogSelection` (unset → profile gauges ∩ listed; stored ∩ listed),
+`prunedPerformanceBottomSelection` (drops deselected PIDs; null when unset or unchanged) and
+`performanceGaugeOverflow`. The stats width fix is Canvas-only and has no unit test.
 
 ## Risks and verification
 
@@ -131,6 +140,9 @@ Verification:
 - [ ] Manual: set, reorder and clear the gauges on AA; the screen refreshes without reconnecting
 - [ ] Manual: select more than 15 grid PIDs; the grid shrinks and the gauges stay on screen
 - [ ] Manual: brake boosting still takes over the screen
+- [ ] Manual: check 6+ gauges and save; the toast names the overflow
+- [ ] Manual: choose a gauge, deselect it in the Performance dialog, reselect it; it is in the grid
+- [ ] Manual: with ≤ 15 grid PIDs, min/max stats show where they fit a 5-column tile
 
 ## Out of scope / follow-ups
 

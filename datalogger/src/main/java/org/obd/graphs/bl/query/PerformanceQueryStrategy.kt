@@ -36,6 +36,22 @@ const val PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED = "pref.aa.performance.bottom.p
 // Added to every query by QueryStrategyOrchestrator when the status panel is on, never drawn.
 val PERFORMANCE_STATUS_PIDS = setOf(Pid.VEHICLE_STATUS_PID_ID.id)
 
+// Profiles define at most 5 gauges, so the cap leaves every existing layout as it was.
+const val PERFORMANCE_MAX_GAUGES = 5
+
+/** How many of [selectedCount] gauges do not fit and fall back into the grid. */
+fun performanceGaugeOverflow(selectedCount: Int): Int = (selectedCount - PERFORMANCE_MAX_GAUGES).coerceAtLeast(0)
+
+/**
+ * The stored gauge selection limited to the PIDs still selected for the screen, or null when
+ * nothing has to be written: the gauges were never set (the profile's apply) or none was dropped.
+ * Without it a deselected gauge PID stayed stored and came back as a gauge once selected again.
+ */
+fun prunedPerformanceBottomSelection(
+    stored: Set<Long>?,
+    selected: Set<Long>
+): Set<Long>? = stored?.filter { selected.contains(it) }?.toSet()?.takeIf { it.size != stored.size }
+
 /**
  * The gauges as the gauge dialog shows them checked: the stored selection, or the profile's
  * gauges when never set, limited to the PIDs the dialog lists. See [tripInfoBottomDialogSelection].

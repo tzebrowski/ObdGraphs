@@ -301,7 +301,7 @@ internal class TripInfoDrawer(
         left: Float,
         statsEnabled: Boolean,
         unitEnabled: Boolean,
-        area: Rect,
+        maxWidth: Int,
         valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2,
         castToInt: Boolean = false
@@ -346,7 +346,7 @@ internal class TripInfoDrawer(
 
             val itemWidth = textWidth + maxStatWidth
 
-            if (itemWidth <= (maxItemWidth(area))) {
+            if (itemWidth <= maxWidth) {
                 valuePaint.color = minValueColorScheme(metric)
                 canvas.drawText(minText, (left + textWidth), top, valuePaint)
 
@@ -361,7 +361,6 @@ internal class TripInfoDrawer(
         }
     }
 
-    // Performance reuses drawMetric without drawScreen, so the grid stays at its default 6 columns there.
     private inline fun maxItemWidth(area: Rect) = (area.width() / layoutCache.grid.columns)
 
     inline fun drawMetric(
@@ -375,7 +374,9 @@ internal class TripInfoDrawer(
         area: Rect,
         valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2,
-        castToInt: Boolean = false
+        castToInt: Boolean = false,
+        // Performance calls this without drawScreen, so layoutCache.grid is not its grid: it passes its own.
+        maxWidth: Int = maxItemWidth(area)
     ) {
         drawValue(
             canvas = canvas,
@@ -385,7 +386,7 @@ internal class TripInfoDrawer(
             left = left,
             statsEnabled = statsEnabled,
             unitEnabled = unitEnabled,
-            area = area,
+            maxWidth = maxWidth,
             valueDoublePrecision = valueDoublePrecision,
             statsDoublePrecision = statsDoublePrecision,
             castToInt = castToInt

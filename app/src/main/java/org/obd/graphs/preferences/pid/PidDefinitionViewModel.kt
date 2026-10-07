@@ -34,6 +34,7 @@ import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_HIDDEN
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_SELECTED
 import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_SELECTED
@@ -41,6 +42,8 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
 import org.obd.graphs.bl.query.performanceBottomDialogSelection
+import org.obd.graphs.bl.query.performanceGaugeOverflow
+import org.obd.graphs.bl.query.prunedPerformanceBottomSelection
 import org.obd.graphs.bl.query.tripInfoBottomDialogSelection
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -199,9 +202,29 @@ class PidDefinitionViewModel(
                 Log.i(LOG_TAG, "Persisting PID list for key=$key, new list=$newList")
                 sendBroadcastEvent("$key.event.changed")
                 Prefs.updateStringSet(key, newList)
+                if (dialogMode is PidDefinitionDialogMode.Performance) {
+                    pruneGaugeSelection(newList.map { it.toLong() }.toSet())
+                }
             } else {
                 Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not change")
             }
+        }
+    }
+
+    // Checked PIDs the gauge row has no room for; they are drawn in the grid instead.
+    fun gaugeOverflow(): Int =
+        if (dialogMode is PidDefinitionDialogMode.PerformanceBottom) performanceGaugeOverflow(allMasterItems.count { it.checked }) else 0
+
+    private fun pruneGaugeSelection(selected: Set<Long>) {
+        val stored =
+            if (Prefs.contains(PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED)) {
+                Prefs.getStringSet(PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED).map { it.toLong() }.toSet()
+            } else {
+                null
+            }
+        prunedPerformanceBottomSelection(stored, selected)?.let { pruned ->
+            Log.i(LOG_TAG, "Dropping deselected PIDs from the gauges, new list=$pruned")
+            Prefs.updateStringSet(PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED, pruned.map { it.toString() })
         }
     }
 

@@ -16,12 +16,10 @@
  */
 package org.obd.graphs.renderer.performance
 
+import org.obd.graphs.bl.query.PERFORMANCE_MAX_GAUGES
 import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
 import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.renderer.trip.TripInfoMetrics
-
-// Profiles define at most 5 gauges, so the cap leaves every existing layout as it was.
-internal const val MAX_GAUGES = 5
 
 internal const val PERFORMANCE_GRID_COLUMNS = 5
 
@@ -58,7 +56,7 @@ internal object PerformanceMetrics {
                 profileBottom.filter { drawable(it) }
             } else {
                 bottomSelection.filter { drawable(it) }.sortedWith(byOrder(bottomSortOrder))
-            }.distinct().take(MAX_GAUGES)
+            }.distinct().take(PERFORMANCE_MAX_GAUGES)
 
         // The profile's grid PIDs keep their place so existing layouts do not move; any other PID
         // follows in the order set in the PID dialog.

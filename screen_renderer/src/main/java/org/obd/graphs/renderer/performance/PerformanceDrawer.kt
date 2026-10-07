@@ -119,7 +119,8 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
                 gridTextSize,
                 statsEnabled = metric.source.isNumber(),
                 area = area,
-                castToInt = metric.pid.type != ValueType.DOUBLE
+                castToInt = metric.pid.type != ValueType.DOUBLE,
+                maxWidth = itemWidth.toInt()
             )
 
             if (columnIndex < grid.columns - 1 && i < topMetricsSize - 1) {

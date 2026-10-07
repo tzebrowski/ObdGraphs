@@ -167,7 +167,7 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   so it must stay in `TRIP_INFO_STATUS_PIDS`. Any PID injected into queries the same way needs adding there too.
 * The Trip Info PID dialog offers the full registry, but the defaults and the current selection are
   added unfiltered: a selected PID hidden by the ECU/stable filters would be dropped on save.
-* Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.75 = 8 × 4 = 32 tiles; past that the last cell is "+N" for the undrawn ones). The floor was 0.5 (72 tiles) until "select all" on an 800 × 480 DHU gave ~4 px labels — readability, not capacity, sets the floor; up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns` — Performance calls `drawMetric` without `drawScreen`, so it keeps 6.
+* Top grid: labels drawn by `AbstractDrawer.drawTitle`, 6 columns (`MAX_ITEM_IN_THE_ROW`), row height `1.8 × textSizeBase` — labels have no width clamp, and a 3+ line label would overlap the next row. Above 18 items `TripInfoMetrics.grid()` shrinks text and adds columns within the same 3-row height (min scale 0.75 = 8 × 4 = 32 tiles; past that the last cell is "+N" for the undrawn ones). The floor was 0.5 (72 tiles) until "select all" on an 800 × 480 DHU gave ~4 px labels — readability, not capacity, sets the floor; up to 18 the layout is unchanged. `maxItemWidth` uses `layoutCache.grid.columns`, which is never laid out for Performance (it calls `drawMetric` without `drawScreen`) — so Performance passes its own column width as `drawMetric(maxWidth = …)`; any other reuse of `drawMetric` must too.
 * Bottom row: max 4 (`MAX_BOTTOM_ITEMS`, extras go to the grid), drawn via `GiuliaDrawer.drawMetric`; text size is computed once in `calculateLayout` and cached. Any input that changes label geometry (area, top/bottom metric counts, bottom PID ids, break-label flag) must be part of `TripInfoLayoutCache.requiresLayoutUpdate` — the non-area ones live in the testable `TripInfoLabelLayout`. A count is not enough once PIDs are user-chosen: swapping a bottom PID keeps the count and left the old text size. Label width must be measured the same way it is drawn (split on `\n` only when breaking is enabled).
 * `TripInfoMetrics.grid()` takes base columns/rows so Performance shares it; `drawHiddenCount` is non-private for the same reason.
 * AA label splitting is controlled by `pref.aa.trip_info.break_label` (default `true`), independent of Giulia virtual screens. Phone Trip Info always splits (`TripInfoSettings`).
@@ -179,12 +179,15 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   Profile lists `pref.query.performance.top`/`bottom`/`hidden` stay the backward-compatible layout: top
   PIDs first in their order, other selected PIDs after in dialog order. Gauges come from
   `pref.aa.performance.bottom.pids.selected` (no XML defaultValue; unset = profile `bottom`, empty = none,
-  max `MAX_GAUGES = 5`). `VEHICLE_STATUS` is excluded via `PERFORMANCE_STATUS_PIDS`.
+  max `PERFORMANCE_MAX_GAUGES = 5`). `VEHICLE_STATUS` is excluded via `PERFORMANCE_STATUS_PIDS`.
+  Saving the main Performance selection prunes deselected PIDs from a *stored* gauge set (never
+  creates one), else a gauge came back as a gauge on reselect.
 * `MetricsCache` reads the profile lists from `Prefs` when it rebuilds the plan, not from listener-updated
   copies: the renderer's listener only flags the plan outdated, and a copy updated by a second listener
   could be read half-applied. Grid fit reuses `TripInfoMetrics.grid(count, 5, 3)` (unchanged up to 15).
 * `MetricsCache` serves phone and AA alike, so the AA gauge pref and order keys also drive the phone
-  screen, which has no setting of its own. Gauges past `MAX_GAUGES` fall back into the grid, not nowhere.
+  screen, which has no setting of its own. Gauges past `PERFORMANCE_MAX_GAUGES` fall back into the grid,
+  not nowhere; the gauge dialog only warns (toast), it does not block.
 
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
