@@ -18,6 +18,7 @@ package org.obd.graphs.renderer.performance
 
 import org.obd.graphs.bl.query.PERFORMANCE_MAX_GAUGES
 import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
+import org.obd.graphs.renderer.PidOrder
 import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.renderer.trip.TripInfoMetrics
 
@@ -55,7 +56,7 @@ internal object PerformanceMetrics {
             if (bottomSelection == null) {
                 profileBottom.filter { drawable(it) }
             } else {
-                bottomSelection.filter { drawable(it) }.sortedWith(byOrder(bottomSortOrder))
+                bottomSelection.filter { drawable(it) }.sortedWith(PidOrder.comparator(bottomSortOrder, profileBottom))
             }.distinct().take(PERFORMANCE_MAX_GAUGES)
 
         // The profile's grid PIDs keep their place so existing layouts do not move; any other PID
@@ -66,14 +67,11 @@ internal object PerformanceMetrics {
                 available
                     .filter { drawable(it) && !bottom.contains(it) && !profileTopIds.contains(it) }
                     .distinct()
-                    .sortedWith(byOrder(sortOrder))
+                    .sortedWith(PidOrder.comparator(sortOrder))
 
         return PerformancePlan(top = top, bottom = bottom)
     }
 
     /** Up to 15 grid PIDs nothing changes; more shrink into the same three-row height. */
     fun grid(itemCount: Int): TripInfoGrid = TripInfoMetrics.grid(itemCount, PERFORMANCE_GRID_COLUMNS, PERFORMANCE_GRID_ROWS)
-
-    private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
-        compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
 }

@@ -58,7 +58,8 @@ When writing new tests, use the natively provided libraries within the `androidT
 * **Test Execution & Rules:** AndroidX Test Runner (v1.5.2) and Rules (v1.5.0)
 * **Kotlin Extensions:** AndroidX Core KTX (v1.5.0) and JUnit KTX (v1.1.5)
 
-> **Note on Unit Tests:** `:datalogger` does have a local JVM suite under `src/test` running on
+> **Note on Unit Tests:** `:app` has a plain JUnit suite for Android-free logic (e.g.
+> `PidDefinitionDialogModeTest`, `./gradlew :app:testGiuliaDebugUnitTest`). `:datalogger` does have a local JVM suite under `src/test` running on
 > Robolectric (`./gradlew :datalogger:testDebugUnitTest`). `:screen_renderer` has plain JUnit
 > tests for pure layout logic (`./gradlew :screen_renderer:testDebugUnitTest`) — keep Canvas-free
 > logic in testable functions such as `TripInfoMetrics`. Other modules define only
@@ -185,6 +186,12 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * `MetricsCache` reads the profile lists from `Prefs` when it rebuilds the plan, not from listener-updated
   copies: the renderer's listener only flags the plan outdated, and a copy updated by a second listener
   could be read half-applied. Grid fit reuses `TripInfoMetrics.grid(count, 5, 3)` (unchanged up to 15).
+* A stored gauge / bottom-row selection is a `Set`, so it carries no order. Undragged PIDs fall back to
+  the profile's bottom order (Trip Info: `TRIP_INFO_DEFAULT_BOTTOM_PIDS`) before id order in
+  `renderer/PidOrder.kt` (shared by both screens — keep one copy, not in either screen's Metrics);
+  plain id order reshuffled the row as soon as one PID was unchecked.
+* "Select all" in the Trip Info / Performance PID dialogs (full registry) only warns via toast, by
+  the user's choice — no cap. Gate: `PidDefinitionDialogMode.warnsOnSelectAll`.
 * `MetricsCache` serves phone and AA alike, so the AA gauge pref and order keys also drive the phone
   screen, which has no setting of its own. Gauges past `PERFORMANCE_MAX_GAUGES` fall back into the grid,
   not nowhere; the gauge dialog only warns (toast), it does not block.

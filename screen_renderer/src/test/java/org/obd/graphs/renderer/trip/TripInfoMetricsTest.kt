@@ -158,6 +158,14 @@ class TripInfoMetricsTest {
     }
 
     @Test
+    fun `undragged bottom row keeps the default order once stored`() {
+        // A stored bottom row is a set; without a drag order it must not jump to id order.
+        val plan = TripInfoMetrics.plan(legacySelection + CUSTOM_PID_1, legacyBottom.reversed().toSet() + CUSTOM_PID_1, null, null)
+
+        assertEquals(legacyBottom + CUSTOM_PID_1, plan.bottom.map { it.id })
+    }
+
+    @Test
     fun `empty bottom selection means no bottom row`() {
         val plan = TripInfoMetrics.plan(legacySelection, emptySet(), null, null)
 

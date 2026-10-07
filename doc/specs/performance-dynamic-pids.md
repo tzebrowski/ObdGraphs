@@ -32,6 +32,7 @@ layout for any selection the old dialog could produce.
 | Vehicle status (status panel / disconnect-when-off on) | Never drawn (not in the profile lists) | Unchanged: listed in `PERFORMANCE_STATUS_PIDS` |
 | Brake boosting | Unchanged | Unchanged |
 | Phone Performance screen | Drew the profile lists | Same plan as AA: follows the AA selection, gauge choice and drag order (no phone-side gauge setting) |
+| "Select all" in the Performance PID dialog | Selected the profile's PIDs | Selects the whole registry; a toast warns that the refresh rate drops and only what fits is shown (no cap) |
 | More than 5 gauges checked | n/a | The dialog does not stop at 5; saving shows a toast with how many go to the grid. The first 5 in gauge order are drawn, the rest go to the grid |
 | PID deselected in the Performance dialog | n/a | Also dropped from a stored gauge selection, so selecting it again later does not bring it back as a gauge. An unset gauge pref stays unset |
 | Min/max stats next to a grid value | Hidden once wider than `width / 6` (Trip Info's column count) | Hidden once wider than the Performance column (`width / grid.columns`) |
@@ -63,8 +64,8 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
    `prunedPerformanceBottomSelection(stored, selected)` (null = nothing to write: unset or nothing dropped).
 2. **`PerformanceMetrics.kt` (new, `:screen_renderer`).** Pure functions:
    - `plan(available, profileTop, profileBottom, hidden, bottomSelection, sortOrder, bottomSortOrder)`.
-     Only queried, non-hidden, non-status PIDs are placed. **Gauges:** the user's selection in gauge order,
-     or the profile's bottom list when unset; at most `PERFORMANCE_MAX_GAUGES = 5` (bundled profiles define ≤ 5).
+     Only queried, non-hidden, non-status PIDs are placed. **Gauges:** the user's selection in gauge order
+     (undragged gauges in the profile's bottom order, then by id), or the profile's bottom list when unset; at most `PERFORMANCE_MAX_GAUGES = 5` (bundled profiles define ≤ 5).
      **Grid:** the profile's top list in its order, then every other queried PID in dialog order
      (unordered last, by id); gauge PIDs are excluded.
    - `grid(itemCount)` reuses `TripInfoMetrics.grid`, now parameterised by base columns/rows
@@ -107,10 +108,13 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
 | hidden PIDs are drawn nowhere | Hidden in neither grid nor gauges, even if chosen as a gauge |
 | vehicle status PID added to every query by the status panel is not drawn | Grid unchanged, never a gauge |
 | selected gauges are ordered, capped and the rest moves to the grid | Gauge order honoured, max 5, overflow and former gauges go to the grid |
+| undragged gauges keep the profile order after one is removed | A stored set without a drag order follows the profile's bottom order, not id order |
+| dragged gauges follow the drag order, then the profile order | Dragged first, then profile order, then the rest by id |
 | empty gauge selection means no gauges | Former gauges move to the grid |
 | gauges that are not queried are skipped | Only queried ids |
 | grid is unchanged up to three full rows | 0–15 items: 5 columns, scale 1 |
 | grid shrinks to fit every profile grid PID | 21 items fit, scale < 1, more columns |
+| the hidden count marker always lands in the last column | For 0–200 items, `shown % columns == columns − 1` whenever items are hidden (`PerformanceDrawer` places "+N" there) |
 | items that do not fit are counted in the last cell | 100 items: capacity − 1 shown, rest hidden |
 
 `./gradlew :datalogger:testDebugUnitTest --tests '*PerformanceQueryStrategy*'` pins the pref key

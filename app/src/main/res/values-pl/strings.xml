@@ -379,6 +379,7 @@
     <string name="pref.aa.performance.bottom_pids_summary">PID wyświetlane jako wskaźniki w dolnej części ekranu wydajności (maks. 5), wybierane spośród zaznaczonych PID. Pozostałe zaznaczone PID są wyświetlane w górnej siatce.</string>
     <string name="pref.aa.performance.bottom_pids_overflow">Mieści się tylko 5 wskaźników; nadmiarowe (%1$d) zostaną wyświetlone w górnej siatce.</string>
     <string name="pref.aa.performance.select_pids">Wybierz OBD2 PID wydajności</string>
+    <string name="pref.pid.select_all_warning">Zaznaczono wszystkie PID. Odpytywanie tak wielu PID obniża częstotliwość odświeżania, a ekran pokazuje tylko tyle, ile się zmieści.</string>
 
 
     <string name="pref.aa.trip_info.category">Ekran informacji o trasie</string>

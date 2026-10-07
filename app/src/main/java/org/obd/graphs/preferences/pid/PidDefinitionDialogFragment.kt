@@ -438,6 +438,9 @@ open class PidDefinitionDialogFragment(
         val btnSelectAll = root.findViewById<Button>(R.id.pid_list_select_all)
         btnSelectAll.visibility = if (dialogMode.isInteractive) View.GONE else View.VISIBLE
         btnSelectAll.setOnClickListener {
+            if (dialogMode.warnsOnSelectAll) {
+                Toast.makeText(requireContext(), R.string.pref_pid_select_all_warning, Toast.LENGTH_LONG).show()
+            }
             viewModel.toggleSelectAll(true)
         }
 

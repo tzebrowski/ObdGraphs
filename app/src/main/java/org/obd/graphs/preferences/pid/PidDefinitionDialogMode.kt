@@ -35,6 +35,10 @@ sealed class PidDefinitionDialogMode {
     val isInteractive: Boolean
         get() = this is Edit || this is Alert
 
+    // These dialogs list the whole PID registry, so "Select all" adds every PID to the query.
+    val warnsOnSelectAll: Boolean
+        get() = this is TripInfo || this is Performance
+
     val isEdit: Boolean
         get() = this is Edit
 

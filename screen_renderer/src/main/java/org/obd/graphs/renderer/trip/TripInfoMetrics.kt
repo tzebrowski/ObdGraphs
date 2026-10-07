@@ -19,6 +19,7 @@ package org.obd.graphs.renderer.trip
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
 import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
+import org.obd.graphs.renderer.PidOrder
 
 internal const val MAX_BOTTOM_ITEMS = 4
 
@@ -97,7 +98,7 @@ internal object TripInfoMetrics {
             } else {
                 bottomSelection
                     .filter { available.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) }
-                    .sortedWith(byOrder(bottomSortOrder))
+                    .sortedWith(PidOrder.comparator(bottomSortOrder, TRIP_INFO_DEFAULT_BOTTOM_PIDS))
             }.take(MAX_BOTTOM_ITEMS)
 
         // Default PIDs keep their fixed place so existing layouts do not move; any other PID
@@ -106,7 +107,7 @@ internal object TripInfoMetrics {
             defaultTop.filter { available.contains(it.id) && !bottomIds.contains(it.id) } +
                 available
                     .filter { !bottomIds.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) && !defaultTopById.containsKey(it) }
-                    .sortedWith(byOrder(sortOrder))
+                    .sortedWith(PidOrder.comparator(sortOrder))
                     .map { TripMetricDescriptor(it) }
 
         return TripInfoPlan(
@@ -151,9 +152,6 @@ internal object TripInfoMetrics {
             scale -= GRID_SCALE_STEP
         }
     }
-
-    private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
-        compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
 }
 
 /**
