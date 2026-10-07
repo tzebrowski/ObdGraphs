@@ -40,7 +40,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 1. **`TripInfoQueryStrategy.kt` (`:datalogger`).** Adds public `PREF_QUERY_TRIP_INFO_SELECTED`, `PREF_QUERY_TRIP_INFO_BOTTOM` and `TRIP_INFO_DEFAULT_BOTTOM_PIDS`. The query itself is unchanged: `getPIDs()` returns the main selection only.
 2. **`TripInfoMetrics.kt` (new, `:screen_renderer`).** Pure, Canvas-free functions:
    - `plan(available, bottomSelection, sortOrder, bottomSortOrder)` splits the queried ids into `top` and `bottom` descriptors.
-     - **Bottom:** the user's selection in bottom-row order, or `TRIP_INFO_DEFAULT_BOTTOM_PIDS` when unset; only queried ids, never `TRIP_INFO_STATUS_PIDS`; at most `MAX_BOTTOM_ITEMS = 4`. A bottom PID keeps the `diff` flag of its top descriptor, so the odometer shows the trip distance there too (the drawer applies `buildDiff` in both rows).
+     - **Bottom:** the user's selection in bottom-row order (undragged ids in `TRIP_INFO_DEFAULT_BOTTOM_PIDS` order, then by id), or `TRIP_INFO_DEFAULT_BOTTOM_PIDS` when unset; only queried ids, never `TRIP_INFO_STATUS_PIDS`; at most `MAX_BOTTOM_ITEMS = 4`. A bottom PID keeps the `diff` flag of its top descriptor, so the odometer shows the trip distance there too (the drawer applies `buildDiff` in both rows).
      - **Top:** the 16 former grid PIDs in their fixed order with their former formatting, then every other queried id in dialog order (unordered ids last, by id). Bottom ids and `TRIP_INFO_STATUS_PIDS` (shared from `TripInfoQueryStrategy.kt`) are excluded.
    - `grid(itemCount)` returns columns, capacity and scale. At scale 1 the grid is 6 columns and the layout is unchanged; at most 18 items fit there. Above that, the scale steps down by 0.05 until `floor(6/s) × floor(3/s)` items fit, with a floor of 0.75 (8 × 4 = 32). `shown`/`hidden` give the tiles drawn and the count for the "+N" cell, which takes the last slot when items do not fit. The floor was 0.5 (12 × 6 = 72) until a DHU test with every PID selected showed about 4 px labels at 800 × 480.
 3. **`TripMetricDescriptor`** moved to `TripInfoMetrics.kt` and became id-based, with a `diff` flag for the odometer (`MetricsBuilder.buildDiff`). `BottomMetricDescriptor` was removed.
@@ -71,6 +71,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 | other PIDs follow the default ones in the dialog order | Defaults first, then by sort order, unordered last |
 | other PIDs get the generic formatting | Generic descriptor defaults |
 | selected bottom row is ordered, capped and the rest moves to the grid | Order honoured, max 4, overflow and unchosen default bottom PIDs appear in the grid |
+| undragged bottom row keeps the default order once stored | A stored set without a drag order follows `TRIP_INFO_DEFAULT_BOTTOM_PIDS` order, not id order |
 | empty bottom selection means no bottom row | Empty set means no bottom row; former bottom PIDs move to the grid |
 | odometer in the bottom row still shows the trip distance | Distance chosen for the bottom row keeps `diff` |
 | vehicle status PID added to every query by the status panel is not drawn | `VEHICLE_STATUS` (added by `QueryStrategyOrchestrator` when the status panel or disconnect-when-off is on) leaves both rows unchanged |
@@ -109,3 +110,11 @@ Verification:
 - **Performance screen:** done in `performance-dynamic-pids.md`.
 - **Paging** the grid via the AA virtual-screen actions instead of the "+N" cell beyond 32.
 - Allowing ambient temp and atm pressure in the grid as an explicit opt-in.
+
+## Select-all warning
+
+"Select all" in the Trip Info and Performance PID dialogs selects the whole PID registry, which lowers
+the refresh rate and overflows the grid into "+N". It only warns (long toast,
+`pref.pid.select_all_warning`, EN + PL); nothing is capped. Gated by
+`PidDefinitionDialogMode.warnsOnSelectAll`, tested by `PidDefinitionDialogModeTest`
+(`./gradlew :app:testGiuliaDebugUnitTest`).

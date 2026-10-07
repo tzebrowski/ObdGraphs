@@ -97,7 +97,7 @@ internal object TripInfoMetrics {
             } else {
                 bottomSelection
                     .filter { available.contains(it) && !TRIP_INFO_STATUS_PIDS.contains(it) }
-                    .sortedWith(byOrder(bottomSortOrder))
+                    .sortedWith(byOrder(bottomSortOrder, TRIP_INFO_DEFAULT_BOTTOM_PIDS))
             }.take(MAX_BOTTOM_ITEMS)
 
         // Default PIDs keep their fixed place so existing layouts do not move; any other PID
@@ -152,8 +152,17 @@ internal object TripInfoMetrics {
         }
     }
 
-    private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
-        compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
+    // Undragged PIDs fall back to [defaultOrder]: a stored selection is a set, and id order would
+    // reshuffle the bottom row as soon as one PID was unchecked.
+    private fun byOrder(
+        sortOrder: Map<Long, Int>?,
+        defaultOrder: List<Long> = emptyList()
+    ): Comparator<Long> =
+        compareBy<Long>(
+            { sortOrder?.get(it) ?: Int.MAX_VALUE },
+            { defaultOrder.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE },
+            { it }
+        )
 }
 
 /**

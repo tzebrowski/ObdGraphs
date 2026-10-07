@@ -375,6 +375,7 @@
     <string name="pref.aa.performance.bottom_pids_summary">PIDs shown as gauges at the bottom of the Performance screen (max 5), chosen from the selected PIDs. All other selected PIDs are shown in the top grid.</string>
     <string name="pref.aa.performance.bottom_pids_overflow">Only 5 gauges fit; %1$d more will be shown in the top grid.</string>
     <string name="pref.aa.performance.select_pids">Select Performance OBD2 PIDs</string>
+    <string name="pref.pid.select_all_warning">Every PID is now selected. Querying this many PIDs lowers the refresh rate, and the screen shows only as many as fit.</string>
 
 
     <string name="pref.aa.trip_info.category">Trip Info Screen</string>

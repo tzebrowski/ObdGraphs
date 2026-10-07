@@ -119,6 +119,26 @@ class PerformanceMetricsTest {
     }
 
     @Test
+    fun `undragged gauges keep the profile order after one is removed`() {
+        // Unchecking a gauge stores the rest as a set; without a drag order they must not jump to id order.
+        val result = plan(available = profileSelection, bottomSelection = setOf(7007L, 7005L, 7028L))
+
+        assertEquals(listOf(7028L, 7005L, 7007L), result.bottom)
+    }
+
+    @Test
+    fun `dragged gauges follow the drag order, then the profile order`() {
+        val result =
+            plan(
+                available = profileSelection + CUSTOM_PID_1,
+                bottomSelection = setOf(7007L, 7005L, 7028L, CUSTOM_PID_1),
+                bottomSortOrder = mapOf(7007L to 0)
+            )
+
+        assertEquals(listOf(7007L, 7028L, 7005L, CUSTOM_PID_1), result.bottom)
+    }
+
+    @Test
     fun `empty gauge selection means no gauges`() {
         val result = plan(available = profileSelection, bottomSelection = emptySet())
 
@@ -151,6 +171,17 @@ class PerformanceMetricsTest {
         assertTrue(grid.columns > PERFORMANCE_GRID_COLUMNS)
         assertEquals(profileTop.size, grid.shown)
         assertEquals(0, grid.hidden)
+    }
+
+    @Test
+    fun `the hidden count marker always lands in the last column`() {
+        // PerformanceDrawer draws "+N" at shown % columns, so it must be the last cell of a row.
+        for (count in 0..200) {
+            val grid = PerformanceMetrics.grid(count)
+            if (grid.hidden > 0) {
+                assertEquals("count=$count", grid.columns - 1, grid.shown % grid.columns)
+            }
+        }
     }
 
     @Test

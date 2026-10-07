@@ -55,7 +55,7 @@ internal object PerformanceMetrics {
             if (bottomSelection == null) {
                 profileBottom.filter { drawable(it) }
             } else {
-                bottomSelection.filter { drawable(it) }.sortedWith(byOrder(bottomSortOrder))
+                bottomSelection.filter { drawable(it) }.sortedWith(byOrder(bottomSortOrder, profileBottom))
             }.distinct().take(PERFORMANCE_MAX_GAUGES)
 
         // The profile's grid PIDs keep their place so existing layouts do not move; any other PID
@@ -74,6 +74,15 @@ internal object PerformanceMetrics {
     /** Up to 15 grid PIDs nothing changes; more shrink into the same three-row height. */
     fun grid(itemCount: Int): TripInfoGrid = TripInfoMetrics.grid(itemCount, PERFORMANCE_GRID_COLUMNS, PERFORMANCE_GRID_ROWS)
 
-    private fun byOrder(sortOrder: Map<Long, Int>?): Comparator<Long> =
-        compareBy<Long>({ sortOrder?.get(it) ?: Int.MAX_VALUE }, { it })
+    // Undragged PIDs fall back to [defaultOrder]: a stored selection is a set, and id order would
+    // reshuffle the gauges as soon as one was unchecked.
+    private fun byOrder(
+        sortOrder: Map<Long, Int>?,
+        defaultOrder: List<Long> = emptyList()
+    ): Comparator<Long> =
+        compareBy<Long>(
+            { sortOrder?.get(it) ?: Int.MAX_VALUE },
+            { defaultOrder.indexOf(it).takeIf { i -> i >= 0 } ?: Int.MAX_VALUE },
+            { it }
+        )
 }
