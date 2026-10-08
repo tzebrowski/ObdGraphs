@@ -95,12 +95,27 @@ class GaugeGeometryTest {
     }
 
     @Test
-    fun `label at the top keeps its radius, wide labels at the sides move inward`() {
-        val top = GaugeGeometry.labelCenterRadius(100f, -Math.PI / 2, 40f, 10f)
-        val side = GaugeGeometry.labelCenterRadius(100f, 0.0, 40f, 10f)
+    fun `labels keep their radius unless they would reach into the ticks`() {
+        val narrowAtSide = GaugeGeometry.labelCenterRadius(75f, 85f, 0.0, 10f, 8f)
+        val wideAtSide = GaugeGeometry.labelCenterRadius(75f, 85f, 0.0, 40f, 8f)
 
-        assertEquals(100f, top, 0.001f)
-        assertEquals(85f, side, 0.001f)
+        assertEquals(75f, narrowAtSide, 0.001f)
+        assertEquals(65f, wideAtSide, 0.001f)
+    }
+
+    @Test
+    fun `stats row stays clear of the end label when the dial ends below its centre`() {
+        // 200 degree dial ends at 40 degrees, beside the stats row: "120" overlapped "max -29".
+        val end = Math.toRadians(40.0)
+        val limit = GaugeGeometry.statsMaxWidth(cardLimit = 300f, endAngleRadians = end, endLabelRadius = 100f, endLabelWidth = 30f, gap = 5f)
+
+        assertEquals(2f * (100f * kotlin.math.cos(end).toFloat() - 15f - 5f), limit, 0.01f)
+    }
+
+    @Test
+    fun `stats row uses the card when the dial ends at or above its centre`() {
+        assertEquals(300f, GaugeGeometry.statsMaxWidth(300f, Math.toRadians(0.0), 100f, 30f, 5f))
+        assertEquals(300f, GaugeGeometry.statsMaxWidth(300f, Math.toRadians(-20.0), 100f, 30f, 5f))
     }
 
     @Test

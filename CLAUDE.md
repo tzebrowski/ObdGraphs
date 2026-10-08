@@ -207,6 +207,10 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * **The dial maps values through `GaugeScale`, not `pid.min`/`pid.max`.** It extends the PID range to
   "nice" steps; progress, labels and ticks must all use `scale.fraction()` or they drift apart.
   Pure geometry lives in `GaugeGeometry.kt` (unit-tested); keep Canvas out of it.
+* The scale bitmap is cached, so anything that decides *what* goes into it (numbers on/off, scale,
+  zones) must be in its key. Numbers skipped for a still-`null` value were cached numberless for good.
+* End labels of a dial that ends below centre sit beside the stats row; `GaugeGeometry.statsMaxWidth`
+  keeps the row clear. Fix overlaps with draw order (numbers after ticks) before moving labels.
 * Red on the dial = the PID's `alert` thresholds. The scale bitmap cache is keyed by `GaugeScale` and
   `GaugeRedZones` too — a cache keyed by PID id alone kept a stale scale after a PID edit.
 * Phone cards may be taller than the dial (`GaugeGeometry.cardHeight`); `borderArea` is the card, `top`

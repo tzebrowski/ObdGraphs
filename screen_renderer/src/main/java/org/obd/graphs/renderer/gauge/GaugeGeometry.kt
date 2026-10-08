@@ -19,10 +19,13 @@ package org.obd.graphs.renderer.gauge
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.log10
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 private val NICE_MULTIPLIERS = doubleArrayOf(1.0, 2.0, 2.5, 4.0, 5.0)
 private const val MIN_INTERVALS = 4
@@ -136,22 +139,39 @@ internal data class GaugeRedZones(
 
 internal object GaugeGeometry {
     /**
-     * Distance from the dial centre to a scale label's centre. The label's outer edge stays on
-     * the circle a label at the top would touch, so wide labels at the sides move inward instead
-     * of running into the ticks and the card border.
-     *
-     * @param baseRadius where a label at the top of the dial is centred.
+     * Distance from the dial centre to a scale label's centre: [baseRadius], unless the label would
+     * then reach past [maxOuterRadius] (into the ticks), in which case it moves just inside it.
+     * Pulling every label inward by its width put the end labels into the value / stats area.
      */
     fun labelCenterRadius(
         baseRadius: Float,
+        maxOuterRadius: Float,
         angleRadians: Double,
         width: Float,
         height: Float
     ): Float {
-        val outerRadius = baseRadius + height / 2f
-        val radialHalfExtent = abs(kotlin.math.cos(angleRadians)).toFloat() * width / 2f +
-            abs(kotlin.math.sin(angleRadians)).toFloat() * height / 2f
-        return outerRadius - radialHalfExtent
+        val radialHalfExtent = abs(cos(angleRadians)).toFloat() * width / 2f +
+            abs(sin(angleRadians)).toFloat() * height / 2f
+        return min(baseRadius, maxOuterRadius - radialHalfExtent)
+    }
+
+    /**
+     * Widest the min / avg / max row may be. When the dial ends below its centre, the last scale
+     * label sits beside that row, so the row must stay clear of the label's inner edge.
+     *
+     * @param endAngleRadians the dial's end angle (canvas convention: positive is below the centre).
+     * @param endLabelRadius distance from the dial centre to the end label's centre.
+     */
+    fun statsMaxWidth(
+        cardLimit: Float,
+        endAngleRadians: Double,
+        endLabelRadius: Float,
+        endLabelWidth: Float,
+        gap: Float
+    ): Float {
+        if (sin(endAngleRadians) <= 0.0) return cardLimit
+        val labelInnerX = abs(cos(endAngleRadians)).toFloat() * endLabelRadius - endLabelWidth / 2f
+        return min(cardLimit, 2f * (labelInnerX - gap)).coerceAtLeast(0f)
     }
 
     /** Text size factor that makes [width] fit [maxWidth]; never enlarges. */

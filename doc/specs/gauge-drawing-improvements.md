@@ -18,13 +18,13 @@ Readability, correctness and per-frame cost fixes for the dial gauge (`GaugeDraw
 | --- | --- | --- | --- |
 | 1 | Scale labels | 6 equal parts of `min..max`, rounded (`-40, -6, 26 …`) | "Nice" steps (1, 2, 2.5, 4, 5 × 10ⁿ), 4–7 intervals, the range extended to the nearest step: `-40, 0, 40 … 160`; gear `-2, 0, 2 … 10` |
 | 2 | Red zone | Last ~2 labels / ticks red on every dial (fixed divider indexes) | Red only over the PID's alert ranges (`alert.upperThreshold`..max, min..`alert.lowerThreshold`); none without thresholds |
-| 3 | Label placement | Centre on a fixed radius; wide labels at the sides overlapped ticks and the border | Outer edge on a fixed radius; side labels move inward by their width |
-| 4 | Stats row | Fixed offsets from the centre, no captions | Measured, centred, equal gaps, scaled down to 90 % of the card; `▼` before min, `▲` before max |
+| 3 | Label placement | Drawn before the ticks, so the red ticks' glow covered the end labels | Drawn after the ticks; centred at 0.75 r as before, moved inward only if the label would reach past 0.85 r |
+| 4 | Stats row | Fixed offsets from the centre, no captions | Measured, centred, equal gaps; `▼` before min, `▲` before max. Scaled down to fit 90 % of the card and, when the dial ends below its centre, the space left of the end label |
 | 5 | Value text | Fixed size | Shrunk (never enlarged) to 70 % of the dial width with its unit; label / stats stay where they were |
 | 6 | Phone layout | Square cards | When the grid does not scroll, cards share the free height up to 1.5 × width; dial centred, module name / rate stay in the card's top corners |
 | 7 | Out-of-range value | Arc drawn past the end, or backwards below min | Clamped to the dial |
 | 8 | Arc angle | Truncated to whole degrees | Float |
-| 9 | Scale bitmap cache | Keyed by PID id, size, colour | Also by scale and red zones, so editing a PID's range or alerts redraws it; the replaced bitmap is recycled |
+| 9 | Scale bitmap cache | Keyed by PID id, size, colour; numbers skipped while the value was still `null`, and that numberless dial stayed cached | Also keyed by scale, red zones and whether numbers are drawn; numbers skipped only for non-numeric values; the replaced bitmap is recycled |
 | 10 | Per frame | New `RadialGradient` per gauge; colour parsed / resolved per frame | Gradient cached per PID and card rect; colours resolved once |
 
 ## Settings / keys touched
@@ -33,7 +33,8 @@ None.
 
 ## Implementation
 
-* `GaugeGeometry.kt` (pure, unit-tested): `GaugeScale.of(min, max)` picks the step by least range extension, then interval count nearest 5; `fraction()` clamps. `GaugeRedZones` turns thresholds into scale fractions. `GaugeGeometry.labelCenterRadius`, `fitScale`, `statsRow`, `cardHeight`.
+* `GaugeGeometry.kt` (pure, unit-tested): `GaugeScale.of(min, max)` picks the step by least range extension, then interval count nearest 5; `fraction()` clamps. `GaugeRedZones` turns thresholds into scale fractions. `GaugeGeometry.labelCenterRadius`, `statsMaxWidth`, `fitScale`, `statsRow`, `cardHeight`.
+* Lesson from the first device run: pulling every side label inward by its width put the end label (40° below centre on a 200° dial) into the stats row, which the `▼`/`▲` captions had made wider. The original overlap was draw order (ticks over numbers), not radius.
 * `GaugeDrawer`: `pidScale(metric)` caches scale + zones per PID, invalidated when min/max/thresholds change. Progress, numbers and ticks all use the scale's fraction. Ticks: majors on the labels, minors halfway; outer gray majors outside zones; in each zone the glowing dense ticks plus a solid band over its outer half. `DrawerSettings.dividersCount`, `dividersStepAngle`, `dividerHighlightStart` removed (no caller set them).
 * `GaugeSurfaceRenderer` (phone only, not landscape single-column): `rowHeight = cardHeight + 2 × margin`; `borderRects` take the card height, the dial top is offset by half the slack. The free height excludes `CONTENT_BOTTOM_PADDING`, otherwise a filled grid scrolls by a few pixels.
 
@@ -54,7 +55,8 @@ Visual only. Existing profiles keep their PIDs and ranges; the dial's range may 
 | no negative zero label / invalid range falls back to a single interval | Edge cases |
 | value outside the scale sticks to its ends | Item 7 (clamp) |
 | red zones come from the alert thresholds only / thresholds beyond the scale draw no zone | Item 2 |
-| label at the top keeps its radius, wide labels at the sides move inward | Item 3 |
+| labels keep their radius unless they would reach into the ticks | Item 3 |
+| stats row stays clear of the end label when the dial ends below its centre / uses the card when it ends at or above | Item 4 |
 | stats row is centred with equal gaps / wider than the card is scaled down | Item 4 |
 | value text is only ever shrunk | Item 5 |
 | cards fill the free height up to a limit, stay square when scrolling | Item 6 |
@@ -66,6 +68,8 @@ Visual only. Existing profiles keep their PIDs and ranges; the dial's range may 
 - [ ] Landscape, 1 and several gauges.
 - [ ] A PID with an upper alert threshold shows red from the threshold; one without shows no red.
 - [ ] Edit a PID's min/max: the dial redraws.
+- [ ] A gauge showing `--` (no value yet) still shows its scale numbers.
+- [ ] End label (e.g. `120`) does not touch the `▲` max value.
 - [ ] Performance, Drag Racing, Brake Boosting gauges (phone + AA DHU): labels readable, no overlap with ticks.
 - [ ] `▼` / `▲` render (font fallback) on the target devices.
 

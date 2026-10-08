@@ -61,6 +61,11 @@ private const val VALUE_MAX_WIDTH_RATIO = 0.7f
 
 // Share of the card width the min / avg / max row may take before it is shrunk.
 private const val STATS_MAX_WIDTH_RATIO = 0.9f
+
+// Scale labels: centred at this share of the dial radius, never reaching past the outer one.
+private const val NUMBERS_RADIUS_RATIO = 0.75f
+private const val NUMBERS_MAX_OUTER_RADIUS_RATIO = 0.85f
+private const val NUMBERS_TEXT_RATIO = 0.055f
 private const val STATS_CAPTION_RATIO = 0.6f
 private const val MIN_CAPTION = "\u25BC"
 private const val MAX_CAPTION = "\u25B2"
@@ -87,7 +92,7 @@ private data class ScaleBitmapCache(
     val scale: GaugeScale,
     val redZones: GaugeRedZones,
     val progressColor: Int,
-    val scaleEnabled: Boolean
+    val numbersDrawn: Boolean
 )
 
 // The scale and red zones of one PID, rebuilt only when its range or thresholds change.
@@ -312,6 +317,7 @@ internal class GaugeDrawer(
             canvas,
             area = drawingCache.workingRect,
             metric = metric,
+            statsMaxWidth = statsMaxWidth(metric, pidScale.scale, scaleEnabled, radius, borderArea),
             radius = radius,
             labelCenterYPadding = labelCenterYPadding,
             fontSize = fontSize,
@@ -553,6 +559,7 @@ internal class GaugeDrawer(
         canvas: Canvas,
         area: RectF,
         metric: Metric,
+        statsMaxWidth: Float,
         radius: Float,
         labelCenterYPadding: Float = 0f,
         fontSize: Int,
@@ -678,7 +685,7 @@ internal class GaugeDrawer(
         }
 
         if (statsEnabled) {
-            drawStatsRow(canvas, area, metric, calculatedFontSize, labelY, verticalGap, borderArea)
+            drawStatsRow(canvas, area, metric, calculatedFontSize, labelY, verticalGap, statsMaxWidth)
         }
     }
 
@@ -691,7 +698,7 @@ internal class GaugeDrawer(
         calculatedFontSize: Float,
         labelY: Float,
         verticalGap: Float,
-        borderArea: RectF?
+        maxWidth: Float
     ) {
         val pid = metric.pid
         val statsTextSize = calculatedFontSize * 0.4f
@@ -721,7 +728,6 @@ internal class GaugeDrawer(
         val present = widths.indices.filter { widths[it] > 0f }
         if (present.isEmpty()) return
 
-        val maxWidth = (borderArea?.width() ?: area.width()) * STATS_MAX_WIDTH_RATIO
         val row =
             GaugeGeometry.statsRow(
                 present.map { widths[it] }.toFloatArray(),
@@ -767,9 +773,13 @@ internal class GaugeDrawer(
         val currentCache = scaleBitmapCache[pidId]
 
         // The scale and red zones are part of the key: editing a PID's range or alerts must redraw it.
+        // Numbers are skipped only for non-numeric values. Skipping them while there was no value yet
+        // cached a dial without numbers until the layout changed.
+        val numbersDrawn = scaleEnabled && (metric.source.value == null || metric.source.isNumber())
+
         val isValid =
             currentCache != null &&
-                currentCache.scaleEnabled == scaleEnabled &&
+                currentCache.numbersDrawn == numbersDrawn &&
                 currentCache.progressColor == settings.getColorTheme().progressColor &&
                 currentCache.width == targetWidth &&
                 currentCache.height == targetHeight &&
@@ -795,10 +805,11 @@ internal class GaugeDrawer(
             cacheCanvas.scale(CACHE_SCALE, CACHE_SCALE)
             cacheCanvas.translate(-rect.left + bitmapPadding, -rect.top + bitmapPadding)
 
-            if (scaleEnabled && metric.source.isNumber()) {
+            // Numbers last: the red ticks' glow used to paint over the end labels.
+            drawTicks(cacheCanvas, rect, pidScale)
+            if (numbersDrawn) {
                 drawNumbers(cacheCanvas, arcTopRect, pidScale, radius)
             }
-            drawTicks(cacheCanvas, rect, pidScale)
 
             scaleBitmapCache.put(
                 pidId,
@@ -809,12 +820,38 @@ internal class GaugeDrawer(
                     pidScale.scale,
                     pidScale.redZones,
                     settings.getColorTheme().progressColor,
-                    scaleEnabled
+                    numbersDrawn
                 )
             )?.bitmap?.recycle()
 
             canvas.drawBitmap(cachedBitmap, null, drawingCache.destRectF, bitmapPaint)
         }
+    }
+
+    private fun statsMaxWidth(
+        metric: Metric,
+        scale: GaugeScale,
+        scaleEnabled: Boolean,
+        radius: Float,
+        borderArea: RectF?
+    ): Float {
+        val cardLimit = (borderArea?.width() ?: drawingCache.workingRect.width()) * STATS_MAX_WIDTH_RATIO
+        if (!scaleEnabled || (metric.source.value != null && !metric.source.isNumber())) return cardLimit
+
+        val endLabel = scale.label(scale.intervals)
+        numbersPaint.textSize = drawingCache.arcTopRect.width() * NUMBERS_TEXT_RATIO
+        numbersPaint.getTextBounds(endLabel, 0, endLabel.length, drawingCache.numberTextRect)
+        val endWidth = drawingCache.numberTextRect.width().toFloat()
+        val endAngle = Math.toRadians(angleOf(1f).toDouble())
+        val endRadius =
+            GaugeGeometry.labelCenterRadius(
+                radius * NUMBERS_RADIUS_RATIO,
+                radius * NUMBERS_MAX_OUTER_RADIUS_RATIO,
+                endAngle,
+                endWidth,
+                drawingCache.numberTextRect.height().toFloat()
+            )
+        return GaugeGeometry.statsMaxWidth(cardLimit, endAngle, endRadius, endWidth, gap = radius * 0.04f)
     }
 
     private fun angleOf(fraction: Float): Float = drawerSettings.startAngle + fraction * drawerSettings.sweepAngle
@@ -826,9 +863,8 @@ internal class GaugeDrawer(
         radius: Float
     ) {
         val scale = pidScale.scale
-        val baseRadius = radius * 0.75f
 
-        numbersPaint.textSize = area.width() * 0.055f
+        numbersPaint.textSize = area.width() * NUMBERS_TEXT_RATIO
 
         for (i in 0..scale.intervals) {
             val angle = angleOf(i.toFloat() / scale.intervals) * (Math.PI / 180)
@@ -838,7 +874,14 @@ internal class GaugeDrawer(
             val textWidth = drawingCache.numberTextRect.width().toFloat()
             val textHeight = drawingCache.numberTextRect.height().toFloat()
 
-            val labelRadius = GaugeGeometry.labelCenterRadius(baseRadius, angle, textWidth, textHeight)
+            val labelRadius =
+                GaugeGeometry.labelCenterRadius(
+                    radius * NUMBERS_RADIUS_RATIO,
+                    radius * NUMBERS_MAX_OUTER_RADIUS_RATIO,
+                    angle,
+                    textWidth,
+                    textHeight
+                )
             val x = area.left + (area.width() / 2.0f + cos(angle) * labelRadius - textWidth / 2).toFloat()
             val y = area.top + (area.height() / 2.0f + sin(angle) * labelRadius + textHeight / 2).toFloat()
 
