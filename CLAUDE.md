@@ -201,6 +201,18 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   screen, which has no setting of its own. Gauges past `PERFORMANCE_MAX_GAUGES` fall back into the grid,
   not nowhere; the gauge dialog only warns (toast), it does not block.
 
+### Gauge drawer (`renderer/gauge/`)
+* `GaugeDrawer` is shared by the Gauge, Performance, Drag Racing and Brake Boosting screens (phone + AA):
+  any dial change shows on all four. Spec: `doc/specs/gauge-drawing-improvements.md`.
+* **The dial maps values through `GaugeScale`, not `pid.min`/`pid.max`.** It extends the PID range to
+  "nice" steps; progress, labels and ticks must all use `scale.fraction()` or they drift apart.
+  Pure geometry lives in `GaugeGeometry.kt` (unit-tested); keep Canvas out of it.
+* Red on the dial = the PID's `alert` thresholds. The scale bitmap cache is keyed by `GaugeScale` and
+  `GaugeRedZones` too — a cache keyed by PID id alone kept a stale scale after a PID edit.
+* Phone cards may be taller than the dial (`GaugeGeometry.cardHeight`); `borderArea` is the card, `top`
+  the dial. Captions belong to the card. `contentHeight`'s bottom pad must be excluded from the height
+  the cards share, or a filled grid scrolls by a few pixels.
+
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
   `pref.adapter.connection.type`. Two Bluetooth transports, deliberately separate:

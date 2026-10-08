@@ -63,6 +63,9 @@ private class GaugeLayoutCache {
 
 private const val TAG = "cache"
 
+// Below the last row; the free height the cards share excludes it, or a filled grid would scroll.
+private const val CONTENT_BOTTOM_PADDING = 20f
+
 internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
@@ -310,7 +313,21 @@ internal class GaugeSurfaceRenderer(
         layoutCache.startX = startX(area, isAA, count)
 
         val totalRows = kotlin.math.ceil(count / layoutCache.columns.toDouble()).toInt()
-        layoutCache.contentHeight = topOffset + (totalRows * layoutCache.rowHeight) + 20f
+
+        // Phone rows were square, so a few gauges left most of a portrait screen empty. When the grid
+        // does not scroll, the cards share the free height; the dial stays square and is centred.
+        val fillsHeight = !isAA && !(isLandscape && layoutCache.columns == 1)
+        val cardHeight =
+            if (fillsHeight) {
+                GaugeGeometry.cardHeight(layoutCache.gaugeWidth, itemMargin, totalRows, area.bottom - topOffset - CONTENT_BOTTOM_PADDING)
+            } else {
+                layoutCache.gaugeWidth
+            }
+        if (fillsHeight) {
+            layoutCache.rowHeight = cardHeight + 2 * itemMargin
+        }
+        val dialOffset = (cardHeight - layoutCache.gaugeWidth) / 2f
+        layoutCache.contentHeight = topOffset + (totalRows * layoutCache.rowHeight) + CONTENT_BOTTOM_PADDING
         layoutCache.maxScroll = max(0f, layoutCache.contentHeight - availableHeight)
 
         for (i in 0 until count) {
@@ -334,12 +351,12 @@ internal class GaugeSurfaceRenderer(
                 }
 
             layoutCache.centeredLefts[i] = centeredLeft
-            layoutCache.centeredTops[i] = centeredTop
+            layoutCache.centeredTops[i] = centeredTop + dialOffset
             layoutCache.borderRects[i].set(
                 centeredLeft,
                 centeredTop,
                 centeredLeft + layoutCache.gaugeWidth,
-                centeredTop + layoutCache.gaugeWidth
+                centeredTop + cardHeight
             )
         }
     }
