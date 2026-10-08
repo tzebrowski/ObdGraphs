@@ -50,6 +50,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 7. **`PidDefinitionViewModel` (`:app`).**
    - The `TripInfo` source is the defaults plus the current selection (unfiltered, so a selected PID hidden by a filter is not dropped on save), plus the filtered registry.
    - The new `TripInfoBottom` source is the PIDs in the main selection, minus `TRIP_INFO_STATUS_PIDS`.
+   - The bottom dialog lists its PIDs via `tripInfoBottomDialogItems()` (`:datalogger`): the default row first in its order, then by id. The dialog stores its checked rows' order as the drag order on first open, and a stored drag order beats the default one, so listing in the selection's `Set` order made opening the dialog reorder the row.
    - For the bottom dialog, `persistedSelection()` uses `tripInfoBottomDialogSelection(persisted, listed)` (`:datalogger`): the stored row, or the default row when unset, **limited to the PIDs the dialog lists**. It drives both the checked state and the "did it change" check on save, so saving the dialog unchanged writes nothing — even when a default bottom PID is not selected for Trip Info, which would otherwise persist a shortened row and lose that PID for good.
 
 ## Backward compatibility
@@ -72,6 +73,7 @@ The bottom setting is in `preferences.xml` under AA → Trip Info → displayed 
 | other PIDs get the generic formatting | Generic descriptor defaults |
 | selected bottom row is ordered, capped and the rest moves to the grid | Order honoured, max 4, overflow and unchosen default bottom PIDs appear in the grid |
 | undragged bottom row keeps the default order once stored | A stored set without a drag order follows `TRIP_INFO_DEFAULT_BOTTOM_PIDS` order, not id order |
+| the order the bottom dialog stores on opening keeps the default row order | The drag order the dialog stores on first open does not reorder the row |
 | empty bottom selection means no bottom row | Empty set means no bottom row; former bottom PIDs move to the grid |
 | odometer in the bottom row still shows the trip distance | Distance chosen for the bottom row keeps `diff` |
 | vehicle status PID added to every query by the status panel is not drawn | `VEHICLE_STATUS` (added by `QueryStrategyOrchestrator` when the status panel or disconnect-when-off is on) leaves both rows unchanged |

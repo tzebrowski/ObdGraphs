@@ -82,7 +82,9 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
    (`maxWidth`): the default comes from the Trip Info layout cache, which Performance never lays out.
 6. **`PidDefinitionViewModel` (`:app`).** The `Performance` source is the profile PIDs plus the current
    selection (unfiltered), plus the filtered registry. The new `PerformanceBottom` source is the
-   selection minus status and hidden PIDs; its checked state and save check use
+   selection minus status and hidden PIDs, listed in the profile's gauge order
+   (`performanceBottomDialogItems`) because the dialog stores its listed order as the drag order on
+   first open; its checked state and save check use
    `performanceBottomDialogSelection`. Saving the `Performance` selection prunes the stored gauges;
    saving the gauge dialog with more than 5 checked shows the overflow toast (`gaugeOverflow()`).
 
@@ -110,6 +112,7 @@ handled by `SurfaceRendererScreen` like a Performance selection change. New stri
 | selected gauges are ordered, capped and the rest moves to the grid | Gauge order honoured, max 5, overflow and former gauges go to the grid |
 | undragged gauges keep the profile order after one is removed | A stored set without a drag order follows the profile's bottom order, not id order |
 | dragged gauges follow the drag order, then the profile order | Dragged first, then profile order, then the rest by id |
+| the order the gauge dialog stores on opening keeps the profile order | The drag order the dialog stores on first open does not reorder the gauges |
 | empty gauge selection means no gauges | Former gauges move to the grid |
 | gauges that are not queried are skipped | Only queried ids |
 | grid is unchanged up to three full rows | 0–15 items: 5 columns, scale 1 |

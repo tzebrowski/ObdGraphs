@@ -14,10 +14,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer
+package org.obd.graphs.bl.query
 
-/** Display order of user-selected PIDs, shared by the Trip Info and Performance plans. */
-internal object PidOrder {
+/** Display order of user-selected PIDs, shared by the Trip Info / Performance plans and their PID dialogs. */
+object PidOrder {
     // Undragged PIDs fall back to [defaultOrder]: a stored selection is a set, and id order would
     // reshuffle the row as soon as one PID was unchecked.
     fun comparator(

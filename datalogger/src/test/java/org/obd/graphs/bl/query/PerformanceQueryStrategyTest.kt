@@ -97,6 +97,16 @@ class PerformanceQueryStrategyTest : TestSetup() {
     }
 
     @Test
+    fun `gauge dialog lists the profile gauges first in their order, without hidden or status PIDs`() {
+        val selected = linkedSetOf(40L, 22L, 36L, PERFORMANCE_STATUS_PIDS.first(), 20L, 30L)
+
+        assertEquals(
+            listOf(20L, 22L, 30L, 40L),
+            performanceBottomDialogItems(selected, hidden = setOf(36L), profileBottom = listOf(20L, 22L))
+        )
+    }
+
+    @Test
     fun `deselecting a PID drops it from the stored gauges`() {
         assertEquals(setOf(20L), prunedPerformanceBottomSelection(stored = setOf(20L, 21L), selected = setOf(10L, 20L)))
         assertEquals(emptySet<Long>(), prunedPerformanceBottomSelection(stored = setOf(21L), selected = setOf(10L)))

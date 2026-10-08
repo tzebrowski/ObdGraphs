@@ -33,19 +33,21 @@ import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.isUserCustom
 import org.obd.graphs.bl.datalogger.serialize
-import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM_SELECTED
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_HIDDEN
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_SELECTED
 import org.obd.graphs.bl.query.PREF_QUERY_TRIP_INFO_SELECTED
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
+import org.obd.graphs.bl.query.performanceBottomDialogItems
 import org.obd.graphs.bl.query.performanceBottomDialogSelection
 import org.obd.graphs.bl.query.performanceGaugeOverflow
 import org.obd.graphs.bl.query.prunedPerformanceBottomSelection
+import org.obd.graphs.bl.query.tripInfoBottomDialogItems
 import org.obd.graphs.bl.query.tripInfoBottomDialogSelection
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongList
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -294,9 +296,7 @@ class PidDefinitionViewModel(
                 pinned + findPidDefinitionByPriority(all) { !pinnedIds.contains(it.id) }
             }
             dialogMode is PidDefinitionDialogMode.TripInfoBottom -> {
-                Prefs.getStringSet(PREF_QUERY_TRIP_INFO_SELECTED)
-                    .map { it.toLong() }
-                    .filter { !TRIP_INFO_STATUS_PIDS.contains(it) }
+                tripInfoBottomDialogItems(Prefs.getStringSet(PREF_QUERY_TRIP_INFO_SELECTED).map { it.toLong() })
                     .mapNotNull { pidRegistry.findBy(it) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }
@@ -311,11 +311,11 @@ class PidDefinitionViewModel(
                 pinned + findPidDefinitionByPriority(all) { !pinnedIds.contains(it.id) }
             }
             dialogMode is PidDefinitionDialogMode.PerformanceBottom -> {
-                val hidden = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN)
-                Prefs.getStringSet(PREF_QUERY_PERFORMANCE_SELECTED)
-                    .map { it.toLong() }
-                    .filter { !PERFORMANCE_STATUS_PIDS.contains(it) && !hidden.contains(it) }
-                    .mapNotNull { pidRegistry.findBy(it) }
+                performanceBottomDialogItems(
+                    Prefs.getStringSet(PREF_QUERY_PERFORMANCE_SELECTED).map { it.toLong() },
+                    Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN),
+                    Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM)
+                ).mapNotNull { pidRegistry.findBy(it) }
                     .map { PidDefinitionDetails(it, checked = false, supported = true) }
             }
             individualQuery -> {
