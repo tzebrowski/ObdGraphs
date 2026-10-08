@@ -17,9 +17,9 @@
 package org.obd.graphs.renderer.trip
 
 import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.query.PidOrder
 import org.obd.graphs.bl.query.TRIP_INFO_DEFAULT_BOTTOM_PIDS
 import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
-import org.obd.graphs.renderer.PidOrder
 
 internal const val MAX_BOTTOM_ITEMS = 4
 

@@ -56,6 +56,17 @@ fun tripInfoBottomDialogSelection(
     listed: Collection<Long>
 ): Set<Long> = (persisted ?: TRIP_INFO_DEFAULT_BOTTOM_PIDS).filter { listed.contains(it) }.toSet()
 
+/**
+ * The PIDs the bottom row dialog lists, in the order the bottom row draws them undragged. The dialog
+ * stores the order of its checked rows when first opened, and that stored order beats the default
+ * one in [PidOrder]; listed in the Trip Info selection's set order it reshuffled the row.
+ */
+fun tripInfoBottomDialogItems(selected: Collection<Long>): List<Long> =
+    selected
+        .filter { !TRIP_INFO_STATUS_PIDS.contains(it) }
+        .distinct()
+        .sortedWith(PidOrder.comparator(null, TRIP_INFO_DEFAULT_BOTTOM_PIDS))
+
 internal class TripInfoQueryStrategy : QueryStrategy() {
     private val defaults =
         setOf(

@@ -63,6 +63,17 @@ fun performanceBottomDialogSelection(
     listed: Collection<Long>
 ): Set<Long> = (persisted ?: Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM)).filter { listed.contains(it) }.toSet()
 
+/** The PIDs the gauge dialog lists, in the profile's gauge order. See [tripInfoBottomDialogItems]. */
+fun performanceBottomDialogItems(
+    selected: Collection<Long>,
+    hidden: Set<Long>,
+    profileBottom: List<Long>
+): List<Long> =
+    selected
+        .filter { !PERFORMANCE_STATUS_PIDS.contains(it) && !hidden.contains(it) }
+        .distinct()
+        .sortedWith(PidOrder.comparator(null, profileBottom))
+
 const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC =
     "pref.query.performance.break_boosting.gas_pid"
 const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_ARBITRARY_METRIC =

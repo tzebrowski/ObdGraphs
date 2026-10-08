@@ -76,6 +76,20 @@ class TripInfoQueryStrategyTest : TestSetup() {
     }
 
     @Test
+    fun `bottom dialog lists the default row first in its order, without status PIDs`() {
+        val selected =
+            linkedSetOf(
+                Pid.COOLANT_TEMP_PID_ID.id,
+                Pid.ENGINE_TORQUE_PID_ID.id,
+                Pid.AMBIENT_TEMP_PID_ID.id,
+                Pid.OIL_PRESSURE_PID_ID.id,
+                Pid.INTAKE_PRESSURE_PID_ID.id
+            )
+
+        assertEquals(TRIP_INFO_DEFAULT_BOTTOM_PIDS + Pid.COOLANT_TEMP_PID_ID.id, tripInfoBottomDialogItems(selected))
+    }
+
+    @Test
     fun `bottom dialog shows the persisted row limited to the listed PIDs`() {
         assertEquals(
             setOf(13L),

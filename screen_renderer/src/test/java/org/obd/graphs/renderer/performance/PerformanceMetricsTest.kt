@@ -20,6 +20,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.query.performanceBottomDialogItems
 
 private const val CUSTOM_PID_1 = 6001L
 private const val CUSTOM_PID_2 = 6002L
@@ -136,6 +137,18 @@ class PerformanceMetricsTest {
             )
 
         assertEquals(listOf(7007L, 7028L, 7005L, CUSTOM_PID_1), result.bottom)
+    }
+
+    @Test
+    fun `the order the gauge dialog stores on opening keeps the profile order`() {
+        // The dialog stores its checked rows' order when first opened, and a stored order beats the profile one.
+        val listed = performanceBottomDialogItems(profileSelection.reversed().toSet(), profileHidden, profileBottom)
+        val gauges = setOf(7028L, 7005L, 7007L)
+        val storedOrder = listed.filter { gauges.contains(it) }.withIndex().associate { it.value to it.index }
+
+        val result = plan(available = profileSelection, bottomSelection = gauges, bottomSortOrder = storedOrder)
+
+        assertEquals(listOf(7028L, 7005L, 7007L), result.bottom)
     }
 
     @Test

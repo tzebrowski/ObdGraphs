@@ -21,6 +21,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.query.tripInfoBottomDialogItems
 
 private const val CUSTOM_PID_1 = 6001L
 private const val CUSTOM_PID_2 = 6002L
@@ -163,6 +164,17 @@ class TripInfoMetricsTest {
         val plan = TripInfoMetrics.plan(legacySelection + CUSTOM_PID_1, legacyBottom.reversed().toSet() + CUSTOM_PID_1, null, null)
 
         assertEquals(legacyBottom + CUSTOM_PID_1, plan.bottom.map { it.id })
+    }
+
+    @Test
+    fun `the order the bottom dialog stores on opening keeps the default row order`() {
+        // The dialog stores its checked rows' order when first opened, and a stored order beats the default one.
+        val listed = tripInfoBottomDialogItems((legacySelection + CUSTOM_PID_1).reversed().toSet())
+        val storedOrder = listed.filter { legacyBottom.contains(it) }.withIndex().associate { it.value to it.index }
+
+        val plan = TripInfoMetrics.plan(legacySelection, legacyBottom.toSet(), null, storedOrder)
+
+        assertEquals(legacyBottom, plan.bottom.map { it.id })
     }
 
     @Test

@@ -188,8 +188,13 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   could be read half-applied. Grid fit reuses `TripInfoMetrics.grid(count, 5, 3)` (unchanged up to 15).
 * A stored gauge / bottom-row selection is a `Set`, so it carries no order. Undragged PIDs fall back to
   the profile's bottom order (Trip Info: `TRIP_INFO_DEFAULT_BOTTOM_PIDS`) before id order in
-  `renderer/PidOrder.kt` (shared by both screens — keep one copy, not in either screen's Metrics);
+  `bl/query/PidOrder.kt` (`:datalogger`, shared by both screens and their dialogs — keep one copy);
   plain id order reshuffled the row as soon as one PID was unchecked.
+* **Opening a PID dialog stores a drag order.** `PidDefinitionViewModel.sortItems()` saves the checked
+  rows' listed order whenever none is stored, and a stored order beats `PidOrder`'s default. So the
+  bottom/gauge dialogs must *list* in the default order (`tripInfoBottomDialogItems`,
+  `performanceBottomDialogItems`); listed in a `Set`'s order, merely opening the dialog fixed a random
+  order. Orders stored before that fix stay as stored — they cannot be told apart from a real drag.
 * "Select all" in the Trip Info / Performance PID dialogs (full registry) only warns via toast, by
   the user's choice — no cap. Gate: `PidDefinitionDialogMode.warnsOnSelectAll`.
 * `MetricsCache` serves phone and AA alike, so the AA gauge pref and order keys also drive the phone

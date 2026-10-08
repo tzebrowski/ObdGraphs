@@ -18,7 +18,7 @@ package org.obd.graphs.renderer.performance
 
 import org.obd.graphs.bl.query.PERFORMANCE_MAX_GAUGES
 import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
-import org.obd.graphs.renderer.PidOrder
+import org.obd.graphs.bl.query.PidOrder
 import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.renderer.trip.TripInfoMetrics
 
