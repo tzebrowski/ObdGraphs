@@ -141,6 +141,26 @@ class GaugeGeometryTest {
     }
 
     @Test
+    fun `phone dial is centred on what it draws, not on its square`() {
+        // 200 degree dial from 200: top of the circle to 40 degrees below the centre.
+        val drawn = 50f * (1f + kotlin.math.sin(Math.toRadians(40.0)).toFloat())
+        val offset = GaugeGeometry.dialTopOffset(cardHeight = 100f, gaugeWidth = 100f, startAngle = 200f, sweepAngle = 200f)
+
+        assertEquals((100f - drawn) / 2f, offset, 0.01f)
+    }
+
+    @Test
+    fun `upper half dial moves to the middle of a square card`() {
+        assertEquals(25f, GaugeGeometry.dialTopOffset(100f, 100f, startAngle = 180f, sweepAngle = 180f), 0.01f)
+    }
+
+    @Test
+    fun `full circle dial stays where it was`() {
+        assertEquals(0f, GaugeGeometry.dialTopOffset(100f, 100f, startAngle = 0f, sweepAngle = 360f), 0.01f)
+        assertEquals(25f, GaugeGeometry.dialTopOffset(150f, 100f, startAngle = 0f, sweepAngle = 360f), 0.01f)
+    }
+
+    @Test
     fun `cards fill the free height up to a limit, stay square when scrolling`() {
         // Four gauges in two columns used under half of a portrait phone screen.
         assertEquals(180f, GaugeGeometry.cardHeight(gaugeWidth = 140f, itemMargin = 6f, rows = 2, availableHeight = 384f))

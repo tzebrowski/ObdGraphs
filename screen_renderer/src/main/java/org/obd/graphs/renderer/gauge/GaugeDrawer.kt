@@ -40,6 +40,7 @@ import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.cache.TextCache
+import org.obd.graphs.renderer.displayUnits
 import org.obd.graphs.round
 import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
@@ -577,7 +578,7 @@ internal class GaugeDrawer(
         valuePaint.getTextBounds(value, 0, value.length, drawingCache.textRect)
 
         val pid = metric.pid
-        val unitText = pid.units
+        val unitText = displayUnits(pid.units)
         var unitWidth = 0f
 
         if (unitText != null) {

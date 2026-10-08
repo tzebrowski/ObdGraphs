@@ -29,6 +29,7 @@ import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.MARGIN_END
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.cache.TextCache
+import org.obd.graphs.renderer.displayUnits
 import org.obd.graphs.renderer.giulia.GiuliaDrawer
 import org.obd.graphs.toNumber
 
@@ -321,7 +322,7 @@ internal class TripInfoDrawer(
         var textWidth = getTextWidth(text, valuePaint) + textPadding
 
         if (unitEnabled) {
-            metric.source.command.pid.units?.let {
+            displayUnits(metric.source.command.pid.units)?.let {
                 valuePaint.color = Color.LTGRAY
                 valuePaint.textSize = (textSize * 0.4).toFloat()
                 canvas.drawText(it, (left + textWidth), top, valuePaint)

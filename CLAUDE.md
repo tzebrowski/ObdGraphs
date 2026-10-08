@@ -211,6 +211,10 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   zones) must be in its key. Numbers skipped for a still-`null` value were cached numberless for good.
 * End labels of a dial that ends below centre sit beside the stats row; `GaugeGeometry.statsMaxWidth`
   keeps the row clear. Fix overlaps with draw order (numbers after ticks) before moving labels.
+* Phone dials are centred on what they draw (`GaugeGeometry.dialTopOffset` from start/sweep), not on
+  their square — a 200° arc leaves the lower circle empty.
+* Units: draw `displayUnits(pid.units)` (`renderer/Units.kt`), never `pid.units` directly. ObdMetrics'
+  PID resources spell °C as a bare `C`, and they are not ours to change (shared with exports/logs).
 * Red on the dial = the PID's `alert` thresholds. The scale bitmap cache is keyed by `GaugeScale` and
   `GaugeRedZones` too — a cache keyed by PID id alone kept a stale scale after a PID edit.
 * Phone cards may be taller than the dial (`GaugeGeometry.cardHeight`); `borderArea` is the card, `top`

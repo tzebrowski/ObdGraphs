@@ -32,6 +32,7 @@ import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.cache.TextCache
+import org.obd.graphs.renderer.displayUnits
 import org.obd.graphs.toFloat
 import org.obd.graphs.toNumber
 import kotlin.math.max
@@ -362,7 +363,7 @@ internal class GiuliaDrawer(
         castToInt: Boolean = false
     ): Float {
         valuePaint.color = valueColorScheme(metric)
-        val units = metric.source.command.pid.units ?: ""
+        val units = displayUnits(metric.source.command.pid.units) ?: ""
         val left1 = left - getTextWidth(units, valuePaint)
         valuePaint.setShadowLayer(30f * density, 0f, 0f, Color.WHITE)
 
@@ -375,7 +376,7 @@ internal class GiuliaDrawer(
 
         canvas.drawText(value, left1, top, valuePaint)
 
-        metric.source.command.pid.units?.let {
+        displayUnits(metric.source.command.pid.units)?.let {
             valuePaint.color = Color.LTGRAY
             valuePaint.textAlign = Paint.Align.LEFT
             valuePaint.textSize = (textSize * 0.4).toFloat()

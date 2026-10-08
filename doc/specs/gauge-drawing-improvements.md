@@ -10,7 +10,7 @@ Readability, correctness and per-frame cost fixes for the dial gauge (`GaugeDraw
 
 **Problem.** Scale labels were thirds of the PID range (`-40, -6, 26, 60 …`, `0.8, 2.7, 4.5 …`). The last part of every dial was painted red whether or not the PID has an alert. End-of-scale labels ran into the ticks and the card border. The min / avg / max row was unlabelled and spaced by fixed offsets. A long value ran past the dial. Four gauges used under half of a portrait screen. A value outside the PID's min..max drew the progress arc past the dial's end (or backwards).
 
-**Scope.** `:screen_renderer` only: `GaugeDrawer`, `GaugeSurfaceRenderer`, new pure `GaugeGeometry.kt`. `GaugeDrawer` is shared, so items 1–5 and 7–9 also change the gauges of Performance, Drag Racing and Brake Boosting (phone and AA). No preference, query or data changes.
+**Scope.** `:screen_renderer` only: `GaugeDrawer`, `GaugeSurfaceRenderer`, new pure `GaugeGeometry.kt`; `renderer/Units.kt` used by every drawer that draws units. `GaugeDrawer` is shared, so items 1–5 and 7–9 also change the gauges of Performance, Drag Racing and Brake Boosting (phone and AA). No preference, query or data changes.
 
 ## Behaviour changes
 
@@ -25,6 +25,8 @@ Readability, correctness and per-frame cost fixes for the dial gauge (`GaugeDraw
 | 7 | Out-of-range value | Arc drawn past the end, or backwards below min | Clamped to the dial |
 | 8 | Arc angle | Truncated to whole degrees | Float |
 | 9 | Scale bitmap cache | Keyed by PID id, size, colour; numbers skipped while the value was still `null`, and that numberless dial stayed cached | Also keyed by scale, red zones and whether numbers are drawn; numbers skipped only for non-numeric values; the replaced bitmap is recycled |
+| 11 | Dial position (phone) | Dial square centred in the card; a 200° dial draws nothing below 40° under its centre, so the bottom third of each card was empty | The drawn part of the arc (from its start / sweep angles) is centred in the card (`GaugeGeometry.dialTopOffset`) |
+| 12 | Units | `C` as defined in the ObdMetrics PID resources | `°C` / `°F` on every surface-rendered screen (gauge, Giulia, Trip Info, Performance, status panel) via `displayUnits()`; the PID data, exports and logs keep `C` |
 | 10 | Per frame | New `RadialGradient` per gauge; colour parsed / resolved per frame | Gradient cached per PID and card rect; colours resolved once |
 
 ## Settings / keys touched
@@ -60,6 +62,8 @@ Visual only. Existing profiles keep their PIDs and ranges; the dial's range may 
 | stats row is centred with equal gaps / wider than the card is scaled down | Item 4 |
 | value text is only ever shrunk | Item 5 |
 | cards fill the free height up to a limit, stay square when scrolling | Item 6 |
+| phone dial is centred on what it draws / upper half dial moves to the middle / full circle dial stays | Item 11 |
+| `UnitsTest`: bare temperature units get the degree sign / other units are drawn as defined | Item 12 |
 
 ## Risks and verification checklist
 
@@ -71,9 +75,14 @@ Visual only. Existing profiles keep their PIDs and ranges; the dial's range may 
 - [ ] A gauge showing `--` (no value yet) still shows its scale numbers.
 - [ ] End label (e.g. `120`) does not touch the `▲` max value.
 - [ ] Performance, Drag Racing, Brake Boosting gauges (phone + AA DHU): labels readable, no overlap with ticks.
+- [ ] Phone, square (scrolling) cards: dial and stats sit in the middle of the card, the arc's end stays inside it.
+- [ ] Temperatures read `°C` on Gauge, Giulia, Trip Info, Performance and the AA status panel.
 - [ ] `▼` / `▲` render (font fallback) on the target devices.
 
 ## Out of scope
+
+* `°C` in the `:app` views (Dashboard, graph marker, DTC details): they format units themselves; `displayUnits` would have to move to `:common` first.
+* Fixing `C` in the ObdMetrics PID resources: a separate repository, and the unit also feeds exports and logs.
 
 * Pre-rendering the progress glow: the arc changes every frame, so it cannot be cached; the `BlurMaskFilter` cost was not measured.
 * Captions in words (`min / avg / max`): would need strings in `:app`'s resources for both locales.

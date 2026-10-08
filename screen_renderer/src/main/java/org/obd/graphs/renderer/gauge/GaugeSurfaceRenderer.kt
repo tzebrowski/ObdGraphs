@@ -66,6 +66,9 @@ private const val TAG = "cache"
 // Below the last row; the free height the cards share excludes it, or a filled grid would scroll.
 private const val CONTENT_BOTTOM_PADDING = 20f
 
+private const val MOBILE_START_ANGLE = 200f
+private const val MOBILE_SWEEP_ANGLE = 200f
+
 internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
@@ -87,8 +90,8 @@ internal class GaugeSurfaceRenderer(
             context = context,
             drawerSettings =
             DrawerSettings(
-                startAngle = 200f,
-                sweepAngle = 200f,
+                startAngle = MOBILE_START_ANGLE,
+                sweepAngle = MOBILE_SWEEP_ANGLE,
                 gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType
             )
         )
@@ -326,7 +329,12 @@ internal class GaugeSurfaceRenderer(
         if (fillsHeight) {
             layoutCache.rowHeight = cardHeight + 2 * itemMargin
         }
-        val dialOffset = (cardHeight - layoutCache.gaugeWidth) / 2f
+        val dialOffset =
+            if (fillsHeight) {
+                GaugeGeometry.dialTopOffset(cardHeight, layoutCache.gaugeWidth, MOBILE_START_ANGLE, MOBILE_SWEEP_ANGLE)
+            } else {
+                0f
+            }
         layoutCache.contentHeight = topOffset + (totalRows * layoutCache.rowHeight) + CONTENT_BOTTOM_PADDING
         layoutCache.maxScroll = max(0f, layoutCache.contentHeight - availableHeight)
 

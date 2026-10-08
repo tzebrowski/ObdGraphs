@@ -22,6 +22,7 @@ import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.log10
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -201,6 +202,49 @@ internal object GaugeGeometry {
             x += (w + gap) * scale
         }
         return StatsRow(lefts, scale)
+    }
+
+    /**
+     * Offset of the dial's square from the card top that centres what the dial actually draws.
+     * A 200° dial draws nothing in the lower part of its circle, so a dial centred as a square
+     * left the bottom third of every card empty.
+     */
+    fun dialTopOffset(
+        cardHeight: Float,
+        gaugeWidth: Float,
+        startAngle: Float,
+        sweepAngle: Float
+    ): Float {
+        val radius = gaugeWidth / 2f
+        val (minSin, maxSin) = arcSinRange(startAngle, sweepAngle)
+        val drawnHeight = radius * (maxSin - minSin)
+        // The drawn part starts radius * minSin below the circle's centre, i.e. this far below its square's top.
+        val drawnTop = radius + radius * minSin
+        return ((cardHeight - drawnHeight) / 2f - drawnTop).coerceIn(0f, max(0f, cardHeight - gaugeWidth / 2f - radius * maxSin))
+    }
+
+    // Lowest and highest sine over the arc (canvas angles: 90 is the bottom, 270 the top).
+    private fun arcSinRange(
+        startAngle: Float,
+        sweepAngle: Float
+    ): Pair<Float, Float> {
+        val start = Math.toRadians(startAngle.toDouble())
+        val end = Math.toRadians((startAngle + sweepAngle).toDouble())
+        var minSin = min(sin(start), sin(end)).toFloat()
+        var maxSin = max(sin(start), sin(end)).toFloat()
+        val from = min(startAngle, startAngle + sweepAngle)
+        val to = max(startAngle, startAngle + sweepAngle)
+        var a = ceil((from - 90f) / 360f) * 360f + 90f
+        while (a <= to) {
+            maxSin = 1f
+            a += 360f
+        }
+        a = ceil((from - 270f) / 360f) * 360f + 270f
+        while (a <= to) {
+            minSin = -1f
+            a += 360f
+        }
+        return minSin to maxSin
     }
 
     /**
