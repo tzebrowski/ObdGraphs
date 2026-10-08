@@ -201,6 +201,26 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   screen, which has no setting of its own. Gauges past `PERFORMANCE_MAX_GAUGES` fall back into the grid,
   not nowhere; the gauge dialog only warns (toast), it does not block.
 
+### Gauge drawer (`renderer/gauge/`)
+* `GaugeDrawer` is shared by the Gauge, Performance, Drag Racing and Brake Boosting screens (phone + AA):
+  any dial change shows on all four. Spec: `doc/specs/gauge-drawing-improvements.md`.
+* **The dial maps values through `GaugeScale`, not `pid.min`/`pid.max`.** It extends the PID range to
+  "nice" steps; progress, labels and ticks must all use `scale.fraction()` or they drift apart.
+  Pure geometry lives in `GaugeGeometry.kt` (unit-tested); keep Canvas out of it.
+* The scale bitmap is cached, so anything that decides *what* goes into it (numbers on/off, scale,
+  zones) must be in its key. Numbers skipped for a still-`null` value were cached numberless for good.
+* End labels of a dial that ends below centre sit beside the stats row; `GaugeGeometry.statsMaxWidth`
+  keeps the row clear. Fix overlaps with draw order (numbers after ticks) before moving labels.
+* Phone dials are centred on what they draw (`GaugeGeometry.dialTopOffset` from start/sweep), not on
+  their square — a 200° arc leaves the lower circle empty.
+* Units: draw `displayUnits(pid.units)` (`renderer/Units.kt`), never `pid.units` directly. ObdMetrics'
+  PID resources spell °C as a bare `C`, and they are not ours to change (shared with exports/logs).
+* Red on the dial = the PID's `alert` thresholds. The scale bitmap cache is keyed by `GaugeScale` and
+  `GaugeRedZones` too — a cache keyed by PID id alone kept a stale scale after a PID edit.
+* Phone cards may be taller than the dial (`GaugeGeometry.cardHeight`); `borderArea` is the card, `top`
+  the dial. Captions belong to the card. `contentHeight`'s bottom pad must be excluded from the height
+  the cards share, or a filled grid scrolls by a few pixels.
+
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
   `pref.adapter.connection.type`. Two Bluetooth transports, deliberately separate:

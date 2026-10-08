@@ -40,7 +40,9 @@ import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.cache.TextCache
+import org.obd.graphs.renderer.displayUnits
 import org.obd.graphs.round
+import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
 import org.obd.graphs.toNumber
 import org.obd.graphs.ui.common.COLOR_WHITE
@@ -55,32 +57,64 @@ import kotlin.math.sin
 private const val MIN_TEXT_VALUE_HEIGHT = 30
 private const val CACHE_SCALE = 2f
 
+// Share of the dial width the value (with its unit) may take before it is shrunk.
+private const val VALUE_MAX_WIDTH_RATIO = 0.7f
+
+// Share of the card width the min / avg / max row may take before it is shrunk.
+private const val STATS_MAX_WIDTH_RATIO = 0.9f
+
+// Scale labels: centred at this share of the dial radius, never reaching past the outer one.
+private const val NUMBERS_RADIUS_RATIO = 0.75f
+private const val NUMBERS_MAX_OUTER_RADIUS_RATIO = 0.85f
+private const val NUMBERS_TEXT_RATIO = 0.055f
+private const val STATS_CAPTION_RATIO = 0.6f
+private const val MIN_CAPTION = "\u25BC"
+private const val MAX_CAPTION = "\u25B2"
+
 data class DrawerSettings(
     val gaugeProgressWidth: Float = 1.5f,
     val gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     val startAngle: Float = 200f,
     val sweepAngle: Float = 180f,
     val scaleStep: Int = 2,
-    val dividersCount: Int = 12,
-    val dividersStepAngle: Float = sweepAngle / dividersCount,
     val longPointerSize: Float = 1f,
     val padding: Float = 10f,
     val dividerWidth: Float = 1f,
     val lineOffset: Float = 8f,
     val valueTextSize: Float = 46f,
     val labelTextSize: Float = 16f,
-    val scaleNumbersTextSize: Float = 12f,
-    val dividerHighlightStart: Int = 9
+    val scaleNumbersTextSize: Float = 12f
 )
 
 private data class ScaleBitmapCache(
     val bitmap: Bitmap,
     val width: Int,
     val height: Int,
-    val dividerCount: Int,
+    val scale: GaugeScale,
+    val redZones: GaugeRedZones,
     val progressColor: Int,
-    val scaleEnabled: Boolean
+    val numbersDrawn: Boolean
 )
+
+// The scale and red zones of one PID, rebuilt only when its range or thresholds change.
+private class PidScale(
+    val scale: GaugeScale,
+    val redZones: GaugeRedZones
+)
+
+private class CachedGradient(
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float,
+    val color: Int,
+    val shader: RadialGradient
+) {
+    fun matches(
+        rect: RectF,
+        color: Int
+    ) = rect.left == left && rect.top == top && rect.right == right && rect.bottom == bottom && color == this.color
+}
 
 private class GaugeDrawingCache {
     val workingRect = RectF()
@@ -113,14 +147,27 @@ internal class GaugeDrawer(
     private val textCache = TextCache()
     private val drawingCache = GaugeDrawingCache()
 
+    private val colorGray = color(R.color.gray)
+    private val colorGrayDark = color(R.color.gray_dark)
+    private val colorGrayLight = color(R.color.gray_light)
+    private val trackShadowColor = "#0D000000".toColorInt()
+
+    private val pidScales = mutableMapOf<Long, PidScale>()
+    private val gradientCache = mutableMapOf<Long, CachedGradient>()
+
     private val numbersPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = color(R.color.gray)
+            color = colorGray
         }
 
     private val labelPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = color(R.color.gray)
+            color = colorGray
+        }
+
+    private val statsCaptionPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = colorGray
         }
 
     private val histogramPaint =
@@ -158,7 +205,7 @@ internal class GaugeDrawer(
 
     private val modulePaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = color(R.color.gray)
+            color = colorGray
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
         }
 
@@ -180,7 +227,28 @@ internal class GaugeDrawer(
         super.recycle()
         scaleBitmapCache.values.forEach { it.bitmap.recycle() }
         scaleBitmapCache.clear()
+        pidScales.clear()
+        gradientCache.clear()
         textCache.clear()
+    }
+
+    private fun pidScale(metric: Metric): PidScale {
+        val pid = metric.pid
+        val min = pid.min.toDouble()
+        val max = pid.max.toDouble()
+        val lower = pid.alert?.lowerThreshold?.toDouble()
+        val upper = pid.alert?.upperThreshold?.toDouble()
+
+        val cached = pidScales[pid.id]
+        if (cached != null &&
+            cached.scale.sourceMin == min &&
+            cached.scale.sourceMax == max &&
+            cached.redZones.lower == lower &&
+            cached.redZones.upper == upper
+        ) {
+            return cached
+        }
+        return PidScale(GaugeScale.of(min, max), GaugeRedZones(lower, upper)).also { pidScales[pid.id] = it }
     }
 
     fun drawGauge(
@@ -214,27 +282,33 @@ internal class GaugeDrawer(
             drawingCache.workingRect.bottom + strokeWidth
         )
 
+        // A card taller than the dial keeps its captions in its own top corners.
+        val cardTop = borderArea?.top ?: top
+
         if (drawMetricRate) {
-            drawMetricRate(metric, drawingCache.workingRect, fontSize, width, left, top, canvas)
+            drawMetricRate(metric, drawingCache.workingRect, fontSize, width, left, cardTop, canvas)
         }
 
         if (drawModule) {
-            drawModuleName(metric, drawingCache.workingRect, fontSize, width, left, top, canvas)
+            drawModuleName(metric, drawingCache.workingRect, fontSize, width, left, cardTop, canvas)
         }
 
         if (drawBorder) {
             drawBorder(canvas, width, left, top, borderArea)
         }
 
-        drawContainerBackground(canvas, width, left, top, borderArea)
+        drawContainerBackground(canvas, metric.pid.id, width, left, top, borderArea)
 
-        drawBackground(canvas, drawingCache.workingRect, drawingCache.arcTopRect, strokeWidth, strokeWidth, metric)
+        val pidScale = pidScale(metric)
+
+        drawBackground(canvas, drawingCache.workingRect, drawingCache.arcTopRect, strokeWidth, strokeWidth, metric, pidScale.scale)
 
         drawScale(
             canvas,
             drawingCache.workingRect,
             drawingCache.arcTopRect,
             metric,
+            pidScale,
             scaleEnabled,
             radius,
             dynamicPadding
@@ -244,6 +318,7 @@ internal class GaugeDrawer(
             canvas,
             area = drawingCache.workingRect,
             metric = metric,
+            statsMaxWidth = statsMaxWidth(metric, pidScale.scale, scaleEnabled, radius, borderArea),
             radius = radius,
             labelCenterYPadding = labelCenterYPadding,
             fontSize = fontSize,
@@ -296,6 +371,7 @@ internal class GaugeDrawer(
 
     private fun drawContainerBackground(
         canvas: Canvas,
+        cacheKey: Long,
         width: Float,
         left: Float,
         top: Float,
@@ -314,20 +390,27 @@ internal class GaugeDrawer(
                 drawingCache.destRectF
             }
 
-        val gradientRadius = min(destRect.width(), destRect.height()) * 0.45f
-
-        drawingCache.gradientColors2[0] = gradientColor
-        drawingCache.gradientColors2[1] = Color.TRANSPARENT
-
+        // A RadialGradient per gauge per frame was pure allocation churn: the card rarely moves.
+        val cached = gradientCache[cacheKey]
         val gradient =
-            RadialGradient(
-                destRect.centerX(),
-                destRect.centerY(),
-                gradientRadius,
-                drawingCache.gradientColors2,
-                drawingCache.backgroundPositions,
-                Shader.TileMode.CLAMP
-            )
+            if (cached != null && cached.matches(destRect, gradientColor)) {
+                cached.shader
+            } else {
+                drawingCache.gradientColors2[0] = gradientColor
+                drawingCache.gradientColors2[1] = Color.TRANSPARENT
+
+                RadialGradient(
+                    destRect.centerX(),
+                    destRect.centerY(),
+                    min(destRect.width(), destRect.height()) * 0.45f,
+                    drawingCache.gradientColors2,
+                    drawingCache.backgroundPositions,
+                    Shader.TileMode.CLAMP
+                ).also {
+                    gradientCache[cacheKey] =
+                        CachedGradient(destRect.left, destRect.top, destRect.right, destRect.bottom, gradientColor, it)
+                }
+            }
 
         backgroundGradientPaint.shader = gradient
         val cornerRadius = 8f * context.resources.displayMetrics.density
@@ -362,14 +445,15 @@ internal class GaugeDrawer(
         arcTopRect: RectF,
         arcTopOffset: Float,
         strokeWidth: Float,
-        metric: Metric
+        metric: Metric,
+        scale: GaugeScale
     ) {
         paint.style = Paint.Style.STROKE
-        paint.color = "#0D000000".toColorInt()
+        paint.color = trackShadowColor
         paint.strokeWidth = strokeWidth
         canvas.drawArc(rect, drawerSettings.startAngle, drawerSettings.sweepAngle, false, paint)
 
-        paint.color = color(R.color.gray_dark)
+        paint.color = colorGrayDark
         paint.strokeWidth = 2f
         canvas.drawArc(
             arcTopRect,
@@ -404,13 +488,14 @@ internal class GaugeDrawer(
         )
 
         val progressBarHeight = (drawingCache.arcBottomRect.top - arcTopRect.top - 2f)
-        drawProgressBar(metric, canvas, rect, progressBarHeight)
+        drawProgressBar(metric, scale, canvas, rect, progressBarHeight)
 
         paint.strokeWidth = strokeWidth
     }
 
     private fun drawProgressBar(
         metric: Metric,
+        scale: GaugeScale,
         canvas: Canvas,
         rect: RectF,
         strokeWidth: Float
@@ -428,11 +513,10 @@ internal class GaugeDrawer(
                 setProgressGradient(rect)
             }
 
-            val value = metric.source.toFloat()
-            val startValue = metric.pid.min.toFloat()
-            val endValue = metric.pid.max.toFloat()
+            // Clamped: a value past the PID's max used to sweep beyond the dial, below min backwards.
+            val fraction = scale.fraction(metric.source.toDouble())
 
-            if (value == startValue) {
+            if (fraction == 0f) {
                 canvas.drawArc(
                     drawingCache.progressRect,
                     drawerSettings.startAngle,
@@ -441,28 +525,12 @@ internal class GaugeDrawer(
                     progressPaint
                 )
             } else {
-                val pointAngle = abs(drawerSettings.sweepAngle).toDouble() / (endValue - startValue)
-                val point = (drawerSettings.startAngle + (value - startValue) * pointAngle).toInt()
-                val currentSweep =
-                    if (drawerSettings.gaugeProgressBarType == GaugeProgressBarType.SHORT) {
-                        drawerSettings.gaugeProgressWidth
-                    } else {
-                        (point - drawerSettings.startAngle)
-                    }
-
-                val startAngle =
-                    if (drawerSettings.gaugeProgressBarType == GaugeProgressBarType.SHORT) {
-                        drawerSettings.startAngle + (point - drawerSettings.startAngle)
-                    } else {
-                        drawerSettings.startAngle
-                    }
-
-                val progressBarWidth =
-                    if (drawerSettings.gaugeProgressBarType == GaugeProgressBarType.SHORT) {
-                        strokeWidth
-                    } else {
-                        strokeWidth / 2f
-                    }
+                // Not truncated to whole degrees: on a short range that made the bar step visibly.
+                val point = drawerSettings.startAngle + fraction * abs(drawerSettings.sweepAngle)
+                val isShort = drawerSettings.gaugeProgressBarType == GaugeProgressBarType.SHORT
+                val currentSweep = if (isShort) drawerSettings.gaugeProgressWidth else point - drawerSettings.startAngle
+                val startAngle = if (isShort) point else drawerSettings.startAngle
+                val progressBarWidth = if (isShort) strokeWidth else strokeWidth / 2f
 
                 glowPaint.color = settings.getColorTheme().progressColor
                 glowPaint.strokeWidth = progressBarWidth * 2.5f
@@ -492,6 +560,7 @@ internal class GaugeDrawer(
         canvas: Canvas,
         area: RectF,
         metric: Metric,
+        statsMaxWidth: Float,
         radius: Float,
         labelCenterYPadding: Float = 0f,
         fontSize: Int,
@@ -509,7 +578,7 @@ internal class GaugeDrawer(
         valuePaint.getTextBounds(value, 0, value.length, drawingCache.textRect)
 
         val pid = metric.pid
-        val unitText = pid.units
+        val unitText = displayUnits(pid.units)
         var unitWidth = 0f
 
         if (unitText != null) {
@@ -519,7 +588,23 @@ internal class GaugeDrawer(
             valuePaint.textSize = calculatedFontSize
         }
 
-        val unitPadding = calculatedFontSize * 0.3f
+        // Layout height is taken before shrinking, so a long value does not move the label and stats.
+        val valueLayoutHeight = drawingCache.textRect.height()
+
+        // A long value (e.g. "100.0" plus its unit) ran past the dial; shrink it to the inner width.
+        val fit =
+            GaugeGeometry.fitScale(
+                drawingCache.textRect.width() + if (unitText != null) calculatedFontSize * 0.3f + unitWidth else 0f,
+                area.width() * VALUE_MAX_WIDTH_RATIO
+            )
+        val valueFontSize = calculatedFontSize * fit
+        if (fit < 1f) {
+            valuePaint.textSize = valueFontSize
+            valuePaint.getTextBounds(value, 0, value.length, drawingCache.textRect)
+            unitWidth *= fit
+        }
+
+        val unitPadding = valueFontSize * 0.3f
         var valueX = area.centerX() - (drawingCache.textRect.width() / 2f)
 
         if (value.length >= 4 && unitText != null) {
@@ -539,7 +624,7 @@ internal class GaugeDrawer(
             histogramPaint.textSize = calculatedFontSize * 0.4f
 
             val verticalGap = calculatedFontSize * 0.2f
-            val valueLineH = max(drawingCache.textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
+            val valueLineH = max(valueLayoutHeight, MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
 
             labelPaint.getTextBounds("Ty", 0, 2, drawingCache.labelRect)
             val labelLineH = drawingCache.labelRect.height()
@@ -560,7 +645,7 @@ internal class GaugeDrawer(
             }
         }
 
-        val valueHeight = max(drawingCache.textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
+        val valueHeight = max(valueLayoutHeight, MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
         val valueY = centerY - valueHeight
 
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
@@ -569,8 +654,8 @@ internal class GaugeDrawer(
 
         val unitY = centerY - valueHeight
         if (unitText != null) {
-            valuePaint.textSize = calculatedFontSize * 0.32f
-            valuePaint.color = color(R.color.gray)
+            valuePaint.textSize = valueFontSize * 0.32f
+            valuePaint.color = colorGray
             val unitX = valueX + drawingCache.textRect.width() + unitPadding
             canvas.drawText(unitText, unitX, unitY, valuePaint)
         }
@@ -601,31 +686,74 @@ internal class GaugeDrawer(
         }
 
         if (statsEnabled) {
-            histogramPaint.textSize = calculatedFontSize * 0.4f
-            histogramPaint.getTextBounds("0000", 0, "0000".length, drawingCache.histsRect)
-            var left = area.centerX() - (drawingCache.histsRect.width() * 1.5f)
+            drawStatsRow(canvas, area, metric, calculatedFontSize, labelY, verticalGap, statsMaxWidth)
+        }
+    }
 
-            val statsY = labelY + drawingCache.histsRect.height() + verticalGap
+    // min / avg / max, centred with equal gaps. Fixed offsets crowded long values to the right, and
+    // nothing said which number was which: min and max get a small ▼ / ▲ caption.
+    private fun drawStatsRow(
+        canvas: Canvas,
+        area: RectF,
+        metric: Metric,
+        calculatedFontSize: Float,
+        labelY: Float,
+        verticalGap: Float,
+        maxWidth: Float
+    ) {
+        val pid = metric.pid
+        val statsTextSize = calculatedFontSize * 0.4f
+        histogramPaint.textSize = statsTextSize
+        histogramPaint.getTextBounds("0000", 0, "0000".length, drawingCache.histsRect)
+        val statsY = labelY + drawingCache.histsRect.height() + verticalGap
 
-            if (pid.historgam.isMinEnabled) {
-                val minStr = textCache.min.get(pid.id, metric.min) { metric.min.format(pid) }
-                histogramPaint.color = minValueColorScheme(metric)
-                canvas.drawText(minStr, left, statsY, histogramPaint)
-                left += (drawingCache.histsRect.width() * 1.2f)
+        val minStr = if (pid.historgam.isMinEnabled) textCache.min.get(pid.id, metric.min) { metric.min.format(pid) } else null
+        val avgStr = if (pid.historgam.isAvgEnabled) textCache.avg.get(pid.id, metric.mean) { metric.mean.format(pid) } else null
+        val maxStr = if (pid.historgam.isMaxEnabled) textCache.max.get(pid.id, metric.max) { metric.max.format(pid) } else null
+
+        val captionTextSize = statsTextSize * STATS_CAPTION_RATIO
+        statsCaptionPaint.textSize = captionTextSize
+        val captionGap = statsTextSize * 0.1f
+
+        fun width(
+            caption: String?,
+            text: String?
+        ): Float =
+            if (text == null) {
+                0f
+            } else {
+                histogramPaint.measureText(text) + if (caption != null) statsCaptionPaint.measureText(caption) + captionGap else 0f
             }
 
-            if (pid.historgam.isAvgEnabled) {
-                val avgStr = textCache.avg.get(pid.id, metric.mean) { metric.mean.format(pid) }
-                histogramPaint.color = settings.getColorTheme().valueColor
-                canvas.drawText(avgStr, left, statsY, histogramPaint)
-                left += (drawingCache.histsRect.width() * 1.5f)
-            }
+        val widths = floatArrayOf(width(MIN_CAPTION, minStr), width(null, avgStr), width(MAX_CAPTION, maxStr))
+        val present = widths.indices.filter { widths[it] > 0f }
+        if (present.isEmpty()) return
 
-            if (pid.historgam.isMaxEnabled) {
-                val maxStr = textCache.max.get(pid.id, metric.max) { metric.max.format(pid) }
-                histogramPaint.color = maxValueColorScheme(metric)
-                canvas.drawText(maxStr, left, statsY, histogramPaint)
+        val row =
+            GaugeGeometry.statsRow(
+                present.map { widths[it] }.toFloatArray(),
+                gap = drawingCache.histsRect.width() * 0.35f,
+                centerX = area.centerX(),
+                maxWidth = maxWidth
+            )
+
+        histogramPaint.textSize = statsTextSize * row.scale
+        statsCaptionPaint.textSize = captionTextSize * row.scale
+
+        present.forEachIndexed { slot, item ->
+            var x = row.lefts[slot]
+            val (caption, text, color) =
+                when (item) {
+                    0 -> Triple(MIN_CAPTION, minStr!!, minValueColorScheme(metric))
+                    1 -> Triple(null, avgStr!!, settings.getColorTheme().valueColor)
+                    else -> Triple(MAX_CAPTION, maxStr!!, maxValueColorScheme(metric))
+                }
+            if (caption != null) {
+                canvas.drawText(caption, x, statsY, statsCaptionPaint)
+                x += statsCaptionPaint.measureText(caption) + captionGap * row.scale
             }
+            histogramPaint.color = color
+            canvas.drawText(text, x, statsY, histogramPaint)
         }
     }
 
@@ -634,6 +762,7 @@ internal class GaugeDrawer(
         rect: RectF,
         arcTopRect: RectF,
         metric: Metric,
+        pidScale: PidScale,
         scaleEnabled: Boolean,
         radius: Float,
         bitmapPadding: Float
@@ -644,13 +773,19 @@ internal class GaugeDrawer(
         val pidId = metric.pid.id
         val currentCache = scaleBitmapCache[pidId]
 
+        // The scale and red zones are part of the key: editing a PID's range or alerts must redraw it.
+        // Numbers are skipped only for non-numeric values. Skipping them while there was no value yet
+        // cached a dial without numbers until the layout changed.
+        val numbersDrawn = scaleEnabled && (metric.source.value == null || metric.source.isNumber())
+
         val isValid =
             currentCache != null &&
-                currentCache.scaleEnabled == scaleEnabled &&
+                currentCache.numbersDrawn == numbersDrawn &&
                 currentCache.progressColor == settings.getColorTheme().progressColor &&
                 currentCache.width == targetWidth &&
                 currentCache.height == targetHeight &&
-                currentCache.dividerCount == drawerSettings.dividersCount
+                currentCache.scale == pidScale.scale &&
+                currentCache.redZones == pidScale.redZones
 
         drawingCache.destRectF.set(rect)
         drawingCache.destRectF.inset(-bitmapPadding, -bitmapPadding)
@@ -671,68 +806,104 @@ internal class GaugeDrawer(
             cacheCanvas.scale(CACHE_SCALE, CACHE_SCALE)
             cacheCanvas.translate(-rect.left + bitmapPadding, -rect.top + bitmapPadding)
 
-            if (scaleEnabled && metric.source.isNumber()) {
-                drawNumbers(cacheCanvas, arcTopRect, metric, radius)
+            // Numbers last: the red ticks' glow used to paint over the end labels.
+            drawTicks(cacheCanvas, rect, pidScale)
+            if (numbersDrawn) {
+                drawNumbers(cacheCanvas, arcTopRect, pidScale, radius)
             }
-            drawTicks(cacheCanvas, rect)
 
-            scaleBitmapCache[pidId] =
+            scaleBitmapCache.put(
+                pidId,
                 ScaleBitmapCache(
                     cachedBitmap,
                     targetWidth,
                     targetHeight,
-                    drawerSettings.dividersCount,
+                    pidScale.scale,
+                    pidScale.redZones,
                     settings.getColorTheme().progressColor,
-                    scaleEnabled
+                    numbersDrawn
                 )
+            )?.bitmap?.recycle()
 
             canvas.drawBitmap(cachedBitmap, null, drawingCache.destRectF, bitmapPaint)
         }
     }
 
+    private fun statsMaxWidth(
+        metric: Metric,
+        scale: GaugeScale,
+        scaleEnabled: Boolean,
+        radius: Float,
+        borderArea: RectF?
+    ): Float {
+        val cardLimit = (borderArea?.width() ?: drawingCache.workingRect.width()) * STATS_MAX_WIDTH_RATIO
+        if (!scaleEnabled || (metric.source.value != null && !metric.source.isNumber())) return cardLimit
+
+        val endLabel = scale.label(scale.intervals)
+        numbersPaint.textSize = drawingCache.arcTopRect.width() * NUMBERS_TEXT_RATIO
+        numbersPaint.getTextBounds(endLabel, 0, endLabel.length, drawingCache.numberTextRect)
+        val endWidth = drawingCache.numberTextRect.width().toFloat()
+        val endAngle = Math.toRadians(angleOf(1f).toDouble())
+        val endRadius =
+            GaugeGeometry.labelCenterRadius(
+                radius * NUMBERS_RADIUS_RATIO,
+                radius * NUMBERS_MAX_OUTER_RADIUS_RATIO,
+                endAngle,
+                endWidth,
+                drawingCache.numberTextRect.height().toFloat()
+            )
+        return GaugeGeometry.statsMaxWidth(cardLimit, endAngle, endRadius, endWidth, gap = radius * 0.04f)
+    }
+
+    private fun angleOf(fraction: Float): Float = drawerSettings.startAngle + fraction * drawerSettings.sweepAngle
+
     private fun drawNumbers(
         canvas: Canvas,
         area: RectF,
-        metric: Metric,
+        pidScale: PidScale,
         radius: Float
     ) {
-        val pid = metric.pid
-        val startValue = pid.min.toDouble()
-        val endValue = pid.max.toDouble()
-        val numberOfItems = (drawerSettings.dividersCount / drawerSettings.scaleStep)
-        val stepValue = (endValue - startValue) / numberOfItems
+        val scale = pidScale.scale
 
-        val baseRadius = radius * 0.75f
+        numbersPaint.textSize = area.width() * NUMBERS_TEXT_RATIO
 
-        val start = 0
-        val end = drawerSettings.dividersCount + 1
-
-        numbersPaint.textSize = area.width() * 0.055f
-
-        for (j in start..end step drawerSettings.scaleStep) {
-            val angle = (drawerSettings.startAngle + j * drawerSettings.dividersStepAngle) * (Math.PI / 180)
-            val text = valueAsString(metric, value = (startValue + stepValue * j / drawerSettings.scaleStep).round(1))
+        for (i in 0..scale.intervals) {
+            val angle = angleOf(i.toFloat() / scale.intervals) * (Math.PI / 180)
+            val text = scale.label(i)
 
             numbersPaint.getTextBounds(text, 0, text.length, drawingCache.numberTextRect)
+            val textWidth = drawingCache.numberTextRect.width().toFloat()
+            val textHeight = drawingCache.numberTextRect.height().toFloat()
 
-            val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - drawingCache.numberTextRect.width() / 2).toFloat()
-            val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + drawingCache.numberTextRect.height() / 2).toFloat()
+            val labelRadius =
+                GaugeGeometry.labelCenterRadius(
+                    radius * NUMBERS_RADIUS_RATIO,
+                    radius * NUMBERS_MAX_OUTER_RADIUS_RATIO,
+                    angle,
+                    textWidth,
+                    textHeight
+                )
+            val x = area.left + (area.width() / 2.0f + cos(angle) * labelRadius - textWidth / 2).toFloat()
+            val y = area.top + (area.height() / 2.0f + sin(angle) * labelRadius + textHeight / 2).toFloat()
 
             numbersPaint.color =
-                if (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep) {
-                    settings.getColorTheme().progressColor
-                } else {
-                    color(R.color.gray)
-                }
+                if (pidScale.redZones.contains(scale.value(i))) settings.getColorTheme().progressColor else colorGray
 
             canvas.drawText(text, x, y, numbersPaint)
         }
     }
 
+    // Major ticks sit on the labels, minor ones halfway between. Red marks the PID's alert ranges
+    // only; it used to be painted on the last part of every dial, alert or not.
     private fun drawTicks(
         canvas: Canvas,
-        rect: RectF
+        rect: RectF,
+        pidScale: PidScale
     ) {
+        val scale = pidScale.scale
+        val zones = pidScale.redZones.ranges(scale)
+        val progressColor = settings.getColorTheme().progressColor
+
         drawingCache.scaleRect.set(
             rect.left + drawerSettings.lineOffset,
             rect.top + drawerSettings.lineOffset,
@@ -740,77 +911,46 @@ internal class GaugeDrawer(
             rect.bottom - drawerSettings.lineOffset
         )
 
-        val start = 0
-        val end = drawerSettings.dividersCount + 1
-
-        drawArcTicks(canvas, drawingCache.scaleRect, start, end, paintColor = {
-            if (it == 10 || it == 12) {
-                settings.getColorTheme().progressColor
-            } else {
-                color(R.color.gray_light)
-            }
-        }) {
-            drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
-        }
-
-        drawArcTicks(canvas, drawingCache.scaleRect, start, drawerSettings.dividersCount + 2) {
-            drawerSettings.startAngle + it * drawerSettings.dividersStepAngle * 0.5f
+        val ticks = scale.intervals * 2
+        for (k in 0..ticks) {
+            val fraction = k.toFloat() / ticks
+            val major = k % 2 == 0
+            paint.color = if (major && zones.any { fraction in it }) progressColor else colorGrayLight
+            canvas.drawArc(drawingCache.scaleRect, angleOf(fraction), drawerSettings.dividerWidth, false, paint)
         }
 
         drawingCache.alignedOuterRect.set(rect)
         drawingCache.alignedOuterRect.inset(2f, 2f)
 
-        val grayEndIndex = drawerSettings.dividerHighlightStart
-        drawArcTicks(
-            canvas,
-            drawingCache.alignedOuterRect,
-            start,
-            grayEndIndex,
-            paintColor = { getScaleColor(it) }
-        ) {
-            drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
+        for (i in 0..scale.intervals) {
+            val fraction = i.toFloat() / scale.intervals
+            if (zones.none { fraction in it }) {
+                paint.color = colorGrayLight
+                canvas.drawArc(drawingCache.alignedOuterRect, angleOf(fraction), drawerSettings.dividerWidth, false, paint)
+            }
         }
 
-        val highlightStartDegrees = (drawerSettings.dividersStepAngle * drawerSettings.dividerHighlightStart + 3).toInt()
-        val highlightEndDegrees = (drawerSettings.dividersStepAngle * (drawerSettings.dividersCount - 1)).toInt()
+        paint.color = progressColor
+        zones.forEach { zone ->
+            val startDegrees = (zone.start * drawerSettings.sweepAngle).toInt()
+            val endDegrees = (zone.endInclusive * drawerSettings.sweepAngle).toInt()
 
-        drawLineTicks(
-            canvas,
-            drawingCache.alignedOuterRect,
-            highlightStartDegrees,
-            highlightEndDegrees,
-            widthInDegrees = drawerSettings.dividerWidth,
-            paintColor = { settings.getColorTheme().progressColor }
-        ) {
-            drawerSettings.startAngle + it
-        }
+            drawLineTicks(
+                canvas,
+                drawingCache.alignedOuterRect,
+                startDegrees,
+                endDegrees,
+                widthInDegrees = drawerSettings.dividerWidth,
+                paintColor = { progressColor }
+            ) {
+                drawerSettings.startAngle + it
+            }
 
-        val widthArc =
-            (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
-
-        paint.color = settings.getColorTheme().progressColor
-        canvas.drawArc(
-            drawingCache.alignedOuterRect,
-            drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 2),
-            widthArc,
-            false,
-            paint
-        )
-    }
-
-    private inline fun drawArcTicks(
-        canvas: Canvas,
-        rect: RectF,
-        start: Int,
-        end: Int,
-        width: Float = drawerSettings.dividerWidth,
-        paintColor: (j: Int) -> Int = { color(R.color.gray_light) },
-        angle: (j: Int) -> Float
-    ) {
-        for (j in start..end step drawerSettings.scaleStep) {
-            paint.color = paintColor(j)
-            canvas.drawArc(rect, angle(j), width, false, paint)
+            // A solid band on the outer half of the zone, towards the dial's end.
+            val half = (zone.endInclusive - zone.start) / 2f
+            val bandStart = if (zone.endInclusive >= 1f) zone.start + half else zone.start
+            paint.color = progressColor
+            canvas.drawArc(drawingCache.alignedOuterRect, angleOf(bandStart), half * drawerSettings.sweepAngle, false, paint)
         }
     }
 
@@ -845,7 +985,7 @@ internal class GaugeDrawer(
             val centerAngle = startAngle + (widthInDegrees / 2f)
             canvas.rotate(centerAngle)
 
-            if (color != color(R.color.gray_light)) {
+            if (color != colorGrayLight) {
                 glowPaint.color = color
                 glowPaint.strokeWidth = paint.strokeWidth * 2.0f
                 canvas.drawLine(radius, -dashLength / 2f, radius, dashLength / 2f, glowPaint)
@@ -906,25 +1046,6 @@ internal class GaugeDrawer(
         width: Float,
         padding: Float
     ): Float = (width - 2 * padding) / 2
-
-    private inline fun getScaleColor(j: Int): Int =
-        if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
-            settings.getColorTheme().progressColor
-        } else {
-            color(R.color.gray_light)
-        }
-
-    private inline fun valueAsString(
-        metric: Metric,
-        value: Double
-    ): String =
-        if (metric.source.command.pid.max
-                .toInt() > 20
-        ) {
-            value.toInt().toString()
-        } else {
-            value.toString()
-        }
 
     private fun getHeightPixels(): Int = context.resources.displayMetrics.heightPixels
 
