@@ -17,7 +17,7 @@ Readability, correctness and per-frame cost fixes for the dial gauge (`GaugeDraw
 | # | Area | Before | After |
 | --- | --- | --- | --- |
 | 1 | Scale labels | 6 equal parts of `min..max`, rounded (`-40, -6, 26 …`) | "Nice" steps (1, 2, 2.5, 4, 5 × 10ⁿ), 4–7 intervals, the range extended to the nearest step: `-40, 0, 40 … 160`; gear `-2, 0, 2 … 10` |
-| 2 | Red zone | Last ~2 labels / ticks red on every dial (fixed divider indexes) | Red only over the PID's alert ranges (`alert.upperThreshold`..max, min..`alert.lowerThreshold`); none without thresholds |
+| 2 | Red zone | Last ~2 labels / ticks red on every dial (fixed divider indexes) | Red over the PID's alert ranges (`alert.upperThreshold`..max, min..`alert.lowerThreshold`). *Superseded by [gauge-view-improvements](gauge-view-improvements.md) item 14:* the last quarter of every dial is red again, thresholds or not |
 | 3 | Label placement | Drawn before the ticks, so the red ticks' glow covered the end labels | Drawn after the ticks; centred at 0.75 r as before, moved inward only if the label would reach past 0.85 r |
 | 4 | Stats row | Fixed offsets from the centre, no captions | Measured, centred, equal gaps; `▼` before min, `▲` before max. Scaled down to fit 90 % of the card and, when the dial ends below its centre, the space left of the end label |
 | 5 | Value text | Fixed size | Shrunk (never enlarged) to 70 % of the dial width with its unit; label / stats stay where they were |
@@ -42,7 +42,7 @@ None.
 
 ## Backward compatibility
 
-Visual only. Existing profiles keep their PIDs and ranges; the dial's range may extend slightly past a PID's min/max to the nearest step (gear `-1..10` → `-2..10`), so the progress arc's position for the same value can shift a little. Dials with no alert thresholds lose their decorative red end.
+Visual only. Existing profiles keep their PIDs and ranges; the dial's range may extend slightly past a PID's min/max to the nearest step (gear `-1..10` → `-2..10`), so the progress arc's position for the same value can shift a little. Dials with no alert thresholds lost their decorative red end (restored for all dials by gauge-view-improvements item 14).
 
 ## Tests
 

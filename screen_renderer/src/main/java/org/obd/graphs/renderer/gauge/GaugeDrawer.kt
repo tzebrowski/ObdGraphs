@@ -116,15 +116,8 @@ private data class ScaleBitmapCache(
     val width: Int,
     val height: Int,
     val scale: GaugeScale,
-    val redZones: GaugeRedZones,
     val progressColor: Int,
     val numbersDrawn: Boolean
-)
-
-// The scale and red zones of one PID, rebuilt only when its range or thresholds change.
-private class PidScale(
-    val scale: GaugeScale,
-    val redZones: GaugeRedZones
 )
 
 private class CachedGradient(
@@ -184,7 +177,7 @@ internal class GaugeDrawer(
     private val colorGrayLight = color(R.color.gray_light)
     private val trackShadowColor = "#0D000000".toColorInt()
 
-    private val pidScales = mutableMapOf<Long, PidScale>()
+    private val pidScales = mutableMapOf<Long, GaugeScale>()
     private val gradientCache = mutableMapOf<Long, CachedGradient>()
     private val progressGradientCache = mutableMapOf<Long, CachedSweepGradient>()
     private val frameStates = GaugeFrameStates()
@@ -304,23 +297,17 @@ internal class GaugeDrawer(
         }
     }
 
-    private fun pidScale(metric: Metric): PidScale {
+    // Rebuilt only when the PID's range changes.
+    private fun pidScale(metric: Metric): GaugeScale {
         val pid = metric.pid
         val min = pid.min.toDouble()
         val max = pid.max.toDouble()
-        val lower = pid.alert?.lowerThreshold?.toDouble()
-        val upper = pid.alert?.upperThreshold?.toDouble()
 
         val cached = pidScales[pid.id]
-        if (cached != null &&
-            cached.scale.sourceMin == min &&
-            cached.scale.sourceMax == max &&
-            cached.redZones.lower == lower &&
-            cached.redZones.upper == upper
-        ) {
+        if (cached != null && cached.sourceMin == min && cached.sourceMax == max) {
             return cached
         }
-        return PidScale(GaugeScale.of(min, max), GaugeRedZones(lower, upper)).also { pidScales[pid.id] = it }
+        return GaugeScale.of(min, max).also { pidScales[pid.id] = it }
     }
 
     fun drawGauge(
@@ -380,16 +367,16 @@ internal class GaugeDrawer(
 
         drawContainerBackground(canvas, metric.pid.id, width, left, top, borderArea)
 
-        val pidScale = pidScale(metric)
+        val scale = pidScale(metric)
 
-        val glowNanos = drawBackground(canvas, drawingCache.workingRect, drawingCache.arcTopRect, strokeWidth, metric, pidScale.scale, stale, startNanos)
+        val glowNanos = drawBackground(canvas, drawingCache.workingRect, drawingCache.arcTopRect, strokeWidth, metric, scale, stale, startNanos)
 
         drawScale(
             canvas,
             drawingCache.workingRect,
             drawingCache.arcTopRect,
             metric,
-            pidScale,
+            scale,
             scaleEnabled,
             radius,
             dynamicPadding
@@ -399,7 +386,7 @@ internal class GaugeDrawer(
             canvas,
             area = drawingCache.workingRect,
             metric = metric,
-            statsMaxWidth = statsMaxWidth(metric, pidScale.scale, scaleEnabled, radius, borderArea),
+            statsMaxWidth = statsMaxWidth(metric, scale, scaleEnabled, radius, borderArea),
             radius = radius,
             labelCenterYPadding = labelCenterYPadding,
             fontSize = fontSize,
@@ -988,7 +975,7 @@ internal class GaugeDrawer(
         rect: RectF,
         arcTopRect: RectF,
         metric: Metric,
-        pidScale: PidScale,
+        scale: GaugeScale,
         scaleEnabled: Boolean,
         radius: Float,
         bitmapPadding: Float
@@ -999,7 +986,7 @@ internal class GaugeDrawer(
         val pidId = metric.pid.id
         val currentCache = scaleBitmapCache[pidId]
 
-        // The scale and red zones are part of the key: editing a PID's range or alerts must redraw it.
+        // The scale is part of the key: editing a PID's range must redraw it.
         // Numbers are skipped only for non-numeric values. Skipping them while there was no value yet
         // cached a dial without numbers until the layout changed.
         val numbersDrawn = scaleEnabled && (metric.source.value == null || metric.source.isNumber())
@@ -1010,8 +997,7 @@ internal class GaugeDrawer(
                 currentCache.progressColor == settings.getColorTheme().progressColor &&
                 currentCache.width == targetWidth &&
                 currentCache.height == targetHeight &&
-                currentCache.scale == pidScale.scale &&
-                currentCache.redZones == pidScale.redZones
+                currentCache.scale == scale
 
         drawingCache.destRectF.set(rect)
         drawingCache.destRectF.inset(-bitmapPadding, -bitmapPadding)
@@ -1033,9 +1019,9 @@ internal class GaugeDrawer(
             cacheCanvas.translate(-rect.left + bitmapPadding, -rect.top + bitmapPadding)
 
             // Numbers last: the red ticks' glow used to paint over the end labels.
-            drawTicks(cacheCanvas, rect, pidScale)
+            drawTicks(cacheCanvas, rect, scale)
             if (numbersDrawn) {
-                drawNumbers(cacheCanvas, arcTopRect, pidScale, radius)
+                drawNumbers(cacheCanvas, arcTopRect, scale, radius)
             }
 
             scaleBitmapCache.put(
@@ -1044,8 +1030,7 @@ internal class GaugeDrawer(
                     cachedBitmap,
                     targetWidth,
                     targetHeight,
-                    pidScale.scale,
-                    pidScale.redZones,
+                    scale,
                     settings.getColorTheme().progressColor,
                     numbersDrawn
                 )
@@ -1086,11 +1071,9 @@ internal class GaugeDrawer(
     private fun drawNumbers(
         canvas: Canvas,
         area: RectF,
-        pidScale: PidScale,
+        scale: GaugeScale,
         radius: Float
     ) {
-        val scale = pidScale.scale
-
         numbersPaint.textSize = area.width() * NUMBERS_TEXT_RATIO
 
         for (i in 0..scale.intervals) {
@@ -1113,21 +1096,20 @@ internal class GaugeDrawer(
             val y = area.top + (area.height() / 2.0f + sin(angle) * labelRadius + textHeight / 2).toFloat()
 
             numbersPaint.color =
-                if (pidScale.redZones.contains(scale.value(i))) settings.getColorTheme().progressColor else colorGray
+                if (GaugeRedZone.contains(i.toFloat() / scale.intervals)) settings.getColorTheme().progressColor else colorGray
 
             canvas.drawText(text, x, y, numbersPaint)
         }
     }
 
-    // Major ticks sit on the labels, minor ones halfway between. Red marks the PID's alert ranges
-    // only; it used to be painted on the last part of every dial, alert or not.
+    // Major ticks sit on the labels, minor ones halfway between. The red end is the same share of
+    // every dial (GaugeRedZone): starting at alert thresholds made it differ from dial to dial.
     private fun drawTicks(
         canvas: Canvas,
         rect: RectF,
-        pidScale: PidScale
+        scale: GaugeScale
     ) {
-        val scale = pidScale.scale
-        val zones = pidScale.redZones.ranges(scale)
+        val zone = GaugeRedZone.range
         val progressColor = settings.getColorTheme().progressColor
 
         drawingCache.scaleRect.set(
@@ -1141,7 +1123,7 @@ internal class GaugeDrawer(
         for (k in 0..ticks) {
             val fraction = k.toFloat() / ticks
             val major = k % 2 == 0
-            paint.color = if (major && zones.any { fraction in it }) progressColor else colorGrayLight
+            paint.color = if (major && fraction in zone) progressColor else colorGrayLight
             canvas.drawArc(drawingCache.scaleRect, angleOf(fraction), drawerSettings.dividerWidth, false, paint)
         }
 
@@ -1150,29 +1132,25 @@ internal class GaugeDrawer(
 
         for (i in 0..scale.intervals) {
             val fraction = i.toFloat() / scale.intervals
-            if (zones.none { fraction in it }) {
+            if (fraction !in zone) {
                 paint.color = colorGrayLight
                 canvas.drawArc(drawingCache.alignedOuterRect, angleOf(fraction), drawerSettings.dividerWidth, false, paint)
             }
         }
 
-        paint.color = progressColor
-        zones.forEach { zone ->
-            // From the exact threshold: whole degrees put the first tick off it on short sweeps.
-            drawLineTicks(
-                canvas,
-                drawingCache.alignedOuterRect,
-                GaugeGeometry.zoneTickOffsets(zone.start, zone.endInclusive, drawerSettings.sweepAngle, drawerSettings.scaleStep.toFloat()),
-                widthInDegrees = drawerSettings.dividerWidth,
-                color = progressColor
-            )
+        // From the zone's exact start: whole degrees put the first tick off it on short sweeps.
+        drawLineTicks(
+            canvas,
+            drawingCache.alignedOuterRect,
+            GaugeGeometry.zoneTickOffsets(zone.start, zone.endInclusive, drawerSettings.sweepAngle, drawerSettings.scaleStep.toFloat()),
+            widthInDegrees = drawerSettings.dividerWidth,
+            color = progressColor
+        )
 
-            // A solid band on the outer half of the zone, towards the dial's end.
-            val half = (zone.endInclusive - zone.start) / 2f
-            val bandStart = if (zone.endInclusive >= 1f) zone.start + half else zone.start
-            paint.color = progressColor
-            canvas.drawArc(drawingCache.alignedOuterRect, angleOf(bandStart), half * drawerSettings.sweepAngle, false, paint)
-        }
+        // A solid band on the outer half of the zone, towards the dial's end.
+        val half = (zone.endInclusive - zone.start) / 2f
+        paint.color = progressColor
+        canvas.drawArc(drawingCache.alignedOuterRect, angleOf(zone.start + half), half * drawerSettings.sweepAngle, false, paint)
     }
 
     private fun drawLineTicks(

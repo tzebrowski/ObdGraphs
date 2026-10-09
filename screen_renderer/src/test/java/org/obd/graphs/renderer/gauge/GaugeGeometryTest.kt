@@ -79,19 +79,12 @@ class GaugeGeometryTest {
     }
 
     @Test
-    fun `red zones come from the alert thresholds only`() {
-        val scale = GaugeScale.of(0.0, 100.0)
-
-        assertTrue(GaugeRedZones.NONE.ranges(scale).isEmpty())
-        assertEquals(listOf(0.8f..1f), GaugeRedZones(null, 80.0).ranges(scale))
-        assertEquals(listOf(0f..0.2f, 0.9f..1f), GaugeRedZones(20.0, 90.0).ranges(scale))
-        assertTrue(GaugeRedZones(null, 80.0).contains(80.0))
-        assertFalse(GaugeRedZones(null, 80.0).contains(79.9))
-    }
-
-    @Test
-    fun `thresholds beyond the scale draw no zone`() {
-        assertTrue(GaugeRedZones(-10.0, 200.0).ranges(GaugeScale.of(0.0, 100.0)).isEmpty())
+    fun `every dial has the same red end`() {
+        // Starting it at each PID's alert threshold made it differ from dial to dial.
+        assertEquals(0.75f..1f, GaugeRedZone.range)
+        assertTrue(GaugeRedZone.contains(1f))
+        assertTrue(GaugeRedZone.contains(0.75f))
+        assertFalse(GaugeRedZone.contains(0.7f))
     }
 
     @Test

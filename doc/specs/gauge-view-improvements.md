@@ -8,7 +8,7 @@ Follow-up to [gauge-drawing-improvements](gauge-drawing-improvements.md): a revi
 
 **Problem.** The progress gradient was set on a paint that never draws the bar. Scale bitmaps (2× resolution, MBs each) of PIDs no longer shown stayed in memory until the drawer was recycled. The value moved sideways with every reading (centred on ink bounds) and jumped when it gained a digit. Red-zone ticks started at whole degrees, off the threshold. The bar jumped between readings, gave no hint of the session range, stayed white in alert, showed nothing for a value past the scale, and a frozen reading looked live. "rate" was hard-coded English, and a long module name ran into it. The text and grid layouts were magic numbers inside Canvas code, untested.
 
-**Scope.** `:screen_renderer` only. `GaugeDrawer` is shared, so the dial changes (items 1–10) also appear on Performance, Drag Racing and Brake Boosting (phone and AA). No preference, query or data changes.
+**Scope.** `:screen_renderer` only. `GaugeDrawer` is shared, so the dial changes (items 1–10, 14) also appear on Performance, Drag Racing and Brake Boosting (phone and AA). No preference, query or data changes.
 
 ## Behaviour changes
 
@@ -26,6 +26,7 @@ Follow-up to [gauge-drawing-improvements](gauge-drawing-improvements.md): a revi
 | 10 | Corner captions | `rate 1.2` in English; module name could overlap it | Prefix from `gauge.rate` (EN `rate`, PL `odczyty/s`); module name ellipsized to the space left of the rate |
 | 11 | Text layout | Overflow maths inline in `drawStatistics` | `GaugeGeometry.textLayout` (tested); magic numbers named. Same output |
 | 12 | Glow cost | Not measurable | `adb shell setprop log.tag.GaugeDrawer VERBOSE` logs average `drawGauge` and glow time every 300 dials |
+| 14 | Red end of the dial | Since #225 only from alert thresholds: a PID without one (e.g. Water Charge Air Cooler temp, `2.0_gme_ext.json` id 17079) had no red at all, and the others started it at different places | The same last quarter on every dial (`GaugeRedZone`, `DEFAULT_RED_ZONE_START = 0.75`, the pre-#225 `dividerHighlightStart = 9` of 12), whatever the thresholds. A first fix (red from the upper threshold, else the last quarter) still looked inconsistent side by side |
 | 13 | Grid layout | Hand-tuned AA / phone maths inside `GaugeSurfaceRenderer` | `GaugeGrid` (pure, tested). Same output |
 
 ## Settings / keys touched
@@ -34,6 +35,7 @@ None. New string `gauge.rate` in `screen_renderer/src/main/res/values{,-pl}/stri
 
 ## Implementation
 
+* `GaugeRedZones(lower, upper)` replaced by the constant `GaugeRedZone`; `pidScale()` caches only the `GaugeScale` and no longer reads thresholds. Scale numbers inside the zone are red. The red end is styling: alerts show through the value and bar colour (item 7).
 * `GaugeGeometry.kt`: `GaugeScale.overflow`, `easeNeedle`, `zoneTickOffsets`, `textLayout`, `moduleNameMaxWidth`.
 * `GaugeFrameStates.kt` (new, pure, clock passed in): per-PID eased needle, last reading (by `metric.source` identity — the collector replaces it on every reading) and last draw; `evict()` returns the PIDs to drop from the drawer's caches.
 * `GaugeGrid.kt` (new): columns, rows, dial width, row height, left / top per index, moved verbatim from `GaugeSurfaceRenderer`.
@@ -54,6 +56,7 @@ Visual only. The bar now shows a white-to-colour gradient (item 1) on every gaug
 | red zone ticks start exactly on the threshold / for a zone ending on its step include the end | Item 4 (truncation put the first tick at 66° instead of 66.6°) |
 | text sits above the centre by the value line and moves up only when the stats overflow the card | Item 11 |
 | module name leaves room for the rate in the other corner | Item 10 |
+| every dial has the same red end | Item 14 |
 | `GaugeFrameStatesTest` needle starts on the value, then eases / each PID eases on its own / evicted PID starts afresh | Item 5 |
 | dial goes stale when no new reading arrives / without a value is never stale | Item 9 |
 | PIDs not drawn any more are evicted / eviction runs at most once per period | Item 2 |
@@ -71,6 +74,7 @@ Items 1, 3, 6, 7 are Canvas / Paint calls; `:screen_renderer` tests are plain JU
 - [ ] Value above the PID max: triangle past the dial's end.
 - [ ] Pull the adapter / stop a PID responding: dial greys after 10 s, recovers on the next reading.
 - [ ] Remove a PID from the Gauge screen, scroll a long grid: no crash (recycled bitmap), dials redraw on return.
+- [ ] All dials, with or without alerts (Water Charge Air Cooler temp, Air Temp Post IC): the same last quarter red.
 - [ ] Narrow phone card with rate on: module name ellipsized, not overlapping. Polish locale shows `odczyty/s`.
 - [ ] `setprop log.tag.GaugeDrawer VERBOSE` on the DHU: note `drawGauge` / glow averages; decide whether the `BlurMaskFilter` glow stays.
 

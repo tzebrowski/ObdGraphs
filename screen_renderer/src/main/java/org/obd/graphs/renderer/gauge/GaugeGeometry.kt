@@ -43,6 +43,9 @@ internal const val NEEDLE_TIME_CONSTANT_SECONDS = 0.12f
 internal const val NEEDLE_MAX_GAP_SECONDS = 1f
 private const val SNAP_DISTANCE = 0.001f
 
+// The last quarter of every dial is red (the pre-#225 `dividerHighlightStart = 9` of 12).
+internal const val DEFAULT_RED_ZONE_START = 0.75f
+
 // A taller card than this only adds empty space around the dial.
 internal const val MAX_CARD_HEIGHT_RATIO = 1.5f
 
@@ -130,29 +133,13 @@ internal data class GaugeScale(
 }
 
 /**
- * The red parts of the dial, as fractions of the scale: from the PID's upper alert threshold to
- * the end, and from the start to its lower one. None when the PID defines no thresholds.
+ * The red end of the dial: the same share of every dial, whatever the PID or its alert thresholds.
+ * Thresholds made it start at a different place on each dial, which looked inconsistent side by side.
  */
-internal data class GaugeRedZones(
-    val lower: Double?,
-    val upper: Double?
-) {
-    fun contains(value: Double): Boolean = (upper != null && value >= upper) || (lower != null && value <= lower)
+internal object GaugeRedZone {
+    val range: ClosedFloatingPointRange<Float> = DEFAULT_RED_ZONE_START..1f
 
-    fun ranges(scale: GaugeScale): List<ClosedFloatingPointRange<Float>> =
-        listOfNotNull(
-            lower?.takeIf { it > scale.min }?.let { 0f..scale.fraction(it) },
-            upper?.takeIf { it < scale.max }?.let { scale.fraction(it)..1f }
-        )
-
-    fun containsFraction(
-        scale: GaugeScale,
-        fraction: Float
-    ): Boolean = ranges(scale).any { fraction in it }
-
-    companion object {
-        val NONE = GaugeRedZones(null, null)
-    }
+    fun contains(fraction: Float): Boolean = fraction in range
 }
 
 internal object GaugeGeometry {
