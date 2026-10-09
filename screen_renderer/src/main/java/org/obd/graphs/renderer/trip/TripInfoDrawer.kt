@@ -341,13 +341,10 @@ internal class TripInfoDrawer(
                 metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
             }
 
-            val minWidth = getTextWidth(minText, valuePaint)
-            val maxWidth = getTextWidth(maxText, valuePaint)
-            val maxStatWidth = maxOf(minWidth, maxWidth)
+            val minTextWidth = getTextWidth(minText, valuePaint)
+            val maxTextWidth = getTextWidth(maxText, valuePaint)
 
-            val itemWidth = textWidth + maxStatWidth
-
-            if (itemWidth <= maxWidth) {
+            if (TripInfoMetrics.statsFit(textWidth, minTextWidth.toFloat(), maxTextWidth.toFloat(), maxWidth)) {
                 valuePaint.color = minValueColorScheme(metric)
                 canvas.drawText(minText, (left + textWidth), top, valuePaint)
 
