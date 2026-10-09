@@ -220,6 +220,14 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * Phone cards may be taller than the dial (`GaugeGeometry.cardHeight`); `borderArea` is the card, `top`
   the dial. Captions belong to the card. `contentHeight`'s bottom pad must be excluded from the height
   the cards share, or a filled grid scrolls by a few pixels.
+* The bar is drawn with `progressPaint` / `glowPaint`, never `paint`: a shader on `paint` (the old
+  progress gradient) is invisible. Spec: `doc/specs/gauge-view-improvements.md`.
+* Per-PID cross-frame state (eased needle, staleness, last draw) lives in `GaugeFrameStates`; every
+  per-PID cache in `GaugeDrawer` must be dropped in `evictUndrawn`, or it leaks for PIDs no longer shown.
+  A new reading = a new `metric.source` object (the collector replaces it), not a changed value.
+* Centre text on `measureText` (advance), not `getTextBounds` (ink): ink width differs per digit, so the
+  value jittered sideways every reading.
+* Grid layout is `GaugeGrid` (pure, pinned by `GaugeGridTest`); change AA tuning there, with a DHU check.
 
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on

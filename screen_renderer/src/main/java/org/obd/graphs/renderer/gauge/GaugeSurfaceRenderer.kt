@@ -40,7 +40,6 @@ private class GaugeLayoutCache {
     var columns = 1
     var gaugeWidth = 0f
     var rowHeight = 0f
-    var startX = 0f
     var contentHeight = 0f
     var maxScroll = 0f
 
@@ -211,77 +210,6 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-    private fun columns(
-        isAA: Boolean,
-        count: Int
-    ): Int =
-        if (isAA) {
-            when (count) {
-                1 -> 1
-                2 -> 2
-                else -> max(count / 2, count - count / 2)
-            }
-        } else {
-            if (count == 1) 1 else settings.getMaxColumns()
-        }
-
-    private fun startX(
-        area: Rect,
-        isAA: Boolean,
-        count: Int
-    ): Float =
-        area.left +
-            if (isAA) {
-                when (count) {
-                    1 -> area.width() / 6f
-                    3, 4 -> area.width() / 8f
-                    else -> 5f
-                }
-            } else {
-                0f
-            }
-
-    private fun rowHeight(
-        isAA: Boolean,
-        availableHeight: Float,
-        isLandscape: Boolean,
-        columns: Int,
-        gaugeWidth: Float,
-        itemMargin: Float
-    ): Float =
-        if (isAA) {
-            availableHeight / 2f
-        } else if (isLandscape && columns == 1) {
-            availableHeight
-        } else {
-            gaugeWidth + (2 * itemMargin)
-        }
-
-    private fun gaugeWidth(
-        isAA: Boolean,
-        cellWidth: Float,
-        count: Int,
-        isLandscape: Boolean,
-        columns: Int,
-        availableHeight: Float,
-        itemMargin: Float
-    ): Float =
-        if (isAA) {
-            cellWidth * widthScaleRatio(count)
-        } else if (isLandscape) {
-            if (columns == 1) availableHeight - (2 * itemMargin) else cellWidth - (2 * itemMargin)
-        } else {
-            cellWidth - (2 * itemMargin)
-        }
-
-    private fun widthScaleRatio(maxItems: Int): Float =
-        when {
-            maxItems <= 1 -> 0.65f
-            maxItems == 2 -> 1.0f
-            maxItems <= 4 -> 0.75f
-            else -> 1.02f
-        }
-
     private fun updateCacheIfNeeded(
         area: Rect,
         count: Int,
@@ -306,23 +234,21 @@ internal class GaugeSurfaceRenderer(
 
         layoutCache.resizeIfNeeded(count)
 
-        layoutCache.columns = columns(isAA, count)
+        val grid = GaugeGrid(isAA = isAA, isLandscape = isLandscape, count = count, maxColumns = settings.getMaxColumns())
+        layoutCache.columns = grid.columns
         val cellWidth = area.width() / layoutCache.columns.toFloat()
         val availableHeight = area.height().toFloat()
         val itemMargin = 6f
 
-        layoutCache.gaugeWidth = gaugeWidth(isAA, cellWidth, count, isLandscape, layoutCache.columns, availableHeight, itemMargin)
-        layoutCache.rowHeight = rowHeight(isAA, availableHeight, isLandscape, layoutCache.columns, layoutCache.gaugeWidth, itemMargin)
-        layoutCache.startX = startX(area, isAA, count)
-
-        val totalRows = kotlin.math.ceil(count / layoutCache.columns.toDouble()).toInt()
+        layoutCache.gaugeWidth = grid.gaugeWidth(cellWidth, availableHeight, itemMargin)
+        layoutCache.rowHeight = grid.rowHeight(availableHeight, layoutCache.gaugeWidth, itemMargin)
 
         // Phone rows were square, so a few gauges left most of a portrait screen empty. When the grid
         // does not scroll, the cards share the free height; the dial stays square and is centred.
-        val fillsHeight = !isAA && !(isLandscape && layoutCache.columns == 1)
+        val fillsHeight = grid.fillsHeight
         val cardHeight =
             if (fillsHeight) {
-                GaugeGeometry.cardHeight(layoutCache.gaugeWidth, itemMargin, totalRows, area.bottom - topOffset - CONTENT_BOTTOM_PADDING)
+                GaugeGeometry.cardHeight(layoutCache.gaugeWidth, itemMargin, grid.rows, area.bottom - topOffset - CONTENT_BOTTOM_PADDING)
             } else {
                 layoutCache.gaugeWidth
             }
@@ -335,37 +261,16 @@ internal class GaugeSurfaceRenderer(
             } else {
                 0f
             }
-        layoutCache.contentHeight = topOffset + (totalRows * layoutCache.rowHeight) + CONTENT_BOTTOM_PADDING
+        layoutCache.contentHeight = topOffset + (grid.rows * layoutCache.rowHeight) + CONTENT_BOTTOM_PADDING
         layoutCache.maxScroll = max(0f, layoutCache.contentHeight - availableHeight)
 
         for (i in 0 until count) {
-            val row = i / layoutCache.columns
-            val col = i % layoutCache.columns
+            val left = grid.left(i, area.left.toFloat(), area.width().toFloat(), layoutCache.gaugeWidth)
+            val top = grid.top(i, topOffset, layoutCache.rowHeight, availableHeight, layoutCache.gaugeWidth, itemMargin)
 
-            val aaLeftPadding = if (isAA) col * (layoutCache.gaugeWidth - 10f) else 0f
-            val cellLeft = if (isAA) layoutCache.startX + aaLeftPadding else layoutCache.startX + (col * cellWidth)
-            val cellTop = topOffset + (row * layoutCache.rowHeight)
-
-            val currentCellWidth = if (layoutCache.columns == 1 && !isAA) area.width().toFloat() else cellWidth
-
-            val centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - layoutCache.gaugeWidth) / 2f
-            val centeredTop =
-                if (!isAA && count == 1 && isLandscape) {
-                    cellTop + (availableHeight - layoutCache.gaugeWidth) / 2f
-                } else if (isAA) {
-                    cellTop
-                } else {
-                    cellTop + itemMargin
-                }
-
-            layoutCache.centeredLefts[i] = centeredLeft
-            layoutCache.centeredTops[i] = centeredTop + dialOffset
-            layoutCache.borderRects[i].set(
-                centeredLeft,
-                centeredTop,
-                centeredLeft + layoutCache.gaugeWidth,
-                centeredTop + cardHeight
-            )
+            layoutCache.centeredLefts[i] = left
+            layoutCache.centeredTops[i] = top + dialOffset
+            layoutCache.borderRects[i].set(left, top, left + layoutCache.gaugeWidth, top + cardHeight)
         }
     }
 }

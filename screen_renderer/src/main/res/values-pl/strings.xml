@@ -20,5 +20,6 @@
     <string name="status_bar.disconnected">rozłączony</string>
     <string name="status_bar.ambient_temp">temp. otoczenia: </string>
     <string name="status_bar.atm_pressure">ciśn. atmosf.: </string>
+    <string name="gauge.rate">odczyty/s</string>
 
 </resources>

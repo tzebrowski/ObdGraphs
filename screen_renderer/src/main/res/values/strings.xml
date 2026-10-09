@@ -20,5 +20,6 @@
     <string name="status_bar.stopping">stopping...</string>
     <string name="status_bar.ambient_temp">ambient temp: </string>
     <string name="status_bar.atm_pressure">atm pressure: </string>
+    <string name="gauge.rate">rate</string>
 
 </resources>
