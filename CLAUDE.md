@@ -201,6 +201,14 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   order. Orders stored before that fix stay as stored — they cannot be told apart from a real drag.
 * "Select all" in the Trip Info / Performance PID dialogs (full registry) only warns via toast, by
   the user's choice — no cap. Gate: `PidDefinitionDialogMode.warnsOnSelectAll`.
+* **Gauges keep their size; the top grid gives way** (user's choice). `PerformanceDrawer` sizes the
+  gauges first (`PerformanceMetrics.gaugeRow`, width / count; `GaugeGeometry.dialBottomRatio` = how far
+  below its top the arc reaches), then `gridRows()` turns the height left into a fractional row budget
+  (1..3) for `TripInfoMetrics.grid(count, 5, rows)`, which shrinks text / adds columns to fit. On an
+  800 × 480 DHU three grid rows plus full-size gauges do not fit. Wrong turn: capping the gauges by
+  the height left under the grid gave ~90 px unreadable dials. That cap now only bites below a 1-row grid.
+  Performance's grid font floor is 0.6 (`PERFORMANCE_MIN_GRID_SCALE`, passed as `grid(minScale)`), not
+  Trip Info's 0.75: at 0.75 the ~1.4 rows left on a DHU held one row of six ("+7" for 12 PIDs).
 * `MetricsCache` serves phone and AA alike, so the AA gauge pref and order keys also drive the phone
   screen, which has no setting of its own. Gauges past `PERFORMANCE_MAX_GAUGES` fall back into the grid,
   not nowhere; the gauge dialog only warns (toast), it does not block.

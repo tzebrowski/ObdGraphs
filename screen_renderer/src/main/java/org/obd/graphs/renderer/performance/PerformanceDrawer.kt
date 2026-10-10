@@ -24,6 +24,7 @@ import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
+import org.obd.graphs.renderer.gauge.GaugeGeometry
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.isNumber
@@ -42,8 +43,11 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
 
+    private val gaugeBottomRatio = DrawerSettings().let { GaugeGeometry.dialBottomRatio(it.startAngle, it.sweepAngle) }
+
     // Rebuilt only when the grid item count changes, not every frame.
     private var grid: TripInfoGrid = PerformanceMetrics.grid(0)
+    private var gridRows = -1f
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(
@@ -83,10 +87,20 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
             fontSize = performanceScreenSettings.fontSize
         )
 
+        val availableWidth = area.width().toFloat()
+        val bottomMetrics = performanceInfoDetails.bottomMetrics
+        val count = bottomMetrics.size
+
+        // Gauges first, at full size; the grid shrinks into the height left above them.
+        val fullGauges = PerformanceMetrics.gaugeRow(count, availableWidth, area.bottom - top, gaugeBottomRatio)
+        val gaugesHeight = if (count > 0) fullGauges.width * gaugeBottomRatio else 0f
+        val rows = PerformanceMetrics.gridRows(area.bottom - top - gaugesHeight, textSize)
+
         val topMetrics = performanceInfoDetails.topMetrics
         val topMetricsSize = topMetrics.size
-        if (grid.shown + grid.hidden != topMetricsSize) {
-            grid = PerformanceMetrics.grid(topMetricsSize)
+        if (grid.shown + grid.hidden != topMetricsSize || rows != gridRows) {
+            grid = PerformanceMetrics.grid(topMetricsSize, rows)
+            gridRows = rows
         }
 
         val gridTextSize = textSize * grid.scale
@@ -160,20 +174,17 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
 
         rowTop -= textSize * 0.7f
 
-        val availableWidth = area.width().toFloat()
         val areaLeft = area.left.toFloat()
         val labelCenterYPadding = performanceScreenSettings.labelCenterYPadding - 4
-        val bottomMetrics = performanceInfoDetails.bottomMetrics
-        val count = bottomMetrics.size
 
         if (count > 0) {
-            val width = if (count == 1) availableWidth / 2f else availableWidth / count.toFloat()
-            val startLeft = if (count == 1) areaLeft + (availableWidth / 4f) else areaLeft
+            val row = PerformanceMetrics.gaugeRow(count, availableWidth, area.bottom - rowTop, gaugeBottomRatio)
+            val startLeft = areaLeft + row.left
             val padding = if (count == 1) 6f else labelCenterYPadding
 
             for (i in 0 until count) {
                 val gauge = bottomMetrics[i]
-                drawGauge(gauge, canvas, rowTop, startLeft + (width * i), width, padding)
+                drawGauge(gauge, canvas, rowTop, startLeft + (row.width * i), row.width, padding)
             }
         }
     }

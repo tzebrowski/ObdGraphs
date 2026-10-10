@@ -23,7 +23,7 @@ import org.obd.graphs.bl.query.TRIP_INFO_STATUS_PIDS
 
 internal const val MAX_BOTTOM_ITEMS = 4
 
-private const val DEFAULT_GRID_ROWS = 3
+private const val DEFAULT_GRID_ROWS = 3f
 
 // Below this the labels are unreadable on an 800 × 480 head unit.
 private const val MIN_GRID_SCALE = 0.75f
@@ -145,13 +145,15 @@ internal object TripInfoMetrics {
     fun grid(
         itemCount: Int,
         baseColumns: Int = MAX_ITEM_IN_THE_ROW,
-        baseRows: Int = DEFAULT_GRID_ROWS
+        // Fractional when the height is a budget (Performance below its gauges), not a row count.
+        baseRows: Float = DEFAULT_GRID_ROWS,
+        minScale: Float = MIN_GRID_SCALE
     ): TripInfoGrid {
         var scale = 1f
         while (true) {
             val columns = (baseColumns / scale + EPSILON).toInt()
             val maxItems = columns * (baseRows / scale + EPSILON).toInt()
-            if (maxItems >= itemCount || scale - GRID_SCALE_STEP < MIN_GRID_SCALE - EPSILON) {
+            if (maxItems >= itemCount || scale - GRID_SCALE_STEP < minScale - EPSILON) {
                 val shown = if (itemCount > maxItems) maxItems - 1 else itemCount
                 return TripInfoGrid(
                     columns = columns,
