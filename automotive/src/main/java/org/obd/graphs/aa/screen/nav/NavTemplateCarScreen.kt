@@ -248,6 +248,7 @@ internal class NavTemplateCarScreen(
                 mutableListOf<FeatureDescription>().apply {
                     addAll(surfaceRendererScreen.getFeatureDescription())
                     addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
+                    addAll(DiagnosticTroubleCodesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
                 }
         }
 
@@ -256,6 +257,10 @@ internal class NavTemplateCarScreen(
         if (surfaceRendererScreen.isSurfaceRendererScreen(identity)) {
             surfaceRendererScreen.switchSurfaceRenderer(identity)
             invalidate()
+        } else if (identity == DtcScreenIdentity.DTC) {
+            surfaceRendererScreen.resetSurfaceRenderer()
+            // Observes its own lifecycle (see its init), unlike RoutinesScreen below.
+            screenManager.push(DiagnosticTroubleCodesScreen(carContext, settings, metricsCollector, fps))
         } else {
             surfaceRendererScreen.resetSurfaceRenderer()
             val routinesScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)

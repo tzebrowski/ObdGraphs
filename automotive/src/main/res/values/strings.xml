@@ -13,8 +13,20 @@
     <string name="routine.executed_successfully">Routine has been executed successfully.</string>
     <string name="routine.no_data">No data received from the ECU. Probably there is no connection to ECU established.</string>
 
+    <string name="dtc.page_title">Trouble Codes</string>
+    <string name="dtc.reading">Reading trouble codes, please wait…</string>
+    <string name="dtc.clearing">Clearing trouble codes, please wait…</string>
+    <string name="dtc.no_codes">No diagnostic trouble codes found.</string>
+    <string name="dtc.no_codes_for_module">No codes reported.</string>
+    <string name="dtc.action_completed">Trouble codes updated.</string>
+    <string name="dtc.clear_confirm_title">Clear trouble codes?</string>
+    <string name="dtc.clear_confirm_message">This erases the stored trouble codes and their freeze frame data from the vehicle. It cannot be undone.</string>
+    <string name="dtc.clear_confirm">Clear</string>
+    <string name="dtc.clear_cancel">Cancel</string>
+
     <string name="available_features.page_title">Available screens</string>
     <string name="available_features.routine_screen.title">Routines</string>
+    <string name="available_features.dtc_screen.title">Trouble Codes</string>
     <string name="available_features.drag_race_screen.title">Drag Racing</string>
     <string name="available_features.performance_screen.title">Performance</string>
     <string name="available_features.giulia_screen.title">Giulia</string>

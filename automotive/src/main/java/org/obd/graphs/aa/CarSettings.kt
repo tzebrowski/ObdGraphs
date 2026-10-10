@@ -34,6 +34,7 @@ import org.obd.graphs.renderer.api.GiuliaScreenSettings
 import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.RoutinesScreenSettings
+import org.obd.graphs.renderer.api.DtcScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.renderer.api.TripInfoScreenSettings
@@ -113,6 +114,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     private val tripInfoScreenSettings = TripInfoScreenSettings()
     private val routinesScreenSettings = RoutinesScreenSettings()
+    private val dtcScreenSettings = DtcScreenSettings()
     private val performanceScreenSettings = PerformanceScreenSettings()
 
     init {
@@ -137,6 +139,10 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     override fun getRoutinesScreenSettings(): RoutinesScreenSettings = routinesScreenSettings.apply {
         viewEnabled = Prefs.getBoolean("pref.aa.routines.enabled", true)
+    }
+
+    override fun getDtcScreenSettings(): DtcScreenSettings = dtcScreenSettings.apply {
+        viewEnabled = Prefs.getBoolean("pref.aa.dtc.enabled", true)
     }
 
     override fun getTripInfoScreenSettings(): TripInfoScreenSettings = tripInfoScreenSettings.apply {

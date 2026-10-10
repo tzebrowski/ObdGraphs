@@ -36,6 +36,10 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
+import org.obd.graphs.bl.datalogger.dtc.displayCode
+import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
+import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
@@ -46,8 +50,6 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.toast
 import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.DiagnosticTroubleCode
-
-private const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
 
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
@@ -218,7 +220,6 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             }
         }
 
-        // Stored as the *deselected* keys so a module added later starts out checked.
         val deselected = Prefs.getStringSet(PREF_DTC_DESELECTED_MODULES)
         val listView =
             content.findViewById<MaxHeightListView>(R.id.dtc_picker_modules).apply {
@@ -334,12 +335,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         for (code in dtcList) {
             if (code.standardCode.isEmpty()) continue
 
-            val formattedCode =
-                if (!code.failureType?.code.isNullOrEmpty()) {
-                    "${code.standardCode}-${code.failureType.code}"
-                } else {
-                    code.standardCode
-                }
+            val formattedCode = code.displayCode()
 
             reportBuilder.append(getString(R.string.dtc_share_dtc, formattedCode)).append("\n")
             reportBuilder
@@ -384,24 +380,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     }
 
     private fun diagnosticTroubleCodes(): List<DiagnosticTroubleCode> =
-        VehicleCapabilitiesManager
-            .getDiagnosticTroubleCodes()
-            .sortedWith(
-                compareBy<DiagnosticTroubleCode> { code ->
-                    code.module ?: ""
-                }.thenBy { code ->
-                    val desc = code.description
-                    val isUnknown =
-                        desc.isNullOrBlank() ||
-                            desc.contains(
-                                "Unknown DTC Description",
-                                ignoreCase = true
-                            )
-                    if (isUnknown) 1 else 0
-                }.thenBy { code ->
-                    code.standardCode
-                }
-            ).toMutableList()
+        VehicleCapabilitiesManager.getDiagnosticTroubleCodes().sortedForDisplay()
 
     override fun onDestroyView() {
         requireContext().unregisterReceiver(dtcNotificationsReceiver)

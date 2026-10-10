@@ -1751,6 +1751,19 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory
+                    android:title="@string/pref.aa.dtc.category"
+                    app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.dtc.enabled"
+                        android:summary="@string/pref.aa.dtc.enabled_summary"
+                        android:title="@string/pref.aa.dtc.enabled"
+                        app:singleLineTitle="false" />
+
+                </PreferenceCategory>
+
+                <PreferenceCategory
                     android:title="@string/pref.aa.trip_info.category"
                     app:singleLineTitle="false">
 

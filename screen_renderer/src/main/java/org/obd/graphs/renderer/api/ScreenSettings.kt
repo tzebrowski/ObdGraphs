@@ -157,12 +157,18 @@ data class RoutinesScreenSettings(
     var viewEnabled: Boolean = true
 )
 
+data class DtcScreenSettings(
+    var viewEnabled: Boolean = true
+)
+
 interface ScreenSettings {
     fun isAA(): Boolean = true
 
     fun handleProfileChanged() {}
 
     fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()
+
+    fun getDtcScreenSettings(): DtcScreenSettings = DtcScreenSettings()
 
     fun getDragRacingScreenSettings(): DragRacingScreenSettings = DragRacingScreenSettings()
 

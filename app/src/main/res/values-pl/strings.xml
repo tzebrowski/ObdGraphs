@@ -394,6 +394,9 @@
     <string name="pref.aa.routines.category">Procedury</string>
     <string name="pref.aa.routines.enabled">Włącz ekran procedur</string>
     <string name="pref.aa.routines.enabled.enabled_summary">Aktywuje ekran procedur, który umożliwia wykonywanie określonych funkcji ECU. Korzystanie z tej funkcji wiąże się z ryzykiem i odbywa się na własną odpowiedzialność.</string>
+    <string name="pref.aa.dtc.category">Kody błędów</string>
+    <string name="pref.aa.dtc.enabled">Włącz ekran kodów błędów</string>
+    <string name="pref.aa.dtc.enabled_summary">Wyświetla w Android Auto ekran kodów błędów diagnostycznych (DTC), na którym można je odczytać i skasować. Skanowane moduły odpowiadają wyborowi dokonanemu w oknie DTC aplikacji.</string>
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
     <string name="pref.aa.performance_meter.metrics_read_freq">Żądana częstotliwość odczytu danych OBD2</string>
     <string name="pref.aa.performance_meter.display_frequency">Wyświetl częstotliwość odczytu danych OBD2</string>

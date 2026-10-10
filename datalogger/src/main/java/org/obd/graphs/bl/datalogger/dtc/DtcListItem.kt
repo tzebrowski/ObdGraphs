@@ -14,13 +14,19 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.dtc
+package org.obd.graphs.bl.datalogger.dtc
 
+import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 
-internal const val DTC_DEFAULT_MODULE = "ecu"
+// Shared by the phone DTC dialog and the AA DTC screen - keep one copy of the grouping/ordering.
 
-internal sealed class DtcListItem {
+const val DTC_DEFAULT_MODULE = "ecu"
+
+// Stores the *deselected* module keys so a module added later starts out checked.
+const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
+
+sealed class DtcListItem {
     data class ModuleHeader(val module: String) : DtcListItem()
     data class DtcRow(val dtc: DiagnosticTroubleCode) : DtcListItem()
 
@@ -43,7 +49,7 @@ private fun DiagnosticTroubleCode.moduleLabel(): String =
 // "no codes" line, so they aren't silently missing from the list.
 // Falls back to a flat list only for the plain default single-ECU case (no module scanning
 // configured at all), keeping that visually identical to before this feature.
-internal fun List<DiagnosticTroubleCode>.toDtcListItems(
+fun List<DiagnosticTroubleCode>.toDtcListItems(
     scannedModules: List<String>,
     noCodesMessage: String,
     noCodesForModuleMessage: String
@@ -87,4 +93,72 @@ internal fun List<DiagnosticTroubleCode>.toDtcListItems(
                 codes.map { DtcListItem.DtcRow(it) }
             }
     }
+}
+
+// Module first, then known descriptions before unknown ones, then code.
+fun Collection<DiagnosticTroubleCode>.sortedForDisplay(): List<DiagnosticTroubleCode> =
+    sortedWith(
+        compareBy<DiagnosticTroubleCode> { it.module ?: "" }
+            .thenBy { if (it.isDescriptionUnknown()) 1 else 0 }
+            .thenBy { it.standardCode }
+    )
+
+// "P0123-1A" when the code carries a failure type, the bare standard code otherwise.
+fun DiagnosticTroubleCode.displayCode(): String =
+    failureType?.code?.takeUnless { it.isEmpty() }?.let { "$standardCode-$it" } ?: standardCode
+
+// Request keys to scan: the configured modules (with a header) the user has not deselected in the
+// phone's module picker. Empty means the plain default-ECU read.
+fun dtcScanModules(
+    mappings: List<DiagnosticMappingItem>,
+    deselected: Collection<String>
+): Set<String> =
+    mappings
+        .filter { it.headerValue.isNotEmpty() && it.requestKey !in deselected }
+        .map { it.requestKey }
+        .toSet()
+
+fun DiagnosticTroubleCode.isDescriptionUnknown(): Boolean =
+    description.isNullOrBlank() || description.contains("Unknown DTC Description", ignoreCase = true)
+
+// The decoded description, or the system/category/subsystem path when the codec has none.
+fun DiagnosticTroubleCode.displayDescription(): String {
+    if (!isDescriptionUnknown()) return description
+
+    val fallbackParts =
+        listOfNotNull(system?.description, category?.description, subsystem?.description)
+            .filter { it.isNotBlank() }
+
+    return if (fallbackParts.isNotEmpty()) {
+        fallbackParts.joinToString(" → ") + " (Unknown specific fault)"
+    } else {
+        "Unknown DTC Description"
+    }
+}
+
+// One block of the list: a module header (null for the flat default-ECU list) and its rows.
+data class DtcSection(val header: String?, val items: List<DtcListItem>)
+
+// Folds the flat header/row stream into sections, for list UIs that render headers natively
+// (the AA ListTemplate's sectioned lists) instead of as rows.
+fun List<DtcListItem>.toDtcSections(): List<DtcSection> {
+    val sections = mutableListOf<DtcSection>()
+    var header: String? = null
+    var items = mutableListOf<DtcListItem>()
+
+    fun flush() {
+        if (header != null || items.isNotEmpty()) sections.add(DtcSection(header, items))
+    }
+
+    forEach { item ->
+        if (item is DtcListItem.ModuleHeader) {
+            flush()
+            header = item.module
+            items = mutableListOf()
+        } else {
+            items.add(item)
+        }
+    }
+    flush()
+    return sections
 }

@@ -244,6 +244,17 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   value jittered sideways every reading.
 * Grid layout is `GaugeGrid` (pure, pinned by `GaugeGridTest`); change AA tuning there, with a DHU check.
 
+### DTC (phone dialog + AA screen)
+* List logic (grouping by module, sort, code/description formatting, scan module selection) lives in
+  `datalogger/.../bl/datalogger/dtc/DtcListItem.kt`, shared by `DiagnosticTroubleCodePreferenceDialogFragment`
+  and AA `DiagnosticTroubleCodesScreen` — keep one copy. Spec: `doc/specs/aa-dtc-screen.md`.
+* AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
+* AA `ListTemplate` action strips take **2** actions (`ACTIONS_CONSTRAINTS_SIMPLE`),
+  not 4 like the nav template — a third throws at build time.
+* AA template screens: a `CarScreen` added as observer of the *parent's* lifecycle (as `gotoScreen` does
+  for `RoutinesScreen`) gets the parent's pause when it is pushed, so its receiver should unregister while
+  it is on screen (read from the code, not yet confirmed on a DHU). `DiagnosticTroubleCodesScreen` observes its own lifecycle instead.
+
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
   `pref.adapter.connection.type`. Two Bluetooth transports, deliberately separate:

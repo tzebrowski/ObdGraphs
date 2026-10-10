@@ -14,8 +14,20 @@
     <string name="routine.executed_successfully">Procedura została wykonana pomyślnie.</string>
     <string name="routine.no_data">Brak danych z ECU. Prawdopodobnie nie nawiązano połączenia z ECU.</string>
 
+    <string name="dtc.page_title">Kody błędów</string>
+    <string name="dtc.reading">Odczyt kodów błędów, proszę czekać…</string>
+    <string name="dtc.clearing">Kasowanie kodów błędów, proszę czekać…</string>
+    <string name="dtc.no_codes">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
+    <string name="dtc.no_codes_for_module">Brak zgłoszonych kodów błędów.</string>
+    <string name="dtc.action_completed">Kody błędów zaktualizowane.</string>
+    <string name="dtc.clear_confirm_title">Skasować kody błędów?</string>
+    <string name="dtc.clear_confirm_message">Spowoduje to usunięcie zapisanych kodów błędów i danych zamrożonej ramki z pojazdu. Tej operacji nie można cofnąć.</string>
+    <string name="dtc.clear_confirm">Skasuj</string>
+    <string name="dtc.clear_cancel">Anuluj</string>
+
     <string name="available_features.page_title">Dostępne ekrany</string>
     <string name="available_features.routine_screen.title">Procedury</string>
+    <string name="available_features.dtc_screen.title">Kody błędów</string>
     <string name="available_features.drag_race_screen.title">Drag Racing</string>
     <string name="available_features.performance_screen.title">Osiągi</string>
     <string name="available_features.giulia_screen.title">Giulia</string>
