@@ -204,4 +204,32 @@ class PerformanceMetricsTest {
         assertEquals(grid.maxItems - 1, grid.shown)
         assertEquals(100 - grid.shown, grid.hidden)
     }
+
+    @Test
+    fun `gauges shrink to the height left below a full grid instead of running off the screen`() {
+        // 800 px wide DHU, three grid rows leave ~150 px: 266 px wide dials needed ~180 px and
+        // their lower part (value, stats) went under the bottom edge.
+        val row = PerformanceMetrics.gaugeRow(count = 3, availableWidth = 800f, availableHeight = 150f, dialBottomRatio = 0.67f)
+
+        assertEquals(150f / 0.67f, row.width, 0.01f)
+        assertTrue(row.width * 0.67f <= 150f + 0.01f)
+        // The narrower row is centred.
+        assertEquals((800f - 3 * row.width) / 2f, row.left, 0.01f)
+    }
+
+    @Test
+    fun `gauges keep their width when the height allows it`() {
+        val three = PerformanceMetrics.gaugeRow(count = 3, availableWidth = 800f, availableHeight = 400f, dialBottomRatio = 0.67f)
+        assertEquals(800f / 3f, three.width, 0.01f)
+        assertEquals(0f, three.left, 0.01f)
+
+        val one = PerformanceMetrics.gaugeRow(count = 1, availableWidth = 800f, availableHeight = 400f, dialBottomRatio = 0.67f)
+        assertEquals(400f, one.width, 0.01f)
+        assertEquals(200f, one.left, 0.01f)
+    }
+
+    @Test
+    fun `default dial reaches 20 degrees below its centre`() {
+        assertEquals((1f + kotlin.math.sin(Math.toRadians(20.0)).toFloat()) / 2f, org.obd.graphs.renderer.gauge.GaugeGeometry.dialBottomRatio(200f, 180f), 0.001f)
+    }
 }

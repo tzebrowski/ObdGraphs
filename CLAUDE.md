@@ -201,6 +201,9 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   order. Orders stored before that fix stay as stored — they cannot be told apart from a real drag.
 * "Select all" in the Trip Info / Performance PID dialogs (full registry) only warns via toast, by
   the user's choice — no cap. Gate: `PidDefinitionDialogMode.warnsOnSelectAll`.
+* Gauge size comes from `PerformanceMetrics.gaugeRow`: width / count, capped by the height left under
+  the grid (`GaugeGeometry.dialBottomRatio` = how far below its top the arc reaches). Width alone let
+  a third grid row push the dials off the bottom of an 800 × 480 DHU. A capped row is centred.
 * `MetricsCache` serves phone and AA alike, so the AA gauge pref and order keys also drive the phone
   screen, which has no setting of its own. Gauges past `PERFORMANCE_MAX_GAUGES` fall back into the grid,
   not nowhere; the gauge dialog only warns (toast), it does not block.

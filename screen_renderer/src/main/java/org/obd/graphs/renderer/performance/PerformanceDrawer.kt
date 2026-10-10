@@ -24,6 +24,7 @@ import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
+import org.obd.graphs.renderer.gauge.GaugeGeometry
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.isNumber
@@ -41,6 +42,8 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
     )
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
+
+    private val gaugeBottomRatio = DrawerSettings().let { GaugeGeometry.dialBottomRatio(it.startAngle, it.sweepAngle) }
 
     // Rebuilt only when the grid item count changes, not every frame.
     private var grid: TripInfoGrid = PerformanceMetrics.grid(0)
@@ -167,13 +170,13 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
         val count = bottomMetrics.size
 
         if (count > 0) {
-            val width = if (count == 1) availableWidth / 2f else availableWidth / count.toFloat()
-            val startLeft = if (count == 1) areaLeft + (availableWidth / 4f) else areaLeft
+            val row = PerformanceMetrics.gaugeRow(count, availableWidth, area.bottom - rowTop, gaugeBottomRatio)
+            val startLeft = areaLeft + row.left
             val padding = if (count == 1) 6f else labelCenterYPadding
 
             for (i in 0 until count) {
                 val gauge = bottomMetrics[i]
-                drawGauge(gauge, canvas, rowTop, startLeft + (width * i), width, padding)
+                drawGauge(gauge, canvas, rowTop, startLeft + (row.width * i), row.width, padding)
             }
         }
     }

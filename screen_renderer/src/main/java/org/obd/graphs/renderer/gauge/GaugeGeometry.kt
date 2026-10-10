@@ -227,6 +227,15 @@ internal object GaugeGeometry {
         return ((cardHeight - drawnHeight) / 2f - drawnTop).coerceIn(0f, max(0f, cardHeight - gaugeWidth / 2f - radius * maxSin))
     }
 
+    /**
+     * How far below the dial square's top the arc's lowest point lies, as a share of the dial width.
+     * The default 200° + 180° dial ends 20° below its centre: 0.67.
+     */
+    fun dialBottomRatio(
+        startAngle: Float,
+        sweepAngle: Float
+    ): Float = (1f + arcSinRange(startAngle, sweepAngle).second) / 2f
+
     // Lowest and highest sine over the arc (canvas angles: 90 is the bottom, 270 the top).
     private fun arcSinRange(
         startAngle: Float,

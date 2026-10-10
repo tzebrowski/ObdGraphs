@@ -19,6 +19,7 @@ package org.obd.graphs.renderer.performance
 import org.obd.graphs.bl.query.PERFORMANCE_MAX_GAUGES
 import org.obd.graphs.bl.query.PERFORMANCE_STATUS_PIDS
 import org.obd.graphs.bl.query.PidOrder
+import org.obd.graphs.renderer.gauge.GaugeGeometry
 import org.obd.graphs.renderer.trip.TripInfoGrid
 import org.obd.graphs.renderer.trip.TripInfoMetrics
 
@@ -26,6 +27,12 @@ internal const val PERFORMANCE_GRID_COLUMNS = 5
 
 // Three full rows always fitted above the gauges; more are shrunk into the same height.
 private const val PERFORMANCE_GRID_ROWS = 3
+
+internal class PerformanceGaugeRow(
+    val width: Float,
+    // From the area's left edge to the first gauge.
+    val left: Float
+)
 
 internal class PerformancePlan(
     val top: List<Long>,
@@ -70,6 +77,25 @@ internal object PerformanceMetrics {
                     .sortedWith(PidOrder.comparator(sortOrder))
 
         return PerformancePlan(top = top, bottom = bottom)
+    }
+
+    /**
+     * Width and start of the gauge row. A gauge is [availableWidth] / [count] wide (one gauge: half
+     * the width), but never wider than fits [availableHeight]: the grid above takes a row per five
+     * PIDs, and with three rows the dials ran off the bottom of the screen. A narrower row is centred.
+     *
+     * @param dialBottomRatio how far below its top a dial reaches, per width ([GaugeGeometry.dialBottomRatio]).
+     */
+    fun gaugeRow(
+        count: Int,
+        availableWidth: Float,
+        availableHeight: Float,
+        dialBottomRatio: Float
+    ): PerformanceGaugeRow {
+        val byWidth = if (count == 1) availableWidth / 2f else availableWidth / count.coerceAtLeast(1)
+        val byHeight = if (dialBottomRatio > 0f) availableHeight.coerceAtLeast(0f) / dialBottomRatio else byWidth
+        val width = minOf(byWidth, byHeight)
+        return PerformanceGaugeRow(width, (availableWidth - width * count) / 2f)
     }
 
     /** Up to 15 grid PIDs nothing changes; more shrink into the same three-row height. */
