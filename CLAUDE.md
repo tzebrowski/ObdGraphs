@@ -219,11 +219,22 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   their square — a 200° arc leaves the lower circle empty.
 * Units: draw `displayUnits(pid.units)` (`renderer/Units.kt`), never `pid.units` directly. ObdMetrics'
   PID resources spell °C as a bare `C`, and they are not ours to change (shared with exports/logs).
-* Red on the dial = the PID's `alert` thresholds. The scale bitmap cache is keyed by `GaugeScale` and
-  `GaugeRedZones` too — a cache keyed by PID id alone kept a stale scale after a PID edit.
+* The red end is **styling, identical on every dial** (`GaugeRedZone`, last quarter), never derived
+  from alert thresholds. Two wrong turns, both rejected by the user: threshold-only zones (#225) left
+  PIDs without alerts with no red; threshold-started zones made the red differ dial to dial. Alerts
+  show only through the value / bar colour. The scale bitmap cache is keyed by `GaugeScale` — a cache
+  keyed by PID id alone kept a stale scale after a PID edit.
 * Phone cards may be taller than the dial (`GaugeGeometry.cardHeight`); `borderArea` is the card, `top`
   the dial. Captions belong to the card. `contentHeight`'s bottom pad must be excluded from the height
   the cards share, or a filled grid scrolls by a few pixels.
+* The bar is drawn with `progressPaint` / `glowPaint`, never `paint`: a shader on `paint` (the old
+  progress gradient) is invisible. Spec: `doc/specs/gauge-view-improvements.md`.
+* Per-PID cross-frame state (eased needle, staleness, last draw) lives in `GaugeFrameStates`; every
+  per-PID cache in `GaugeDrawer` must be dropped in `evictUndrawn`, or it leaks for PIDs no longer shown.
+  A new reading = a new `metric.source` object (the collector replaces it), not a changed value.
+* Centre text on `measureText` (advance), not `getTextBounds` (ink): ink width differs per digit, so the
+  value jittered sideways every reading.
+* Grid layout is `GaugeGrid` (pure, pinned by `GaugeGridTest`); change AA tuning there, with a DHU check.
 
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on

@@ -79,19 +79,12 @@ class GaugeGeometryTest {
     }
 
     @Test
-    fun `red zones come from the alert thresholds only`() {
-        val scale = GaugeScale.of(0.0, 100.0)
-
-        assertTrue(GaugeRedZones.NONE.ranges(scale).isEmpty())
-        assertEquals(listOf(0.8f..1f), GaugeRedZones(null, 80.0).ranges(scale))
-        assertEquals(listOf(0f..0.2f, 0.9f..1f), GaugeRedZones(20.0, 90.0).ranges(scale))
-        assertTrue(GaugeRedZones(null, 80.0).contains(80.0))
-        assertFalse(GaugeRedZones(null, 80.0).contains(79.9))
-    }
-
-    @Test
-    fun `thresholds beyond the scale draw no zone`() {
-        assertTrue(GaugeRedZones(-10.0, 200.0).ranges(GaugeScale.of(0.0, 100.0)).isEmpty())
+    fun `every dial has the same red end`() {
+        // Starting it at each PID's alert threshold made it differ from dial to dial.
+        assertEquals(0.75f..1f, GaugeRedZone.range)
+        assertTrue(GaugeRedZone.contains(1f))
+        assertTrue(GaugeRedZone.contains(0.75f))
+        assertFalse(GaugeRedZone.contains(0.7f))
     }
 
     @Test
@@ -166,5 +159,75 @@ class GaugeGeometryTest {
         assertEquals(180f, GaugeGeometry.cardHeight(gaugeWidth = 140f, itemMargin = 6f, rows = 2, availableHeight = 384f))
         assertEquals(210f, GaugeGeometry.cardHeight(gaugeWidth = 140f, itemMargin = 6f, rows = 2, availableHeight = 1000f))
         assertEquals(140f, GaugeGeometry.cardHeight(gaugeWidth = 140f, itemMargin = 6f, rows = 5, availableHeight = 500f))
+    }
+
+    @Test
+    fun `value beyond the scale is reported as overflow, the dial alone cannot show it`() {
+        val scale = GaugeScale.of(0.0, 100.0)
+
+        assertEquals(1, scale.overflow(130.0))
+        assertEquals(-1, scale.overflow(-5.0))
+        assertEquals(0, scale.overflow(100.0))
+        assertEquals(0, scale.overflow(0.0))
+        assertEquals(0, scale.overflow(Double.NaN))
+    }
+
+    @Test
+    fun `needle eases towards the value independent of the frame rate`() {
+        val oneStep = GaugeGeometry.easeNeedle(0f, 1f, elapsedSeconds = 0.1f)
+        var twoSteps = GaugeGeometry.easeNeedle(0f, 1f, elapsedSeconds = 0.05f)
+        twoSteps = GaugeGeometry.easeNeedle(twoSteps, 1f, elapsedSeconds = 0.05f)
+
+        assertTrue(oneStep > 0f && oneStep < 1f)
+        assertEquals(oneStep, twoSteps, 0.0001f)
+        // One time constant covers ~63 % of the way.
+        assertEquals(0.632f, GaugeGeometry.easeNeedle(0f, 1f, NEEDLE_TIME_CONSTANT_SECONDS), 0.001f)
+    }
+
+    @Test
+    fun `needle snaps on the first frame, after a gap and when close`() {
+        assertEquals(0.7f, GaugeGeometry.easeNeedle(Float.NaN, 0.7f, 0.016f))
+        assertEquals(0.7f, GaugeGeometry.easeNeedle(0.1f, 0.7f, NEEDLE_MAX_GAP_SECONDS + 0.1f))
+        assertEquals(0.7f, GaugeGeometry.easeNeedle(0.6995f, 0.7f, 0.016f))
+        assertEquals(0.1f, GaugeGeometry.easeNeedle(0.1f, 0.7f, 0f))
+    }
+
+    @Test
+    fun `red zone ticks start exactly on the threshold`() {
+        // 0.333 of a 200 degree sweep is 66.6 degrees; truncated to whole degrees it was drawn at 66.
+        val offsets = GaugeGeometry.zoneTickOffsets(0.333f, 1f, sweepAngle = 200f, stepDegrees = 2f)
+
+        assertEquals(66.6f, offsets.first(), 0.001f)
+        assertTrue(offsets.last() <= 200f)
+        assertTrue(offsets.last() > 198f)
+        assertEquals(2f, offsets[1] - offsets[0], 0.001f)
+    }
+
+    @Test
+    fun `red zone ticks for a zone ending on its step include the end`() {
+        val offsets = GaugeGeometry.zoneTickOffsets(0.5f, 1f, sweepAngle = 200f, stepDegrees = 2f)
+
+        assertEquals(51, offsets.size)
+        assertEquals(200f, offsets.last(), 0.001f)
+        assertEquals(0, GaugeGeometry.zoneTickOffsets(1f, 0.5f, 200f, 2f).size)
+    }
+
+    @Test
+    fun `text sits above the centre by the value line and moves up only when the stats overflow the card`() {
+        val fits = GaugeGeometry.textLayout(centerY = 100f, valueLineHeight = 40f, labelLineHeight = 10f, statsLineHeight = 10f, verticalGap = 5f, bottomLimit = 200f)
+        assertEquals(60f, fits.valueBaseline)
+
+        // Stats baseline 60 + 10 + 5 + 10 + 5 = 90, its half line below at 95: 15 past a limit of 80.
+        val overflows = GaugeGeometry.textLayout(100f, 40f, 10f, 10f, 5f, bottomLimit = 80f)
+        assertEquals(45f, overflows.valueBaseline)
+
+        assertEquals(60f, GaugeGeometry.textLayout(100f, 40f, 10f, 10f, 5f, bottomLimit = null).valueBaseline)
+    }
+
+    @Test
+    fun `module name leaves room for the rate in the other corner`() {
+        assertEquals(180f, GaugeGeometry.moduleNameMaxWidth(cardWidth = 200f, cornerOffset = 10f, rateWidth = 0f, gap = 5f))
+        assertEquals(135f, GaugeGeometry.moduleNameMaxWidth(cardWidth = 200f, cornerOffset = 10f, rateWidth = 40f, gap = 5f))
+        assertEquals(0f, GaugeGeometry.moduleNameMaxWidth(cardWidth = 50f, cornerOffset = 10f, rateWidth = 40f, gap = 5f))
     }
 }
