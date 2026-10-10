@@ -206,14 +206,49 @@ class PerformanceMetricsTest {
     }
 
     @Test
-    fun `gauges shrink to the height left below a full grid instead of running off the screen`() {
-        // 800 px wide DHU, three grid rows leave ~150 px: 266 px wide dials needed ~180 px and
-        // their lower part (value, stats) went under the bottom edge.
+    fun `grid shrinks into the height left above full-size gauges`() {
+        // 800 x 480 DHU: ~280 px below the status panel, 266 px dials need ~178 px, text size 33.
+        val rows = PerformanceMetrics.gridRows(height = 280f - 178f, textSize = 33f)
+        val grid = PerformanceMetrics.grid(12, rows)
+
+        // Three rows at full size (as drawn before) need 2 x 3 x 33 px; the grid gets under two.
+        assertTrue("$rows", rows < 2f)
+        assertEquals(12, grid.shown)
+        assertEquals(0, grid.hidden)
+        assertTrue(grid.scale < 1f)
+        // Its rows, at its scale, stay within the budget.
+        assertTrue((12 + grid.columns - 1) / grid.columns * grid.scale <= rows + 0.001f)
+    }
+
+    @Test
+    fun `fonts shrink further than Trip Info so a short grid still shows every PID`() {
+        // DHU with a 3-gauge row: ~1.4 rows of height left. At Trip Info's 0.75 floor that is one
+        // row of six, so 12 PIDs showed 5 and "+7".
+        val grid = PerformanceMetrics.grid(12, rows = 1.4f)
+
+        assertEquals(12, grid.shown)
+        assertEquals(0, grid.hidden)
+        assertTrue("${grid.scale}", grid.scale < 0.75f && grid.scale >= 0.6f - 0.001f)
+    }
+
+    @Test
+    fun `grid keeps three full rows when the height allows it`() {
+        assertEquals(3f, PerformanceMetrics.gridRows(height = 1000f, textSize = 33f), 0.001f)
+        val grid = PerformanceMetrics.grid(15, PerformanceMetrics.gridRows(1000f, 33f))
+        assertEquals(1f, grid.scale, 0.001f)
+        assertEquals(15, grid.shown)
+    }
+
+    @Test
+    fun `grid never gets less than one row`() {
+        assertEquals(1f, PerformanceMetrics.gridRows(height = 0f, textSize = 33f), 0.001f)
+    }
+
+    @Test
+    fun `gauges shrink only when even a one-row grid leaves too little`() {
         val row = PerformanceMetrics.gaugeRow(count = 3, availableWidth = 800f, availableHeight = 150f, dialBottomRatio = 0.67f)
 
         assertEquals(150f / 0.67f, row.width, 0.01f)
-        assertTrue(row.width * 0.67f <= 150f + 0.01f)
-        // The narrower row is centred.
         assertEquals((800f - 3 * row.width) / 2f, row.left, 0.01f)
     }
 

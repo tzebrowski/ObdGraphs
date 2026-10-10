@@ -47,6 +47,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
 
     // Rebuilt only when the grid item count changes, not every frame.
     private var grid: TripInfoGrid = PerformanceMetrics.grid(0)
+    private var gridRows = -1f
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(
@@ -86,10 +87,20 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
             fontSize = performanceScreenSettings.fontSize
         )
 
+        val availableWidth = area.width().toFloat()
+        val bottomMetrics = performanceInfoDetails.bottomMetrics
+        val count = bottomMetrics.size
+
+        // Gauges first, at full size; the grid shrinks into the height left above them.
+        val fullGauges = PerformanceMetrics.gaugeRow(count, availableWidth, area.bottom - top, gaugeBottomRatio)
+        val gaugesHeight = if (count > 0) fullGauges.width * gaugeBottomRatio else 0f
+        val rows = PerformanceMetrics.gridRows(area.bottom - top - gaugesHeight, textSize)
+
         val topMetrics = performanceInfoDetails.topMetrics
         val topMetricsSize = topMetrics.size
-        if (grid.shown + grid.hidden != topMetricsSize) {
-            grid = PerformanceMetrics.grid(topMetricsSize)
+        if (grid.shown + grid.hidden != topMetricsSize || rows != gridRows) {
+            grid = PerformanceMetrics.grid(topMetricsSize, rows)
+            gridRows = rows
         }
 
         val gridTextSize = textSize * grid.scale
@@ -163,11 +174,8 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
 
         rowTop -= textSize * 0.7f
 
-        val availableWidth = area.width().toFloat()
         val areaLeft = area.left.toFloat()
         val labelCenterYPadding = performanceScreenSettings.labelCenterYPadding - 4
-        val bottomMetrics = performanceInfoDetails.bottomMetrics
-        val count = bottomMetrics.size
 
         if (count > 0) {
             val row = PerformanceMetrics.gaugeRow(count, availableWidth, area.bottom - rowTop, gaugeBottomRatio)
