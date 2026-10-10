@@ -281,4 +281,18 @@ class TripInfoMetricsTest {
         assertEquals(69, grid.hidden)
         assertEquals(grid.maxItems, grid.shown + 1)
     }
+
+    @Test
+    fun `min and max are drawn when they fit beside the value in the column`() {
+        // #222 compared against the width of the max text instead of the column: never fitted,
+        // so no top-grid tile showed min / max.
+        assertTrue(TripInfoMetrics.statsFit(valueWidth = 60f, minTextWidth = 30f, maxTextWidth = 40f, columnWidth = 200))
+        assertTrue(TripInfoMetrics.statsFit(valueWidth = 160f, minTextWidth = 30f, maxTextWidth = 40f, columnWidth = 200))
+    }
+
+    @Test
+    fun `min and max are skipped when the wider one does not fit`() {
+        assertFalse(TripInfoMetrics.statsFit(valueWidth = 160f, minTextWidth = 45f, maxTextWidth = 30f, columnWidth = 200))
+        assertFalse(TripInfoMetrics.statsFit(valueWidth = 161f, minTextWidth = 30f, maxTextWidth = 40f, columnWidth = 200))
+    }
 }

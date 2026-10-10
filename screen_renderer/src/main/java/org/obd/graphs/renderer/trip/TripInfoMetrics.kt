@@ -125,6 +125,18 @@ internal object TripInfoMetrics {
     }
 
     /**
+     * Whether min / max (stacked, beside the value and its unit) fit in a [columnWidth] column.
+     * Pure because a local named like the column-width parameter once shadowed it, and the check
+     * compared against the max text's own width: no top-grid tile showed min / max.
+     */
+    fun statsFit(
+        valueWidth: Float,
+        minTextWidth: Float,
+        maxTextWidth: Float,
+        columnWidth: Int
+    ): Boolean = valueWidth + maxOf(minTextWidth, maxTextWidth) <= columnWidth
+
+    /**
      * Fits [itemCount] items into the height of a [baseRows]-row grid by shrinking the text and
      * adding columns. Up to [baseColumns] × [baseRows] items nothing changes (18 for Trip Info);
      * beyond the minimum scale the last cell becomes a "+N" marker for the items that are not drawn.
