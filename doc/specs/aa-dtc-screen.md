@@ -4,7 +4,7 @@
 
 ## Summary
 
-Android Auto gets a "Trouble Codes" screen that lists the stored diagnostic trouble codes and lets
+Android Auto gets a "Diagnostic Trouble Codes" screen that lists the stored diagnostic trouble codes and lets
 the driver read them again or clear them, so the head unit offers what the phone's DTC dialog does.
 
 **Problem.** DTC were reachable only from the phone (`DiagnosticTroubleCodePreferenceDialogFragment`).
@@ -18,7 +18,7 @@ class), `:app` (preference, EN/PL strings, dialog now uses the shared logic).
 
 | Area | Before | After |
 |---|---|---|
-| AA "Available screens" list | Surface screens + Routines | + "Trouble Codes" (when enabled) |
+| AA "Available screens" list | Surface screens + Routines | + "Diagnostic Trouble Codes" (when enabled) |
 | AA DTC list | — | Last stored DTC (same store as the phone dialog), grouped by module like the phone |
 | AA read | — | Strip action (sync icon) while connected; loading list until `DATA_LOGGER_DTC_ACTION_COMPLETED` |
 | AA clear | — | Strip action (red trash) while connected and codes exist → confirmation `MessageTemplate` → clear |
@@ -43,7 +43,7 @@ system → category path when unknown), second line = active statuses when prese
   sections for `ListTemplate.addSectionedList`).
 * `automotive/.../screen/nav/DiagnosticTroubleCodesScreen.kt`: `ListTemplate` (single list for the
   default-ECU case, sectioned lists per module otherwise), `DtcClearConfirmationScreen`.
-  Identity `DtcScreenIdentity.DTC` (223).
+  Identity `DtcScreenIdentity.DTC` (223); icon `drawable/action_dtc.xml` (check-engine symbol with "!", vector, white like the other strip icons).
 * `NavTemplateCarScreen.gotoScreen` pushes the screen for that identity; `availableFeatures()` lists it.
 * `ScreenSettings.getDtcScreenSettings()` / `DtcScreenSettings`, implemented in `CarSettings`.
 * `ListTemplate`'s action strip allows **2** actions (`ACTIONS_CONSTRAINTS_SIMPLE`), hence
@@ -66,7 +66,7 @@ is checked manually.
 
 ## Risks and verification checklist
 
-- [ ] DHU: "Trouble Codes" appears in Available screens; hidden when `pref.aa.dtc.enabled` is off.
+- [ ] DHU: "Diagnostic Trouble Codes" appears in Available screens; hidden when `pref.aa.dtc.enabled` is off.
 - [ ] Disconnected: only Connect in the strip; connecting shows the loading list, then read/clear.
 - [ ] Read: loading list, then refreshed codes + "Trouble codes updated." toast.
 - [ ] Clear: confirmation shown; Cancel/Back does nothing; Clear clears and reloads the list.

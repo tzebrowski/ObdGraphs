@@ -135,7 +135,7 @@ internal class DiagnosticTroubleCodesScreen(
             listOf(
                 FeatureDescription(
                     DtcScreenIdentity.DTC,
-                    R.drawable.action_features,
+                    R.drawable.action_dtc,
                     stringProvider.getString(R.string.available_features_dtc_screen_title)
                 )
             )
