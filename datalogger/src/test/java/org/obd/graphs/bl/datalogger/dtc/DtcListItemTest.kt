@@ -85,7 +85,7 @@ class DtcListItemTest {
     fun `default ECU read is one headerless section`() {
         val sections =
             listOf(dtc("P0100"), dtc("P0200", module = "ecu"))
-                .toDtcListItems(emptyList(), "none", "none for module")
+                .toDtcListItems(emptyList(), "none", "none for module", unknownModuleLabel = "?")
                 .toDtcSections()
         assertEquals(1, sections.size)
         assertEquals(null, sections[0].header)
@@ -94,7 +94,7 @@ class DtcListItemTest {
 
     @Test
     fun `no codes is a single message section`() {
-        val sections = emptyList<DiagnosticTroubleCode>().toDtcListItems(emptyList(), "none", "x").toDtcSections()
+        val sections = emptyList<DiagnosticTroubleCode>().toDtcListItems(emptyList(), "none", "x", unknownModuleLabel = "?").toDtcSections()
         assertEquals(listOf(DtcSection(null, listOf(DtcListItem.Message("", "none")))), sections)
     }
 
@@ -102,10 +102,49 @@ class DtcListItemTest {
     fun `scanned modules become sections, empty ones with a message`() {
         val sections =
             listOf(dtc("P0100", module = "Engine"))
-                .toDtcListItems(listOf("Engine", "Gearbox"), "none", "nothing")
+                .toDtcListItems(listOf("Engine", "Gearbox"), "none", "nothing", unknownModuleLabel = "?")
                 .toDtcSections()
         assertEquals(listOf("Engine", "Gearbox"), sections.map { it.header })
         assertTrue(sections[0].items.single() is DtcListItem.DtcRow)
         assertEquals(DtcListItem.Message("Gearbox", "nothing"), sections[1].items.single())
+    }
+
+    @Test
+    fun `untagged codes from a multi-module scan go under the unknown module label`() {
+        val sections =
+            listOf(dtc("P0100", module = "ecu"), dtc("P0105"))
+                .toDtcListItems(listOf("Engine ECU", "ABS"), "none", "nothing", unknownModuleLabel = "Unknown module")
+                .toDtcSections()
+        assertEquals(listOf("ABS", "Engine ECU", "Unknown module"), sections.map { it.header })
+        assertEquals(2, sections[2].items.size)
+    }
+
+    @Test
+    fun `untagged codes from a single-module scan go under that module`() {
+        val sections =
+            listOf(dtc("P0100", module = "ecu"))
+                .toDtcListItems(listOf("Engine ECU"), "none", "nothing", unknownModuleLabel = "Unknown module")
+                .toDtcSections()
+        assertEquals(listOf("Engine ECU"), sections.map { it.header })
+    }
+
+    @Test
+    fun `entries sharing a header are scanned once under the first entry`() {
+        val mappings =
+            listOf(
+                DiagnosticMappingItem(1, "22", "DA10F1", "Engine ECU"),
+                DiagnosticMappingItem(2, "GME20", "da10f1", "Engine ECU (2.0 GME)"),
+                DiagnosticMappingItem(3, "ABS", "DA28F1", "ABS"),
+                DiagnosticMappingItem(4, "BCM", "", "BCM")
+            )
+        assertEquals(
+            listOf("Engine ECU", "ABS"),
+            dtcScanTargets(mappings, setOf("22", "GME20", "ABS", "BCM")).map { it.displayName }
+        )
+        // A deselected first entry leaves the header to the next selected one.
+        assertEquals(
+            listOf("Engine ECU (2.0 GME)"),
+            dtcScanTargets(mappings, setOf("GME20")).map { it.displayName }
+        )
     }
 }

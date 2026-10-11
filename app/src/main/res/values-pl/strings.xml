@@ -435,6 +435,7 @@
     <string name="pref.dtc.code">Kod</string>
     <string name="pref.dtc.description">Opis</string>
     <string name="pref.dtc.no_dtc_found">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
+    <string name="pref.dtc.unknown_module">Nieznany moduł</string>
     <string name="pref.dtc.no_dtc_found_for_module">Brak zgłoszonych kodów błędów.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Włącz automatyczne czyszczenie DTC</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatycznie kasuje kody błędów diagnostycznych (DTC) z pamięci ECU.</string>

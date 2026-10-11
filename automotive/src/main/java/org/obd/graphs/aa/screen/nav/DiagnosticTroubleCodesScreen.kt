@@ -204,7 +204,8 @@ internal class DiagnosticTroubleCodesScreen(
                 .toDtcListItems(
                     scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
                     noCodesMessage = stringProvider.getString(R.string.dtc_no_codes),
-                    noCodesForModuleMessage = stringProvider.getString(R.string.dtc_no_codes_for_module)
+                    noCodesForModuleMessage = stringProvider.getString(R.string.dtc_no_codes_for_module),
+                    unknownModuleLabel = stringProvider.getString(R.string.dtc_unknown_module)
                 ).toDtcSections()
 
         val builder =

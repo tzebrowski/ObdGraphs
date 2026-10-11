@@ -52,7 +52,8 @@ private fun DiagnosticTroubleCode.moduleLabel(): String =
 fun List<DiagnosticTroubleCode>.toDtcListItems(
     scannedModules: List<String>,
     noCodesMessage: String,
-    noCodesForModuleMessage: String
+    noCodesForModuleMessage: String,
+    unknownModuleLabel: String
 ): List<DtcListItem> {
     val realModules =
         (mapNotNull { it.module } + scannedModules)
@@ -70,12 +71,19 @@ fun List<DiagnosticTroubleCode>.toDtcListItems(
     // A scan targeting a single module can still return codes tagged with the default "ecu" (or
     // untagged) - they came back from that scan, so file them under the module the user picked
     // rather than a separate generic "ECU" group. With several modules scanned there's no way to
-    // tell which one they belong to, so they keep the default label.
-    val singleScannedModule = scannedModules.filter { it.isNotBlank() }.distinct().singleOrNull()
+    // tell which one they belong to: "ECU" would read as a real module (and sit next to e.g.
+    // "Engine ECU"), so they go under unknownModuleLabel instead.
+    val distinctScannedModules = scannedModules.filter { it.isNotBlank() }.distinct()
+    val singleScannedModule = distinctScannedModules.singleOrNull()
 
     fun DiagnosticTroubleCode.groupLabel(): String =
         moduleLabel().let { label ->
-            if (label == DTC_DEFAULT_MODULE_LABEL && singleScannedModule != null) singleScannedModule else label
+            when {
+                label != DTC_DEFAULT_MODULE_LABEL -> label
+                singleScannedModule != null -> singleScannedModule
+                distinctScannedModules.size > 1 -> unknownModuleLabel
+                else -> label
+            }
         }
 
     // Within a group, the same code can arrive twice (once tagged "ecu", once untagged) - show it once.
@@ -162,3 +170,15 @@ fun List<DtcListItem>.toDtcSections(): List<DtcSection> {
     flush()
     return sections
 }
+
+// The table entries a DTC read/clear actually targets: the selected ones that have a header, one per
+// header. Two entries may name the same ECU (e.g. "Engine ECU" and "Engine ECU (2.0 GME)", both
+// DA10F1); once codes carry their module, scanning both lists every code of that ECU twice.
+// The first entry in table order names the section.
+fun dtcScanTargets(
+    mappings: List<DiagnosticMappingItem>,
+    selected: Set<String>
+): List<DiagnosticMappingItem> =
+    mappings
+        .filter { it.headerValue.isNotEmpty() && it.requestKey in selected }
+        .distinctBy { it.headerValue.trim().uppercase() }

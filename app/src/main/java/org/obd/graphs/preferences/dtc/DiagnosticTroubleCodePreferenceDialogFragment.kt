@@ -399,7 +399,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             codes.toDtcListItems(
                 scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
                 noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
-                noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module)
+                noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
+                unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
             )
         )
 

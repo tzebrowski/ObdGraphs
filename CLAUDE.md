@@ -249,6 +249,13 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   `datalogger/.../bl/datalogger/dtc/DtcListItem.kt`, shared by `DiagnosticTroubleCodePreferenceDialogFragment`
   and AA `DiagnosticTroubleCodesScreen` — keep one copy. Spec: `doc/specs/aa-dtc-screen.md`.
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
+* **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
+  An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing
+  means the module tag was lost upstream: e.g. two DTC read PIDs sharing a query made the decoder use
+  the registry copies (`module=ecu`). Check the `[DTC] Adding DTC read command` lines in logcat
+  before touching the grouping. Fix lives in ObdMetrics `fix/dtc-module-tagging`.
+* CAN header table entries can share a header; `dtcScanTargets` scans each header once (first selected
+  entry names it). Without it the same ECU's codes appear under every name pointing at it.
 * AA `ListTemplate` action strips take **2** actions (`ACTIONS_CONSTRAINTS_SIMPLE`),
   not 4 like the nav template — a third throws at build time.
 * AA template screens: a `CarScreen` added as observer of the *parent's* lifecycle (as `gotoScreen` does

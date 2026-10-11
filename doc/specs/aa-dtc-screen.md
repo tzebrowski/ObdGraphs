@@ -24,6 +24,7 @@ class), `:app` (preference, EN/PL strings, dialog now uses the shared logic).
 | AA clear | — | Strip action (red trash) while connected and codes exist → confirmation `MessageTemplate` → clear |
 | AA while disconnected | — | Strip shows Connect only (idle `ROUTINES_QUERY`, no live PIDs) |
 | Phone DTC dialog | — | Unchanged output; grouping/sorting/formatting now come from `:datalogger` |
+| Untagged codes after a multi-module scan (phone + AA) | Section "ECU", next to real modules such as "Engine ECU" | Section "Unknown module" (`pref.dtc.unknown_module` / `dtc.unknown_module`); single-module scans still file them under that module, a plain default-ECU read stays flat |
 
 Row: title = code with failure type (`P0123-1A`), first line = description (or the
 system → category path when unknown), second line = active statuses when present.
@@ -51,6 +52,23 @@ system → category path when unknown), second line = active statuses when prese
 * The receiver lives from `onCreate` to `onDestroy` of the screen's own lifecycle, so a result
   arriving while the confirmation is on top still ends the loading state. Error/stop/connect-error
   events also end it — the DTC action never reports back once the link is gone.
+
+### Module tags come from ObdMetrics
+
+A code's section is its `DiagnosticTroubleCode.module`, set by the codec from the PID it decodes with.
+Two DTC read PIDs sharing a query (`giulia_2.0_gme.json` + `2.0_gme_ext.json` in the GME profiles) made
+ObdMetrics decode with the registry's copies (`module=ecu`), so every code of a multi-module scan landed
+in "ECU" and each scanned module read "No codes reported". Fixed upstream on branch
+`fix/dtc-module-tagging` in ObdMetrics (decoder keeps the command's module; one read per query) and
+ObdMetricsGiuliaQV (`ExtendedDiagnosticTroubleCodeCodec` tags the module); needs an `obdMetricVersion`
+bump here. "Unknown module" is the safety net for any codec that still forgets the tag.
+
+### One scan per header
+
+CAN header table entries can share a header (GME profiles: "Engine ECU" / "Engine ECU (2.0 GME)" on
+`DA10F1`, "Service Interval" / "Instrument Panel" on `DA60F1`). With module tags fixed, both entries
+listed the same codes. `dtcScanTargets` (used by `WorkflowOrchestrator.getDtcModules`, so phone and AA,
+read and clear) keeps one entry per header, the first selected one in table order, which names the section.
 
 ## Backward compatibility
 
