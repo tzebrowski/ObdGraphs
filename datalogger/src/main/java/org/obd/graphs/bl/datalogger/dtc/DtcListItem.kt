@@ -33,6 +33,12 @@ sealed class DtcListItem {
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
     // that reported nothing. Keyed so DiffUtil can tell per-module messages apart.
     data class Message(val key: String, val text: String) : DtcListItem()
+
+    // Every subclass is a data class; declared here so DiffUtil's areContentsTheSame (and lint's
+    // DiffUtilEquals check, which cannot see subclasses across modules) rely on value equality.
+    abstract override fun equals(other: Any?): Boolean
+
+    abstract override fun hashCode(): Int
 }
 
 private const val DTC_DEFAULT_MODULE_LABEL = "ECU"

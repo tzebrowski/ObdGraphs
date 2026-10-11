@@ -248,6 +248,9 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * List logic (grouping by module, sort, code/description formatting, scan module selection) lives in
   `datalogger/.../bl/datalogger/dtc/DtcListItem.kt`, shared by `DiagnosticTroubleCodePreferenceDialogFragment`
   and AA `DiagnosticTroubleCodesScreen` — keep one copy. Spec: `doc/specs/aa-dtc-screen.md`.
+* `DtcListItem` declares `abstract equals/hashCode`: lint's `DiffUtilEquals` (an *error*, fails CI
+  `lintGiuliaDebug`) cannot see data-class subclasses in another module. Run `:app:lintGiuliaDebug`
+  after moving a type that an `:app` adapter compares.
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
 * **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
   An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing
