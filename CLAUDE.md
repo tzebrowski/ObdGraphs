@@ -244,6 +244,27 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   value jittered sideways every reading.
 * Grid layout is `GaugeGrid` (pure, pinned by `GaugeGridTest`); change AA tuning there, with a DHU check.
 
+### DTC (phone dialog + AA screen)
+* List logic (grouping by module, sort, code/description formatting, scan module selection) lives in
+  `datalogger/.../bl/datalogger/dtc/DtcListItem.kt`, shared by `DiagnosticTroubleCodePreferenceDialogFragment`
+  and AA `DiagnosticTroubleCodesScreen` — keep one copy. Spec: `doc/specs/aa-dtc-screen.md`.
+* `DtcListItem` declares `abstract equals/hashCode`: lint's `DiffUtilEquals` (an *error*, fails CI
+  `lintGiuliaDebug`) cannot see data-class subclasses in another module. Run `:app:lintGiuliaDebug`
+  after moving a type that an `:app` adapter compares.
+* AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
+* **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
+  An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing
+  means the module tag was lost upstream: e.g. two DTC read PIDs sharing a query made the decoder use
+  the registry copies (`module=ecu`). Check the `[DTC] Adding DTC read command` lines in logcat
+  before touching the grouping. Fix lives in ObdMetrics `fix/dtc-module-tagging`.
+* CAN header table entries can share a header; `dtcScanTargets` scans each header once (first selected
+  entry names it). Without it the same ECU's codes appear under every name pointing at it.
+* AA `ListTemplate` action strips take **2** actions (`ACTIONS_CONSTRAINTS_SIMPLE`),
+  not 4 like the nav template — a third throws at build time.
+* AA template screens: a `CarScreen` added as observer of the *parent's* lifecycle (as `gotoScreen` does
+  for `RoutinesScreen`) gets the parent's pause when it is pushed, so its receiver should unregister while
+  it is on screen (read from the code, not yet confirmed on a DHU). `DiagnosticTroubleCodesScreen` observes its own lifecycle instead.
+
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
   `pref.adapter.connection.type`. Two Bluetooth transports, deliberately separate:

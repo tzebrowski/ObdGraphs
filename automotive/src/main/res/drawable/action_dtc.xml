@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Check-engine (MIL) symbol with an exclamation mark, for the DTC screen. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="54dp"
+    android:height="54dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M7,3 L16,3 L16,5 L12.5,5 L12.5,7 L16,7 L17.5,9 L17.5,11 L19.5,11 L19.5,8 L22,8 L22,19 L19.5,19 L19.5,15 L17.5,15 L17.5,17 L15,20 L8,20 L6,17.5 L4.5,17.5 L4.5,14.5 L3,14.5 L3,18 L1,18 L1,10 L3,10 L3,12.5 L4.5,12.5 L4.5,10 L7,7 L10.5,7 L10.5,5 L7,5 Z M9.75,9.5 L12.25,9.5 L12.25,14.5 L9.75,14.5 Z M9.75,15.75 L12.25,15.75 L12.25,17.75 L9.75,17.75 Z" />
+</vector>

@@ -35,6 +35,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.dtc.DtcListItem
+import org.obd.graphs.bl.datalogger.dtc.displayCode
+import org.obd.graphs.bl.datalogger.dtc.displayDescription
+import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
 import org.obd.metrics.api.model.DiagnosticTroubleCode
@@ -83,37 +87,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         dtc: DiagnosticTroubleCode,
         position: Int
     ) {
-        val formattedCode =
-            if (!dtc.failureType?.code.isNullOrEmpty()) {
-                "${dtc.standardCode}-${dtc.failureType.code}"
-            } else {
-                dtc.standardCode
-            }
-
-        var finalDescription = dtc.description
-        var isUnknown = false
-
-        if (finalDescription.isNullOrBlank() ||
-            finalDescription.contains(
-                "Unknown DTC Description",
-                ignoreCase = true
-            )
-        ) {
-            isUnknown = true
-            val fallbackParts =
-                listOfNotNull(
-                    dtc.system?.description,
-                    dtc.category?.description,
-                    dtc.subsystem?.description
-                ).filter { it.isNotBlank() }
-
-            finalDescription =
-                if (fallbackParts.isNotEmpty()) {
-                    fallbackParts.joinToString(" → ") + " (Unknown specific fault)"
-                } else {
-                    "Unknown DTC Description"
-                }
-        }
+        val formattedCode = dtc.displayCode()
+        val finalDescription = dtc.displayDescription()
+        val isUnknown = dtc.isDescriptionUnknown()
 
         if (dtc.standardCode.isEmpty()) {
             holder.code.setText("", Color.GRAY, Typeface.NORMAL, 1f)

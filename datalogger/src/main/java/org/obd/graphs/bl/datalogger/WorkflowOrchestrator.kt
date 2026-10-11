@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
+import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
@@ -272,8 +273,7 @@ internal class WorkflowOrchestrator internal constructor() {
     // module's displayName (description, falling back to requestKey) is what ends up on
     // Init.Header.mode - not a protocol mode, but the label shown in the DTC list/dialogs.
     private fun getDtcModules(selectedModules: Set<String>): List<Init.Header> =
-        DiagnosticRequestIDManager.getMappings()
-            .filter { it.headerValue.isNotEmpty() && it.requestKey in selectedModules }
+        dtcScanTargets(DiagnosticRequestIDManager.getMappings(), selectedModules)
             .map { Init.Header.builder().mode(it.displayName).header(it.headerValue).build() }
 
     fun discoverModule(header: String) {

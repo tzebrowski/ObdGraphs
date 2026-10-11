@@ -390,6 +390,9 @@
     <string name="pref.aa.routines.category">Routines</string>
     <string name="pref.aa.routines.enabled">Enable routines screen</string>
     <string name="pref.aa.routines.enabled.enabled_summary">Activates the Routines screen, which permits execution of specific ECU functions. Use of this feature carries risk and is entirely at your own responsibility.</string>
+    <string name="pref.aa.dtc.category">Trouble codes</string>
+    <string name="pref.aa.dtc.enabled">Enable trouble codes screen</string>
+    <string name="pref.aa.dtc.enabled_summary">Shows the diagnostic trouble codes (DTC) screen in Android Auto, where codes can be read and cleared. Modules scanned follow the selection made in the DTC dialog of the app.</string>
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
     <string name="pref.aa.performance_meter.metrics_read_freq">Desired OBD2 Data reading frequency</string>
     <string name="pref.aa.performance_meter.display_frequency">Display OBD2 Data read frequency</string>
@@ -428,6 +431,7 @@
     <string name="pref.dtc.code">Code</string>
     <string name="pref.dtc.description">Description</string>
     <string name="pref.dtc.no_dtc_found">No Diagnosis Trouble Code (DTC) found.</string>
+    <string name="pref.dtc.unknown_module">Unknown module</string>
     <string name="pref.dtc.no_dtc_found_for_module">No trouble codes reported.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Enable Automatic DTC cleanup</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatically clears Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
