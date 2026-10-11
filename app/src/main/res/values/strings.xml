@@ -979,6 +979,10 @@
     <string name="dtc.share.status">Status: %1$s (Hex: %2$s)</string>
     <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
     <string name="dtc.share.unknown_did">Unknown DID</string>
+    <string name="dtc.detail.hex_status">Hex: %1$s | Mask: %2$s\nStatus: %3$s</string>
+    <string name="dtc.copy.system">System: %1$s</string>
+    <string name="dtc.copy.status">Status: %1$s</string>
+    <string name="dtc.copied_to_clipboard">Copied %1$s to clipboard</string>
     <string name="error_dialog.copied_to_clipboard">Copied to clipboard</string>
     <string name="dialog.screen_lock.cancel">Cancel</string>
     <string name="gps.title">GPS DIAGNOSTICS</string>

@@ -39,9 +39,9 @@ import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
+import org.obd.graphs.bl.datalogger.dtc.itemKey
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
-import org.obd.metrics.api.model.DiagnosticTroubleCode
 
 private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DTC = 1
@@ -52,7 +52,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 ) : ListAdapter<DtcListItem, RecyclerView.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
-    private var expandedPosition = RecyclerView.NO_POSITION
+    // The expanded row by identity, not position: after a read or clear the list changes and
+    // another row would sit at the old position.
+    private var expandedKey: String? = null
 
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
@@ -77,16 +79,18 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     ) {
         when (val item = getItem(position)) {
             is DtcListItem.ModuleHeader -> (holder as HeaderViewHolder).bind(item)
-            is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item.dtc, position)
+            is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item)
             is DtcListItem.Message -> (holder as MessageViewHolder).bind(item)
         }
     }
 
     private fun bindDtc(
         holder: DtcViewHolder,
-        dtc: DiagnosticTroubleCode,
-        position: Int
+        item: DtcListItem.DtcRow
     ) {
+        val dtc = item.dtc
+        val context = holder.itemView.context
+        val notAvailable = context.getString(R.string.dtc_share_not_available)
         val formattedCode = dtc.displayCode()
         val finalDescription = dtc.displayDescription()
         val isUnknown = dtc.isDescriptionUnknown()
@@ -106,14 +110,14 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             }
         }
 
-        val systemTxt = dtc.system?.description ?: "N/A"
-        val categoryTxt = dtc.category?.description ?: "N/A"
-        holder.detailSystemInfo.text = "System: $systemTxt | Category: $categoryTxt"
+        val systemTxt = dtc.system?.description ?: notAvailable
+        val categoryTxt = dtc.category?.description ?: notAvailable
+        holder.detailSystemInfo.text = context.getString(R.string.dtc_share_system_category, systemTxt, categoryTxt)
 
-        val hex = dtc.rawHex ?: "N/A"
+        val hex = dtc.rawHex ?: notAvailable
         val statusMask = String.format("0x%02X", dtc.statusMask)
-        val activeStatuses = dtc.activeStatuses?.joinToString(", ") ?: "None"
-        holder.detailHexStatus.text = "Hex: $hex | Mask: $statusMask\nStatus: $activeStatuses"
+        val activeStatuses = dtc.activeStatuses?.joinToString(", ") ?: context.getString(R.string.dtc_share_none)
+        holder.detailHexStatus.text = context.getString(R.string.dtc_detail_hex_status, hex, statusMask, activeStatuses)
 
         val snapshot = dtc.snapshot
         if (dataLoggerSettings.instance().adapter.dtcReadSnapshots && snapshot != null) {
@@ -121,9 +125,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             val snapshotText = StringBuilder()
 
             snapshot.forEach { did ->
-                val value = did.decodedValue ?: "N/A"
+                val value = did.decodedValue ?: notAvailable
                 val unit = did.definition?.units ?: ""
-                val desc = did.definition?.description ?: "Unknown DID"
+                val desc = did.definition?.description ?: context.getString(R.string.dtc_share_unknown_did)
                 snapshotText.append("• $desc: $value $unit\n")
             }
 
@@ -132,32 +136,38 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             holder.snapshotContainer.visibility = View.GONE
         }
 
-        val isExpanded = position == expandedPosition
+        val key = item.itemKey()
+        val isExpanded = key == expandedKey
         holder.expandedContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
         holder.itemView.setOnClickListener {
-            val previousExpandedPosition = expandedPosition
-            expandedPosition = if (isExpanded) RecyclerView.NO_POSITION else position
+            val previousKey = expandedKey
+            expandedKey = if (isExpanded) null else key
 
-            notifyItemChanged(previousExpandedPosition)
-            notifyItemChanged(expandedPosition)
+            previousKey?.let { notifyRowChanged(it) }
+            expandedKey?.let { notifyRowChanged(it) }
         }
 
         holder.actionSearchWeb.setOnClickListener {
             val query = "OBD2 DTC $formattedCode ${dtc.description ?: ""}".trim()
             val url = "https://www.google.com/search?q=${Uri.encode(query)}"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            holder.itemView.context.startActivity(intent)
+            context.startActivity(intent)
         }
 
         holder.actionCopyCode.setOnClickListener {
-            val clipboard =
-                holder.itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-            var clipText = "DTC: $formattedCode\nDescription: ${dtc.description ?: "Unknown"}\nSystem: $systemTxt\nStatus: $activeStatuses"
+            var clipText =
+                listOf(
+                    context.getString(R.string.dtc_share_dtc, formattedCode),
+                    context.getString(R.string.dtc_share_description, dtc.description ?: context.getString(R.string.dtc_share_unknown)),
+                    context.getString(R.string.dtc_copy_system, systemTxt),
+                    context.getString(R.string.dtc_copy_status, activeStatuses)
+                ).joinToString("\n")
 
             if (dtc.snapshot != null) {
-                clipText += "\n\nSnapshot Data:\n${holder.detailSnapshotInfo.text}"
+                clipText += "\n\n${context.getString(R.string.dtc_freeze_frame_data)}:\n${holder.detailSnapshotInfo.text}"
             }
 
             val clip = ClipData.newPlainText("DTC Info", clipText)
@@ -165,11 +175,16 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 
             Toast
                 .makeText(
-                    holder.itemView.context,
-                    "Copied $formattedCode to clipboard",
+                    context,
+                    context.getString(R.string.dtc_copied_to_clipboard, formattedCode),
                     Toast.LENGTH_SHORT
                 ).show()
         }
+    }
+
+    private fun notifyRowChanged(key: String) {
+        val position = currentList.indexOfFirst { it.itemKey() == key }
+        if (position != RecyclerView.NO_POSITION) notifyItemChanged(position)
     }
 
     internal class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -210,16 +225,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                 override fun areItemsTheSame(
                     oldItem: DtcListItem,
                     newItem: DtcListItem
-                ): Boolean =
-                    when {
-                        oldItem is DtcListItem.ModuleHeader && newItem is DtcListItem.ModuleHeader ->
-                            oldItem.module == newItem.module
-                        oldItem is DtcListItem.DtcRow && newItem is DtcListItem.DtcRow ->
-                            oldItem.dtc.standardCode == newItem.dtc.standardCode && oldItem.dtc.rawHex == newItem.dtc.rawHex
-                        oldItem is DtcListItem.Message && newItem is DtcListItem.Message ->
-                            oldItem.key == newItem.key
-                        else -> false
-                    }
+                ): Boolean = oldItem.itemKey() == newItem.itemKey()
 
                 override fun areContentsTheSame(
                     oldItem: DtcListItem,

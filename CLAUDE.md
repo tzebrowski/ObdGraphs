@@ -251,6 +251,10 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * `DtcListItem` declares `abstract equals/hashCode`: lint's `DiffUtilEquals` (an *error*, fails CI
   `lintGiuliaDebug`) cannot see data-class subclasses in another module. Run `:app:lintGiuliaDebug`
   after moving a type that an `:app` adapter compares.
+* Row identity is `DtcListItem.itemKey()` (module + display code, no raw hex): used for DiffUtil's
+  `areItemsTheSame` and the phone's expanded row. Code + raw hex merged the same code from two modules,
+  and made a status-byte change look like a new row. Never key list state by position — a read or
+  clear reorders the list and another row inherited the expanded state.
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
 * **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
   An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing

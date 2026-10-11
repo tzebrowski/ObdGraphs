@@ -48,6 +48,16 @@ private const val DTC_DEFAULT_MODULE_LABEL = "ECU"
 private fun DiagnosticTroubleCode.moduleLabel(): String =
     module?.takeUnless { it.isBlank() || it.equals(DTC_DEFAULT_MODULE, ignoreCase = true) } ?: DTC_DEFAULT_MODULE_LABEL
 
+// Identity of a list row across reloads (DiffUtil's areItemsTheSame, the expanded row). A code row
+// includes its module: the same code reported by two modules is two rows. The raw hex is left out -
+// it carries the status byte, and a status change is a content change of the same row.
+fun DtcListItem.itemKey(): String =
+    when (this) {
+        is DtcListItem.ModuleHeader -> "header:$module"
+        is DtcListItem.DtcRow -> "dtc:${dtc.moduleLabel()}:${dtc.displayCode()}"
+        is DtcListItem.Message -> "message:$key"
+    }
+
 // Always label results with a module header once a real (non-default) module is present, even if
 // only one module ended up reporting codes this scan (eg. you picked 2 modules but only one had
 // codes) - the user explicitly picked modules and wants to see which one each result came from.
