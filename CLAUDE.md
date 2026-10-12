@@ -298,7 +298,12 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   the decoder runs each, so two clear codecs race (file order decides). Hence no `dtcClear` in `giulia_2.0_gme.json`.
 * Snapshot/follow-up requests must go to the code's own module (`ATSH`); before ObdMetrics `feat/dtc-follow-up-requests`
   they went to the last scanned module and timed out (handler logs "Timed out waiting", a 5 s gap before "Notyfing").
-  The snapshot parser stops at the first DID the loaded files do not define. A short freeze frame means a missing DID.
+  The snapshot parser stops at the first DID it cannot resolve. A short freeze frame means a missing DID, or one whose
+  `length` differs from the frame: 2.0 GME stores 1812 / 1004 in 1 byte, their live replies 2. Snapshot sizes go in
+  the `dtcSnapshot` group (resolved before livedata, never queried live). Wrong turn: a 33-DID layout from the spec
+  document; the car sends 11. Trust a captured frame (logcat `TX: 19 04`), not the document.
+* A context reply that decodes to `null` is never published, so the DTC handler waits for it until its timeout (23 s
+  for 30 codes; the scan looks hung). Snapshot and follow-up codecs return an error response instead.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

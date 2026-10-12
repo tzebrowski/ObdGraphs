@@ -245,7 +245,7 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         val slot = slot<String>()
         every { editor.putString(eq(PREF_DTC), capture(slot)) } returns editor
 
-        val counter = PidDefinition(17149L, 1, "A", "22", "6080", "", "DTC Event\nCounter", 0, 255, null)
+        val counter = PidDefinition(1239005L, 1, "A", "19", "6080", "", "DTC Event Counter", 0, 255, null)
         val code = dtc("P0100", "Mass air flow circuit").apply { details = listOf(SnapshotPID(counter, "07", 7)) }
         VehicleCapabilitiesManager.updateDTC(setOf(code))
 
