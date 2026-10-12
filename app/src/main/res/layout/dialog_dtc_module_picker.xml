@@ -42,6 +42,18 @@
             android:textColor="@color/rainbow_indigo" />
     </LinearLayout>
 
+    <!-- Bulk (de)selection sits with the list rather than in the button bar: three buttons sharing
+         the bar's width broke "Odznacz wszystkie" mid-word in Polish. -->
+    <Button
+        android:id="@+id/dtc_picker_toggle_all"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:padding="0dp"
+        android:text="@string/pref.dtc.select_modules.deselect_all"
+        android:textColor="@color/rainbow_indigo" />
+
     <!-- Height-capped so a long module list scrolls instead of pushing the buttons out of view. -->
     <org.obd.graphs.preferences.dtc.MaxHeightListView
         android:id="@+id/dtc_picker_modules"
@@ -56,36 +68,27 @@
         android:scrollbarThumbVertical="@drawable/dtc_module_list_scrollbar_thumb"
         android:scrollbars="vertical" />
 
-    <!-- Own button bar (not the AlertDialog's) so the three buttons never auto-stack vertically. -->
+    <!-- Own button bar (not the AlertDialog's) so the buttons never auto-stack vertically. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
+        android:gravity="end"
         android:orientation="horizontal"
         android:paddingTop="16dp">
 
         <Button
             android:id="@+id/dtc_picker_cancel"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/pref.dtc.select_modules.cancel" />
-
-        <Button
-            android:id="@+id/dtc_picker_toggle_all"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/pref.dtc.select_modules.deselect_all" />
 
         <Button
             android:id="@+id/dtc_picker_confirm"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textColor="@color/dtc_module_picker_confirm_text" />
     </LinearLayout>
 
