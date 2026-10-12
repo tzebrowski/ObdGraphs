@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.datalogger.dtc
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.obd.graphs.DiagnosticMappingItem
@@ -146,5 +147,37 @@ class DtcListItemTest {
             listOf("Engine ECU (2.0 GME)"),
             dtcScanTargets(mappings, setOf("GME20")).map { it.displayName }
         )
+    }
+
+    @Test
+    fun `the same code from two modules is two rows`() {
+        val abs = dtc("U0100", module = "ABS").apply { rawHex = "C10000" }
+        val bcm = dtc("U0100", module = "BCM").apply { rawHex = "C10000" }
+
+        val rows =
+            listOf(abs, bcm)
+                .toDtcListItems(listOf("ABS", "BCM"), "none", "none for module", "unknown")
+                .filterIsInstance<DtcListItem.DtcRow>()
+
+        assertEquals(2, rows.size)
+        assertNotEquals(rows[0].itemKey(), rows[1].itemKey())
+    }
+
+    @Test
+    fun `a status change keeps the row identity`() {
+        val before = DtcListItem.DtcRow(dtc("P0300", module = "Engine").apply { rawHex = "030008" })
+        val after = DtcListItem.DtcRow(dtc("P0300", module = "Engine").apply { rawHex = "030009" })
+
+        assertEquals(before.itemKey(), after.itemKey())
+        assertNotEquals(before.itemKey(), DtcListItem.DtcRow(dtc("P0300", module = "Engine", failureType = "1A")).itemKey())
+    }
+
+    @Test
+    fun `default ECU tags share one identity, unlike the header and message of a module`() {
+        assertEquals(
+            DtcListItem.DtcRow(dtc("P0300", module = null)).itemKey(),
+            DtcListItem.DtcRow(dtc("P0300", module = "ecu")).itemKey()
+        )
+        assertNotEquals(DtcListItem.ModuleHeader("ABS").itemKey(), DtcListItem.Message("ABS", "none").itemKey())
     }
 }
