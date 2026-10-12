@@ -114,6 +114,10 @@ Code", no `--author`/`--trailer` naming Claude.
 via PR. Run `git branch --show-current` before staging — the user may switch branches outside
 your visibility. Don't stage unrelated local edits (e.g. a locally modified `app/build.gradle`).
 
+**Never reference private files in a repo.** The ECU UDS spreadsheets and other private documents
+stay out of code, comments, specs and CLAUDE.md: no file names, paths or sheet names. Say "the ECM"
+instead. The repos are public.
+
 **Never push, never amend.** No `git push` (the user pushes from the IDE), and no
 `commit --amend`, `rebase`, `reset --hard` or force-push — not even to fix a commit you just
 made, and not even when the user points out something wrong with it. A commit may already be on
@@ -286,6 +290,20 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   ObdMetrics' `isRunning` is false inside `onRunning` (threads start after it), so anything scheduled
   "on connect" must wait for `workflow.isRunning` off the callback thread. Untagged codes after a
   reconnect: check the logcat for `InitCompletedHandler: Found Diagnostic Trouble Codes` first.
+* **2.0 GME DTC knowledge lives in ObdMetricsGiuliaQV, by the user's choice;** ObdMetrics core only offers generic
+  hooks. A PID's decoder is its `codecClass` (loaded by name), so the GME clear is a GiuliaQV codec + `dtcClear` in
+  `2.0_gme_ext.json`. Per-code requests (UDS `19 06` extended data) are `dtcFollowUp` templates (`{dtc}` placeholder);
+  their values arrive in `DiagnosticTroubleCode.details`. Spec: `doc/specs/dtc-extended-data.md`.
+* One clear PID per query across a profile's files: ObdMetrics' registry keeps every PID registered for a query and
+  the decoder runs each, so two clear codecs race (file order decides). Hence no `dtcClear` in `giulia_2.0_gme.json`.
+* Snapshot/follow-up requests must go to the code's own module (`ATSH`); before ObdMetrics `feat/dtc-follow-up-requests`
+  they went to the last scanned module and timed out (handler logs "Timed out waiting", a 5 s gap before "Notyfing").
+  The snapshot parser stops at the first DID it cannot resolve. A short freeze frame means a missing DID, or one whose
+  `length` differs from the frame: 2.0 GME stores 1812 / 1004 in 1 byte, their live replies 2. Snapshot sizes go in
+  the `dtcSnapshot` group (resolved before livedata, never queried live). Wrong turn: a 33-DID layout from the spec
+  document; the car sends 11. Trust a captured frame (logcat `TX: 19 04`), not the document.
+* A context reply that decodes to `null` is never published, so the DTC handler waits for it until its timeout (23 s
+  for 30 codes; the scan looks hung). Snapshot and follow-up codecs return an error response instead.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

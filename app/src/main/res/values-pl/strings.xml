@@ -743,6 +743,7 @@
 
     <!-- Extracted from layouts -->
     <string name="dtc.freeze_frame_data">Dane zamrożonej klatki UDS</string>
+    <string name="dtc.extended_data">Dane rozszerzone</string>
     <string name="dtc.action_google_issue">Szukaj w Google</string>
     <string name="dtc.action_copy">Kopiuj</string>
     <string name="dtc.action_refresh">Odśwież</string>

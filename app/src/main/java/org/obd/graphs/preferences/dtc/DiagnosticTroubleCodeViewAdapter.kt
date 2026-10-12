@@ -40,6 +40,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
 import org.obd.graphs.bl.datalogger.dtc.itemKey
+import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
 
@@ -119,22 +120,16 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val activeStatuses = dtc.activeStatuses?.joinToString(", ") ?: context.getString(R.string.dtc_share_none)
         holder.detailHexStatus.text = context.getString(R.string.dtc_detail_hex_status, hex, statusMask, activeStatuses)
 
-        val snapshot = dtc.snapshot
-        if (dataLoggerSettings.instance().adapter.dtcReadSnapshots && snapshot != null) {
-            holder.snapshotContainer.visibility = View.VISIBLE
-            val snapshotText = StringBuilder()
+        // Both are read only with "Read DTC snapshots" on; an empty list means the ECU sent nothing usable.
+        val unknownDid = context.getString(R.string.dtc_share_unknown_did)
+        val snapshotLines = dtc.snapshot.toDidLines(unknownDid, notAvailable)
+        val showSnapshot = dataLoggerSettings.instance().adapter.dtcReadSnapshots && snapshotLines.isNotEmpty()
+        holder.snapshotContainer.visibility = if (showSnapshot) View.VISIBLE else View.GONE
+        holder.detailSnapshotInfo.text = snapshotLines.joinToString("\n") { "• $it" }
 
-            snapshot.forEach { did ->
-                val value = did.decodedValue ?: notAvailable
-                val unit = did.definition?.units ?: ""
-                val desc = did.definition?.description ?: context.getString(R.string.dtc_share_unknown_did)
-                snapshotText.append("• $desc: $value $unit\n")
-            }
-
-            holder.detailSnapshotInfo.text = snapshotText.toString().trimEnd()
-        } else {
-            holder.snapshotContainer.visibility = View.GONE
-        }
+        val extendedLines = dtc.details.toDidLines(unknownDid, notAvailable)
+        holder.extendedContainer.visibility = if (extendedLines.isNotEmpty()) View.VISIBLE else View.GONE
+        holder.detailExtendedInfo.text = extendedLines.joinToString("\n") { "• $it" }
 
         val key = item.itemKey()
         val isExpanded = key == expandedKey
@@ -166,8 +161,11 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                     context.getString(R.string.dtc_copy_status, activeStatuses)
                 ).joinToString("\n")
 
-            if (dtc.snapshot != null) {
+            if (showSnapshot) {
                 clipText += "\n\n${context.getString(R.string.dtc_freeze_frame_data)}:\n${holder.detailSnapshotInfo.text}"
+            }
+            if (extendedLines.isNotEmpty()) {
+                clipText += "\n\n${context.getString(R.string.dtc_extended_data)}:\n${holder.detailExtendedInfo.text}"
             }
 
             val clip = ClipData.newPlainText("DTC Info", clipText)
@@ -214,6 +212,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 
         var snapshotContainer: LinearLayout = itemView.findViewById(R.id.dtc_snapshot_container)
         var detailSnapshotInfo: TextView = itemView.findViewById(R.id.dtc_detail_snapshot_info)
+
+        var extendedContainer: LinearLayout = itemView.findViewById(R.id.dtc_extended_container)
+        var detailExtendedInfo: TextView = itemView.findViewById(R.id.dtc_detail_extended_info)
 
         var actionSearchWeb: Button = itemView.findViewById(R.id.dtc_action_search_web)
         var actionCopyCode: Button = itemView.findViewById(R.id.dtc_action_copy_code)

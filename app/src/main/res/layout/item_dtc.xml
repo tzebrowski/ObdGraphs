@@ -91,6 +91,35 @@
                 android:textIsSelectable="true" />
         </LinearLayout>
 
+        <!-- Values of the dtcFollowUp requests (e.g. UDS 19 06 extended data): occurrences, cycles to MIL off. -->
+        <LinearLayout
+            android:id="@+id/dtc_extended_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/surface_variant"
+            android:padding="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dtc.extended_data"
+                android:textStyle="bold"
+                android:textColor="@color/rainbow_indigo"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/dtc_detail_extended_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp"
+                android:textIsSelectable="true" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
