@@ -19,6 +19,8 @@ package org.obd.graphs.aa.screen.nav
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.car.app.CarContext
@@ -26,6 +28,8 @@ import androidx.car.app.Screen
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.ForegroundCarColorSpan
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.MessageTemplate
@@ -34,6 +38,7 @@ import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Template
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.LocalizedStringProvider
@@ -234,8 +239,10 @@ internal class DiagnosticTroubleCodesScreen(
                     SectionedItemList.create(ItemList.Builder().addItem(it).build(), stringProvider.getString(R.string.dtc_read_info_section))
                 )
             }
+            // Section headers take plain text only (no colour spans): a module with codes carries its count.
             sections.forEach { section ->
-                builder.addSectionedList(SectionedItemList.create(itemList(section.items), section.header ?: ""))
+                val header = section.header?.let { if (section.codeCount > 0) "$it (${section.codeCount})" else it } ?: ""
+                builder.addSectionedList(SectionedItemList.create(itemList(section.items), header))
             }
         }
         return builder.build()
@@ -292,7 +299,7 @@ internal class DiagnosticTroubleCodesScreen(
                 items.forEach { item ->
                     when (item) {
                         is DtcListItem.DtcRow -> addItem(row(item.dtc))
-                        is DtcListItem.Message -> addItem(Row.Builder().setTitle(item.text).build())
+                        is DtcListItem.Message -> addItem(Row.Builder().setTitle(item.text).setImage(icon(R.drawable.dtc_ok, CarColor.GREEN)).build())
                         is DtcListItem.ModuleHeader -> Unit
                     }
                 }
@@ -304,19 +311,34 @@ internal class DiagnosticTroubleCodesScreen(
             return Row.Builder().setTitle(description).build()
         }
 
+        // Row titles take no colour spans, so a code is marked by a red icon; its status line is yellow.
         val builder =
             Row
                 .Builder()
                 .setTitle(dtc.displayCode())
+                .setImage(icon(R.drawable.dtc_fault, CarColor.RED))
                 .addText(description)
 
         dtc.activeStatuses
             ?.filter { it.isNotBlank() }
             ?.takeIf { it.isNotEmpty() }
-            ?.let { builder.addText(it.joinToString(", ")) }
+            ?.let { builder.addText(colored(it.joinToString(", "), CarColor.YELLOW)) }
 
         return builder.build()
     }
+
+    private fun icon(
+        drawable: Int,
+        tint: CarColor
+    ): CarIcon = CarIcon.Builder(IconCompat.createWithResource(carContext, drawable)).setTint(tint).build()
+
+    private fun colored(
+        text: String,
+        color: CarColor
+    ): CharSequence =
+        SpannableString(text).apply {
+            setSpan(ForegroundCarColorSpan.create(color), 0, length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        }
 
     // ListTemplate allows two strip actions: connect while disconnected; read + clear once connected
     // (disconnect is on the main screen, one Back away).

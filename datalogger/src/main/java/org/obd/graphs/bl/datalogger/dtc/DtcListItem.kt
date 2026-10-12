@@ -28,7 +28,8 @@ const val DTC_DEFAULT_MODULE = "ecu"
 const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
 
 sealed class DtcListItem {
-    data class ModuleHeader(val module: String) : DtcListItem()
+    // codeCount: the module's code rows, 0 for a module scanned clean. Not part of the row identity.
+    data class ModuleHeader(val module: String, val codeCount: Int = 0) : DtcListItem()
     data class DtcRow(val dtc: DiagnosticTroubleCode) : DtcListItem()
 
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
@@ -107,11 +108,15 @@ fun List<DiagnosticTroubleCode>.toDtcListItems(
     val codesByModule =
         groupBy { it.groupLabel() }
             .mapValues { (_, codes) -> codes.distinctBy { it.standardCode to it.failureType?.code } }
-    val labels = (codesByModule.keys + scannedModules.filter { it.isNotBlank() }).distinct().sorted()
+    // Modules reporting codes first - they are what the list is opened for - then the clean ones, each by name.
+    val labels =
+        (codesByModule.keys + scannedModules.filter { it.isNotBlank() })
+            .distinct()
+            .sortedWith(compareBy<String> { if (codesByModule[it].isNullOrEmpty()) 1 else 0 }.thenBy { it })
 
     return labels.flatMap { label ->
         val codes = codesByModule[label].orEmpty()
-        listOf(DtcListItem.ModuleHeader(label)) +
+        listOf(DtcListItem.ModuleHeader(label, codes.size)) +
             if (codes.isEmpty()) {
                 listOf(DtcListItem.Message(key = label, text = noCodesForModuleMessage))
             } else {
@@ -166,24 +171,30 @@ fun DiagnosticTroubleCode.displayDescription(): String {
     }
 }
 
+// "Engine ECU (13)" for a module with codes, the bare name for a clean one.
+fun DtcListItem.ModuleHeader.displayName(): String = if (codeCount > 0) "$module ($codeCount)" else module
+
 // One block of the list: a module header (null for the flat default-ECU list) and its rows.
-data class DtcSection(val header: String?, val items: List<DtcListItem>)
+// codeCount follows the header's, so list UIs can style sections with codes apart from clean ones.
+data class DtcSection(val header: String?, val items: List<DtcListItem>, val codeCount: Int = 0)
 
 // Folds the flat header/row stream into sections, for list UIs that render headers natively
 // (the AA ListTemplate's sectioned lists) instead of as rows.
 fun List<DtcListItem>.toDtcSections(): List<DtcSection> {
     val sections = mutableListOf<DtcSection>()
     var header: String? = null
+    var codeCount = 0
     var items = mutableListOf<DtcListItem>()
 
     fun flush() {
-        if (header != null || items.isNotEmpty()) sections.add(DtcSection(header, items))
+        if (header != null || items.isNotEmpty()) sections.add(DtcSection(header, items, codeCount))
     }
 
     forEach { item ->
         if (item is DtcListItem.ModuleHeader) {
             flush()
             header = item.module
+            codeCount = item.codeCount
             items = mutableListOf()
         } else {
             items.add(item)

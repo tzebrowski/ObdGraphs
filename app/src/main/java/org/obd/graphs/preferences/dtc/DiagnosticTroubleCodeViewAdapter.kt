@@ -20,7 +20,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.view.LayoutInflater
@@ -30,6 +29,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +38,7 @@ import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
+import org.obd.graphs.bl.datalogger.dtc.displayName
 import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
 import org.obd.graphs.bl.datalogger.dtc.itemKey
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
@@ -95,19 +96,22 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val formattedCode = dtc.displayCode()
         val finalDescription = dtc.displayDescription()
         val isUnknown = dtc.isDescriptionUnknown()
+        // Codes stand out in red; descriptions in the dialog's primary text colour (DKGRAY was unreadable on dark).
+        val primaryText = ContextCompat.getColor(context, R.color.dialog_text_primary)
+        val secondaryText = ContextCompat.getColor(context, R.color.dialog_text_secondary)
 
         if (dtc.standardCode.isEmpty()) {
-            holder.code.setText("", Color.GRAY, Typeface.NORMAL, 1f)
-            holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
+            holder.code.setText("", secondaryText, Typeface.NORMAL, 1f)
+            holder.description.setText(finalDescription, secondaryText, Typeface.NORMAL, 1f)
             holder.expandedContainer.visibility = View.GONE
             holder.itemView.setOnClickListener(null)
             return
         } else {
             holder.code.setText(formattedCode, COLOR_CARDINAL, Typeface.BOLD, 1f)
             if (isUnknown) {
-                holder.description.setText(finalDescription, Color.GRAY, Typeface.ITALIC, 1f)
+                holder.description.setText(finalDescription, secondaryText, Typeface.ITALIC, 1f)
             } else {
-                holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
+                holder.description.setText(finalDescription, primaryText, Typeface.NORMAL, 1f)
             }
         }
 
@@ -188,16 +192,25 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     internal class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val name: TextView = itemView.findViewById(R.id.dtc_module_header_name)
 
+        // A module reporting codes in amber with its count, a clean one muted - neither in the codes' red.
         fun bind(header: DtcListItem.ModuleHeader) {
-            name.text = header.module
+            name.text = header.displayName()
+            name.setTextColor(
+                ContextCompat.getColor(
+                    itemView.context,
+                    if (header.codeCount > 0) R.color.dtc_module_with_codes else R.color.dialog_text_secondary
+                )
+            )
         }
     }
 
     internal class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val text: TextView = itemView.findViewById(R.id.dtc_message)
 
+        // "No codes reported" - good news, in green.
         fun bind(message: DtcListItem.Message) {
             text.text = message.text
+            text.setTextColor(ContextCompat.getColor(itemView.context, R.color.philippine_green))
         }
     }
 

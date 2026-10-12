@@ -262,6 +262,11 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * Phone dialog buttons: check the PL strings at phone width. Three equal-weight buttons in
   `dialog_dtc_module_picker.xml` broke "Odznacz wszystkie" mid-word, so select/deselect-all now sits
   above the list and the bar holds only Cancel + confirm.
+* Module order: modules with codes first, then clean ones, each by name (`toDtcListItems`, shared). Headers carry the
+  code count (`ModuleHeader.codeCount`, not part of `itemKey()`). AA templates allow colour spans only in row text
+  lines: section headers and row titles are text-only and throw on a colour span, so AA marks codes with a tinted
+  `CarIcon`. Phone colours come from night-aware resources; hard-coded `Color.DKGRAY` was unreadable on the dark
+  dialog. Spec: `doc/specs/dtc-list-colors-order.md`.
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
 * **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
   An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing
