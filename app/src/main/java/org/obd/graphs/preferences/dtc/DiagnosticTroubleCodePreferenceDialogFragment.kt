@@ -18,10 +18,12 @@ package org.obd.graphs.preferences.dtc
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.DiagnosticRequestIDManager
@@ -36,10 +38,14 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
+import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
+import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
+import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
@@ -57,6 +63,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var refreshButton: Button
     private lateinit var shareButton: Button
     private lateinit var recyclerView: RecyclerView
+    private lateinit var readInfo: TextView
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -65,7 +72,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 intent: Intent?
             ) {
                 when (intent?.action) {
-                    DATA_LOGGER_DTC_ACTION_COMPLETED -> handleDTCChangedNotification()
+                    DATA_LOGGER_DTC_ACTION_COMPLETED -> handleDTCChangedNotification(intent.getSerializableCompat())
                     // The read/clear will never report back after the user cancels the progress
                     // overlay or the connection drops, so restore the idle state here instead of
                     // leaving the Clear button stuck on "Clearing...".
@@ -86,6 +93,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
 
         recyclerView = root.findViewById(R.id.recycler_view)
+        readInfo = root.findViewById(R.id.dtc_read_info)
 
         adapter = DiagnosticTroubleCodeViewAdapter(context)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
@@ -388,9 +396,21 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         super.onDestroyView()
     }
 
-    private fun handleDTCChangedNotification() {
+    // clearOutcome is set only when the completed action was a clear.
+    private fun handleDTCChangedNotification(clearOutcome: DtcClearOutcome?) {
         refreshList()
         resetActionState()
+
+        when (clearOutcome) {
+            DtcClearOutcome.CLEARED -> toast(R.string.pref_dtc_clear_outcome_cleared)
+            DtcClearOutcome.REFUSED -> toast(R.string.pref_dtc_clear_outcome_refused)
+            DtcClearOutcome.CODES_REMAIN ->
+                toast(
+                    R.string.pref_dtc_clear_outcome_codes_remain,
+                    diagnosticTroubleCodes().count { it.standardCode.isNotEmpty() }.toString()
+                )
+            null -> Unit
+        }
     }
 
     private fun refreshList() {
@@ -404,9 +424,36 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             )
         )
 
+        refreshReadInfo()
+
         // Nothing to share or clear without codes.
         shareButton.isEnabled = codes.isNotEmpty()
         clearButton.isEnabled = codes.isNotEmpty()
+    }
+
+    private fun refreshReadInfo() {
+        val info = VehicleCapabilitiesManager.getDtcReadInfo()
+        if (info == null) {
+            readInfo.visibility = View.GONE
+            return
+        }
+        readInfo.text =
+            info.summary(
+                formattedTime =
+                DateUtils.formatDateTime(
+                    requireContext(),
+                    info.timestamp,
+                    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_YEAR
+                ),
+                currentVin = VehicleCapabilitiesManager.getCurrentVin(),
+                labels =
+                DtcReadInfoLabels(
+                    lastRead = getString(R.string.pref_dtc_read_info),
+                    vin = getString(R.string.pref_dtc_read_info_vin),
+                    otherVehicle = getString(R.string.pref_dtc_read_info_other_vehicle)
+                )
+            )
+        readInfo.visibility = View.VISIBLE
     }
 
     private fun resetActionState() {

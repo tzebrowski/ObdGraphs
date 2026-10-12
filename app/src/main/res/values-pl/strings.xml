@@ -436,6 +436,12 @@
     <string name="pref.dtc.description">Opis</string>
     <string name="pref.dtc.no_dtc_found">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
     <string name="pref.dtc.unknown_module">Nieznany moduł</string>
+    <string name="pref.dtc.read_info">Ostatni odczyt: %1$s</string>
+    <string name="pref.dtc.read_info_vin">VIN %1$s</string>
+    <string name="pref.dtc.read_info_other_vehicle">inny pojazd (VIN %1$s)</string>
+    <string name="pref.dtc.clear_outcome.cleared">Kody błędów skasowane.</string>
+    <string name="pref.dtc.clear_outcome.refused">Pojazd odmówił skasowania kodów błędów. Wyłącz silnik, pozostaw włączony zapłon i spróbuj ponownie.</string>
+    <string name="pref.dtc.clear_outcome.codes_remain">Kody błędów zgłaszane po skasowaniu: %1$s. Usterka może nadal występować.</string>
     <string name="pref.dtc.no_dtc_found_for_module">Brak zgłoszonych kodów błędów.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Włącz automatyczne czyszczenie DTC</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatycznie kasuje kody błędów diagnostycznych (DTC) z pamięci ECU.</string>

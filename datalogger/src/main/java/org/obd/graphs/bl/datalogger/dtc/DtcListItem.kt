@@ -142,6 +142,11 @@ fun dtcScanModules(
         .map { it.requestKey }
         .toSet()
 
+// Modules the automatic DTC read on connect scans: every configured module with a header - the
+// picker's deselection applies to manual scans only. Empty means no modules are configured and
+// ObdMetrics' own default-header read on connect stays in charge.
+fun dtcConnectScanModules(mappings: List<DiagnosticMappingItem>): Set<String> = dtcScanModules(mappings, emptySet())
+
 fun DiagnosticTroubleCode.isDescriptionUnknown(): Boolean =
     description.isNullOrBlank() || description.contains("Unknown DTC Description", ignoreCase = true)
 

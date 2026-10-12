@@ -266,6 +266,30 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   before touching the grouping. Fix lives in ObdMetrics `fix/dtc-module-tagging`.
 * CAN header table entries can share a header; `dtcScanTargets` scans each header once (first selected
   entry names it). Without it the same ECU's codes appear under every name pointing at it.
+* **ObdMetrics reported `NO_DATA` for every user-triggered clear** (only the init clear had a real
+  status, in `VehicleCapabilities`). Fixed upstream on `feat/dtc-clear-status`, but the app judges a
+  clear mainly by the read that follows it (`dtcClearOutcome`): only "refused" needs the real status.
+  The outcome rides on `DATA_LOGGER_DTC_ACTION_COMPLETED` as a `DtcClearOutcome` extra; reads carry none.
+  Spec: `doc/specs/dtc-read-info-clear-outcome.md`.
+* Stored codes are stamped (`pref.datalogger.dtc.read_info`: time + VIN) in `updateDTC`. Vehicle
+  metadata is keyed by the metadata PID's *label*, which varies by profile **and is translated**
+  (Giulia 22F190: "Vehicle Identification Number" / PL "Numer identyfikacyjny pojazdu"). So `vinFrom`
+  falls back to recognising the value. Wrong turn: matching keys on "vin" missed the Giulia VIN.
+  No VIN at all usually means `pref.adapter.init.fetchDeviceProperties` is off (metadata `{}`).
+  Check on device: `adb shell "run-as <pkg> cat shared_prefs/<pkg>_preferences.xml"` (debug builds only).
+* **Automatic DTC read on connect = a module scan when modules are configured.** ObdMetrics' own
+  init read (`vehicleDtcReadingEnabled`) covers the default header only. Its untagged result replaced the
+  grouped list on every connect, and its codes leaked into the next scan as "Unknown module"
+  (`DiagnosticTroubleCodeHandler` accumulated *all* DTC replies, including init's; fixed on ObdMetrics
+  `feat/dtc-clear-status` with a start marker that resets it).
+  So `AdjustmentsStrategy` turns it off and `WorkflowOrchestrator.scheduleConnectScan` scans all modules.
+  ObdMetrics' `isRunning` is false inside `onRunning` (threads start after it), so anything scheduled
+  "on connect" must wait for `workflow.isRunning` off the callback thread. Untagged codes after a
+  reconnect: check the logcat for `InitCompletedHandler: Found Diagnostic Trouble Codes` first.
+* String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
+* Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
+  delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate
+  `ObdMetricsTest` repo and do not capture the clear status, so a test needs its own `Lifecycle`.
 * AA `ListTemplate` action strips take **2** actions (`ACTIONS_CONSTRAINTS_SIMPLE`),
   not 4 like the nav template — a third throws at build time.
 * AA template screens: a `CarScreen` added as observer of the *parent's* lifecycle (as `gotoScreen` does

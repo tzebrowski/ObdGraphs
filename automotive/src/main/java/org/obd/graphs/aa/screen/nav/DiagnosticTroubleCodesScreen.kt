@@ -19,6 +19,7 @@ package org.obd.graphs.aa.screen.nav
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -53,7 +54,9 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.WorkflowStatus
+import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
+import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
@@ -61,8 +64,10 @@ import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.bl.datalogger.dtc.toDtcSections
+import org.obd.graphs.bl.datalogger.dtc.vehicleLine
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.registerReceiver
@@ -107,7 +112,8 @@ internal class DiagnosticTroubleCodesScreen(
                     when (intent?.action) {
                         DATA_LOGGER_DTC_ACTION_COMPLETED -> {
                             if (actionInProgress != null) {
-                                toast.show(carContext, R.string.dtc_action_completed)
+                                // A clear reports what it achieved; a read just that the list is fresh.
+                                toast.show(carContext, completionMessage(intent.getSerializableCompat()))
                             }
                             actionInProgress = null
                             invalidate()
@@ -216,11 +222,18 @@ internal class DiagnosticTroubleCodesScreen(
                 .setTitle(title(codes))
                 .setActionStrip(actionStrip(codes.isNotEmpty()))
 
-        // A ListTemplate takes either one list or sections, never both.
+        // A ListTemplate takes either one list or sections, never both. The read info leads the
+        // single list, or gets a section of its own so it is not read as one module's row.
+        val readInfo = readInfoRow()
         val headerless = sections.singleOrNull()?.takeIf { it.header == null }
         if (headerless != null) {
-            builder.setSingleList(itemList(headerless.items))
+            builder.setSingleList(itemList(headerless.items, readInfo))
         } else {
+            readInfo?.let {
+                builder.addSectionedList(
+                    SectionedItemList.create(ItemList.Builder().addItem(it).build(), stringProvider.getString(R.string.dtc_read_info_section))
+                )
+            }
             sections.forEach { section ->
                 builder.addSectionedList(SectionedItemList.create(itemList(section.items), section.header ?: ""))
             }
@@ -234,10 +247,48 @@ internal class DiagnosticTroubleCodesScreen(
         return if (count > 0) "$title ($count)" else title
     }
 
-    private fun itemList(items: List<DtcListItem>): ItemList =
+    private fun completionMessage(clearOutcome: DtcClearOutcome?): String =
+        when (clearOutcome) {
+            DtcClearOutcome.CLEARED -> stringProvider.getString(R.string.dtc_clear_outcome_cleared)
+            DtcClearOutcome.REFUSED -> stringProvider.getString(R.string.dtc_clear_outcome_refused)
+            DtcClearOutcome.CODES_REMAIN ->
+                stringProvider.getString(
+                    R.string.dtc_clear_outcome_codes_remain,
+                    diagnosticTroubleCodes().count { it.standardCode.isNotEmpty() }
+                )
+            null -> stringProvider.getString(R.string.dtc_action_completed)
+        }
+
+    // "Last read: <time>" with the vehicle on the second line; null before the first stamped read.
+    private fun readInfoRow(): Row? {
+        val info = VehicleCapabilitiesManager.getDtcReadInfo() ?: return null
+        val labels =
+            DtcReadInfoLabels(
+                lastRead = stringProvider.getString(R.string.dtc_read_info),
+                vin = stringProvider.getString(R.string.dtc_read_info_vin),
+                otherVehicle = stringProvider.getString(R.string.dtc_read_info_other_vehicle)
+            )
+        val time =
+            DateUtils.formatDateTime(
+                carContext,
+                info.timestamp,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_YEAR
+            )
+        return Row
+            .Builder()
+            .setTitle(labels.lastRead.format(time))
+            .apply { info.vehicleLine(VehicleCapabilitiesManager.getCurrentVin(), labels)?.let { addText(it) } }
+            .build()
+    }
+
+    private fun itemList(
+        items: List<DtcListItem>,
+        leadingRow: Row? = null
+    ): ItemList =
         ItemList
             .Builder()
             .apply {
+                leadingRow?.let { addItem(it) }
                 items.forEach { item ->
                     when (item) {
                         is DtcListItem.DtcRow -> addItem(row(item.dtc))

@@ -20,6 +20,13 @@
     <string name="dtc.unknown_module">Unknown module</string>
     <string name="dtc.no_codes_for_module">No codes reported.</string>
     <string name="dtc.action_completed">Trouble codes updated.</string>
+    <string name="dtc.read_info_section">Last read</string>
+    <string name="dtc.read_info">Last read: %1$s</string>
+    <string name="dtc.read_info_vin">VIN %1$s</string>
+    <string name="dtc.read_info_other_vehicle">Another vehicle (VIN %1$s)</string>
+    <string name="dtc.clear_outcome.cleared">Trouble codes cleared.</string>
+    <string name="dtc.clear_outcome.refused">Vehicle refused to clear codes. Engine off, ignition on, then retry.</string>
+    <string name="dtc.clear_outcome.codes_remain">Still reported after clearing: %1$d. The fault may be present.</string>
     <string name="dtc.clear_confirm_title">Clear trouble codes?</string>
     <string name="dtc.clear_confirm_message">This erases the stored trouble codes and their freeze frame data from the vehicle. It cannot be undone.</string>
     <string name="dtc.clear_confirm">Clear</string>

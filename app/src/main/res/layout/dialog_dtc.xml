@@ -7,6 +7,21 @@
     android:minWidth="350dp"
     android:background="@color/dialog_card_background">
 
+    <!-- When and from which vehicle the listed codes were read; gone before the first stamped read. -->
+    <TextView
+        android:id="@+id/dtc_read_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/header_code"
         android:layout_width="wrap_content"
@@ -18,7 +33,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_read_info" />
 
     <TextView
         android:id="@+id/header_description"
@@ -31,7 +46,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/header_code"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_read_info" />
 
     <View
         android:id="@+id/header_divider"
