@@ -118,8 +118,25 @@ class DtcListItemTest {
             listOf(dtc("P0100", module = "ecu"), dtc("P0105"))
                 .toDtcListItems(listOf("Engine ECU", "ABS"), "none", "nothing", unknownModuleLabel = "Unknown module")
                 .toDtcSections()
-        assertEquals(listOf("ABS", "Engine ECU", "Unknown module"), sections.map { it.header })
-        assertEquals(2, sections[2].items.size)
+        assertEquals(listOf("Unknown module", "ABS", "Engine ECU"), sections.map { it.header })
+        assertEquals(2, sections[0].items.size)
+    }
+
+    @Test
+    fun `modules reporting codes come before clean ones, each group by name`() {
+        val sections =
+            listOf(dtc("P0100", module = "Engine ECU"), dtc("C0035", module = "ABS"), dtc("P0105", module = "Engine ECU"))
+                .toDtcListItems(listOf("Airbag", "ABS", "Engine ECU", "BCM"), "none", "nothing", unknownModuleLabel = "?")
+                .toDtcSections()
+
+        assertEquals(listOf("ABS", "Engine ECU", "Airbag", "BCM"), sections.map { it.header })
+        assertEquals(listOf(1, 2, 0, 0), sections.map { it.codeCount })
+    }
+
+    @Test
+    fun `module header shows the code count only when there are codes`() {
+        assertEquals("Engine ECU (2)", DtcListItem.ModuleHeader("Engine ECU", 2).displayName())
+        assertEquals("ABS", DtcListItem.ModuleHeader("ABS").displayName())
     }
 
     @Test

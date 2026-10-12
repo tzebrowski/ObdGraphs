@@ -8,6 +8,8 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="rainbow_indigo">#1C3D72</color>
+    <!-- DTC list: header of a module reporting codes (codes themselves use cardinal). -->
+    <color name="dtc_module_with_codes">#B45309</color>
     <color name="cardinal">#C22636</color>
     <color name="primary_red">#E31E21</color>
     <color name="beveled_red_shadow">#911414</color>
