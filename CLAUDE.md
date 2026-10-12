@@ -266,6 +266,18 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   before touching the grouping. Fix lives in ObdMetrics `fix/dtc-module-tagging`.
 * CAN header table entries can share a header; `dtcScanTargets` scans each header once (first selected
   entry names it). Without it the same ECU's codes appear under every name pointing at it.
+* **ObdMetrics reported `NO_DATA` for every user-triggered clear** (only the init clear had a real
+  status, in `VehicleCapabilities`). Fixed upstream on `feat/dtc-clear-status`, but the app judges a
+  clear mainly by the read that follows it (`dtcClearOutcome`): only "refused" needs the real status.
+  The outcome rides on `DATA_LOGGER_DTC_ACTION_COMPLETED` as a `DtcClearOutcome` extra; reads carry none.
+  Spec: `doc/specs/dtc-read-info-clear-outcome.md`.
+* Stored codes are stamped (`pref.datalogger.dtc.read_info`: time + VIN) in `updateDTC`. Vehicle
+  metadata is keyed by the metadata PID's *label*, which varies by profile, so `vinFrom` matches a
+  key containing "vin" plus a valid 17-char VIN. Never assume a fixed `"VIN"` key.
+* String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
+* Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
+  delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate
+  `ObdMetricsTest` repo and do not capture the clear status, so a test needs its own `Lifecycle`.
 * AA `ListTemplate` action strips take **2** actions (`ACTIONS_CONSTRAINTS_SIMPLE`),
   not 4 like the nav template — a third throws at build time.
 * AA template screens: a `CarScreen` added as observer of the *parent's* lifecycle (as `gotoScreen` does

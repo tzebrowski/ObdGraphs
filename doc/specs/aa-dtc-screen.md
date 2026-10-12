@@ -22,6 +22,7 @@ class), `:app` (preference, EN/PL strings, dialog now uses the shared logic).
 | AA DTC list | — | Last stored DTC (same store as the phone dialog), grouped by module like the phone |
 | AA read | — | Strip action (sync icon) while connected; loading list until `DATA_LOGGER_DTC_ACTION_COMPLETED` |
 | AA clear | — | Strip action (red trash) while connected and codes exist → confirmation `MessageTemplate` → clear |
+| AA read info / clear result | — | Added later: see `dtc-read-info-clear-outcome.md` ("Last read" row, toast per clear outcome) |
 | AA while disconnected | — | Strip shows Connect only (idle `ROUTINES_QUERY`, no live PIDs) |
 | Phone DTC dialog | — | Unchanged output; grouping/sorting/formatting now come from `:datalogger` |
 | Untagged codes after a multi-module scan (phone + AA) | Section "ECU", next to real modules such as "Engine ECU" | Section "Unknown module" (`pref.dtc.unknown_module` / `dtc.unknown_module`); single-module scans still file them under that module, a plain default-ECU read stays flat |

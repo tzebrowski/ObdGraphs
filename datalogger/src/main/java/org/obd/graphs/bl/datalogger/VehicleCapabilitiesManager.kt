@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.obd.graphs.bl.datalogger.dtc.DtcReadInfo
+import org.obd.graphs.bl.datalogger.dtc.vinFrom
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
@@ -36,6 +38,7 @@ private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_DTC = "pref.datalogger.dtc"
 private const val PREF_DTC_SCANNED_MODULES = "pref.datalogger.dtc.scanned_modules"
+private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
 
 object VehicleCapabilitiesManager {
     private val mapper =
@@ -86,20 +89,38 @@ object VehicleCapabilitiesManager {
     // scannedModules are the module labels (DiagnosticTroubleCode.module) a user-triggered scan
     // targeted, kept so the DTC list can tell "scanned, nothing reported" apart from "not scanned".
     // Empty for the default single-ECU scan and for automatic reads.
+    // Stamped with the time and the VIN of the vehicle connected now: metadata is rewritten on every
+    // connect (updateCapabilities) before any DTC read of that connection completes.
     internal fun updateDTC(
         dtc: Set<DiagnosticTroubleCode>,
-        scannedModules: List<String> = emptyList()
+        scannedModules: List<String> = emptyList(),
+        now: Long = System.currentTimeMillis()
     ) {
+        val readInfo = DtcReadInfo(timestamp = now, vin = getCurrentVin())
         Prefs.edit().apply {
             Log.i(
                 LOG_TAG,
-                "Updating DTC, size: ${dtc.size}, scanned modules: $scannedModules"
+                "Updating DTC, size: ${dtc.size}, scanned modules: $scannedModules, read info: $readInfo"
             )
             putString(PREF_DTC, mapper.writeValueAsString(dtc))
             putString(PREF_DTC_SCANNED_MODULES, mapper.writeValueAsString(scannedModules))
+            putString(PREF_DTC_READ_INFO, mapper.writeValueAsString(readInfo))
             commit()
         }
     }
+
+    // Null for codes stored before the read info existed: their age is unknown, not "now".
+    fun getDtcReadInfo(): DtcReadInfo? =
+        try {
+            val preferences = Prefs.getString(PREF_DTC_READ_INFO, "")!!
+            if (preferences.isEmpty()) null else mapper.readValue<DtcReadInfo>(preferences)
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to read DTC read info from preferences", e)
+            null
+        }
+
+    // The VIN of the vehicle from the last connection's metadata, if it reported one.
+    fun getCurrentVin(): String? = vinFrom(getVehicleMetadata().associate { it.name to it.value })
 
     fun getDtcScannedModules(): List<String> =
         try {

@@ -25,6 +25,7 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -41,6 +42,7 @@ import org.robolectric.annotation.Config
 private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_DTC = "pref.datalogger.dtc"
+private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -189,5 +191,39 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         val result = VehicleCapabilitiesManager.getSupportedPIDs()
 
         assertEquals(setOf("0100", "010c"), result.toSet())
+    }
+
+    @Test
+    fun `updateDTC stamps the read with its time and the connected vehicle's VIN`() {
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_METADATA), any()) } returns """{"VIN":"ZARFAMAN0K7612345"}"""
+        val slot = slot<String>()
+        every { editor.putString(eq(PREF_DTC_READ_INFO), capture(slot)) } returns editor
+
+        VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "Mass air flow circuit")), now = 1_760_000_000_000)
+
+        every { sharedPrefs.getString(eq(PREF_DTC_READ_INFO), any()) } returns slot.captured
+        val info = VehicleCapabilitiesManager.getDtcReadInfo()!!
+
+        assertEquals(1_760_000_000_000, info.timestamp)
+        assertEquals("ZARFAMAN0K7612345", info.vin)
+    }
+
+    @Test
+    fun `updateDTC stamps the read without a VIN when the vehicle reported none`() {
+        val slot = slot<String>()
+        every { editor.putString(eq(PREF_DTC_READ_INFO), capture(slot)) } returns editor
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), now = 5)
+
+        every { sharedPrefs.getString(eq(PREF_DTC_READ_INFO), any()) } returns slot.captured
+        assertNull(VehicleCapabilitiesManager.getDtcReadInfo()!!.vin)
+    }
+
+    @Test
+    fun `getDtcReadInfo is null for codes stored before reads were stamped, and on malformed json`() {
+        assertNull(VehicleCapabilitiesManager.getDtcReadInfo())
+
+        every { sharedPrefs.getString(eq(PREF_DTC_READ_INFO), any()) } returns "not-json"
+        assertNull(VehicleCapabilitiesManager.getDtcReadInfo())
     }
 }

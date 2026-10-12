@@ -21,6 +21,13 @@
     <string name="dtc.unknown_module">Nieznany moduł</string>
     <string name="dtc.no_codes_for_module">Brak zgłoszonych kodów błędów.</string>
     <string name="dtc.action_completed">Kody błędów zaktualizowane.</string>
+    <string name="dtc.read_info_section">Ostatni odczyt</string>
+    <string name="dtc.read_info">Ostatni odczyt: %1$s</string>
+    <string name="dtc.read_info_vin">VIN %1$s</string>
+    <string name="dtc.read_info_other_vehicle">Inny pojazd (VIN %1$s)</string>
+    <string name="dtc.clear_outcome.cleared">Kody błędów skasowane.</string>
+    <string name="dtc.clear_outcome.refused">Pojazd odmówił skasowania. Wyłącz silnik, zostaw zapłon i ponów.</string>
+    <string name="dtc.clear_outcome.codes_remain">Zgłaszane po skasowaniu: %1$d. Usterka może występować.</string>
     <string name="dtc.clear_confirm_title">Skasować kody błędów?</string>
     <string name="dtc.clear_confirm_message">Spowoduje to usunięcie zapisanych kodów błędów i danych zamrożonej ramki z pojazdu. Tej operacji nie można cofnąć.</string>
     <string name="dtc.clear_confirm">Skasuj</string>

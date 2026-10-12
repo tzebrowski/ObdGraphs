@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
+import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.trip.tripManager
@@ -96,7 +97,16 @@ internal class WorkflowOrchestrator internal constructor() {
 
             VehicleCapabilitiesManager.updateDTC(dtc, pendingDtcModules.orEmpty())
             pendingDtcModules = null
-            sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
+
+            // A clear is always followed by a read, so dtc are the codes left after it.
+            if (pendingDtcClear) {
+                pendingDtcClear = false
+                val outcome = dtcClearOutcome(status, dtc)
+                Log.i(LOG_TAG, "DTC clear completed. Status=$status, codes left=${dtc.size}, outcome=$outcome")
+                sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED, outcome)
+            } else {
+                sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
+            }
         }
 
         override fun onRoutineCompleted(
@@ -250,10 +260,15 @@ internal class WorkflowOrchestrator internal constructor() {
     @Volatile
     private var pendingDtcModules: List<String>? = null
 
+    // Whether the DTC action in flight is a clear: its completion carries a DtcClearOutcome extra.
+    @Volatile
+    private var pendingDtcClear = false
+
     fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) {
         val readAction = getReadDtcAction()
         val modules = getDtcModules(selectedModules)
         pendingDtcModules = modules.map { it.mode }
+        pendingDtcClear = true
         Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction, modules=$modules")
         val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction), modules)
         Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
@@ -263,6 +278,7 @@ internal class WorkflowOrchestrator internal constructor() {
         val readAction = getReadDtcAction()
         val modules = getDtcModules(selectedModules)
         pendingDtcModules = modules.map { it.mode }
+        pendingDtcClear = false
         Log.i(LOG_TAG,"Schedule DTC read action=$readAction, modules=$modules")
         val result = workflow.scheduleDTCAction(setOf(readAction), modules)
         Log.i(LOG_TAG,"DTC read is scheduled: $result")
