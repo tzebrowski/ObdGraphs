@@ -286,6 +286,15 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   ObdMetrics' `isRunning` is false inside `onRunning` (threads start after it), so anything scheduled
   "on connect" must wait for `workflow.isRunning` off the callback thread. Untagged codes after a
   reconnect: check the logcat for `InitCompletedHandler: Found Diagnostic Trouble Codes` first.
+* **2.0 GME DTC knowledge lives in ObdMetricsGiuliaQV, by the user's choice;** ObdMetrics core only offers generic
+  hooks. A PID's decoder is its `codecClass` (loaded by name), so the GME clear is a GiuliaQV codec + `dtcClear` in
+  `2.0_gme_ext.json`. Per-code requests (UDS `19 06` extended data) are `dtcFollowUp` templates (`{dtc}` placeholder);
+  their values arrive in `DiagnosticTroubleCode.details`. Spec: `doc/specs/dtc-extended-data.md`.
+* One clear PID per query across a profile's files: ObdMetrics' registry keeps every PID registered for a query and
+  the decoder runs each, so two clear codecs race (file order decides). Hence no `dtcClear` in `giulia_2.0_gme.json`.
+* Snapshot/follow-up requests must go to the code's own module (`ATSH`); before ObdMetrics `feat/dtc-follow-up-requests`
+  they went to the last scanned module and timed out (handler logs "Timed out waiting", a 5 s gap before "Notyfing").
+  The snapshot parser stops at the first DID the loaded files do not define. A short freeze frame means a missing DID.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

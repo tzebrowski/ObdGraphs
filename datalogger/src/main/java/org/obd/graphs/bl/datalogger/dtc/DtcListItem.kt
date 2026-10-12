@@ -18,6 +18,7 @@ package org.obd.graphs.bl.datalogger.dtc
 
 import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.api.model.SnapshotPID
 
 // Shared by the phone DTC dialog and the AA DTC screen - keep one copy of the grouping/ordering.
 
@@ -203,3 +204,21 @@ fun dtcScanTargets(
     mappings
         .filter { it.headerValue.isNotEmpty() && it.requestKey in selected }
         .distinctBy { it.headerValue.trim().uppercase() }
+
+// "Engine Speed: 750 rpm" per decoded DID of a snapshot or of the extended data (DiagnosticTroubleCode.details).
+// PID labels are written for dashboard tiles ("Engine Coolant\nTemp"), so their line breaks are flattened.
+fun List<SnapshotPID>?.toDidLines(
+    unknownDid: String,
+    notAvailable: String
+): List<String> =
+    orEmpty().map { did ->
+        val description =
+            did.definition
+                ?.description
+                ?.replace(Regex("\\s*\n\\s*"), " ")
+                ?.trim()
+                ?.takeUnless { it.isEmpty() } ?: unknownDid
+        val value = did.decodedValue?.toString() ?: notAvailable
+        val units = did.definition?.units?.trim().orEmpty()
+        listOf("$description:", value, units).filter { it.isNotEmpty() }.joinToString(" ")
+    }

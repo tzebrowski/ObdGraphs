@@ -32,6 +32,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.bl.TestSetup
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
 import org.obd.metrics.pid.PidDefinition
@@ -237,5 +238,22 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         verify(exactly = 0) { editor.putString(eq(PREF_DTC), any()) }
         verify(exactly = 0) { editor.putString(eq(PREF_DTC_READ_INFO), any()) }
         verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE) }
+    }
+
+    @Test
+    fun `updateDTC and getDiagnosticTroubleCodes preserve the extended data through the round trip`() {
+        val slot = slot<String>()
+        every { editor.putString(eq(PREF_DTC), capture(slot)) } returns editor
+
+        val counter = PidDefinition(17149L, 1, "A", "22", "6080", "", "DTC Event\nCounter", 0, 255, null)
+        val code = dtc("P0100", "Mass air flow circuit").apply { details = listOf(SnapshotPID(counter, "07", 7)) }
+        VehicleCapabilitiesManager.updateDTC(setOf(code))
+
+        every { sharedPrefs.getString(eq(PREF_DTC), any()) } returns slot.captured
+        val details = VehicleCapabilitiesManager.getDiagnosticTroubleCodes().single().details
+
+        assertEquals(1, details.size)
+        assertEquals("6080", details[0].definition.pid)
+        assertEquals(7, details[0].decodedValue.toInt())
     }
 }

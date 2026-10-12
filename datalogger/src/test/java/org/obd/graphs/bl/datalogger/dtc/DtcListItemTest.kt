@@ -22,7 +22,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.command.dtc.DtcComponent
+import org.obd.metrics.pid.PidDefinition
 
 class DtcListItemTest {
     private fun dtc(
@@ -191,5 +193,21 @@ class DtcListItemTest {
             )
         assertEquals(setOf("22", "ABS"), dtcConnectScanModules(mappings))
         assertTrue(dtcConnectScanModules(emptyList()).isEmpty())
+    }
+
+    @Test
+    fun `did lines flatten tile labels and fall back for missing parts`() {
+        fun did(
+            description: String?,
+            units: String?,
+            value: Number?
+        ) = SnapshotPID(PidDefinition(1L, 1, "A", "22", "6080", units, description, 0, 255, null), "07", value)
+
+        assertEquals(
+            listOf("DTC Event Counter: 7", "Engine Coolant Temp: 90 C", "unknown DID: n/a"),
+            listOf(did("DTC Event\nCounter", "", 7), did("Engine Coolant\n Temp", "C", 90), did(null, null, null))
+                .toDidLines(unknownDid = "unknown DID", notAvailable = "n/a")
+        )
+        assertTrue(null.toDidLines("unknown DID", "n/a").isEmpty())
     }
 }

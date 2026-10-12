@@ -968,6 +968,7 @@
 
     <!-- Extracted from layouts -->
     <string name="dtc.freeze_frame_data">UDS Freeze Frame Data</string>
+    <string name="dtc.extended_data">Extended data</string>
     <string name="dtc.action_google_issue">Google Issue</string>
     <string name="dtc.action_copy">Copy</string>
     <string name="dtc.action_refresh">Refresh</string>

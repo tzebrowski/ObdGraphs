@@ -44,6 +44,7 @@ import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.summary
+import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.preferences.CoreDialogFragment
@@ -362,15 +363,17 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             val activeStatuses = code.activeStatuses?.joinToString(", ") ?: getString(R.string.dtc_share_none)
             reportBuilder.append(getString(R.string.dtc_share_status, activeStatuses, hex)).append("\n")
 
-            val snapshot = code.snapshot
-            if (snapshot != null && dataLoggerSettings.instance().adapter.dtcReadSnapshots) {
-                reportBuilder.append(getString(R.string.dtc_share_snapshot, snapshot.size)).append("\n")
-                snapshot.forEach { did ->
-                    val value = did.decodedValue ?: notAvailable
-                    val unit = did.definition?.units ?: ""
-                    val desc = did.definition?.description ?: getString(R.string.dtc_share_unknown_did)
-                    reportBuilder.append("  - $desc: $value $unit\n")
-                }
+            val unknownDid = getString(R.string.dtc_share_unknown_did)
+            val snapshotLines = code.snapshot.toDidLines(unknownDid, notAvailable)
+            if (snapshotLines.isNotEmpty() && dataLoggerSettings.instance().adapter.dtcReadSnapshots) {
+                reportBuilder.append(getString(R.string.dtc_share_snapshot, snapshotLines.size)).append("\n")
+                snapshotLines.forEach { reportBuilder.append("  - $it\n") }
+            }
+
+            val extendedLines = code.details.toDidLines(unknownDid, notAvailable)
+            if (extendedLines.isNotEmpty()) {
+                reportBuilder.append(getString(R.string.dtc_extended_data)).append(":\n")
+                extendedLines.forEach { reportBuilder.append("  - $it\n") }
             }
 
             reportBuilder.append("\n")
