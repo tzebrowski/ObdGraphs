@@ -39,9 +39,18 @@ class DtcReadInfoTest {
     }
 
     @Test
+    fun `vin is recognised by its value under a label not mentioning VIN`() {
+        // giulia_2.0_gme.json labels 22F190 "Vehicle Identification Number"; in Polish it is
+        // "Numer identyfikacyjny pojazdu" - neither contains "vin".
+        assertEquals(VIN, vinFrom(mapOf("Software number" to "50548170", "Vehicle Identification Number" to VIN)))
+        assertEquals(VIN, vinFrom(mapOf("Numer identyfikacyjny pojazdu" to " $VIN ")))
+    }
+
+    @Test
     fun `no vin without a VIN key or a valid 17 character value`() {
         assertNull(vinFrom(emptyMap()))
-        assertNull(vinFrom(mapOf("ECU name" to VIN)))
+        assertNull(vinFrom(mapOf("ECU serial number" to "12345678901234567", "Hardware version" to "ABCDEFGHJKLMNPRST")))
+        assertNull(vinFrom(mapOf("ECU name" to "$VIN-01")))
         assertNull(vinFrom(mapOf("VIN" to "NO DATA")))
         // I, O and Q never appear in a VIN.
         assertNull(vinFrom(mapOf("VIN" to "ZARFAMAN0K761234O")))

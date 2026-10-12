@@ -61,13 +61,17 @@ fun DtcReadInfo.vehicleLine(
 // ISO 3779: 17 characters, no I, O or Q.
 private val VIN_PATTERN = Regex("[A-HJ-NPR-Z0-9]{17}")
 
-// Vehicle metadata is keyed by the metadata PID's label, which differs per profile ("VIN",
-// "Vehicle identification number (VIN)", ...), and the decoded value can carry padding. Takes the
-// first key mentioning VIN whose value holds a valid VIN.
+// Vehicle metadata is keyed by the metadata PID's label, which differs per profile and is translated
+// ("VIN", "Vehicle Identification Number", "Numer identyfikacyjny pojazdu", ...), so the label alone
+// cannot find it. A key mentioning VIN wins (its value may carry padding); otherwise any value that
+// is exactly a VIN - letters and digits mixed, so a numeric part number never qualifies.
 fun vinFrom(metadata: Map<String, String>): String? =
     metadata.entries
         .filter { it.key.contains("vin", ignoreCase = true) }
         .firstNotNullOfOrNull { VIN_PATTERN.find(it.value.uppercase())?.value }
+        ?: metadata.values
+            .map { it.trim().uppercase() }
+            .firstOrNull { VIN_PATTERN.matches(it) && it.any(Char::isLetter) && it.any(Char::isDigit) }
 
 // What a clear achieved, judged from the clear reply and the read that follows it. The read is the
 // real verdict: an ECU can acknowledge the clear while an active fault sets the code again at once.

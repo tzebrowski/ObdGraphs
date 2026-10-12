@@ -226,4 +226,16 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         every { sharedPrefs.getString(eq(PREF_DTC_READ_INFO), any()) } returns "not-json"
         assertNull(VehicleCapabilitiesManager.getDtcReadInfo())
     }
+
+    @Test
+    fun `updateCapabilities leaves the stored codes to the module scan on connect`() {
+        every { dataLoggerSettings.instance() } returns
+            DataLoggerSettings(adapter = Adapter(vehicleCapabilitiesReadingEnabled = false, dtcEnabled = true))
+
+        VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities(), moduleScanOnConnect = true)
+
+        verify(exactly = 0) { editor.putString(eq(PREF_DTC), any()) }
+        verify(exactly = 0) { editor.putString(eq(PREF_DTC_READ_INFO), any()) }
+        verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE) }
+    }
 }

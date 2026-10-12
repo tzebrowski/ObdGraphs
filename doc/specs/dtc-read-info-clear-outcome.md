@@ -26,6 +26,8 @@ reports the real clear status (needs an `obdMetricVersion` bump here for the "re
 | Clear, codes read back afterwards | Same as above | "Trouble codes still reported after clearing: N. The fault may still be present." |
 | Clear refused by the ECU | Same as above | "The vehicle refused to clear the trouble codes. Turn the engine off, leave the ignition on and try again." (needs the ObdMetrics change) |
 | Read | Unchanged | Unchanged (AA: "Trouble codes updated.") |
+| Automatic read on connect (`pref.adapter.init.fetchDTC`), modules configured | ObdMetrics read the default header only; the flat, untagged result **replaced** the last grouped scan, and its codes leaked into the next scan as "Unknown module" | The app scans **all** configured modules (one per header) once connected; the list stays grouped. "DTC available" toast unchanged |
+| Automatic read on connect, no modules configured | Default-header read | Unchanged |
 
 ## Settings / keys touched
 
@@ -37,9 +39,13 @@ reports the real clear status (needs an `obdMetricVersion` bump here for the "re
 
 * `datalogger/.../dtc/DtcReadInfo.kt` (pure, unit-tested):
   * `DtcReadInfo(timestamp, vin)`, `isFromOtherVehicle(currentVin)` (both known and different).
-  * `vinFrom(metadata)`: the metadata map is keyed by the metadata PID's label, which differs per
-    profile, and the decoded value may carry padding. So it takes the first key containing "vin"
-    whose value holds a 17-character ISO 3779 VIN (no I/O/Q).
+  * `vinFrom(metadata)`: the metadata map is keyed by the metadata PID's *label*, which differs per
+    profile and is translated (`giulia_2.0_gme.json` 22F190 is "Vehicle Identification Number", in
+    Polish "Numer identyfikacyjny pojazdu"). So a key containing "vin" wins (value may be padded),
+    otherwise any value that is exactly a 17-character ISO 3779 VIN (no I/O/Q) mixing letters and digits.
+  * The VIN exists only if the vehicle metadata is read on connect
+    (`pref.adapter.init.fetchDeviceProperties`, "fetch device properties"). With it off, the
+    metadata is `{}` and the line shows the time only.
   * `summary()` / `vehicleLine()` build the line from localized format strings (`DtcReadInfoLabels`);
     the parts are joined in code because string resources lose a leading space.
   * `DtcClearOutcome` + `dtcClearOutcome(status, codesAfterClear)`: `ERR` → REFUSED; otherwise any
@@ -48,6 +54,20 @@ reports the real clear status (needs an `obdMetricVersion` bump here for the "re
 * `VehicleCapabilitiesManager.updateDTC` stamps `DtcReadInfo(now, getCurrentVin())`. Metadata is
   rewritten on every connect before that connection's reads complete, so the VIN is the connected
   vehicle's. `getDtcReadInfo()` returns null when unset or malformed.
+* Read on connect: `AdjustmentsStrategy` turns ObdMetrics' `vehicleDtcReadingEnabled` off whenever
+  `dtcConnectScanModules(mappings)` is non-empty (every module with a header; the phone picker's
+  deselection applies to manual scans only, by the user's choice). `WorkflowOrchestrator.onRunning`
+  then calls `scheduleConnectScan`. ObdMetrics only counts the workflow as running once all its threads
+  are up (after `onRunning` returns), so it waits on `workflow.isRunning` (max 10 s) off the callback
+  thread before `scheduleDTCRead(modules, connectScan = true)`. Its completion raises
+  `DATA_LOGGER_DTC_AVAILABLE` like the old read. `updateCapabilities(moduleScanOnConnect = true)` no
+  longer stores the (empty) init codes.
+* Leak in ObdMetrics (all versions): `DiagnosticTroubleCodeHandler` accumulates *every* DTC read reply,
+  including the init read's, and hands them out with the next scheduled read. With the init read off
+  whenever modules are configured, the app no longer triggers it. Fixed upstream on
+  `feat/dtc-clear-status` too: every scheduled DTC action starts with a `DiagnosticTroubleCodeStartCommand`
+  that drops whatever the handler accumulated before it (init read, a timed-out earlier action).
+  Test: `scheduledReadDoesNotReturnCodesFromTheInitRead` (fails on `v11.x`).
 * `WorkflowOrchestrator`: `pendingDtcClear` marks a scheduled clear; `onDTCCompleted` then sends
   `DATA_LOGGER_DTC_ACTION_COMPLETED` with the `DtcClearOutcome` as the broadcast extra. A read sends it
   without one.
@@ -73,6 +93,12 @@ unchanged; receivers that ignore the extra behave as before.
 
 ## Tests
 
+* `DtcListItemTest`: `dtcConnectScanModules` takes every module with a header, ignoring the picker.
+* `AdjustmentsStrategyTest`: no ObdMetrics DTC read on connect when modules are configured (fails on
+  the old strategy); the automatic clear is unaffected.
+* `VehicleCapabilitiesManagerTest`: `updateCapabilities(moduleScanOnConnect = true)` stores nothing and
+  raises no "DTC available".
+
 * `datalogger/src/test/.../dtc/DtcReadInfoTest.kt`: VIN parsing (label variants, padding, invalid
   values), other-vehicle rule, summary text, clear outcome for every status/read-back combination.
 * `VehicleCapabilitiesManagerTest`: `updateDTC` stamps time + VIN, no VIN when none reported,
@@ -82,16 +108,20 @@ unchanged; receivers that ignore the extra behave as before.
 
 ## Risks and verification checklist
 
-- [ ] Phone: after a read, the grey line shows date/time and the VIN; it's absent on a fresh install.
+- [ ] Phone: after a read, the grey line shows date/time and the VIN (metadata reading on); it's absent on a fresh install.
+- [x] Phone, metadata reading off (`fetchDeviceProperties=false`): time only, no VIN (seen on device 2026-10-12).
 - [ ] Phone + AA: connect to a different vehicle (or edit the stored VIN): "another vehicle" appears.
 - [ ] Clear with the engine running on an ECU that refuses: "refused" toast (after the ObdMetrics bump).
 - [ ] Clear with an active fault: "still reported after clearing: N".
 - [ ] Clear that succeeds: "Trouble codes cleared." and an empty list.
 - [ ] AA (DHU): read info row first; with module sections, a separate "Last read" section.
 - [ ] PL: line and toasts fit (phone dialog width, AA toast).
+- [ ] Automatic DTC reading on, modules configured: after connecting, the list is grouped by module
+      (no "Unknown module", no flat list); "Last read" shows the connect time.
+- [ ] Automatic DTC reading on, no modules configured: flat default-ECU list as before.
 - Risk: on AA the read info row takes one of the rows the host allows while driving.
-- Risk: `vinFrom` depends on the metadata label mentioning "VIN". A profile whose VIN PID is labelled
-  otherwise gets no VIN (line without VIN, never a false "another vehicle").
+- Risk: the value fallback could take another 17-character letters+digits metadata value for a VIN.
+  None of the bundled profiles has such a field. A wrong VIN could cause a false "another vehicle".
 
 ## Out of scope
 

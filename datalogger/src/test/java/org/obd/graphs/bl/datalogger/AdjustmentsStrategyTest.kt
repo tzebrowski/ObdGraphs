@@ -26,6 +26,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.obd.graphs.DiagnosticMappingItem
+import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.bl.TestSetup
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.metrics.pid.PIDsGroup
@@ -137,5 +139,23 @@ class AdjustmentsStrategyTest : TestSetup() {
         val adjustments = strategy.findAdjustmentFor(QueryStrategyType.DRAG_RACING_QUERY, preferences)
 
         assertTrue(adjustments.overrides.isEmpty())
+    }
+
+    // ObdMetrics' read on connect covers the default header only: with modules configured it left
+    // untagged codes that replaced the grouped list and leaked into the next scan, so the app scans
+    // the modules itself after connecting.
+    @Test
+    fun `read on connect is left to the module scan when modules are configured`() {
+        val preferences = preferences()
+        every { dataLoggerSettings.instance() } returns preferences
+        mockkObject(DiagnosticRequestIDManager)
+        every { DiagnosticRequestIDManager.getMappings() } returns
+            listOf(DiagnosticMappingItem(1, "22", "DA10F1", "Engine ECU"))
+
+        val adjustments = strategy.findAdjustmentFor(QueryStrategyType.SHARED_QUERY, preferences)
+
+        assertFalse(adjustments.requestedGroups.contains(PIDsGroup.DTC_READ))
+        // The automatic clear is a separate setting and stays as it was.
+        assertTrue(adjustments.requestedGroups.contains(PIDsGroup.DTC_CLEAR))
     }
 }

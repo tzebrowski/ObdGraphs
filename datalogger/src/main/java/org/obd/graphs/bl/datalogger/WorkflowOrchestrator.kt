@@ -24,6 +24,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
+import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.trip.tripManager
@@ -53,6 +54,8 @@ import org.obd.metrics.translation.TranslationProvider
 import java.util.*
 
 const val JS_ENGINE_NAME = "rhino"
+
+private const val CONNECT_SCAN_START_TIMEOUT_MS = 10_000L
 
 /**
  * That's the wrapper interface on Workflow API.
@@ -97,6 +100,11 @@ internal class WorkflowOrchestrator internal constructor() {
 
             VehicleCapabilitiesManager.updateDTC(dtc, pendingDtcModules.orEmpty())
             pendingDtcModules = null
+
+            if (pendingConnectScan) {
+                pendingConnectScan = false
+                if (dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
+            }
 
             // A clear is always followed by a read, so dtc are the codes left after it.
             if (pendingDtcClear) {
@@ -147,9 +155,19 @@ internal class WorkflowOrchestrator internal constructor() {
 
             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             status = WorkflowStatus.Connected
-            VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
+            val connectScanModules =
+                if (dataLoggerSettings.instance().adapter.dtcEnabled) {
+                    dtcConnectScanModules(DiagnosticRequestIDManager.getMappings())
+                } else {
+                    emptySet()
+                }
+            VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities, moduleScanOnConnect = connectScanModules.isNotEmpty())
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
             tripManager.startNewTrip(System.currentTimeMillis())
+
+            if (connectScanModules.isNotEmpty()) {
+                scheduleConnectScan(connectScanModules)
+            }
         }
 
         override fun onError(msg: String, tr: Throwable?) {
@@ -264,21 +282,48 @@ internal class WorkflowOrchestrator internal constructor() {
     @Volatile
     private var pendingDtcClear = false
 
+    // Whether the DTC action in flight is the read on connect: it raises DATA_LOGGER_DTC_AVAILABLE,
+    // as ObdMetrics' own read on connect did (VehicleCapabilitiesManager.updateCapabilities).
+    @Volatile
+    private var pendingConnectScan = false
+
+    // ObdMetrics counts the workflow as running only once all its threads are up, which is after
+    // onRunning returns - scheduling from inside the callback would be refused as NOT_RUNNING.
+    private fun scheduleConnectScan(modules: Set<String>) {
+        runAsync(wait = false) {
+            val deadline = System.currentTimeMillis() + CONNECT_SCAN_START_TIMEOUT_MS
+            while (!workflow.isRunning && System.currentTimeMillis() < deadline) {
+                Thread.sleep(50)
+            }
+            if (workflow.isRunning) {
+                Log.i(LOG_TAG, "Scheduling DTC read on connect for all modules: $modules")
+                scheduleDTCRead(modules, connectScan = true)
+            } else {
+                Log.w(LOG_TAG, "Workflow did not start in time, skipping DTC read on connect")
+            }
+        }
+    }
+
     fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) {
         val readAction = getReadDtcAction()
         val modules = getDtcModules(selectedModules)
         pendingDtcModules = modules.map { it.mode }
         pendingDtcClear = true
+        pendingConnectScan = false
         Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction, modules=$modules")
         val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction), modules)
         Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
     }
 
-    fun scheduleDTCRead(selectedModules: Set<String> = emptySet()) {
+    fun scheduleDTCRead(
+        selectedModules: Set<String> = emptySet(),
+        connectScan: Boolean = false
+    ) {
         val readAction = getReadDtcAction()
         val modules = getDtcModules(selectedModules)
         pendingDtcModules = modules.map { it.mode }
         pendingDtcClear = false
+        pendingConnectScan = connectScan
         Log.i(LOG_TAG,"Schedule DTC read action=$readAction, modules=$modules")
         val result = workflow.scheduleDTCAction(setOf(readAction), modules)
         Log.i(LOG_TAG,"DTC read is scheduled: $result")

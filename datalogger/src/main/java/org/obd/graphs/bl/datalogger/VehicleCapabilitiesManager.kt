@@ -50,7 +50,12 @@ object VehicleCapabilitiesManager {
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
 
-    internal fun updateCapabilities(vehicleCapabilities: VehicleCapabilities) {
+    // moduleScanOnConnect: the codes come from the module scan scheduled after connecting, which
+    // stores them itself - vehicleCapabilities.dtc is empty then and must not replace the list.
+    internal fun updateCapabilities(
+        vehicleCapabilities: VehicleCapabilities,
+        moduleScanOnConnect: Boolean = false
+    ) {
         Prefs.edit().apply {
             Log.i(
                 LOG_TAG,
@@ -78,7 +83,7 @@ object VehicleCapabilitiesManager {
             )
             commit()
         }
-        if (dataLoggerSettings.instance().adapter.dtcEnabled) {
+        if (dataLoggerSettings.instance().adapter.dtcEnabled && !moduleScanOnConnect) {
             updateDTC(vehicleCapabilities.dtc)
             if (vehicleCapabilities.dtc.isNotEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)

@@ -180,4 +180,16 @@ class DtcListItemTest {
         )
         assertNotEquals(DtcListItem.ModuleHeader("ABS").itemKey(), DtcListItem.Message("ABS", "none").itemKey())
     }
+
+    @Test
+    fun `the read on connect scans every configured module, ignoring the picker`() {
+        val mappings =
+            listOf(
+                DiagnosticMappingItem(1, "22", "DA10F1", "Engine ECU"),
+                DiagnosticMappingItem(2, "ABS", "DA28F1", "ABS"),
+                DiagnosticMappingItem(3, "BCM", "", "BCM")
+            )
+        assertEquals(setOf("22", "ABS"), dtcConnectScanModules(mappings))
+        assertTrue(dtcConnectScanModules(emptyList()).isEmpty())
+    }
 }
