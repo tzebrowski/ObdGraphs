@@ -114,6 +114,10 @@ Code", no `--author`/`--trailer` naming Claude.
 via PR. Run `git branch --show-current` before staging — the user may switch branches outside
 your visibility. Don't stage unrelated local edits (e.g. a locally modified `app/build.gradle`).
 
+**Never reference private files in a repo.** The ECU UDS spreadsheets and other private documents
+stay out of code, comments, specs and CLAUDE.md: no file names, paths or sheet names. Say "the ECM"
+instead. The repos are public.
+
 **Never push, never amend.** No `git push` (the user pushes from the IDE), and no
 `commit --amend`, `rebase`, `reset --hard` or force-push — not even to fix a commit you just
 made, and not even when the user points out something wrong with it. A commit may already be on

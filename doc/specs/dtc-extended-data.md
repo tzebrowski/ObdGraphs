@@ -4,7 +4,7 @@
 
 ## Summary
 
-**Problem.** The 2.0 GME ECM UDS spec (`~/github/UDS/ECM-ECM_FGA-96-0001505917(006_005).xlsx`) showed three gaps:
+**Problem.** The 2.0 GME ECM showed three gaps:
 
 1. **Freeze frames showed at most 4 values.** ObdMetrics' snapshot parser stops at the first unknown DID, and the
    ECM's snapshot (`19 04`, 33 DIDs) has `1921` fifth, which no loaded PID file defined. In multi-module scans the
