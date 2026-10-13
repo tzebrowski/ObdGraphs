@@ -33,7 +33,7 @@
     <string name="dtc.clear_outcome.refused">Vehicle refused to clear codes. Engine off, ignition on, then retry.</string>
     <string name="dtc.clear_outcome.codes_remain">Still reported after clearing: %1$d. The fault may be present.</string>
     <string name="dtc.clear_confirm_title">Clear trouble codes?</string>
-    <string name="dtc.clear_confirm_message">This erases the stored trouble codes and their freeze frame data from the vehicle. It cannot be undone.</string>
+    <string name="dtc.clear_confirm_message">This erases the stored trouble codes and their freeze frame data from the vehicle and resets the readiness monitors. It cannot be undone.</string>
     <string name="dtc.clear_confirm">Clear</string>
     <string name="dtc.clear_cancel">Cancel</string>
 

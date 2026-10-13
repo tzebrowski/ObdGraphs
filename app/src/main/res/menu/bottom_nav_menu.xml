@@ -29,6 +29,11 @@
 
     <item
         app:showAsAction="never"
+        android:id="@+id/ctx_menu_readiness"
+        android:title="@string/pref.readiness.title" />
+
+    <item
+        app:showAsAction="never"
         android:id="@+id/ctx_menu_vehicle_properties"
         android:title="@string/pref.vehicle.metadata_title" />
 

@@ -44,5 +44,14 @@ enum class Pid(val id: Long) {
     OIL_DEGRADATION_PID_ID(7015),
     VEHICLE_STATUS_PID_ID(17091),
 
+    // Readiness monitors (mode01.json, ObdMetrics ReadinessMonitorsCodec) and the "since codes cleared" /
+    // "MIL on" counters (mode01_2.json).
+    READINESS_SINCE_CLEAR_PID_ID(21010),
+    READINESS_DRIVE_CYCLE_PID_ID(21011),
+    DISTANCE_SINCE_CODES_CLEARED_PID_ID(50),
+    TIME_SINCE_CODES_CLEARED_PID_ID(79),
+    DISTANCE_MIL_ON_PID_ID(34),
+    TIME_MIL_ON_PID_ID(78),
+
     GPS_LOCATION_PID_ID(9977774L)
 }

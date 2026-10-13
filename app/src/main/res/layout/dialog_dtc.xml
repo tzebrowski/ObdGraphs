@@ -22,6 +22,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Link to the readiness monitors: the last stored result, or an invitation to check. -->
+    <TextView
+        android:id="@+id/dtc_readiness_link"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="?android:attr/textColorLink"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_read_info" />
+
     <TextView
         android:id="@+id/header_code"
         android:layout_width="wrap_content"
@@ -33,7 +49,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_read_info" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_readiness_link" />
 
     <TextView
         android:id="@+id/header_description"
@@ -46,7 +62,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/header_code"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_read_info" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_readiness_link" />
 
     <View
         android:id="@+id/header_divider"

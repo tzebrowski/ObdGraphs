@@ -33,7 +33,8 @@ internal class QueryStrategyOrchestrator :
         QueryStrategyType.INDIVIDUAL_QUERY to IndividualQueryStrategy(),
         QueryStrategyType.ROUTINES_QUERY to RoutinesQueryStrategy(),
         QueryStrategyType.TRIP_INFO_QUERY to TripInfoQueryStrategy(),
-        QueryStrategyType.PERFORMANCE_QUERY to PerformanceQueryStrategy()
+        QueryStrategyType.PERFORMANCE_QUERY to PerformanceQueryStrategy(),
+        QueryStrategyType.READINESS_QUERY to ReadinessQueryStrategy()
     )
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY

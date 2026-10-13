@@ -707,6 +707,28 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
+    <!-- Own category: readiness is generic OBD (mode 01), shown even when no DTC read PIDs are configured. -->
+    <PreferenceCategory
+        android:key="pref.readiness.category"
+        android:title="@string/pref.readiness.title">
+        <!-- Own screen so the menu can open it (pref.readiness), like pref.dtc. -->
+        <PreferenceScreen
+            android:key="pref.readiness"
+            android:summary="@string/pref.readiness.summary"
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
+            <PreferenceCategory android:title="@string/pref.readiness.title">
+                <org.obd.graphs.preferences.readiness.ReadinessListPreferences
+                    app:icon="@drawable/ic_action_execute"
+                    android:dialogTitle="@string/pref.readiness.title"
+                    android:key="pref.readiness.list"
+                    android:summary="@string/pref.readiness.summary"
+                    android:title="@string/pref.readiness.settings"
+                    app:singleLineTitle="false" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref.power_category">
         <PreferenceScreen
             android:key="pref.power"

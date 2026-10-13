@@ -24,6 +24,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.DiagnosticRequestIDManager
@@ -49,11 +51,15 @@ import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
+import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
+import org.obd.graphs.bl.readiness.ReadinessSnapshot
 import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
+import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.readiness.ReadinessDialogFragment
 import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
@@ -68,6 +74,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var shareButton: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var readInfo: TextView
+    private lateinit var readinessLink: TextView
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -98,6 +105,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         recyclerView = root.findViewById(R.id.recycler_view)
         readInfo = root.findViewById(R.id.dtc_read_info)
+        readinessLink = root.findViewById(R.id.dtc_readiness_link)
+        attachReadinessLink()
 
         adapter = DiagnosticTroubleCodeViewAdapter(context)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
@@ -466,6 +475,44 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 )
             )
         readInfo.visibility = View.VISIBLE
+    }
+
+    // Monitors and codes come from the same self-tests (a failed monitor stores a code; a clear resets both), so the
+    // list links to the readiness dialog. Shown from the child manager so the row refreshes when that dialog closes.
+    private fun attachReadinessLink() {
+        childFragmentManager.registerFragmentLifecycleCallbacks(
+            object : FragmentManager.FragmentLifecycleCallbacks() {
+                override fun onFragmentViewDestroyed(
+                    fm: FragmentManager,
+                    f: Fragment
+                ) {
+                    if (f is ReadinessDialogFragment) refreshReadinessLink()
+                }
+            },
+            false
+        )
+        readinessLink.setOnClickListener { ReadinessDialogFragment().show(childFragmentManager, null) }
+        refreshReadinessLink()
+    }
+
+    private fun refreshReadinessLink() {
+        val snapshot = ReadinessSnapshot.decode(Prefs.getString(PREF_READINESS_LAST))
+        readinessLink.text =
+            if (snapshot == null) {
+                getString(R.string.dtc_readiness_link_unknown)
+            } else {
+                getString(
+                    R.string.dtc_readiness_link,
+                    getString(if (snapshot.milOn) R.string.readiness_mil_on else R.string.readiness_mil_off),
+                    snapshot.complete,
+                    snapshot.supported,
+                    DateUtils.formatDateTime(
+                        requireContext(),
+                        snapshot.timestamp,
+                        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
+                    )
+                )
+            }
     }
 
     private fun resetActionState() {

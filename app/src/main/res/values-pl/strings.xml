@@ -454,7 +454,7 @@
     <string name="pref.dtc.show_notification">Włącz powiadomienia DTC</string>
     <string name="pref.dtc.show_notification_summary">Wysyła alert po znalezieniu nowych kodów błędów diagnostycznych (DTC).</string>
 
-    <string name="pref.dtc.clean_dialog.confirm_message">Czy na pewno chcesz skasować wszystkie DTC z ECU?\n\nUpewnij się, że silnik jest WYŁĄCZONY, ale stacyjka jest WŁĄCZONA.</string>
+    <string name="pref.dtc.clean_dialog.confirm_message">Czy na pewno chcesz skasować wszystkie DTC z ECU?\n\nUpewnij się, że silnik jest WYŁĄCZONY, ale stacyjka jest WŁĄCZONA.\n\nKasowanie zeruje też monitory gotowości: samochód będzie niegotowy, dopóki nie wykonają się ponownie.</string>
     <string name="pref.dtc.clean_dialog.send_message">Komenda kasowania wysłana do ECU</string>
     <string name="pref.dtc.clean_dialog.title">Skasować kody diagnostyczne?</string>
     <string name="pref.dtc.screen_lock">To może chwilę potrwać. Proszę czekać\u2026</string>
@@ -857,4 +857,47 @@
     <string name="wizard_step_summary_intro">Wszystko gotowe!</string>
     <string name="wizard_step_summary_description">Aplikacja jest skonfigurowana i gotowa do użycia. Możesz wrócić do tych ustawień w dowolnym momencie w Ustawieniach lub uruchomić ponownie tego kreatora z pozycji \"Uruchom kreatora konfiguracji\" na górze Ustawień.</string>
 
+    <!-- Monitory gotowości (ReadinessDialogFragment) -->
+    <string name="pref.readiness.title">Monitory gotowości</string>
+    <string name="pref.readiness.settings">Monitory gotowości</string>
+    <string name="pref.readiness.summary">Autotesty emisji: które są zakończone, kontrolka MIL i liczniki od skasowania kodów.</string>
+    <string name="readiness.view.since_clear">Od skasowania kodów</string>
+    <string name="readiness.view.drive_cycle">Bieżący przejazd</string>
+    <string name="readiness.mil_on">MIL zapalona</string>
+    <string name="readiness.mil_off">MIL zgaszona</string>
+    <string name="readiness.emission_codes">Kody emisyjne: %1$d</string>
+    <string name="readiness.summary">Monitory gotowe: %1$d / %2$d</string>
+    <string name="readiness.all_complete">Wszystkie monitory gotowe</string>
+    <string name="readiness.help_title">Jak monitory mają się do kodów błędów?</string>
+    <string name="readiness.help">Sterownik silnika podczas jazdy stale testuje układy emisji (katalizator, sondy lambda, wypadanie zapłonów…). Każdy taki test to monitor gotowości.\n\n• Zakończony: test został wykonany. Niezakończony: test nie odbył się od ostatniego skasowania kodów.\n• Test, który wykryje usterkę, zapisuje kod błędu (DTC) i może zapalić kontrolkę MIL.\n• Kasowanie kodów zeruje też wszystkie monitory; auto musi trochę pojeździć, aby wykonać testy ponownie. Brak kodów przy niezakończonych monitorach oznacza, że auto jeszcze się nie sprawdziło, a nie że jest sprawne.\n• Po naprawie: skasuj kody, przejedź się i sprawdź, czy monitor się zakończył, a kod nie wrócił.</string>
+    <string name="dtc.readiness_link">Monitory gotowości: %1$s · gotowe %2$d / %3$d · %4$s ›</string>
+    <string name="dtc.readiness_link_unknown">Monitory gotowości: sprawdź, czy auto zakończyło autotesty ›</string>
+    <string name="readiness.module_missing">Monitory gotowości wymagają modułu PID „Mode01”. Włącz go w Ustawieniach → Dostępne moduły.</string>
+    <string name="readiness.no_data">Oczekiwanie na dane gotowości z pojazdu…</string>
+    <string name="readiness.not_reported">Ten pojazd nie udostępnia tego widoku (sterownik nie odpowiada na zapytanie).</string>
+    <string name="readiness.not_connected">Połącz się z pojazdem, aby odczytać monitory gotowości.</string>
+    <string name="readiness.no_monitors">Brak zgłoszonych monitorów.</string>
+    <string name="readiness.monitor_row">%1$s: %2$s</string>
+    <string name="readiness.complete">gotowy</string>
+    <string name="readiness.incomplete">niegotowy</string>
+    <string name="readiness.counter.distance_since_clear">Dystans od skasowania kodów: %1$s</string>
+    <string name="readiness.counter.time_since_clear">Czas od skasowania kodów: %1$s</string>
+    <string name="readiness.counter.distance_mil_on">Dystans z zapaloną MIL: %1$s</string>
+    <string name="readiness.counter.time_mil_on">Czas z zapaloną MIL: %1$s</string>
+    <string name="readiness.monitor.misfire">Wypadanie zapłonu</string>
+    <string name="readiness.monitor.fuel_system">Układ paliwowy</string>
+    <string name="readiness.monitor.components">Podzespoły</string>
+    <string name="readiness.monitor.catalyst">Katalizator</string>
+    <string name="readiness.monitor.heated_catalyst">Katalizator podgrzewany</string>
+    <string name="readiness.monitor.evaporative_system">Układ odparowania paliwa</string>
+    <string name="readiness.monitor.secondary_air">Powietrze wtórne</string>
+    <string name="readiness.monitor.ac_refrigerant">Czynnik klimatyzacji</string>
+    <string name="readiness.monitor.oxygen_sensor">Sonda lambda</string>
+    <string name="readiness.monitor.oxygen_sensor_heater">Podgrzewanie sondy lambda</string>
+    <string name="readiness.monitor.nmhc_catalyst">Katalizator NMHC</string>
+    <string name="readiness.monitor.nox_scr">NOx / SCR</string>
+    <string name="readiness.monitor.boost_pressure">Ciśnienie doładowania</string>
+    <string name="readiness.monitor.exhaust_gas_sensor">Czujnik spalin</string>
+    <string name="readiness.monitor.pm_filter">Filtr cząstek stałych</string>
+    <string name="readiness.monitor.egr_vvt">EGR / VVT</string>
 </resources>

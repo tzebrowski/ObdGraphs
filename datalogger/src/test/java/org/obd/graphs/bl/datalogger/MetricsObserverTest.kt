@@ -16,11 +16,16 @@
  */
 package org.obd.graphs.bl.datalogger
 
+import android.os.Looper
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import io.mockk.verify
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +36,7 @@ import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -125,5 +131,41 @@ class MetricsObserverTest : TestSetup() {
 
         verify(exactly = 1) { processorA.onRunning(capabilities) }
         verify(exactly = 1) { processorB.onRunning(capabilities) }
+    }
+
+    private fun lifecycleOwner(): Pair<LifecycleOwner, LifecycleRegistry> {
+        val owner = mockk<LifecycleOwner>()
+        val registry = LifecycleRegistry.createUnsafe(owner)
+        every { owner.lifecycle } returns registry
+        registry.currentState = Lifecycle.State.RESUMED
+        return owner to registry
+    }
+
+    @Test
+    fun `observeEach delivers every metric of a batch, not only the last`() {
+        // 01 01 and 01 41 are decoded from one reply and published back to back; LiveData kept only 01 41.
+        val (owner, _) = lifecycleOwner()
+        val received = mutableListOf<Any?>()
+        observer.observeEach(owner) { received.add(it.value) }
+
+        observer.onNext(ObdMetric.builder().command(ObdCommand(pid)).value(1).build())
+        observer.onNext(ObdMetric.builder().command(ObdCommand(pid)).value(2).build())
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertEquals(listOf<Any?>(1, 2), received)
+    }
+
+    @Test
+    fun `observeEach stops delivering once the owner is destroyed`() {
+        val (owner, registry) = lifecycleOwner()
+        val received = mutableListOf<Any?>()
+        observer.observeEach(owner) { received.add(it.value) }
+
+        observer.onNext(ObdMetric.builder().command(ObdCommand(pid)).value(1).build())
+        registry.currentState = Lifecycle.State.DESTROYED
+        observer.onNext(ObdMetric.builder().command(ObdCommand(pid)).value(2).build())
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertEquals(emptyList<Any?>(), received)
     }
 }

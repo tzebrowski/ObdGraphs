@@ -27,6 +27,10 @@ import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
+import org.obd.graphs.bl.readiness.resetsReadiness
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.updateString
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.CANNetworkRegistry
@@ -111,6 +115,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 pendingDtcClear = false
                 val outcome = dtcClearOutcome(status, dtc)
                 Log.i(LOG_TAG, "DTC clear completed. Status=$status, codes left=${dtc.size}, outcome=$outcome")
+                if (outcome.resetsReadiness()) Prefs.updateString(PREF_READINESS_LAST, null)
                 sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED, outcome)
             } else {
                 sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
@@ -218,6 +223,9 @@ internal class WorkflowOrchestrator internal constructor() {
                 observer(it)
             }
         }
+
+    fun observeEach(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) =
+        metricsObserver.observeEach(lifecycleOwner, observer)
 
     fun status(): WorkflowStatus = status
 
@@ -401,6 +409,9 @@ internal class WorkflowOrchestrator internal constructor() {
 
         currentQuery = query
     }
+
+    // The query running now, null before the first start; lets a screen put back what it replaced.
+    fun runningQuery(): Query? = if (::currentQuery.isInitialized) currentQuery else null
 
     fun isSameQuery(query: Query) =
         ::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()
