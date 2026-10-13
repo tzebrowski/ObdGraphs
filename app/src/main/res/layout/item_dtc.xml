@@ -35,15 +35,9 @@
         app:layout_constraintStart_toEndOf="@+id/dtc_value"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/dtc_text_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="dtc_value,dtc_description" />
-
-    <!-- State chips from the DTC status byte, in one line below code and description: chips are wider than the code
-         column and overlapped the description there. Space below is padding, not margin: barriers ignore margins. -->
+    <!-- State chips from the DTC status byte, in one line below the description (never shorter than the code: same
+         text size and padding). The row is a plain top-down stack - description, chips, details, divider - because a
+         barrier here resolved wrongly once a row was expanded and pushed the chips far down. -->
     <LinearLayout
         android:id="@+id/dtc_badges"
         android:layout_width="wrap_content"
@@ -53,7 +47,7 @@
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_text_bottom">
+        app:layout_constraintTop_toBottomOf="@+id/dtc_description">
 
         <TextView
             android:id="@+id/dtc_state_badge"
@@ -190,14 +184,6 @@
 
     </LinearLayout>
 
-    <!-- The divider sits below whichever column is taller: the chips under the code can outgrow the description. -->
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/dtc_row_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="dtc_value,dtc_badges,dtc_description,dtc_expanded_details_container" />
-
     <View
         android:id="@+id/item_divider"
         android:layout_width="0dp"
@@ -206,6 +192,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_row_bottom" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_expanded_details_container" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

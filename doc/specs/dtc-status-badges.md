@@ -17,7 +17,7 @@ so `DiagnosticTroubleCode.statusMask` is always the ISO 14229-1 status byte.
 
 | Area | Before | After |
 |---|---|---|
-| Phone code row, collapsed | Code + description | + chips under the code: state chip (icon + label) and a separate MIL chip |
+| Phone code row, collapsed | Code + description | + a chip line below code and description: state chip (icon + label) and a separate MIL chip |
 | Phone code row, expanded | Hex, mask, bit list | + one line per chip explaining it ("Active: the fault is present right now."), raw detail stays |
 | AA code row | Red icon; bit list in yellow | Icon and status line tinted by state: active red, stored yellow, pending / history plain |
 | Order within a module (phone + AA) | Known descriptions first, then code | Active, stored, pending, history, no state; then known descriptions first, then code |
@@ -46,8 +46,13 @@ their own palette (`dtc_state_*`, light + night), none reuses the codes' red or 
 | History | history (clock) | grey |
 | MIL | lamp | yellow |
 
+Light theme: solid fill with white text (every light colour ≥ 4.5:1 against white); night: faint fill (20 %) with
+coloured text (`R.bool.dtc_badge_solid`). A faint fill on the light dialog washed out to pink / beige.
+
 Wrong turn: a bold coloured line under the description ("Aktywny · MIL zapalona") competed with the description and
-reused the codes' red; most rows read the same red word. Replaced by the chips.
+reused the codes' red; most rows read the same red word. Replaced by the chips. Second wrong turn: chips stacked
+under the code were wider than the code column, overlapped the description and ran into the divider. Third: barriers
+placing the chips below code + description pushed them far down in an expanded row.
 
 ## Settings / keys touched
 
@@ -59,8 +64,9 @@ None. New strings `dtc.state.*` (app + automotive), `dtc.state.mil`, `dtc.state.
 * `datalogger/.../dtc/DtcStatus.kt`: `dtcStatus(statusMask)` → `DtcStatus(state, warningLamp)`; `statusLine(labels)`
   builds the localized line. `DtcState` declaration order is the display order.
 * `sortedForDisplay()` sorts by state after module. `toDtcListItems` keeps that order inside each module group.
-* Phone: `dtc_badges` (state + MIL chips, style `DtcBadge`, `dtc_badge_background` tinted in code) under the code in
-  `item_dtc.xml`; `dtc_detail_state` in the expanded details. Per-state colour / icon / explanation is `STATE_BADGES`
+* Phone: `dtc_badges` (state + MIL chips side by side, style `DtcBadge`, `dtc_badge_background` tinted in code) on a
+  line of its own below the description in `item_dtc.xml` (top-down stack: description → chips → details → divider,
+  no barriers), gone when it holds no chip; `dtc_detail_state` in the expanded details. Per-state colour / icon / explanation is `STATE_BADGES`
   in the adapter. `dtcStatusLabels(context)` is shared by the adapter and the share report.
 * AA: `DiagnosticTroubleCodesScreen.row()` tints the icon and status line by state.
 
@@ -76,8 +82,9 @@ A mask of 0 shows no line, as before.
 
 ## Risks and verification checklist
 
-* [ ] Phone, light and dark theme: chips readable, icons tinted, code column not widened by "OCZEKUJĄCY".
+* [ ] Phone, light (solid chips) and dark (faint chips) theme: chips readable, icons tinted, code column not widened by "OCZEKUJĄCY".
 * [ ] Phone: a row with no state has no chips and no explanation line.
+* [ ] Phone: expanding a row keeps the chips right under the description.
 * [ ] AA (DHU): icon tints, two text lines (description + status) per row, no truncation of "Active · MIL on" / PL.
 * [ ] Real ECM: an active fault with the engine running shows "Active"; after it heals, "Stored".
 * ECUs that do not support some bits (status availability mask) may report states less precisely; the mask is not

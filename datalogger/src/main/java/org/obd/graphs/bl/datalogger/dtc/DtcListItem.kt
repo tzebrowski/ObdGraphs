@@ -155,6 +155,16 @@ fun dtcScanModules(
 // ObdMetrics' own default-header read on connect stays in charge.
 fun dtcConnectScanModules(mappings: List<DiagnosticMappingItem>): Set<String> = dtcScanModules(mappings, emptySet())
 
+// How long the phone's "please wait" overlay waits for a DTC read / clear. ScreenLock's 10 s default is shorter than
+// a real scan: 13 modules with freeze frames and extended data took ~13 s, and ObdMetrics alone may wait 23 s for
+// slow follow-ups. The overlay dismissed with "Timeout waiting for response" while the scan went on and succeeded.
+// Only a safety net for a result that never arrives (Cancel stays available); 0 modules = the default-ECU read.
+private const val DTC_ACTION_BASE_TIMEOUT_MS = 30_000L
+private const val DTC_ACTION_PER_MODULE_TIMEOUT_MS = 5_000L
+
+fun dtcActionTimeoutMs(moduleCount: Int): Long =
+    DTC_ACTION_BASE_TIMEOUT_MS + maxOf(1, moduleCount) * DTC_ACTION_PER_MODULE_TIMEOUT_MS
+
 fun DiagnosticTroubleCode.isDescriptionUnknown(): Boolean =
     description.isNullOrBlank() || description.contains("Unknown DTC Description", ignoreCase = true)
 

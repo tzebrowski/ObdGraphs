@@ -72,6 +72,14 @@ class DtcListItemTest {
     }
 
     @Test
+    fun `dtc overlay timeout outlasts a real multi-module scan`() {
+        // 13 modules with snapshots + extended data took ~13 s on the 2.0 GME; the old fixed 10 s overlay timed out.
+        assertTrue(dtcActionTimeoutMs(13) > 23_000)
+        assertTrue(dtcActionTimeoutMs(13) > dtcActionTimeoutMs(1))
+        assertEquals(dtcActionTimeoutMs(1), dtcActionTimeoutMs(0))
+    }
+
+    @Test
     fun `within a module active codes come first, then stored, pending, history, unknown`() {
         val sorted =
             listOf(

@@ -21,6 +21,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.view.LayoutInflater
@@ -232,7 +233,8 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         }
     }
 
-    // Icon + coloured text on a faint fill of the same colour; gone without a label.
+    // Icon + label; solid fill with white text on light backgrounds, faint fill with coloured text at night
+    // (dtc_badge_solid). Gone without a label.
     private fun TextView.showBadge(
         label: String?,
         style: BadgeStyle?
@@ -240,11 +242,13 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         visibility = if (label != null && style != null) View.VISIBLE else View.GONE
         if (label == null || style == null) return
         val color = ContextCompat.getColor(context, style.color)
+        val solid = context.resources.getBoolean(R.bool.dtc_badge_solid)
+        val foreground = if (solid) Color.WHITE else color
         text = label
-        setTextColor(color)
+        setTextColor(foreground)
         setCompoundDrawablesRelativeWithIntrinsicBounds(style.icon, 0, 0, 0)
-        compoundDrawableTintList = ColorStateList.valueOf(color)
-        backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, BADGE_FILL_ALPHA))
+        compoundDrawableTintList = ColorStateList.valueOf(foreground)
+        backgroundTintList = ColorStateList.valueOf(if (solid) color else ColorUtils.setAlphaComponent(color, BADGE_FILL_ALPHA))
     }
 
     private fun notifyRowChanged(key: String) {
