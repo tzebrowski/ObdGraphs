@@ -36,11 +36,15 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
+import org.obd.graphs.bl.datalogger.dtc.DtcState
+import org.obd.graphs.bl.datalogger.dtc.DtcStatusLabels
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.displayName
+import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
 import org.obd.graphs.bl.datalogger.dtc.itemKey
+import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
@@ -48,6 +52,15 @@ import org.obd.graphs.ui.common.setText
 private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DTC = 1
 private const val VIEW_TYPE_MESSAGE = 2
+
+internal fun dtcStatusLabels(context: Context) =
+    DtcStatusLabels(
+        active = context.getString(R.string.dtc_state_active),
+        stored = context.getString(R.string.dtc_state_stored),
+        pending = context.getString(R.string.dtc_state_pending),
+        history = context.getString(R.string.dtc_state_history),
+        warningLamp = context.getString(R.string.dtc_state_warning_lamp)
+    )
 
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?
@@ -103,6 +116,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         if (dtc.standardCode.isEmpty()) {
             holder.code.setText("", secondaryText, Typeface.NORMAL, 1f)
             holder.description.setText(finalDescription, secondaryText, Typeface.NORMAL, 1f)
+            holder.status.visibility = View.GONE
             holder.expandedContainer.visibility = View.GONE
             holder.itemView.setOnClickListener(null)
             return
@@ -114,6 +128,19 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                 holder.description.setText(finalDescription, primaryText, Typeface.NORMAL, 1f)
             }
         }
+
+        // Failing now in the codes' red, stored in amber, pending / history muted.
+        val status = dtc.dtcStatus()
+        val statusLine = status.statusLine(dtcStatusLabels(context))
+        holder.status.visibility = if (statusLine != null) View.VISIBLE else View.GONE
+        holder.status.text = statusLine
+        holder.status.setTextColor(
+            when (status.state) {
+                DtcState.ACTIVE -> COLOR_CARDINAL
+                DtcState.STORED -> ContextCompat.getColor(context, R.color.dtc_module_with_codes)
+                else -> secondaryText
+            }
+        )
 
         val systemTxt = dtc.system?.description ?: notAvailable
         val categoryTxt = dtc.category?.description ?: notAvailable
@@ -217,6 +244,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     internal class DtcViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
+        var status: TextView = itemView.findViewById(R.id.dtc_status)
 
         var expandedContainer: LinearLayout =
             itemView.findViewById(R.id.dtc_expanded_details_container)

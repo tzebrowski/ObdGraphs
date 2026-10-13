@@ -72,6 +72,20 @@ class DtcListItemTest {
     }
 
     @Test
+    fun `within a module active codes come first, then stored, pending, history, unknown`() {
+        val sorted =
+            listOf(
+                dtc("P0500", module = "a").apply { statusMask = 0x00 },
+                dtc("P0400", module = "a").apply { statusMask = 0x20 },
+                dtc("P0300", module = "a").apply { statusMask = 0x04 },
+                dtc("P0200", module = "a").apply { statusMask = 0x08 },
+                dtc("P0100", module = "b").apply { statusMask = 0x09 },
+                dtc("P0600", module = "a", description = null).apply { statusMask = 0x09 }
+            ).sortedForDisplay()
+        assertEquals(listOf("P0600", "P0200", "P0300", "P0400", "P0500", "P0100"), sorted.map { it.standardCode })
+    }
+
+    @Test
     fun `scan modules skip deselected and header-less mappings`() {
         val mappings =
             listOf(

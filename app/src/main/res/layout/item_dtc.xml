@@ -35,6 +35,21 @@
         app:layout_constraintStart_toEndOf="@+id/dtc_value"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- State from the DTC status byte ("Active · MIL on"); gone when the ECU reports no fault bit. -->
+    <TextView
+        android:id="@+id/dtc_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dtc_value"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_description" />
+
     <LinearLayout
         android:id="@+id/dtc_expanded_details_container"
         android:layout_width="0dp"
@@ -46,7 +61,7 @@
         android:paddingBottom="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/dtc_value"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_description">
+        app:layout_constraintTop_toBottomOf="@+id/dtc_status">
 
         <TextView
             android:id="@+id/dtc_detail_system_info"

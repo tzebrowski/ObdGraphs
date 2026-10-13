@@ -125,10 +125,12 @@ fun List<DiagnosticTroubleCode>.toDtcListItems(
     }
 }
 
-// Module first, then known descriptions before unknown ones, then code.
+// Module first, then by state (active, stored, pending, history, none), known descriptions before
+// unknown ones, then code.
 fun Collection<DiagnosticTroubleCode>.sortedForDisplay(): List<DiagnosticTroubleCode> =
     sortedWith(
         compareBy<DiagnosticTroubleCode> { it.module ?: "" }
+            .thenBy { it.dtcStatus().state }
             .thenBy { if (it.isDescriptionUnknown()) 1 else 0 }
             .thenBy { it.standardCode }
     )

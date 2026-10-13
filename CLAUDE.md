@@ -267,6 +267,10 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   lines: section headers and row titles are text-only and throw on a colour span, so AA marks codes with a tinted
   `CarIcon`. Phone colours come from night-aware resources; hard-coded `Color.DKGRAY` was unreadable on the dark
   dialog. Spec: `doc/specs/dtc-list-colors-order.md`.
+* Code state (Active / Stored / Pending / History + MIL) is decoded from `statusMask` in `dtc/DtcStatus.kt`,
+  shared by phone, AA, sort and share report. `statusMask` is always the UDS status byte: ObdMetrics builds every
+  code in `UdsMultiFrameDtcParser`. Its `activeStatuses` are translated strings — never parse them, use the mask.
+  Spec: `doc/specs/dtc-status-badges.md`.
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
 * **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
   An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing

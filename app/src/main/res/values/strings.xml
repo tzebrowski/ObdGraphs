@@ -984,6 +984,12 @@
     <string name="dtc.share.none">None</string>
     <string name="dtc.share.system_category">System: %1$s | Category: %2$s</string>
     <string name="dtc.share.status">Status: %1$s (Hex: %2$s)</string>
+    <string name="dtc.state.active">Active</string>
+    <string name="dtc.state.stored">Stored</string>
+    <string name="dtc.state.pending">Pending</string>
+    <string name="dtc.state.history">History</string>
+    <string name="dtc.state.warning_lamp">MIL on</string>
+    <string name="dtc.share.state">State: %1$s</string>
     <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
     <string name="dtc.share.unknown_did">Unknown DID</string>
     <string name="dtc.detail.hex_status">Hex: %1$s | Mask: %2$s\nStatus: %3$s</string>
