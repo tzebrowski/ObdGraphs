@@ -74,15 +74,18 @@ data class DtcStatusLabels(
     val warningLamp: String
 )
 
+// The state's label, null for UNKNOWN (no badge).
+fun DtcStatus.stateLabel(labels: DtcStatusLabels): String? =
+    when (state) {
+        DtcState.ACTIVE -> labels.active
+        DtcState.STORED -> labels.stored
+        DtcState.PENDING -> labels.pending
+        DtcState.HISTORY -> labels.history
+        DtcState.UNKNOWN -> null
+    }
+
 // "Active · MIL on", "Stored", "MIL on" (lamp without a fault state), null when there is nothing to show.
 fun DtcStatus.statusLine(labels: DtcStatusLabels): String? =
-    listOfNotNull(
-        when (state) {
-            DtcState.ACTIVE -> labels.active
-            DtcState.STORED -> labels.stored
-            DtcState.PENDING -> labels.pending
-            DtcState.HISTORY -> labels.history
-            DtcState.UNKNOWN -> null
-        },
-        labels.warningLamp.takeIf { warningLamp }
-    ).takeIf { it.isNotEmpty() }?.joinToString(" · ")
+    listOfNotNull(stateLabel(labels), labels.warningLamp.takeIf { warningLamp })
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString(" · ")

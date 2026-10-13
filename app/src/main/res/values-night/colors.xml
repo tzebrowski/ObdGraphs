@@ -18,4 +18,9 @@
     <color name="surface_variant">#2A2E33</color>
     <color name="gps_status_accent">#03DAC5</color>
     <color name="gps_status_warning">#FFB74D</color>
+    <color name="dtc_state_active">#FB923C</color>
+    <color name="dtc_state_stored">#60A5FA</color>
+    <color name="dtc_state_pending">#C4B5FD</color>
+    <color name="dtc_state_history">#A1A1AA</color>
+    <color name="dtc_state_mil">#FACC15</color>
 </resources>

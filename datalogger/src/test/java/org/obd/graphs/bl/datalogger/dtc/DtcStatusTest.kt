@@ -71,4 +71,11 @@ class DtcStatusTest {
         assertEquals("MIL on", dtcStatus(0x80).statusLine(labels))
         assertNull(dtcStatus(0x00).statusLine(labels))
     }
+
+    @Test
+    fun `state label leaves the lamp out`() {
+        assertEquals("Active", dtcStatus(0x89).stateLabel(labels))
+        assertEquals("Pending", dtcStatus(0x84).stateLabel(labels))
+        assertNull(dtcStatus(0x80).stateLabel(labels))
+    }
 }

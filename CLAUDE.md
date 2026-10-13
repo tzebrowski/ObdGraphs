@@ -270,7 +270,10 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
 * Code state (Active / Stored / Pending / History + MIL) is decoded from `statusMask` in `dtc/DtcStatus.kt`,
   shared by phone, AA, sort and share report. `statusMask` is always the UDS status byte: ObdMetrics builds every
   code in `UdsMultiFrameDtcParser`. Its `activeStatuses` are translated strings — never parse them, use the mask.
-  Spec: `doc/specs/dtc-status-badges.md`.
+  Spec: `doc/specs/dtc-status-badges.md`. Phone shows it as chips under the code, each with its own icon + colour
+  (`STATE_BADGES`) and a text explanation when expanded — the user rejected a coloured text line reusing the codes' red.
+  `item_dtc.xml`'s divider hangs off the `dtc_row_bottom` barrier: a view added to either column must be in its
+  `constraint_referenced_ids`, or it overflows the row (the chips first did, the divider followed the right column only).
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
 * **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
   An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing
