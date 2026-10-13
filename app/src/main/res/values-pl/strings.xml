@@ -872,6 +872,7 @@
     <string name="readiness.help">Sterownik silnika podczas jazdy stale testuje układy emisji (katalizator, sondy lambda, wypadanie zapłonów…). Każdy taki test to monitor gotowości.\n\n• Zakończony: test został wykonany. Niezakończony: test nie odbył się od ostatniego skasowania kodów.\n• Test, który wykryje usterkę, zapisuje kod błędu (DTC) i może zapalić kontrolkę MIL.\n• Kasowanie kodów zeruje też wszystkie monitory; auto musi trochę pojeździć, aby wykonać testy ponownie. Brak kodów przy niezakończonych monitorach oznacza, że auto jeszcze się nie sprawdziło, a nie że jest sprawne.\n• Po naprawie: skasuj kody, przejedź się i sprawdź, czy monitor się zakończył, a kod nie wrócił.</string>
     <string name="dtc.readiness_link">Monitory gotowości: %1$s · gotowe %2$d / %3$d · %4$s ›</string>
     <string name="dtc.readiness_link_unknown">Monitory gotowości: sprawdź, czy auto zakończyło autotesty ›</string>
+    <string name="readiness.module_missing">Monitory gotowości wymagają modułu PID „Mode01”. Włącz go w Ustawieniach → Dostępne moduły.</string>
     <string name="readiness.no_data">Oczekiwanie na dane gotowości z pojazdu…</string>
     <string name="readiness.not_reported">Ten pojazd nie udostępnia tego widoku (sterownik nie odpowiada na zapytanie).</string>
     <string name="readiness.not_connected">Połącz się z pojazdem, aby odczytać monitory gotowości.</string>

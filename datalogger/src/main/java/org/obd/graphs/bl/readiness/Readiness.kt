@@ -21,6 +21,7 @@ import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.metrics.api.model.ReadinessMonitor
 import org.obd.metrics.api.model.ReadinessStatus
 import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.PidDefinitionRegistry
 
 // Shared by the phone readiness screen (and an AA one later) - keep the display logic here, Android-free.
 
@@ -30,6 +31,10 @@ const val READINESS_PID_CATEGORY = "readiness"
 // Readiness PIDs decode to a ReadinessStatus, not a number: on a gauge or in a grid they would only ever show NaN,
 // so the PID pickers leave them out. The readiness screen queries them itself.
 fun PidDefinition.isReadinessPid(): Boolean = READINESS_PID_CATEGORY.equals(category, ignoreCase = true)
+
+// 01 01 / 01 41 live in the Mode01 resource file (mode01.json). With that module deselected in "Available modules"
+// ObdMetrics silently drops their ids from the query, and the screen would wait forever.
+fun PidDefinitionRegistry.hasReadinessPids(): Boolean = findBy(Pid.READINESS_SINCE_CLEAR_PID_ID.id) != null
 
 // Which status the screen shows: since the codes were last cleared (01 01) or this drive cycle (01 41).
 enum class ReadinessView { SINCE_CLEAR, DRIVE_CYCLE }

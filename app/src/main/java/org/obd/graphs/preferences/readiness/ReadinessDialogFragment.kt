@@ -38,6 +38,7 @@ import org.obd.graphs.bl.readiness.READINESS_COUNTER_PIDS
 import org.obd.graphs.bl.readiness.ReadinessCounter
 import org.obd.graphs.bl.readiness.ReadinessState
 import org.obd.graphs.bl.readiness.ReadinessView
+import org.obd.graphs.bl.readiness.hasReadinessPids
 import org.obd.graphs.bl.readiness.shownMonitors
 import org.obd.graphs.bl.readiness.snapshot
 import org.obd.graphs.bl.readiness.summary
@@ -99,7 +100,7 @@ internal class ReadinessDialogFragment : CoreDialogFragment() {
             }
         }
 
-        if (DataLoggerRepository.isRunning()) {
+        if (DataLoggerRepository.isRunning() && moduleAvailable()) {
             replacedQuery = DataLoggerRepository.runningQuery()
             withDataLogger { updateQuery(Query.instance(QueryStrategyType.READINESS_QUERY)) }
         }
@@ -139,6 +140,7 @@ internal class ReadinessDialogFragment : CoreDialogFragment() {
             message.visibility = View.VISIBLE
             message.setText(
                 when {
+                    !moduleAvailable() -> R.string.readiness_module_missing
                     !DataLoggerRepository.isRunning() -> R.string.readiness_not_connected
                     state.isNotReported(view) -> R.string.readiness_not_reported
                     else -> R.string.readiness_no_data
@@ -212,6 +214,8 @@ internal class ReadinessDialogFragment : CoreDialogFragment() {
             val padding = resources.getDimensionPixelSize(R.dimen.readiness_row_padding)
             setPadding(0, padding, 0, padding)
         }
+
+    private fun moduleAvailable() = DataLoggerRepository.getPidDefinitionRegistry().hasReadinessPids()
 
     private fun color(id: Int) = ContextCompat.getColor(requireContext(), id)
 

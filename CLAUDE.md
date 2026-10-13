@@ -344,6 +344,8 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   the DTC dialog shows it as a row opening the readiness dialog. An accepted clear drops it (`resetsReadiness`).
   A dialog opened from a dialog goes on its `childFragmentManager`; refresh in `onFragmentViewDestroyed`, since the
   parent dialog gets no onResume when it closes.
+* ObdMetrics drops query ids missing from the registry without an error. A screen with a fixed query must check that
+  its PIDs' resource module is selected (readiness: `hasReadinessPids()`, Mode01) or it waits forever.
 * The dialog switches the running query to `READINESS_QUERY` and restores `DataLoggerRepository.runningQuery()`
   on close. Any other screen that polls its own PIDs from a dialog must restore the same way.
 * **"Nothing decoded any more" = check logcat for `ConnectorResponseDecoder ... Unexpected error` / `Completed decoder

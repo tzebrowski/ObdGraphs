@@ -16,6 +16,8 @@
  */
 package org.obd.graphs.bl.readiness
 
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -28,6 +30,7 @@ import org.obd.metrics.api.model.ReadinessMonitor
 import org.obd.metrics.api.model.ReadinessMonitorId
 import org.obd.metrics.api.model.ReadinessStatus
 import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.PidDefinitionRegistry
 
 class ReadinessTest {
     private fun status(vararg monitors: ReadinessMonitor) = ReadinessStatus(false, 0, false, monitors.toList())
@@ -79,6 +82,17 @@ class ReadinessTest {
         assertNull(ReadinessSnapshot.decode(null))
         assertNull(ReadinessSnapshot.decode("garbage"))
         assertNull(ReadinessSnapshot.decode("1;maybe;8;1;2"))
+    }
+
+    @Test
+    fun `readiness needs the module defining 01 01`() {
+        val withModule = mockk<PidDefinitionRegistry>()
+        every { withModule.findBy(Pid.READINESS_SINCE_CLEAR_PID_ID.id) } returns mockk<PidDefinition>()
+        val withoutModule = mockk<PidDefinitionRegistry>()
+        every { withoutModule.findBy(Pid.READINESS_SINCE_CLEAR_PID_ID.id) } returns null
+
+        assertTrue(withModule.hasReadinessPids())
+        assertFalse(withoutModule.hasReadinessPids())
     }
 
     @Test

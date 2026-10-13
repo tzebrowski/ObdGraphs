@@ -125,7 +125,10 @@ Non-continuous monitors, bits 0–7:
 
 ## Backward compatibility
 
-New PIDs and screens only. Profiles without 01 01 support (the ECU's supported-PIDs bitmap) hide the entry or show
+New PIDs and screens only. 01 01 / 01 41 come from the Mode01 resource file (`mode01.json`), the counters from
+Mode01 2 (`mode01_2.json`). With Mode01 deselected in "Available modules" ObdMetrics silently drops the readiness ids
+from the query; the dialog then keeps the running query and says the module is needed
+(`PidDefinitionRegistry.hasReadinessPids()`). Without Mode01 2 only the counters are missing. Profiles without 01 01 support (the ECU's supported-PIDs bitmap) hide the entry or show
 "not supported by this vehicle".
 
 ## Tests

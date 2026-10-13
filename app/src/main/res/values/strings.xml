@@ -1114,6 +1114,7 @@
     <string name="readiness.help">The engine computer keeps testing its emission systems while you drive (catalyst, oxygen sensors, misfire…). Each of these tests is a readiness monitor.\n\n• Complete: the test has run. Not complete: it has not run since the codes were last cleared.\n• A test that finds a fault stores a trouble code (DTC) and may light the MIL.\n• Clearing the codes also resets every monitor to not complete; the car needs some driving to run the tests again. No codes with monitors not complete means the car has not checked itself yet, not that it is healthy.\n• After a repair: clear the codes, drive, and check that the monitor completes and the code does not come back.</string>
     <string name="dtc.readiness_link">Readiness monitors: %1$s · complete %2$d / %3$d · %4$s ›</string>
     <string name="dtc.readiness_link_unknown">Readiness monitors: check whether the car has finished its self-tests ›</string>
+    <string name="readiness.module_missing">Readiness monitors need the Mode01 PID module. Turn it on in Settings → Available modules.</string>
     <string name="readiness.no_data">Waiting for the vehicle\'s readiness data…</string>
     <string name="readiness.not_reported">This vehicle does not report this view (the ECU does not answer the request).</string>
     <string name="readiness.not_connected">Connect to the vehicle to read the readiness monitors.</string>
