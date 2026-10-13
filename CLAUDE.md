@@ -131,6 +131,12 @@ the remote before you see it. Say what is wrong and let the user decide.
 
 Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and fails at configuration. Use e.g. `JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 ./gradlew ...`. Quick compile check for a module: `./gradlew :screen_renderer:compileDebugKotlin`.
 
+CI "Unresolved reference" to a new ObdMetrics class while it builds locally = stale snapshot, not code.
+Locally `mavenLocal()` serves your own ObdMetrics install; CI restores a Gradle cache (`setup-java`
+`cache: gradle`) that trusts a cached `-SNAPSHOT` for 24 h. Hence `--refresh-dependencies` in
+`.github/workflows/build.yml`. Check the published jar first: the Sonatype `maven-metadata.xml`
+gives the timestamped jar name; a CI run started before that timestamp cannot see it.
+
 ---
 
 ## 📚 Findings & Architecture Decisions

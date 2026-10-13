@@ -45,11 +45,13 @@ jobs:
           ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+        # --refresh-dependencies: the restored Gradle cache trusts a cached -SNAPSHOT for 24 h,
+        # so a freshly published ObdMetrics snapshot was never fetched
         run: |
           if [ "${{ env.HAS_SECRETS }}" == "true" ]; then
-            sh ./gradlew check
+            sh ./gradlew check --refresh-dependencies
           else
-            sh ./gradlew lintDebug testDebugUnitTest
+            sh ./gradlew lintDebug testDebugUnitTest --refresh-dependencies
           fi
 
       - name: Android Integration Tests
