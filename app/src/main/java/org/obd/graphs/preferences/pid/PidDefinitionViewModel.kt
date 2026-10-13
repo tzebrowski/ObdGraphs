@@ -46,6 +46,7 @@ import org.obd.graphs.bl.query.performanceGaugeOverflow
 import org.obd.graphs.bl.query.prunedPerformanceBottomSelection
 import org.obd.graphs.bl.query.tripInfoBottomDialogItems
 import org.obd.graphs.bl.query.tripInfoBottomDialogSelection
+import org.obd.graphs.bl.readiness.isReadinessPid
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongList
 import org.obd.graphs.preferences.getLongSet
@@ -398,6 +399,7 @@ class PidDefinitionViewModel(
         return source
             .asSequence()
             .filter { p -> p.group == PIDsGroup.LIVEDATA }
+            .filter { p -> !p.isReadinessPid() }
             .filter { p -> if (!stablePIDsEnabled) p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
             .map { p -> PidDefinitionDetails(source = p, supported = isSupported(ecuSupportedPIDs, p)) }

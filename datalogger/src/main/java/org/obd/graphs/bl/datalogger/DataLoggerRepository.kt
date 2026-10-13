@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.query.Query
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -51,11 +52,17 @@ object DataLoggerRepository {
     fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
     fun getPidDefinitionRegistry(): PidDefinitionRegistry = workflowOrchestrator.pidDefinitionRegistry()
     fun isDTCEnabled(): Boolean = workflowOrchestrator.isDTCEnabled()
+    fun runningQuery(): Query? = workflowOrchestrator.runningQuery()
     fun updateTranslations(locale: String) = workflowOrchestrator.updateTranslations(locale)
     fun status(): WorkflowStatus = workflowOrchestrator.status()
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
         workflowOrchestrator.observe(lifecycleOwner, observer)
+    }
+
+    // Every metric, none conflated: observe() keeps only the latest of metrics decoded together (LiveData).
+    fun observeEach(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
+        workflowOrchestrator.observeEach(lifecycleOwner, observer)
     }
 
     fun observe(metricsProcessor: MetricsProcessor): DataLoggerRepository {

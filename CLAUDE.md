@@ -333,6 +333,33 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   for `RoutinesScreen`) gets the parent's pause when it is pushed, so its receiver should unregister while
   it is on screen (read from the code, not yet confirmed on a DHU). `DiagnosticTroubleCodesScreen` observes its own lifecycle instead.
 
+### Readiness monitors (phone)
+* Spec `doc/specs/readiness-monitors.md`. ObdMetrics decodes 01 01 / 01 41 (`ReadinessMonitorsCodec`, ids 21010 /
+  21011, `"category": "readiness"`) into a `ReadinessStatus` object, not a number. Hence `isReadinessPid()` keeps
+  them out of the PID pickers: on a gauge they would only show NaN. Display logic: `bl/readiness/Readiness.kt`.
+* Reached from the menu (`ctx_menu_readiness` → sub-screen `pref.readiness`, which opens the dialog). The menu's
+  DTC item opens only the `pref.dtc` sub-screen, so an entry placed in the root settings alone is never seen —
+  any new top-level feature needs a menu item, not just a preferences.xml category.
+* Link with DTC: the readiness dialog stores the last since-clear result (`pref.readiness.last`, `ReadinessSnapshot`);
+  the DTC dialog shows it as a row opening the readiness dialog. An accepted clear drops it (`resetsReadiness`).
+  A dialog opened from a dialog goes on its `childFragmentManager`; refresh in `onFragmentViewDestroyed`, since the
+  parent dialog gets no onResume when it closes.
+* The dialog switches the running query to `READINESS_QUERY` and restores `DataLoggerRepository.runningQuery()`
+  on close. Any other screen that polls its own PIDs from a dialog must restore the same way.
+* **"Nothing decoded any more" = check logcat for `ConnectorResponseDecoder ... Unexpected error` / `Completed decoder
+  thread`.** Every `updateQuery` queues UDS `10 01` (no PID); since the module-tagging change its reply threw an NPE
+  that ended ObdMetrics' decoder thread, so after any query switch no reply (live data, readiness, DTC) was decoded
+  until the next connect, while TX/RX still looked healthy. Fixed in ObdMetrics `ConnectorResponseDecoder` (skips
+  PID-less replies, and one failing reply no longer ends the thread).
+* **`DataLoggerRepository.observe()` conflates** (LiveData `postValue`): metrics decoded from one batch reply arrive
+  back to back and only the last reaches the observer. Fine for gauges reading the collector; a screen that needs
+  each PID's reply uses `observeEach()`. The readiness dialog sat at "waiting" until it switched.
+* ObdMetrics' batch decoder used to map a PID the ECU did not answer onto the reply's answer code (PID 41 in
+  `4101...`); fixed in `CachedBatchMessageDecoder` on `feat/readiness-monitors`. The 2.0 GME answers only 01 01 / 01 21
+  of the readiness query. To check a batch on the bench, decode the logged TX/RX with `BatchCodec` in a test.
+* Adding a mode 01 PID with pid "01" broke ObdMetrics' batch tests: `BatchCodecTestRunner` turned every query token,
+  the mode included, into a PID. It now skips the first token. Production builds commands from ids and was fine.
+
 ### Connectors (`:datalogger/.../connectors`)
 * One `AdapterConnection` per transport, chosen by `ConnectionManager.obtain()` on
   `pref.adapter.connection.type`. Two Bluetooth transports, deliberately separate:

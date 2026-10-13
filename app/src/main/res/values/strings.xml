@@ -450,7 +450,7 @@
     <string name="pref.dtc.show_notification">Enable DTC notifications</string>
     <string name="pref.dtc.show_notification_summary">Sends an alert when new Diagnostic Trouble Codes (DTCs) are found.</string>
 
-    <string name="pref.dtc.clean_dialog.confirm_message">Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.</string>
+    <string name="pref.dtc.clean_dialog.confirm_message">Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.\n\nClearing also resets the readiness monitors: the car shows not-ready until they run again.</string>
     <string name="pref.dtc.clean_dialog.send_message">Clear command sent to ECU</string>
     <string name="pref.dtc.clean_dialog.title">Clear Diagnostic Codes?</string>
     <string name="pref.dtc.screen_lock">This might take a while. Please wait…</string>
@@ -1099,4 +1099,46 @@
     <string name="wizard_step_summary_title">All Set</string>
     <string name="wizard_step_summary_intro">You\'re all set!</string>
     <string name="wizard_step_summary_description">Your app is configured and ready to go. You can revisit any of these settings anytime in Preferences, or re-run this wizard from the \"Run Setup Wizard\" entry at the top of Preferences.</string>
+    <!-- Readiness monitors (ReadinessDialogFragment) -->
+    <string name="pref.readiness.title">Readiness monitors</string>
+    <string name="pref.readiness.settings">Readiness monitors</string>
+    <string name="pref.readiness.summary">Emission self-tests: which ones are complete, the MIL and the counters since the codes were cleared.</string>
+    <string name="readiness.view.since_clear">Since codes cleared</string>
+    <string name="readiness.view.drive_cycle">This drive</string>
+    <string name="readiness.mil_on">MIL on</string>
+    <string name="readiness.mil_off">MIL off</string>
+    <string name="readiness.emission_codes">Emission codes: %1$d</string>
+    <string name="readiness.summary">Monitors complete: %1$d / %2$d</string>
+    <string name="readiness.all_complete">All monitors complete</string>
+    <string name="readiness.help_title">How do monitors relate to trouble codes?</string>
+    <string name="readiness.help">The engine computer keeps testing its emission systems while you drive (catalyst, oxygen sensors, misfire…). Each of these tests is a readiness monitor.\n\n• Complete: the test has run. Not complete: it has not run since the codes were last cleared.\n• A test that finds a fault stores a trouble code (DTC) and may light the MIL.\n• Clearing the codes also resets every monitor to not complete; the car needs some driving to run the tests again. No codes with monitors not complete means the car has not checked itself yet, not that it is healthy.\n• After a repair: clear the codes, drive, and check that the monitor completes and the code does not come back.</string>
+    <string name="dtc.readiness_link">Readiness monitors: %1$s · complete %2$d / %3$d · %4$s ›</string>
+    <string name="dtc.readiness_link_unknown">Readiness monitors: check whether the car has finished its self-tests ›</string>
+    <string name="readiness.no_data">Waiting for the vehicle\'s readiness data…</string>
+    <string name="readiness.not_reported">This vehicle does not report this view (the ECU does not answer the request).</string>
+    <string name="readiness.not_connected">Connect to the vehicle to read the readiness monitors.</string>
+    <string name="readiness.no_monitors">No monitors reported.</string>
+    <string name="readiness.monitor_row">%1$s: %2$s</string>
+    <string name="readiness.complete">complete</string>
+    <string name="readiness.incomplete">not complete</string>
+    <string name="readiness.counter.distance_since_clear">Distance since codes cleared: %1$s</string>
+    <string name="readiness.counter.time_since_clear">Time since codes cleared: %1$s</string>
+    <string name="readiness.counter.distance_mil_on">Distance with MIL on: %1$s</string>
+    <string name="readiness.counter.time_mil_on">Time with MIL on: %1$s</string>
+    <string name="readiness.monitor.misfire">Misfire</string>
+    <string name="readiness.monitor.fuel_system">Fuel system</string>
+    <string name="readiness.monitor.components">Components</string>
+    <string name="readiness.monitor.catalyst">Catalyst</string>
+    <string name="readiness.monitor.heated_catalyst">Heated catalyst</string>
+    <string name="readiness.monitor.evaporative_system">Evaporative system</string>
+    <string name="readiness.monitor.secondary_air">Secondary air</string>
+    <string name="readiness.monitor.ac_refrigerant">A/C refrigerant</string>
+    <string name="readiness.monitor.oxygen_sensor">Oxygen sensor</string>
+    <string name="readiness.monitor.oxygen_sensor_heater">Oxygen sensor heater</string>
+    <string name="readiness.monitor.nmhc_catalyst">NMHC catalyst</string>
+    <string name="readiness.monitor.nox_scr">NOx / SCR</string>
+    <string name="readiness.monitor.boost_pressure">Boost pressure</string>
+    <string name="readiness.monitor.exhaust_gas_sensor">Exhaust gas sensor</string>
+    <string name="readiness.monitor.pm_filter">Particulate filter</string>
+    <string name="readiness.monitor.egr_vvt">EGR / VVT</string>
 </resources>

@@ -50,6 +50,8 @@ import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
+import org.obd.graphs.preferences.readiness.ReadinessDialogFragment
+import org.obd.graphs.preferences.readiness.ReadinessListPreferences
 import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.sendBroadcastEvent
@@ -71,6 +73,7 @@ const val PREFERENCE_SCREEN_KEY_PERFORMANCE = "pref.performance.displayed_parame
 const val PREFERENCE_SCREEN_KEY_DASH = "pref.dash.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GAUGE = "pref.gauge.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GRAPH = "pref.graph.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_KEY_READINESS = "pref.readiness"
 const val PREFERENCE_SCREEN_KEY_GIULIA = "pref.giulia.displayed_parameter_ids"
 
 const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
@@ -144,6 +147,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
             is DiagnosticTroubleCodeListPreferences -> {
                 DiagnosticTroubleCodePreferenceDialogFragment().show(parentFragmentManager, null)
+            }
+
+            is ReadinessListPreferences -> {
+                ReadinessDialogFragment().show(parentFragmentManager, null)
             }
 
             else -> {
@@ -246,6 +253,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         when (preferenceKey) {
             PREF_GAUGE_TRIPS -> TripLogListDialogFragment(enableUploadCloudButton = false).show(parentFragmentManager, null)
             PREF_TRIP_LOGS -> TripLogListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
+            PREFERENCE_SCREEN_KEY_READINESS -> ReadinessDialogFragment().show(parentFragmentManager, null)
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog(

@@ -31,6 +31,7 @@ import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GAUGE
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GIULIA
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GRAPH
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_PERFORMANCE
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_READINESS
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_TRIP_INFO
 import org.obd.graphs.preferences.PREF_GAUGE_TRIPS
 import org.obd.graphs.preferences.PREF_TRIP_LOGS
@@ -90,6 +91,7 @@ internal object NavigationRouter {
             R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
             R.id.ctx_menu_view_profiles -> navigateToPreferencesScreen("pref.profiles")
             R.id.ctx_menu_dtc -> navigateToPreferencesScreen("pref.dtc")
+            R.id.ctx_menu_readiness -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_READINESS)
 
             R.id.navigation_android_giulia_auto_pids -> navigateToPreferencesScreen("pref.aa.displayed.pids")
             R.id.navigation_android_gauge_auto_pids -> navigateToPreferencesScreen("pref.aa.gauge.displayed.pids")

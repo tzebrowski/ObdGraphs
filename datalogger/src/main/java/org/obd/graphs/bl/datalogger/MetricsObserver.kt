@@ -16,10 +16,16 @@
  */
 package org.obd.graphs.bl.datalogger
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.Lifecycle.Event
+import androidx.lifecycle.Lifecycle.State
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import org.obd.metrics.api.model.*
+import java.util.concurrent.CopyOnWriteArraySet
 
 private const val TAG = "MetricsObserver"
 
@@ -27,6 +33,8 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
     private val metricsProcessors = mutableSetOf<MetricsProcessor>()
+    private val eachMetricObservers = CopyOnWriteArraySet<(ObdMetric) -> Unit>()
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     override fun onStopped() {
         metrics.postValue(null)
@@ -50,11 +58,27 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
         }
     }
 
+    // Every metric, in order, on the main thread, until the owner is destroyed. observe() goes through LiveData's
+    // postValue, which keeps only the latest value: of two metrics decoded from one batch reply, the first was lost
+    // (the readiness dialog never saw 01 01, posted right before 01 41). Use this when each PID's value matters.
+    fun observeEach(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
+        if (lifecycleOwner.lifecycle.currentState == State.DESTROYED) return
+        eachMetricObservers.add(observer)
+        lifecycleOwner.lifecycle.addObserver(
+            LifecycleEventObserver { _, event ->
+                if (event == Event.ON_DESTROY) eachMetricObservers.remove(observer)
+            }
+        )
+    }
+
     override fun onNext(reply: Reply<*>) {
 
         if (reply is ObdMetric) {
             reply.command.pid?.let {
                 metrics.postValue(reply)
+                eachMetricObservers.forEach { observer ->
+                    mainHandler.post { if (observer in eachMetricObservers) observer(reply) }
+                }
                 metricsProcessors.forEach {
                     try {
                         it.postValue(reply)
