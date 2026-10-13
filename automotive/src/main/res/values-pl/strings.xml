@@ -20,6 +20,11 @@
     <string name="dtc.no_codes">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
     <string name="dtc.unknown_module">Nieznany moduł</string>
     <string name="dtc.no_codes_for_module">Brak zgłoszonych kodów błędów.</string>
+    <string name="dtc.state.active">Aktywny</string>
+    <string name="dtc.state.stored">Zapisany</string>
+    <string name="dtc.state.pending">Oczekujący</string>
+    <string name="dtc.state.history">Historyczny</string>
+    <string name="dtc.state.warning_lamp">MIL zapalona</string>
     <string name="dtc.action_completed">Kody błędów zaktualizowane.</string>
     <string name="dtc.read_info_section">Ostatni odczyt</string>
     <string name="dtc.read_info">Ostatni odczyt: %1$s</string>

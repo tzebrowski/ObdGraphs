@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- DTC state chips: solid fill + white text on light backgrounds (a faint fill washed out there),
+         faint fill + coloured text in night mode. -->
+    <bool name="dtc_badge_solid">true</bool>
+</resources>

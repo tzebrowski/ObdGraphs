@@ -24,4 +24,10 @@
     <color name="surface_variant">#E4E7EB</color>
     <color name="gps_status_accent">#00897B</color>
     <color name="gps_status_warning">#EF6C00</color>
+    <!-- DTC state chips: distinct from the codes' red and the module header's amber. -->
+    <color name="dtc_state_active">#C2410C</color>
+    <color name="dtc_state_stored">#1D4ED8</color>
+    <color name="dtc_state_pending">#6D28D9</color>
+    <color name="dtc_state_history">#52525B</color>
+    <color name="dtc_state_mil">#A16207</color>
 </resources>

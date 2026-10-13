@@ -267,6 +267,20 @@ Gradle needs JDK 17+ (Crashlytics plugin); the shell default may be JDK 11 and f
   lines: section headers and row titles are text-only and throw on a colour span, so AA marks codes with a tinted
   `CarIcon`. Phone colours come from night-aware resources; hard-coded `Color.DKGRAY` was unreadable on the dark
   dialog. Spec: `doc/specs/dtc-list-colors-order.md`.
+* Code state (Active / Stored / Pending / History + MIL) is decoded from `statusMask` in `dtc/DtcStatus.kt`,
+  shared by phone, AA, sort and share report. `statusMask` is always the UDS status byte: ObdMetrics builds every
+  code in `UdsMultiFrameDtcParser`. Its `activeStatuses` are translated strings — never parse them, use the mask.
+  Spec: `doc/specs/dtc-status-badges.md`. Phone shows it as chips under the code, each with its own icon + colour
+  (`STATE_BADGES`) and a text explanation when expanded — the user rejected a coloured text line reusing the codes' red.
+  `item_dtc.xml` is a plain top-down stack: description → chips → expanded details → divider (the code sits beside
+  the description and is never taller). Wrong turns: chips under the code alone were wider than its column and
+  overlapped the description; barriers (`bottom` of code + description, and of all columns for the divider) resolved
+  wrongly once a row was expanded, pushing the chips ~850 px down. Space below a view is padding, not margin, if
+  anything ever constrains to a barrier again (barriers ignore margins). Check bounds with
+  `adb shell uiautomator dump`, not by eye.
+* "Timeout waiting for response" on a DTC read/clear is the phone overlay (`ScreenLockManager`), not the car:
+  `ScreenLock.timeoutMs` defaults to 10 s, a 13-module scan takes ~13 s. DTC actions pass `dtcActionTimeoutMs(modules)`;
+  any other long action behind the overlay needs its own timeout too. The logcat shows the scan completing regardless.
 * AA scans the modules the phone's picker left checked (`PREF_DTC_DESELECTED_MODULES`); AA has no picker.
 * **The section a code lands in is `DiagnosticTroubleCode.module`, set inside ObdMetrics, not here.**
   An "ECU" (now "Unknown module") section full of codes next to scanned modules that report nothing

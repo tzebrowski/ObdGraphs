@@ -35,6 +35,33 @@
         app:layout_constraintStart_toEndOf="@+id/dtc_value"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- State chips from the DTC status byte, in one line below the description (never shorter than the code: same
+         text size and padding). The row is a plain top-down stack - description, chips, details, divider - because a
+         barrier here resolved wrongly once a row was expanded and pushed the chips far down. -->
+    <LinearLayout
+        android:id="@+id/dtc_badges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="12dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_description">
+
+        <TextView
+            android:id="@+id/dtc_state_badge"
+            style="@style/DtcBadge"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/dtc_mil_badge"
+            style="@style/DtcBadge"
+            android:layout_marginStart="8dp"
+            android:text="@string/dtc.state.mil"
+            android:visibility="gone" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/dtc_expanded_details_container"
         android:layout_width="0dp"
@@ -46,7 +73,17 @@
         android:paddingBottom="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/dtc_value"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_description">
+        app:layout_constraintTop_toBottomOf="@+id/dtc_badges">
+
+        <!-- What the state chips mean, one line each (the chips' colour alone does not say it). -->
+        <TextView
+            android:id="@+id/dtc_detail_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="13sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/dtc_detail_system_info"

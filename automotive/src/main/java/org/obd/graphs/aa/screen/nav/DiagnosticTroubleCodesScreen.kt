@@ -62,11 +62,15 @@ import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
+import org.obd.graphs.bl.datalogger.dtc.DtcState
+import org.obd.graphs.bl.datalogger.dtc.DtcStatusLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
+import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
+import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.bl.datalogger.dtc.toDtcSections
 import org.obd.graphs.bl.datalogger.dtc.vehicleLine
@@ -311,21 +315,35 @@ internal class DiagnosticTroubleCodesScreen(
             return Row.Builder().setTitle(description).build()
         }
 
-        // Row titles take no colour spans, so a code is marked by a red icon; its status line is yellow.
+        // Row titles take no colour spans, so the state colours the icon and the status line:
+        // failing now red, stored yellow, pending / history plain.
+        val status = dtc.dtcStatus()
+        val color =
+            when (status.state) {
+                DtcState.ACTIVE -> CarColor.RED
+                DtcState.STORED -> CarColor.YELLOW
+                else -> CarColor.DEFAULT
+            }
         val builder =
             Row
                 .Builder()
                 .setTitle(dtc.displayCode())
-                .setImage(icon(R.drawable.dtc_fault, CarColor.RED))
+                .setImage(icon(R.drawable.dtc_fault, color))
                 .addText(description)
 
-        dtc.activeStatuses
-            ?.filter { it.isNotBlank() }
-            ?.takeIf { it.isNotEmpty() }
-            ?.let { builder.addText(colored(it.joinToString(", "), CarColor.YELLOW)) }
+        status.statusLine(statusLabels())?.let { builder.addText(if (color == CarColor.DEFAULT) it else colored(it, color)) }
 
         return builder.build()
     }
+
+    private fun statusLabels() =
+        DtcStatusLabels(
+            active = stringProvider.getString(R.string.dtc_state_active),
+            stored = stringProvider.getString(R.string.dtc_state_stored),
+            pending = stringProvider.getString(R.string.dtc_state_pending),
+            history = stringProvider.getString(R.string.dtc_state_history),
+            warningLamp = stringProvider.getString(R.string.dtc_state_warning_lamp)
+        )
 
     private fun icon(
         drawable: Int,

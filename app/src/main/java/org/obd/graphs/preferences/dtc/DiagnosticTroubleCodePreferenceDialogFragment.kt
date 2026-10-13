@@ -42,7 +42,10 @@ import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
+import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
+import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
+import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
@@ -137,7 +140,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     messageRes = R.string.pref_dtc_select_modules_description,
                     confirmWhenEmpty = false
                 ) { selectedModules ->
-                    setLoadingState(true)
+                    setLoadingState(true, selectedModules.size)
                     withDataLogger {
                         scheduleDTCRead(selectedModules)
                     }
@@ -155,7 +158,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     messageRes = R.string.pref_dtc_clean_dialog_confirm_message,
                     confirmWhenEmpty = true
                 ) { selectedModules ->
-                    setLoadingState(true)
+                    setLoadingState(true, selectedModules.size)
                     withDataLogger {
                         scheduleDTCCleanup(selectedModules)
                     }
@@ -319,20 +322,23 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             ?.commit()
     }
 
-    private fun setLoadingState(isLoading: Boolean) =
-        if (isLoading) {
-            sendBroadcastEvent(
-                SCREEN_LOCK_PROGRESS_EVENT,
-                ScreenLock(
-                    message = R.string.pref_dtc_screen_lock,
-                    showCancel = true
-                )
+    private fun setLoadingState(
+        isLoading: Boolean,
+        moduleCount: Int = 0
+    ) = if (isLoading) {
+        sendBroadcastEvent(
+            SCREEN_LOCK_PROGRESS_EVENT,
+            ScreenLock(
+                message = R.string.pref_dtc_screen_lock,
+                showCancel = true,
+                timeoutMs = dtcActionTimeoutMs(moduleCount)
             )
-        } else {
-            sendBroadcastEvent(
-                SCREEN_UNLOCK_PROGRESS_EVENT
-            )
-        }
+        )
+    } else {
+        sendBroadcastEvent(
+            SCREEN_UNLOCK_PROGRESS_EVENT
+        )
+    }
 
     private fun shareDtcReport(dtcList: List<DiagnosticTroubleCode>) {
         val notAvailable = getString(R.string.dtc_share_not_available)
@@ -341,6 +347,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         reportBuilder.append("$reportTitle\n")
         reportBuilder.append("-".repeat(reportTitle.length)).append("\n\n")
 
+        val statusLabels = dtcStatusLabels(requireContext())
         for (code in dtcList) {
             if (code.standardCode.isEmpty()) continue
 
@@ -358,6 +365,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     .append(getString(R.string.dtc_share_system_category, systemTxt ?: notAvailable, categoryTxt ?: notAvailable))
                     .append("\n")
             }
+
+            code.dtcStatus().statusLine(statusLabels)?.let { reportBuilder.append(getString(R.string.dtc_share_state, it)).append("\n") }
 
             val hex = code.rawHex ?: notAvailable
             val activeStatuses = code.activeStatuses?.joinToString(", ") ?: getString(R.string.dtc_share_none)

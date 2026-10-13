@@ -19,6 +19,11 @@
     <string name="dtc.no_codes">No diagnostic trouble codes found.</string>
     <string name="dtc.unknown_module">Unknown module</string>
     <string name="dtc.no_codes_for_module">No codes reported.</string>
+    <string name="dtc.state.active">Active</string>
+    <string name="dtc.state.stored">Stored</string>
+    <string name="dtc.state.pending">Pending</string>
+    <string name="dtc.state.history">History</string>
+    <string name="dtc.state.warning_lamp">MIL on</string>
     <string name="dtc.action_completed">Trouble codes updated.</string>
     <string name="dtc.read_info_section">Last read</string>
     <string name="dtc.read_info">Last read: %1$s</string>
