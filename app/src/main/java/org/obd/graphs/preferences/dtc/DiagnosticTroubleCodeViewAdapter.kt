@@ -79,7 +79,27 @@ internal val STATE_BADGES =
 
 internal val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
 
+// The "no longer reported" section header's chip (check + count).
+internal val GONE_BADGE = BadgeStyle(R.color.philippine_green, R.drawable.dtc_history_gone, R.string.dtc_legend_gone)
+
 internal val NEW_BADGE = BadgeStyle(R.color.dtc_history_new, R.drawable.dtc_history_new, R.string.dtc_history_new_explanation)
+
+// A compact chip (icon + short label) in a section header's summary line.
+internal fun LinearLayout.addMiniBadge(
+    label: String,
+    style: BadgeStyle,
+    description: String
+) {
+    addView(
+        TextView(context, null, 0, R.style.DtcMiniBadge).apply {
+            showBadge(label, style)
+            contentDescription = description
+        },
+        LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            marginStart = context.resources.getDimensionPixelSize(R.dimen.dtc_mini_badge_gap)
+        }
+    )
+}
 
 // The chips the DTC legend explains, in the order a row shows them: label and style.
 internal val DTC_LEGEND: List<Pair<Int, BadgeStyle>> =
@@ -122,10 +142,11 @@ internal fun TextView.showBadge(
     backgroundTintList = ColorStateList.valueOf(if (solid) color else ColorUtils.setAlphaComponent(color, BADGE_FILL_ALPHA))
 }
 
-// onGoneHeaderClick: the "no longer reported" header was tapped; the owner rebuilds the list expanded / collapsed.
+// onGoneHeaderClick / onModuleHeaderClick: a section header was tapped; the owner rebuilds the list expanded / collapsed.
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?,
-    private val onGoneHeaderClick: () -> Unit = {}
+    private val onGoneHeaderClick: () -> Unit = {},
+    private val onModuleHeaderClick: (DtcListItem.ModuleHeader) -> Unit = {}
 ) : ListAdapter<DtcListItem, RecyclerView.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -148,7 +169,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         when (viewType) {
             VIEW_TYPE_HEADER -> HeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
             VIEW_TYPE_MESSAGE -> MessageViewHolder(mInflater.inflate(R.layout.item_dtc_message, parent, false))
-            VIEW_TYPE_GONE_HEADER -> GoneHeaderViewHolder(mInflater.inflate(R.layout.item_dtc_gone_header, parent, false))
+            VIEW_TYPE_GONE_HEADER -> GoneHeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
             else -> DtcViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
         }
 
@@ -157,7 +178,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         position: Int
     ) {
         when (val item = getItem(position)) {
-            is DtcListItem.ModuleHeader -> (holder as HeaderViewHolder).bind(item)
+            is DtcListItem.ModuleHeader -> (holder as HeaderViewHolder).bind(item, onModuleHeaderClick)
             is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item)
             is DtcListItem.Message -> (holder as MessageViewHolder).bind(item)
             is DtcListItem.GoneHeader -> (holder as GoneHeaderViewHolder).bind(item, onGoneHeaderClick)
@@ -332,34 +353,82 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 
     internal class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val name: TextView = itemView.findViewById(R.id.dtc_module_header_name)
+        private val summary: LinearLayout = itemView.findViewById(R.id.dtc_module_header_summary)
+        private val arrow: ImageView = itemView.findViewById(R.id.dtc_module_header_arrow)
 
         // A module reporting codes in amber with its count, a clean one muted - neither in the codes' red.
-        fun bind(header: DtcListItem.ModuleHeader) {
+        // The summary chips (state icon + count, MIL, new) stay in both states, so a collapsed module still
+        // says what it holds; the legend explains the icons.
+        fun bind(
+            header: DtcListItem.ModuleHeader,
+            onClick: (DtcListItem.ModuleHeader) -> Unit
+        ) {
+            val context = itemView.context
             name.text = header.displayName()
             name.setTextColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    if (header.codeCount > 0) R.color.dtc_module_with_codes else R.color.dialog_text_secondary
-                )
+                ContextCompat.getColor(context, if (header.codeCount > 0) R.color.dtc_module_with_codes else R.color.dialog_text_secondary)
             )
+
+            summary.removeAllViews()
+            val labels = dtcStatusLabels(context)
+            val chips =
+                header.summary.byState.entries
+                    .sortedBy { it.key }
+                    .mapNotNull { (state, count) -> STATE_BADGES[state]?.let { Triple(count.toString(), it, "$count ${state.label(labels)}") } } +
+                    listOfNotNull(
+                        Triple(context.getString(R.string.dtc_state_mil), MIL_BADGE, context.getString(R.string.dtc_state_warning_lamp))
+                            .takeIf { header.summary.milCount > 0 },
+                        Triple(header.summary.newCount.toString(), NEW_BADGE, "${header.summary.newCount} ${context.getString(R.string.dtc_history_new)}")
+                            .takeIf { header.summary.newCount > 0 }
+                    )
+            chips.forEach { (label, style, description) -> summary.addMiniBadge(label, style, description) }
+            if (header.codeCount == 0) {
+                summary.addView(
+                    ImageView(context).apply {
+                        setImageResource(R.drawable.dtc_history_gone)
+                        imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.philippine_green))
+                        contentDescription = context.getString(R.string.dtc_module_clean)
+                    },
+                    context.resources.getDimensionPixelSize(R.dimen.dtc_module_clean_icon).let { LinearLayout.LayoutParams(it, it) }
+                )
+            }
+
+            arrow.rotation = if (header.expanded) 180f else 0f
+            itemView.contentDescription =
+                "${name.text}. ${context.getString(if (header.expanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)}"
+            itemView.setOnClickListener { onClick(header) }
         }
+
+        private fun DtcState.label(labels: DtcStatusLabels) =
+            when (this) {
+                DtcState.ACTIVE -> labels.active
+                DtcState.STORED -> labels.stored
+                DtcState.PENDING -> labels.pending
+                DtcState.HISTORY -> labels.history
+                DtcState.UNKNOWN -> ""
+            }
     }
 
+    // Same layout as a module header, so every section looks alike: green name and a green check chip with the count.
     internal class GoneHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val banner: View = itemView.findViewById(R.id.dtc_gone_header_banner)
-        private val name: TextView = itemView.findViewById(R.id.dtc_gone_header_name)
-        private val arrow: ImageView = itemView.findViewById(R.id.dtc_gone_header_arrow)
+        private val name: TextView = itemView.findViewById(R.id.dtc_module_header_name)
+        private val summary: LinearLayout = itemView.findViewById(R.id.dtc_module_header_summary)
+        private val arrow: ImageView = itemView.findViewById(R.id.dtc_module_header_arrow)
 
         fun bind(
             header: DtcListItem.GoneHeader,
             onClick: () -> Unit
         ) {
             val context = itemView.context
-            name.text = context.getString(R.string.dtc_history_gone_header, header.codeCount)
+            name.text = context.getString(R.string.dtc_history_gone_title)
+            name.setTextColor(ContextCompat.getColor(context, R.color.philippine_green))
+            summary.removeAllViews()
+            summary.addMiniBadge(header.codeCount.toString(), GONE_BADGE, name.text.toString())
             arrow.rotation = if (header.expanded) 180f else 0f
-            banner.contentDescription =
-                "${name.text}. ${context.getString(if (header.expanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)}"
-            banner.setOnClickListener { onClick() }
+            itemView.contentDescription =
+                "${context.getString(R.string.dtc_history_gone_header, header.codeCount)}. " +
+                context.getString(if (header.expanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)
+            itemView.setOnClickListener { onClick() }
         }
     }
 

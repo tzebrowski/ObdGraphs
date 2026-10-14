@@ -46,6 +46,7 @@ import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
+import org.obd.graphs.bl.datalogger.dtc.collapsedBy
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
@@ -56,6 +57,7 @@ import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.bl.datalogger.dtc.withGoneSection
+import org.obd.graphs.bl.datalogger.dtc.withModuleSummaries
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
 import org.obd.graphs.bl.readiness.ReadinessSnapshot
 import org.obd.graphs.getSerializableCompat
@@ -86,6 +88,9 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
     // The "no longer reported" section starts collapsed each time the dialog opens.
     private var goneExpanded = false
+
+    // Modules the user expanded / collapsed while the dialog is open; the others follow isExpandedByDefault().
+    private val moduleExpanded = mutableMapOf<String, Boolean>()
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -121,10 +126,17 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         attachLegend(root)
 
         adapter =
-            DiagnosticTroubleCodeViewAdapter(context) {
-                goneExpanded = !goneExpanded
-                refreshList()
-            }
+            DiagnosticTroubleCodeViewAdapter(
+                context,
+                onGoneHeaderClick = {
+                    goneExpanded = !goneExpanded
+                    refreshList()
+                },
+                onModuleHeaderClick = { header ->
+                    moduleExpanded[header.module] = !header.expanded
+                    refreshList()
+                }
+            )
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
@@ -462,6 +474,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
                     unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
                 ).markedWith(history)
+                .withModuleSummaries()
+                .collapsedBy { moduleExpanded[it] }
                 .withGoneSection(history, goneExpanded)
         )
 

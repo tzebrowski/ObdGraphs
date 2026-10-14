@@ -25,7 +25,7 @@ dialog markers and the "gone" section, EN/PL). `:automotive` ("new" marker in AA
 | Each DTC store (read, clear, connect scan) | Overwrites the one list | Also appends a scan record to the vehicle's history (capped) |
 | Clear | Freeze frames of cleared codes are lost | The scan before the clear stays in history, with its freeze frames |
 | Phone DTC list, code seen for the first time | No marker | "New" chip on the row (green, own icon), first in the chip line |
-| Phone DTC list, codes gone since the previous scan | Not shown | Collapsed section at the end behind a green banner (check icon, "No longer reported (N)", "Healed or cleared since the previous scan of their module", arrow); tap expands. Rows greyed, code struck through, module named, "Last reported <date>" in place of the state chips |
+| Phone DTC list, codes gone since the previous scan | Not shown | Collapsed section at the end. Its header has the module headers' layout (user's request: all sections alike): green "No longer reported" title, a green check chip with the count, arrow; tap expands. The meaning is in the legend. Rows greyed, code struck through, module named, "Last reported <date>" in place of the state chips |
 | Clear / Refresh pressed while another DTC action runs (e.g. the connect scan) | ObdMetrics cut the running action short; its result was taken for the new one, whose read was then stored with no modules (list collapsed into one "ECU" group) | The new action waits and starts when the running one completes; each result is stored with its own kind and modules |
 | Phone expanded row | Code details | "Code history" panel on top: first / last reported, in N of M scans |
 | Phone code row | Expandable, nothing says so | Chevron at the row end, turned up while expanded |

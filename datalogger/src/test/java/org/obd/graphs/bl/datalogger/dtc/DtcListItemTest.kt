@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.datalogger.dtc
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -248,5 +249,62 @@ class DtcListItemTest {
                 .toDidLines(unknownDid = "unknown DID", notAvailable = "n/a")
         )
         assertTrue(null.toDidLines("unknown DID", "n/a").isEmpty())
+    }
+
+    private fun withStatus(
+        code: String,
+        module: String,
+        statusMask: Int
+    ) = dtc(code, module = module).apply { this.statusMask = statusMask }
+
+    @Test
+    fun `module headers summarise their codes by state, MIL and new`() {
+        val engine =
+            listOf(
+                withStatus("P0100", "Engine", 0x09), // active, test failed + confirmed
+                withStatus("P0200", "Engine", 0x89), // active + MIL
+                withStatus("P0300", "Engine", 0x08), // stored
+                withStatus("P0400", "Engine", 0x10) // no state
+            )
+        val items =
+            engine
+                .toDtcListItems(listOf("Engine", "ABS"), "none", "none for module", "unknown")
+                .map { if (it is DtcListItem.DtcRow && it.dtc.standardCode == "P0300") it.copy(isNew = true) else it }
+                .withModuleSummaries()
+
+        val headers = items.filterIsInstance<DtcListItem.ModuleHeader>().associateBy { it.module }
+        assertEquals(
+            DtcModuleSummary(byState = mapOf(DtcState.ACTIVE to 2, DtcState.STORED to 1), milCount = 1, newCount = 1),
+            headers.getValue("Engine").summary
+        )
+        assertEquals(DtcModuleSummary(), headers.getValue("ABS").summary)
+    }
+
+    @Test
+    fun `modules with codes start expanded, clean ones collapsed, and the user's choice wins`() {
+        val items =
+            listOf(withStatus("P0100", "Engine", 0x09))
+                .toDtcListItems(listOf("Engine", "ABS"), "none", "none for module", "unknown")
+
+        val byDefault = items.collapsedBy { null }
+        assertEquals(listOf("header:Engine", "dtc:Engine:P0100", "header:ABS"), byDefault.map { it.itemKey() })
+        assertTrue((byDefault[0] as DtcListItem.ModuleHeader).expanded)
+        assertFalse((byDefault[2] as DtcListItem.ModuleHeader).expanded)
+
+        val toggled = items.collapsedBy { mapOf("Engine" to false, "ABS" to true)[it] }
+        assertEquals(listOf("header:Engine", "header:ABS", "message:ABS"), toggled.map { it.itemKey() })
+    }
+
+    @Test
+    fun `collapsing a module never hides the no longer reported section`() {
+        val gone = dtc("P0500", module = "Engine")
+        val diff = DtcHistoryDiff(gone = listOf(gone))
+        val items =
+            listOf(withStatus("P0100", "Engine", 0x09))
+                .toDtcListItems(listOf("Engine"), "none", "none for module", "unknown")
+                .collapsedBy { false }
+                .withGoneSection(diff, expanded = true)
+
+        assertEquals(listOf("header:Engine", "gone-header", "dtc:Engine:P0500"), items.map { it.itemKey() })
     }
 }

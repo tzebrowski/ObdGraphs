@@ -284,6 +284,10 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   wrongly once a row was expanded, pushing the chips ~850 px down. Space below a view is padding, not margin, if
   anything ever constrains to a barrier again (barriers ignore margins). Check bounds with
   `adb shell uiautomator dump`, not by eye.
+* Phone module sections collapse (`collapsedBy`, `withModuleSummaries` in `DtcListItem.kt`): clean modules start
+  collapsed, modules with codes expanded; the header's mini chips (state counts, MIL, new, check when clean) are what a
+  collapsed module shows. Every section header, "no longer reported" included, uses `item_dtc_module_header.xml` and
+  `addMiniBadge` (user wants them alike; a separate banner was rejected). Keep header-only data (`summary`, `expanded`) out of `itemKey()`, or a toggle reads as a new row.
 * The phone DTC dialog has a chip legend (`DTC_LEGEND` in the adapter, toggle under the readiness row). A new chip
   must be added there too; `DtcLegendTest` fails if a state badge is missing. Legend texts are the `*.explanation`
   strings with the "Label: " prefix cut, so keep that prefix format in every language.

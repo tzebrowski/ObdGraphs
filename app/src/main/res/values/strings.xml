@@ -1007,7 +1007,8 @@
     <string name="dtc.row.expand">Show details</string>
     <string name="dtc.row.collapse">Hide details</string>
     <string name="dtc.history.gone_header">No longer reported (%1$d)</string>
-    <string name="dtc.history.gone_subtitle">Healed or cleared since the previous scan of their module</string>
+    <string name="dtc.module.clean">No trouble codes</string>
+    <string name="dtc.history.gone_title">No longer reported</string>
     <string name="dtc.history.last_reported">Last reported %1$s</string>
     <string name="dtc.share.state">State: %1$s</string>
     <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
