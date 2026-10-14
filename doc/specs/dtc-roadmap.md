@@ -17,6 +17,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | Show what state each code is in (initial #1): chips for active / stored / pending / history + MIL, sort by state | `dtc-status-badges.md` |
 | Read/clear overlay no longer times out during a long scan | `dtc-status-badges.md` (fix in the same branch) |
 | Readiness monitors (initial #3): phone screen, clear warning, DTC list row | `readiness-monitors.md` |
+| Modules that do not answer: "no response" / "refused" instead of clean, left out of history markers | `dtc-module-response.md` |
 | History per vehicle (initial #4) with VIN on every connect (added later #8): new / gone markers | `dtc-history.md` |
 
 ## Planned
@@ -107,8 +108,7 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
 
 * **Legacy header scanned with UDS:** the scan includes "OBD-II (Legacy Mode 01)" (header `DB33F1`) and sends it the
   UDS `19 02` read. A legacy/functional header may need Mode 03 instead, or should be skipped by the UDS scan.
-* **Modules that do not answer:** they look the same as clean ones ("No trouble codes reported"). Other tools show
-  "no response" separately.
+* ~~**Modules that do not answer**~~: done, `dtc-module-response.md`.
 
 ## Out of scope
 

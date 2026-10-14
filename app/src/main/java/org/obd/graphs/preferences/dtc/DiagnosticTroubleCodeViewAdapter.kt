@@ -55,6 +55,7 @@ import org.obd.graphs.bl.datalogger.dtc.stateLabel
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
+import org.obd.metrics.command.dtc.DtcModuleStatus
 
 private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DTC = 1
@@ -78,6 +79,11 @@ internal val STATE_BADGES =
     )
 
 internal val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
+
+// A module header's chip when the module did not answer the scan / refused the read: its codes are unknown.
+internal val NO_RESPONSE_BADGE =
+    BadgeStyle(R.color.dtc_state_history, R.drawable.dtc_module_no_response, R.string.dtc_module_no_response_explanation)
+internal val REFUSED_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_module_refused, R.string.dtc_module_refused_explanation)
 
 // The "no longer reported" section header's chip (check + count).
 internal val GONE_BADGE = BadgeStyle(R.color.philippine_green, R.drawable.dtc_history_gone, R.string.dtc_legend_gone)
@@ -109,7 +115,9 @@ internal val DTC_LEGEND: List<Pair<Int, BadgeStyle>> =
         R.string.dtc_state_stored to STATE_BADGES.getValue(DtcState.STORED),
         R.string.dtc_state_pending to STATE_BADGES.getValue(DtcState.PENDING),
         R.string.dtc_state_history to STATE_BADGES.getValue(DtcState.HISTORY),
-        R.string.dtc_state_mil to MIL_BADGE
+        R.string.dtc_state_mil to MIL_BADGE,
+        R.string.dtc_module_no_response to NO_RESPONSE_BADGE,
+        R.string.dtc_module_refused to REFUSED_BADGE
     )
 
 // The explanations start with their label ("Active: ..."), which the legend already shows as the chip.
@@ -382,7 +390,15 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                             .takeIf { header.summary.newCount > 0 }
                     )
             chips.forEach { (label, style, description) -> summary.addMiniBadge(label, style, description) }
-            if (header.codeCount == 0) {
+            when (header.response) {
+                DtcModuleStatus.NO_RESPONSE ->
+                    context.getString(R.string.dtc_module_no_response).let { summary.addMiniBadge(it, NO_RESPONSE_BADGE, it) }
+                DtcModuleStatus.REFUSED ->
+                    context.getString(R.string.dtc_module_refused).let { summary.addMiniBadge(it, REFUSED_BADGE, it) }
+                DtcModuleStatus.RESPONDED -> Unit
+            }
+            // The check means "answered, no codes" - never for a module that did not answer.
+            if (header.codeCount == 0 && header.response == DtcModuleStatus.RESPONDED) {
                 summary.addView(
                     ImageView(context).apply {
                         setImageResource(R.drawable.dtc_history_gone)
@@ -435,10 +451,15 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     internal class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val text: TextView = itemView.findViewById(R.id.dtc_message)
 
-        // "No codes reported" - good news, in green.
+        // "No codes reported" - good news, in green; a module that did not answer, muted.
         fun bind(message: DtcListItem.Message) {
             text.text = message.text
-            text.setTextColor(ContextCompat.getColor(itemView.context, R.color.philippine_green))
+            text.setTextColor(
+                ContextCompat.getColor(
+                    itemView.context,
+                    if (message.status == DtcModuleStatus.RESPONDED) R.color.philippine_green else R.color.dialog_text_secondary
+                )
+            )
         }
     }
 

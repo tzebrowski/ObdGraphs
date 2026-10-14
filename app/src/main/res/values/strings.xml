@@ -440,6 +440,8 @@
     <string name="pref.dtc.clear_outcome.refused">The vehicle refused to clear the trouble codes. Turn the engine off, leave the ignition on and try again.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Trouble codes still reported after clearing: %1$s. The fault may still be present.</string>
     <string name="pref.dtc.no_dtc_found_for_module">No trouble codes reported.</string>
+    <string name="pref.dtc.module_no_response">No response from the module. Its codes are unknown.</string>
+    <string name="pref.dtc.module_refused">The module refused the read.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Enable Automatic DTC cleanup</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatically clears Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
     <string name="pref.dtc.settings_summary"><b>Tap</b> to view active Diagnostic Trouble Codes (DTCs) retrieved from the ECU.</string>
@@ -1008,6 +1010,11 @@
     <string name="dtc.row.collapse">Hide details</string>
     <string name="dtc.history.gone_header">No longer reported (%1$d)</string>
     <string name="dtc.module.clean">No trouble codes</string>
+    <string name="dtc.module.no_response">No response</string>
+    <string name="dtc.module.no_response.explanation">No response: the module did not answer the scan. Its codes are unknown, so it is left out of New and No longer reported.</string>
+    <string name="dtc.module.refused">Refused</string>
+    <string name="dtc.module.refused.explanation">Refused: the module answered but declined to send its codes.</string>
+    <string name="dtc.share.modules_no_response">Modules without an answer: %1$s</string>
     <string name="dtc.history.gone_title">No longer reported</string>
     <string name="dtc.history.last_reported">Last reported %1$s</string>
     <string name="dtc.share.state">State: %1$s</string>

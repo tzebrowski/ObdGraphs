@@ -56,6 +56,7 @@ import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
+import org.obd.graphs.bl.datalogger.dtc.unansweredModules
 import org.obd.graphs.bl.datalogger.dtc.withGoneSection
 import org.obd.graphs.bl.datalogger.dtc.withModuleSummaries
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
@@ -384,6 +385,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         reportBuilder.append("$reportTitle\n")
         reportBuilder.append("-".repeat(reportTitle.length)).append("\n\n")
 
+        VehicleCapabilitiesManager.getDtcModuleStatus().unansweredModules().takeIf { it.isNotEmpty() }?.let {
+            reportBuilder.append(getString(R.string.dtc_share_modules_no_response, it.joinToString(", "))).append("\n\n")
+        }
+
         val statusLabels = dtcStatusLabels(requireContext())
         for (code in dtcList) {
             if (code.standardCode.isEmpty()) continue
@@ -472,7 +477,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
                     noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
                     noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
-                    unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
+                    unknownModuleLabel = getString(R.string.pref_dtc_unknown_module),
+                    moduleStatus = VehicleCapabilitiesManager.getDtcModuleStatus(),
+                    noResponseMessage = getString(R.string.pref_dtc_module_no_response),
+                    refusedMessage = getString(R.string.pref_dtc_module_refused)
                 ).markedWith(history)
                 .withModuleSummaries()
                 .collapsedBy { moduleExpanded[it] }

@@ -22,6 +22,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.command.dtc.DtcModuleStatus
 
 class DtcHistoryDiffTest {
     private fun dtc(
@@ -186,5 +187,36 @@ class DtcHistoryDiffTest {
         val items = listOf(DtcListItem.DtcRow(dtc("P0100")))
 
         assertEquals(items, items.withGoneSection(DtcHistoryDiff.EMPTY, expanded = true))
+    }
+
+    @Test
+    fun `a module that did not answer neither loses its codes nor counts as covered`() {
+        val abs = dtc("C0035", module = "ABS")
+        val diff =
+            dtcHistoryDiff(
+                listOf(
+                    scan(1, abs, modules = listOf("Engine", "ABS")),
+                    DtcScan(2, DtcScanKind.READ, listOf("Engine", "ABS"), emptyList(), mapOf("ABS" to DtcModuleStatus.NO_RESPONSE)),
+                    DtcScan(3, DtcScanKind.READ, listOf("Engine", "ABS"), emptyList(), mapOf("ABS" to DtcModuleStatus.REFUSED))
+                )
+            )
+
+        assertTrue(diff.gone.isEmpty())
+        assertEquals(DtcCodeHistory(firstSeen = 1, lastSeen = 1, seenIn = 1, coveredIn = 1), diff.history(abs))
+    }
+
+    @Test
+    fun `a module that answered again is compared again`() {
+        val abs = dtc("C0035", module = "ABS")
+        val diff =
+            dtcHistoryDiff(
+                listOf(
+                    scan(1, abs, modules = listOf("ABS")),
+                    DtcScan(2, DtcScanKind.READ, listOf("ABS"), emptyList(), mapOf("ABS" to DtcModuleStatus.NO_RESPONSE)),
+                    DtcScan(3, DtcScanKind.READ, listOf("ABS"), emptyList(), mapOf("ABS" to DtcModuleStatus.RESPONDED))
+                )
+            )
+
+        assertEquals(listOf("C0035"), diff.gone.map { it.standardCode })
     }
 }

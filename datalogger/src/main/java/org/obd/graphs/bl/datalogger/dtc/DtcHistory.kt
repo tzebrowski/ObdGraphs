@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.datalogger.dtc
 
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.command.dtc.DtcModuleStatus
 
 // Per-vehicle DTC history: every stored DTC list is also kept as a scan record, keyed by VIN.
 // Pure logic here; the file lives in DtcHistoryStore. Spec: doc/specs/dtc-history.md.
@@ -39,12 +40,20 @@ enum class DtcScanKind {
 }
 
 // scannedModules: module labels the scan targeted (DiagnosticTroubleCode.module); empty = default single-ECU read.
+// moduleStatus: how each targeted module answered; empty for scans recorded before it existed (= all answered).
 data class DtcScan(
     val timestamp: Long = 0,
     val kind: DtcScanKind = DtcScanKind.READ,
     val scannedModules: List<String> = emptyList(),
-    val codes: List<DiagnosticTroubleCode> = emptyList()
-)
+    val codes: List<DiagnosticTroubleCode> = emptyList(),
+    val moduleStatus: Map<String, DtcModuleStatus> = emptyMap()
+) {
+    // A module that did not answer (or refused) was targeted but not looked at.
+    fun answered(module: String): Boolean =
+        moduleStatus.entries.firstOrNull { it.key.equals(module, ignoreCase = true) }?.value.let {
+            it == null || it == DtcModuleStatus.RESPONDED
+        }
+}
 
 fun historyKey(vin: String?): String = vin?.uppercase() ?: UNKNOWN_VEHICLE
 
@@ -75,7 +84,8 @@ fun Map<String, List<DtcScan>>.append(
         .associate { it.key to it.value }
 }
 
-// Whether this scan looked at the module the code comes from. A module scan covers the modules it targeted;
+// Whether this scan looked at the module the code comes from. A module scan covers the modules it targeted and
+// that answered (a silent module's codes are unknown, not gone);
 // a code with no module of its own (the default ECU, or untagged) is only comparable with scans of the same
 // targets as the scan that reported it - a default single-ECU read is compared only with other default reads.
 internal fun DtcScan.covers(
@@ -84,8 +94,8 @@ internal fun DtcScan.covers(
 ): Boolean {
     val module = code.module?.takeUnless { it.isBlank() || it.equals(DTC_DEFAULT_MODULE, ignoreCase = true) }
     return if (module == null) {
-        scannedModules.toSet() == reportedBy.scannedModules.toSet()
+        scannedModules.toSet() == reportedBy.scannedModules.toSet() && scannedModules.all { answered(it) }
     } else {
-        scannedModules.any { it.equals(module, ignoreCase = true) }
+        scannedModules.any { it.equals(module, ignoreCase = true) } && answered(module)
     }
 }

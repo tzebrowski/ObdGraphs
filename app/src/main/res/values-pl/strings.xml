@@ -444,6 +444,8 @@
     <string name="pref.dtc.clear_outcome.refused">Pojazd odmówił skasowania kodów błędów. Wyłącz silnik, pozostaw włączony zapłon i spróbuj ponownie.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Kody błędów zgłaszane po skasowaniu: %1$s. Usterka może nadal występować.</string>
     <string name="pref.dtc.no_dtc_found_for_module">Brak zgłoszonych kodów błędów.</string>
+    <string name="pref.dtc.module_no_response">Moduł nie odpowiedział. Jego kody są nieznane.</string>
+    <string name="pref.dtc.module_refused">Moduł odmówił odczytu.</string>
     <string name="pref.dtc.enable_automatic_cleanup">Włącz automatyczne czyszczenie DTC</string>
     <string name="pref.dtc.enable_automatic_cleanup_summary">Automatycznie kasuje kody błędów diagnostycznych (DTC) z pamięci ECU.</string>
     <string name="pref.dtc.settings_summary"><b>Dotknij</b>, aby wyświetlić aktywne kody błędów diagnostycznych (DTC) pobrane z ECU.</string>
@@ -783,6 +785,11 @@
     <string name="dtc.row.collapse">Ukryj szczegóły</string>
     <string name="dtc.history.gone_header">Już nie zgłaszane (%1$d)</string>
     <string name="dtc.module.clean">Brak kodów usterek</string>
+    <string name="dtc.module.no_response">Brak odpowiedzi</string>
+    <string name="dtc.module.no_response.explanation">Brak odpowiedzi: moduł nie odpowiedział na odczyt. Jego kody są nieznane, więc nie wpływa na oznaczenia Nowy i Już nie zgłaszane.</string>
+    <string name="dtc.module.refused">Odmowa</string>
+    <string name="dtc.module.refused.explanation">Odmowa: moduł odpowiedział, ale nie przesłał kodów.</string>
+    <string name="dtc.share.modules_no_response">Moduły bez odpowiedzi: %1$s</string>
     <string name="dtc.history.gone_title">Już nie zgłaszane</string>
     <string name="dtc.history.last_reported">Ostatnio zgłoszony %1$s</string>
     <string name="dtc.share.state">Stan: %1$s</string>

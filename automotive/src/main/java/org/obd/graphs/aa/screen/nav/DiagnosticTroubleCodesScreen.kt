@@ -86,6 +86,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.Identity
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.command.dtc.DtcModuleStatus
 
 internal enum class DtcScreenIdentity(
     private val code: Int
@@ -223,7 +224,10 @@ internal class DiagnosticTroubleCodesScreen(
                     scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
                     noCodesMessage = stringProvider.getString(R.string.dtc_no_codes),
                     noCodesForModuleMessage = stringProvider.getString(R.string.dtc_no_codes_for_module),
-                    unknownModuleLabel = stringProvider.getString(R.string.dtc_unknown_module)
+                    unknownModuleLabel = stringProvider.getString(R.string.dtc_unknown_module),
+                    moduleStatus = VehicleCapabilitiesManager.getDtcModuleStatus(),
+                    noResponseMessage = stringProvider.getString(R.string.dtc_no_response_for_module),
+                    refusedMessage = stringProvider.getString(R.string.dtc_refused_for_module)
                 ).markedWith(DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo()))
                 .toDtcSections()
 
@@ -308,7 +312,20 @@ internal class DiagnosticTroubleCodesScreen(
                 items.forEach { item ->
                     when (item) {
                         is DtcListItem.DtcRow -> addItem(row(item.dtc, item.isNew))
-                        is DtcListItem.Message -> addItem(Row.Builder().setTitle(item.text).setImage(icon(R.drawable.dtc_ok, CarColor.GREEN)).build())
+                        // A module that did not answer is not good news: plain fault icon, no green.
+                        is DtcListItem.Message ->
+                            addItem(
+                                Row
+                                    .Builder()
+                                    .setTitle(item.text)
+                                    .setImage(
+                                        if (item.status == DtcModuleStatus.RESPONDED) {
+                                            icon(R.drawable.dtc_ok, CarColor.GREEN)
+                                        } else {
+                                            icon(R.drawable.dtc_fault, CarColor.DEFAULT)
+                                        }
+                                    ).build()
+                            )
                         is DtcListItem.ModuleHeader, is DtcListItem.GoneHeader -> Unit
                     }
                 }

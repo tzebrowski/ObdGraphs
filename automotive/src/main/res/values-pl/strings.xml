@@ -20,6 +20,8 @@
     <string name="dtc.no_codes">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
     <string name="dtc.unknown_module">Nieznany moduł</string>
     <string name="dtc.no_codes_for_module">Brak zgłoszonych kodów błędów.</string>
+    <string name="dtc.no_response_for_module">Moduł nie odpowiedział.</string>
+    <string name="dtc.refused_for_module">Moduł odmówił odczytu.</string>
     <string name="dtc.state.active">Aktywny</string>
     <string name="dtc.state.stored">Zapisany</string>
     <string name="dtc.state.pending">Oczekujący</string>

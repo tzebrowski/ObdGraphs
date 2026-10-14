@@ -25,6 +25,7 @@ import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.command.dtc.DtcComponent
+import org.obd.metrics.command.dtc.DtcModuleStatus
 import org.obd.metrics.pid.PidDefinition
 
 class DtcListItemTest {
@@ -306,5 +307,59 @@ class DtcListItemTest {
                 .withGoneSection(diff, expanded = true)
 
         assertEquals(listOf("header:Engine", "gone-header", "dtc:Engine:P0500"), items.map { it.itemKey() })
+    }
+
+    @Test
+    fun `a module that did not answer is not shown as clean and sorts between codes and clean modules`() {
+        val items =
+            listOf(withStatus("P0100", "Engine", 0x09))
+                .toDtcListItems(
+                    scannedModules = listOf("Engine", "ABS", "BCM", "Airbag"),
+                    noCodesMessage = "none",
+                    noCodesForModuleMessage = "no codes",
+                    unknownModuleLabel = "unknown",
+                    moduleStatus =
+                    mapOf(
+                        "Engine" to DtcModuleStatus.RESPONDED,
+                        "ABS" to DtcModuleStatus.NO_RESPONSE,
+                        "BCM" to DtcModuleStatus.RESPONDED,
+                        "Airbag" to DtcModuleStatus.REFUSED
+                    ),
+                    noResponseMessage = "no response",
+                    refusedMessage = "refused"
+                )
+
+        val headers = items.filterIsInstance<DtcListItem.ModuleHeader>()
+        assertEquals(listOf("Engine", "ABS", "Airbag", "BCM"), headers.map { it.module })
+        assertEquals(
+            listOf(DtcModuleStatus.RESPONDED, DtcModuleStatus.NO_RESPONSE, DtcModuleStatus.REFUSED, DtcModuleStatus.RESPONDED),
+            headers.map { it.response }
+        )
+        val messages = items.filterIsInstance<DtcListItem.Message>().associate { it.key to (it.text to it.status) }
+        assertEquals("no response" to DtcModuleStatus.NO_RESPONSE, messages["ABS"])
+        assertEquals("refused" to DtcModuleStatus.REFUSED, messages["Airbag"])
+        assertEquals("no codes" to DtcModuleStatus.RESPONDED, messages["BCM"])
+        // Silent modules have no codes, so they start collapsed like clean ones.
+        assertEquals(listOf("header:Engine", "dtc:Engine:P0100", "header:ABS", "header:Airbag", "header:BCM"), items.collapsedBy { null }.map { it.itemKey() })
+    }
+
+    @Test
+    fun `without recorded statuses every module counts as answered`() {
+        val items = emptyList<DiagnosticTroubleCode>().toDtcListItems(listOf("ABS"), "none", "no codes", "unknown")
+
+        assertEquals(DtcModuleStatus.RESPONDED, items.filterIsInstance<DtcListItem.ModuleHeader>().single().response)
+        assertEquals("no codes", items.filterIsInstance<DtcListItem.Message>().single().text)
+    }
+
+    @Test
+    fun `unanswered modules keep the scan order`() {
+        val status =
+            linkedMapOf(
+                "Engine" to DtcModuleStatus.RESPONDED,
+                "BCM" to DtcModuleStatus.NO_RESPONSE,
+                "ABS" to DtcModuleStatus.REFUSED
+            )
+
+        assertEquals(listOf("BCM", "ABS"), status.unansweredModules())
     }
 }
