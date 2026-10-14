@@ -23,6 +23,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TableLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -63,12 +65,15 @@ import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
 import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.readiness.ReadinessDialogFragment
+import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.toast
 import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+
+private const val PREF_DTC_LEGEND_EXPANDED = "pref.dtc.legend.expanded"
 
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
@@ -113,6 +118,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         readInfo = root.findViewById(R.id.dtc_read_info)
         readinessLink = root.findViewById(R.id.dtc_readiness_link)
         attachReadinessLink()
+        attachLegend(root)
 
         adapter =
             DiagnosticTroubleCodeViewAdapter(context) {
@@ -490,6 +496,35 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 )
             )
         readInfo.visibility = View.VISIBLE
+    }
+
+    // What the row chips mean, from the explanations the expanded rows use. Collapsed by default; the choice is kept.
+    private fun attachLegend(root: View) {
+        val toggle = root.findViewById<TextView>(R.id.dtc_legend_toggle)
+        val legend = root.findViewById<LinearLayout>(R.id.dtc_legend)
+        val inflater = LayoutInflater.from(requireContext())
+
+        val table = root.findViewById<TableLayout>(R.id.dtc_legend_table)
+        DTC_LEGEND.forEach { (label, style) ->
+            val row = inflater.inflate(R.layout.item_dtc_legend_row, table, false)
+            row.findViewById<TextView>(R.id.dtc_legend_badge).showBadge(getString(label), style)
+            row.findViewById<TextView>(R.id.dtc_legend_text).text = legendExplanation(getString(style.explanation))
+            table.addView(row)
+        }
+
+        fun show(expanded: Boolean) {
+            legend.visibility = if (expanded) View.VISIBLE else View.GONE
+            toggle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (expanded) R.drawable.dtc_expand_less else R.drawable.dtc_expand_more, 0)
+            toggle.compoundDrawableTintList = toggle.textColors
+            toggle.contentDescription = getString(if (expanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)
+        }
+
+        show(Prefs.getBoolean(PREF_DTC_LEGEND_EXPANDED, false))
+        toggle.setOnClickListener {
+            val expanded = legend.visibility != View.VISIBLE
+            Prefs.updateBoolean(PREF_DTC_LEGEND_EXPANDED, expanded)
+            show(expanded)
+        }
     }
 
     // Monitors and codes come from the same self-tests (a failed monitor stores a code; a clear resets both), so the

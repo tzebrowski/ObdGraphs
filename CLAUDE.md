@@ -284,6 +284,13 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   wrongly once a row was expanded, pushing the chips ~850 px down. Space below a view is padding, not margin, if
   anything ever constrains to a barrier again (barriers ignore margins). Check bounds with
   `adb shell uiautomator dump`, not by eye.
+* The phone DTC dialog has a chip legend (`DTC_LEGEND` in the adapter, toggle under the readiness row). A new chip
+  must be added there too; `DtcLegendTest` fails if a state badge is missing. Legend texts are the `*.explanation`
+  strings with the "Label: " prefix cut, so keep that prefix format in every language.
+  Equal chip widths come from a `TableLayout`, not code: a chip measured before it is attached leaves out its start
+  icon (relative compound drawables resolve on attach), ~70 px short. Wrong turn: anchoring by text replace in
+  `dialog_dtc.xml` re-pointed the wrong view and made a constraint loop (toggle drawn behind the buttons) — check
+  every `toBottomOf` after editing a ConstraintLayout chain.
 * "Timeout waiting for response" on a DTC read/clear is the phone overlay (`ScreenLockManager`), not the car:
   `ScreenLock.timeoutMs` defaults to 10 s, a 13-module scan takes ~13 s. DTC actions pass `dtcActionTimeoutMs(modules)`;
   any other long action behind the overlay needs its own timeout too. The logcat shows the scan completing regardless.

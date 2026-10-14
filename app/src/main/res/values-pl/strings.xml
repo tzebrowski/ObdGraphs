@@ -774,6 +774,8 @@
     <string name="dtc.history.new">Nowy</string>
     <string name="dtc.history.new.explanation">Nowy: nie wystąpił w żadnym wcześniejszym odczycie tego pojazdu.</string>
     <string name="dtc.history.title">Historia kodu</string>
+    <string name="dtc.legend.toggle">Co oznaczają etykiety?</string>
+    <string name="dtc.legend.gone">Już nie zgłaszane: kody, które poprzedni odczyt ich modułu zawierał, a obecny już nie (naprawione lub skasowane). Na końcu listy.</string>
     <string name="dtc.history.first_seen">Pierwsze wystąpienie: %1$s</string>
     <string name="dtc.history.last_seen">Ostatnie wystąpienie: %1$s</string>
     <string name="dtc.history.seen_in">Zgłoszony w %1$d z %2$d odczytów tego modułu</string>

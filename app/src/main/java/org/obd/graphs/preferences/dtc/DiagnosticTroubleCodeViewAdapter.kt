@@ -62,13 +62,13 @@ private const val VIEW_TYPE_GONE_HEADER = 3
 private const val GONE_ROW_ALPHA = 0.6f
 private const val BADGE_FILL_ALPHA = 0x33
 
-private data class BadgeStyle(
+internal data class BadgeStyle(
     val color: Int,
     val icon: Int,
     val explanation: Int
 )
 
-private val STATE_BADGES =
+internal val STATE_BADGES =
     mapOf(
         DtcState.ACTIVE to BadgeStyle(R.color.dtc_state_active, R.drawable.dtc_state_active, R.string.dtc_state_active_explanation),
         DtcState.STORED to BadgeStyle(R.color.dtc_state_stored, R.drawable.dtc_state_stored, R.string.dtc_state_stored_explanation),
@@ -76,9 +76,23 @@ private val STATE_BADGES =
         DtcState.HISTORY to BadgeStyle(R.color.dtc_state_history, R.drawable.dtc_state_history, R.string.dtc_state_history_explanation)
     )
 
-private val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
+internal val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
 
-private val NEW_BADGE = BadgeStyle(R.color.dtc_history_new, R.drawable.dtc_history_new, R.string.dtc_history_new_explanation)
+internal val NEW_BADGE = BadgeStyle(R.color.dtc_history_new, R.drawable.dtc_history_new, R.string.dtc_history_new_explanation)
+
+// The chips the DTC legend explains, in the order a row shows them: label and style.
+internal val DTC_LEGEND: List<Pair<Int, BadgeStyle>> =
+    listOf(
+        R.string.dtc_history_new to NEW_BADGE,
+        R.string.dtc_state_active to STATE_BADGES.getValue(DtcState.ACTIVE),
+        R.string.dtc_state_stored to STATE_BADGES.getValue(DtcState.STORED),
+        R.string.dtc_state_pending to STATE_BADGES.getValue(DtcState.PENDING),
+        R.string.dtc_state_history to STATE_BADGES.getValue(DtcState.HISTORY),
+        R.string.dtc_state_mil to MIL_BADGE
+    )
+
+// The explanations start with their label ("Active: ..."), which the legend already shows as the chip.
+internal fun legendExplanation(explanation: String): String = explanation.substringAfter(": ", explanation)
 
 internal fun dtcStatusLabels(context: Context) =
     DtcStatusLabels(
@@ -88,6 +102,24 @@ internal fun dtcStatusLabels(context: Context) =
         history = context.getString(R.string.dtc_state_history),
         warningLamp = context.getString(R.string.dtc_state_warning_lamp)
     )
+
+// Icon + label; solid fill with white text on light backgrounds, faint fill with coloured text at night
+// (dtc_badge_solid). Gone without a label.
+internal fun TextView.showBadge(
+    label: String?,
+    style: BadgeStyle?
+) {
+    visibility = if (label != null && style != null) View.VISIBLE else View.GONE
+    if (label == null || style == null) return
+    val color = ContextCompat.getColor(context, style.color)
+    val solid = context.resources.getBoolean(R.bool.dtc_badge_solid)
+    val foreground = if (solid) Color.WHITE else color
+    text = label
+    setTextColor(foreground)
+    setCompoundDrawablesRelativeWithIntrinsicBounds(style.icon, 0, 0, 0)
+    compoundDrawableTintList = ColorStateList.valueOf(foreground)
+    backgroundTintList = ColorStateList.valueOf(if (solid) color else ColorUtils.setAlphaComponent(color, BADGE_FILL_ALPHA))
+}
 
 // onGoneHeaderClick: the "no longer reported" header was tapped; the owner rebuilds the list expanded / collapsed.
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
@@ -269,24 +301,6 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                     Toast.LENGTH_SHORT
                 ).show()
         }
-    }
-
-    // Icon + label; solid fill with white text on light backgrounds, faint fill with coloured text at night
-    // (dtc_badge_solid). Gone without a label.
-    private fun TextView.showBadge(
-        label: String?,
-        style: BadgeStyle?
-    ) {
-        visibility = if (label != null && style != null) View.VISIBLE else View.GONE
-        if (label == null || style == null) return
-        val color = ContextCompat.getColor(context, style.color)
-        val solid = context.resources.getBoolean(R.bool.dtc_badge_solid)
-        val foreground = if (solid) Color.WHITE else color
-        text = label
-        setTextColor(foreground)
-        setCompoundDrawablesRelativeWithIntrinsicBounds(style.icon, 0, 0, 0)
-        compoundDrawableTintList = ColorStateList.valueOf(foreground)
-        backgroundTintList = ColorStateList.valueOf(if (solid) color else ColorUtils.setAlphaComponent(color, BADGE_FILL_ALPHA))
     }
 
     private fun notifyRowChanged(key: String) {
