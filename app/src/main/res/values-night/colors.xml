@@ -23,4 +23,5 @@
     <color name="dtc_state_pending">#C4B5FD</color>
     <color name="dtc_state_history">#A1A1AA</color>
     <color name="dtc_state_mil">#FACC15</color>
+    <color name="dtc_history_new">#34D399</color>
 </resources>

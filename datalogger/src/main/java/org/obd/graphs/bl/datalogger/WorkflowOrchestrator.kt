@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
+import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
@@ -102,7 +103,13 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.d(LOG_TAG, "Received onDTCCompleted event.")
             }
 
-            VehicleCapabilitiesManager.updateDTC(dtc, pendingDtcModules.orEmpty())
+            val kind =
+                when {
+                    pendingDtcClear -> DtcScanKind.CLEAR
+                    pendingConnectScan -> DtcScanKind.CONNECT
+                    else -> DtcScanKind.READ
+                }
+            VehicleCapabilitiesManager.updateDTC(dtc, pendingDtcModules.orEmpty(), kind = kind)
             pendingDtcModules = null
 
             if (pendingConnectScan) {

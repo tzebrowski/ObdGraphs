@@ -22,7 +22,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfo
+import org.obd.graphs.bl.datalogger.dtc.DtcScan
+import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
 import org.obd.graphs.bl.datalogger.dtc.isVinRequest
 import org.obd.graphs.bl.datalogger.dtc.vinFrom
 import org.obd.graphs.preferences.Prefs
@@ -86,7 +89,7 @@ object VehicleCapabilitiesManager {
             commit()
         }
         if (dataLoggerSettings.instance().adapter.dtcEnabled && !moduleScanOnConnect) {
-            updateDTC(vehicleCapabilities.dtc)
+            updateDTC(vehicleCapabilities.dtc, kind = DtcScanKind.CONNECT)
             if (vehicleCapabilities.dtc.isNotEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
             }
@@ -98,10 +101,13 @@ object VehicleCapabilitiesManager {
     // Empty for the default single-ECU scan and for automatic reads.
     // Stamped with the time and the VIN of the vehicle connected now: metadata is rewritten on every
     // connect (updateCapabilities) before any DTC read of that connection completes.
+    // Also appended to the vehicle's history (DtcHistoryStore) with the same timestamp, which ties the
+    // stored list to its history record.
     internal fun updateDTC(
         dtc: Set<DiagnosticTroubleCode>,
         scannedModules: List<String> = emptyList(),
-        now: Long = System.currentTimeMillis()
+        now: Long = System.currentTimeMillis(),
+        kind: DtcScanKind = DtcScanKind.READ
     ) {
         val readInfo = DtcReadInfo(timestamp = now, vin = getCurrentVin())
         Prefs.edit().apply {
@@ -114,6 +120,7 @@ object VehicleCapabilitiesManager {
             putString(PREF_DTC_READ_INFO, mapper.writeValueAsString(readInfo))
             commit()
         }
+        DtcHistoryStore.append(readInfo.vin, DtcScan(now, kind, scannedModules, dtc.toList()))
     }
 
     // Null for codes stored before the read info existed: their age is unknown, not "now".

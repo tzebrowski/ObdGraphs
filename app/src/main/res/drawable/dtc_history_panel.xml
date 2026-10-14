@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DTC history panel: the details' surface with a green start edge (the "New" chip colour). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_variant" />
+        </shape>
+    </item>
+    <item android:gravity="start|fill_vertical" android:width="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/dtc_history_new" />
+        </shape>
+    </item>
+</layer-list>

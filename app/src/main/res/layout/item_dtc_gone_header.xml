@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Header of the "no longer reported" section (DTC history); tapping it expands / collapses the section. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/dtc_gone_header_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textColor="@color/dialog_text_secondary"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.05" />
+
+</LinearLayout>

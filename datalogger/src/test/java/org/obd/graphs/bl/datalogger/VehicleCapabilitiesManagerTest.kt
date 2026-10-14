@@ -28,9 +28,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.obd.graphs.bl.TestSetup
+import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
+import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
+import org.obd.graphs.bl.datalogger.dtc.UNKNOWN_VEHICLE
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.api.model.VehicleCapabilities
@@ -39,6 +44,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 
 private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
@@ -48,6 +54,8 @@ private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class VehicleCapabilitiesManagerTest : TestSetup() {
+    @get:Rule
+    val folder = TemporaryFolder()
 
     private fun dtc(
         standardCode: String,
@@ -69,10 +77,15 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         mockkObject(dataLoggerSettings)
         mockkStatic("org.obd.graphs.BroadcastKt")
         every { org.obd.graphs.sendBroadcastEvent(any<String>()) } returns Unit
+        DtcHistoryStore.file = { File(folder.root, "dtc_history.json") }
+        DtcHistoryStore.reset()
     }
 
     @After
-    fun tearDown() = unmockkAll()
+    fun tearDown() {
+        DtcHistoryStore.reset()
+        unmockkAll()
+    }
 
     @Test
     fun `updateCapabilities stores supported pids when reading is enabled and capabilities are present`() {
@@ -255,5 +268,34 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         assertEquals(1, details.size)
         assertEquals("6080", details[0].definition.pid)
         assertEquals(7, details[0].decodedValue.toInt())
+    }
+
+    @Test
+    fun `updateDTC appends the scan to the vehicle's history with its kind, modules and time`() {
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_METADATA), any()) } returns """{"VIN":"ZARFAMAN0K7612345"}"""
+
+        VehicleCapabilitiesManager.updateDTC(
+            setOf(dtc("P0100", "Mass air flow circuit")),
+            scannedModules = listOf("Engine ECU"),
+            now = 7,
+            kind = DtcScanKind.CLEAR
+        )
+
+        val scan = DtcHistoryStore.scans("ZARFAMAN0K7612345").single()
+        assertEquals(7L, scan.timestamp)
+        assertEquals(DtcScanKind.CLEAR, scan.kind)
+        assertEquals(listOf("Engine ECU"), scan.scannedModules)
+        assertEquals("P0100", scan.codes.single().standardCode)
+    }
+
+    @Test
+    fun `the init read on connect is recorded as a connect scan of the unknown vehicle when no VIN came`() {
+        every { dataLoggerSettings.instance() } returns
+            DataLoggerSettings(adapter = Adapter(vehicleCapabilitiesReadingEnabled = false, dtcEnabled = true))
+
+        VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities(dtc = setOf(dtc("P0100", "Mass air flow circuit"))))
+
+        assertEquals(DtcScanKind.CONNECT, DtcHistoryStore.scans(null).single().kind)
+        assertEquals(DtcHistoryStore.scans(null), DtcHistoryStore.scans(UNKNOWN_VEHICLE))
     }
 }

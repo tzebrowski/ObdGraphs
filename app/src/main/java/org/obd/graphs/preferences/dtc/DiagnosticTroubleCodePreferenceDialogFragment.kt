@@ -41,16 +41,19 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
+import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
+import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
+import org.obd.graphs.bl.datalogger.dtc.withGoneSection
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
 import org.obd.graphs.bl.readiness.ReadinessSnapshot
 import org.obd.graphs.getSerializableCompat
@@ -75,6 +78,9 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var recyclerView: RecyclerView
     private lateinit var readInfo: TextView
     private lateinit var readinessLink: TextView
+
+    // The "no longer reported" section starts collapsed each time the dialog opens.
+    private var goneExpanded = false
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -108,7 +114,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         readinessLink = root.findViewById(R.id.dtc_readiness_link)
         attachReadinessLink()
 
-        adapter = DiagnosticTroubleCodeViewAdapter(context)
+        adapter =
+            DiagnosticTroubleCodeViewAdapter(context) {
+                goneExpanded = !goneExpanded
+                refreshList()
+            }
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
@@ -436,13 +446,17 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
     private fun refreshList() {
         val codes = diagnosticTroubleCodes()
+        // New / gone markers from the vehicle's DTC history, for the list stored with this read info.
+        val history = DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo())
         adapter.submitList(
-            codes.toDtcListItems(
-                scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
-                noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
-                noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
-                unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
-            )
+            codes
+                .toDtcListItems(
+                    scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
+                    noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
+                    noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
+                    unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
+                ).markedWith(history)
+                .withGoneSection(history, goneExpanded)
         )
 
         refreshReadInfo()

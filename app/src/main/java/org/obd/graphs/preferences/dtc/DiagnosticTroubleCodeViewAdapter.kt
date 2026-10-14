@@ -24,10 +24,12 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -47,6 +49,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayName
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
 import org.obd.graphs.bl.datalogger.dtc.itemKey
+import org.obd.graphs.bl.datalogger.dtc.moduleNameOrNull
 import org.obd.graphs.bl.datalogger.dtc.stateLabel
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.ui.common.COLOR_CARDINAL
@@ -55,6 +58,8 @@ import org.obd.graphs.ui.common.setText
 private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DTC = 1
 private const val VIEW_TYPE_MESSAGE = 2
+private const val VIEW_TYPE_GONE_HEADER = 3
+private const val GONE_ROW_ALPHA = 0.6f
 private const val BADGE_FILL_ALPHA = 0x33
 
 private data class BadgeStyle(
@@ -73,6 +78,8 @@ private val STATE_BADGES =
 
 private val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
 
+private val NEW_BADGE = BadgeStyle(R.color.dtc_history_new, R.drawable.dtc_history_new, R.string.dtc_history_new_explanation)
+
 internal fun dtcStatusLabels(context: Context) =
     DtcStatusLabels(
         active = context.getString(R.string.dtc_state_active),
@@ -82,8 +89,10 @@ internal fun dtcStatusLabels(context: Context) =
         warningLamp = context.getString(R.string.dtc_state_warning_lamp)
     )
 
+// onGoneHeaderClick: the "no longer reported" header was tapped; the owner rebuilds the list expanded / collapsed.
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
-    context: Context?
+    context: Context?,
+    private val onGoneHeaderClick: () -> Unit = {}
 ) : ListAdapter<DtcListItem, RecyclerView.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -96,6 +105,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             is DtcListItem.ModuleHeader -> VIEW_TYPE_HEADER
             is DtcListItem.DtcRow -> VIEW_TYPE_DTC
             is DtcListItem.Message -> VIEW_TYPE_MESSAGE
+            is DtcListItem.GoneHeader -> VIEW_TYPE_GONE_HEADER
         }
 
     override fun onCreateViewHolder(
@@ -105,6 +115,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         when (viewType) {
             VIEW_TYPE_HEADER -> HeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
             VIEW_TYPE_MESSAGE -> MessageViewHolder(mInflater.inflate(R.layout.item_dtc_message, parent, false))
+            VIEW_TYPE_GONE_HEADER -> GoneHeaderViewHolder(mInflater.inflate(R.layout.item_dtc_gone_header, parent, false))
             else -> DtcViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
         }
 
@@ -116,6 +127,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             is DtcListItem.ModuleHeader -> (holder as HeaderViewHolder).bind(item)
             is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item)
             is DtcListItem.Message -> (holder as MessageViewHolder).bind(item)
+            is DtcListItem.GoneHeader -> (holder as GoneHeaderViewHolder).bind(item, onGoneHeaderClick)
         }
     }
 
@@ -133,36 +145,58 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val primaryText = ContextCompat.getColor(context, R.color.dialog_text_primary)
         val secondaryText = ContextCompat.getColor(context, R.color.dialog_text_secondary)
 
+        // A gone row is no longer reported: greyed out, its module named (the section mixes modules).
+        holder.itemView.alpha = if (item.isGone) GONE_ROW_ALPHA else 1f
+
         if (dtc.standardCode.isEmpty()) {
             holder.code.setText("", secondaryText, Typeface.NORMAL, 1f)
             holder.description.setText(finalDescription, secondaryText, Typeface.NORMAL, 1f)
             holder.badges.visibility = View.GONE
             holder.expandedContainer.visibility = View.GONE
+            holder.expandIndicator.visibility = View.GONE
             holder.itemView.setOnClickListener(null)
             return
         } else {
-            holder.code.setText(formattedCode, COLOR_CARDINAL, Typeface.BOLD, 1f)
-            if (isUnknown) {
-                holder.description.setText(finalDescription, secondaryText, Typeface.ITALIC, 1f)
+            holder.code.setText(formattedCode, if (item.isGone) secondaryText else COLOR_CARDINAL, Typeface.BOLD, 1f)
+            val description =
+                dtc.moduleNameOrNull()?.takeIf { item.isGone }?.let { "$it: $finalDescription" } ?: finalDescription
+            if (isUnknown || item.isGone) {
+                holder.description.setText(description, secondaryText, if (isUnknown) Typeface.ITALIC else Typeface.NORMAL, 1f)
             } else {
-                holder.description.setText(finalDescription, primaryText, Typeface.NORMAL, 1f)
+                holder.description.setText(description, primaryText, Typeface.NORMAL, 1f)
             }
         }
 
         // State and MIL as chips under the code: own colour and icon each (none reuses the codes' red),
         // spelled out in the expanded details.
+        // A gone row has no current state: its chips would describe the last scan that reported it.
         val status = dtc.dtcStatus()
-        val stateStyle = STATE_BADGES[status.state]
+        val stateStyle = STATE_BADGES[status.state].takeUnless { item.isGone }
+        val showMil = status.warningLamp && !item.isGone
+        holder.newBadge.showBadge(context.getString(R.string.dtc_history_new).takeIf { item.isNew }, NEW_BADGE)
         holder.stateBadge.showBadge(status.stateLabel(dtcStatusLabels(context)), stateStyle)
-        holder.milBadge.showBadge(context.getString(R.string.dtc_state_mil).takeIf { status.warningLamp }, MIL_BADGE)
+        holder.milBadge.showBadge(context.getString(R.string.dtc_state_mil).takeIf { showMil }, MIL_BADGE)
         // The row's chip line, padding included, only when it holds a chip.
         holder.badges.visibility =
-            if (holder.stateBadge.visibility == View.VISIBLE || holder.milBadge.visibility == View.VISIBLE) View.VISIBLE else View.GONE
+            if (listOf(holder.newBadge, holder.stateBadge, holder.milBadge).any { it.visibility == View.VISIBLE }) View.VISIBLE else View.GONE
         val explanations =
-            listOfNotNull(stateStyle, MIL_BADGE.takeIf { status.warningLamp })
+            listOfNotNull(NEW_BADGE.takeIf { item.isNew }, stateStyle, MIL_BADGE.takeIf { showMil })
                 .map { context.getString(it.explanation) }
         holder.detailState.visibility = if (explanations.isNotEmpty()) View.VISIBLE else View.GONE
         holder.detailState.text = explanations.joinToString("\n")
+
+        val history = item.history
+        holder.historyContainer.visibility = if (history != null) View.VISIBLE else View.GONE
+        if (history != null) {
+            fun date(timestamp: Long) =
+                DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME)
+            holder.detailHistory.text =
+                listOf(
+                    context.getString(R.string.dtc_history_first_seen, date(history.firstSeen)),
+                    context.getString(R.string.dtc_history_last_seen, date(history.lastSeen)),
+                    context.getString(R.string.dtc_history_seen_in, history.seenIn, history.coveredIn)
+                ).joinToString("\n")
+        }
 
         val systemTxt = dtc.system?.description ?: notAvailable
         val categoryTxt = dtc.category?.description ?: notAvailable
@@ -187,6 +221,10 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val key = item.itemKey()
         val isExpanded = key == expandedKey
         holder.expandedContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        holder.expandIndicator.visibility = View.VISIBLE
+        holder.expandIndicator.rotation = if (isExpanded) 180f else 0f
+        holder.expandIndicator.contentDescription =
+            context.getString(if (isExpanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)
 
         holder.itemView.setOnClickListener {
             val previousKey = expandedKey
@@ -271,6 +309,19 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         }
     }
 
+    internal class GoneHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val name: TextView = itemView.findViewById(R.id.dtc_gone_header_name)
+
+        fun bind(
+            header: DtcListItem.GoneHeader,
+            onClick: () -> Unit
+        ) {
+            val arrow = if (header.expanded) "\u25BE" else "\u25B8"
+            name.text = "$arrow ${itemView.context.getString(R.string.dtc_history_gone_header, header.codeCount)}"
+            itemView.setOnClickListener { onClick() }
+        }
+    }
+
     internal class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val text: TextView = itemView.findViewById(R.id.dtc_message)
 
@@ -285,12 +336,16 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
         var badges: LinearLayout = itemView.findViewById(R.id.dtc_badges)
+        var newBadge: TextView = itemView.findViewById(R.id.dtc_new_badge)
         var stateBadge: TextView = itemView.findViewById(R.id.dtc_state_badge)
         var milBadge: TextView = itemView.findViewById(R.id.dtc_mil_badge)
 
         var expandedContainer: LinearLayout =
             itemView.findViewById(R.id.dtc_expanded_details_container)
         var detailState: TextView = itemView.findViewById(R.id.dtc_detail_state)
+        var historyContainer: LinearLayout = itemView.findViewById(R.id.dtc_history_container)
+        var detailHistory: TextView = itemView.findViewById(R.id.dtc_detail_history)
+        var expandIndicator: ImageView = itemView.findViewById(R.id.dtc_expand_indicator)
         var detailSystemInfo: TextView = itemView.findViewById(R.id.dtc_detail_system_info)
         var detailHexStatus: TextView = itemView.findViewById(R.id.dtc_detail_hex_status)
 

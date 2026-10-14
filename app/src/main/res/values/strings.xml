@@ -996,6 +996,15 @@
     <string name="dtc.state.pending.explanation">Pending: detected recently, not yet confirmed. It is confirmed if it happens again.</string>
     <string name="dtc.state.history.explanation">History: occurred since the last clear, no longer pending or stored.</string>
     <string name="dtc.state.mil.explanation">MIL: the module requests the check-engine lamp.</string>
+    <string name="dtc.history.new">New</string>
+    <string name="dtc.history.new.explanation">New: not reported by any earlier scan of this vehicle.</string>
+    <string name="dtc.history.title">Code history</string>
+    <string name="dtc.history.first_seen">First reported: %1$s</string>
+    <string name="dtc.history.last_seen">Last reported: %1$s</string>
+    <string name="dtc.history.seen_in">Reported in %1$d of %2$d scans of this module</string>
+    <string name="dtc.row.expand">Show details</string>
+    <string name="dtc.row.collapse">Hide details</string>
+    <string name="dtc.history.gone_header">No longer reported (%1$d)</string>
     <string name="dtc.share.state">State: %1$s</string>
     <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
     <string name="dtc.share.unknown_did">Unknown DID</string>

@@ -771,6 +771,15 @@
     <string name="dtc.state.pending.explanation">Oczekujący: wykryty niedawno, jeszcze niepotwierdzony. Zostanie potwierdzony, jeśli się powtórzy.</string>
     <string name="dtc.state.history.explanation">Historyczny: wystąpił od ostatniego kasowania, już nie oczekuje ani nie jest zapisany.</string>
     <string name="dtc.state.mil.explanation">MIL: moduł żąda zapalenia kontrolki silnika.</string>
+    <string name="dtc.history.new">Nowy</string>
+    <string name="dtc.history.new.explanation">Nowy: nie wystąpił w żadnym wcześniejszym odczycie tego pojazdu.</string>
+    <string name="dtc.history.title">Historia kodu</string>
+    <string name="dtc.history.first_seen">Pierwsze wystąpienie: %1$s</string>
+    <string name="dtc.history.last_seen">Ostatnie wystąpienie: %1$s</string>
+    <string name="dtc.history.seen_in">Zgłoszony w %1$d z %2$d odczytów tego modułu</string>
+    <string name="dtc.row.expand">Pokaż szczegóły</string>
+    <string name="dtc.row.collapse">Ukryj szczegóły</string>
+    <string name="dtc.history.gone_header">Już nie zgłaszane (%1$d)</string>
     <string name="dtc.share.state">Stan: %1$s</string>
     <string name="dtc.share.snapshot">Migawka (rekord %1$d):</string>
     <string name="dtc.share.unknown_did">Nieznany DID</string>

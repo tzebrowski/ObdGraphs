@@ -30,7 +30,19 @@ const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
 sealed class DtcListItem {
     // codeCount: the module's code rows, 0 for a module scanned clean. Not part of the row identity.
     data class ModuleHeader(val module: String, val codeCount: Int = 0) : DtcListItem()
-    data class DtcRow(val dtc: DiagnosticTroubleCode) : DtcListItem()
+
+    // isNew / isGone / history come from the vehicle's DTC history (DtcHistoryDiff); none of them is part
+    // of the row identity. isGone: a row of the "no longer reported" section.
+    data class DtcRow(
+        val dtc: DiagnosticTroubleCode,
+        val isNew: Boolean = false,
+        val isGone: Boolean = false,
+        val history: DtcCodeHistory? = null
+    ) : DtcListItem()
+
+    // Header of the "no longer reported" section: codes the previous scan of their module had and this one
+    // has not (healed or cleared). Collapsed by default; expanded is part of the content, so a toggle rebinds it.
+    data class GoneHeader(val codeCount: Int, val expanded: Boolean = false) : DtcListItem()
 
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
     // that reported nothing. Keyed so DiffUtil can tell per-module messages apart.
@@ -58,7 +70,37 @@ fun DtcListItem.itemKey(): String =
         is DtcListItem.ModuleHeader -> "header:$module"
         is DtcListItem.DtcRow -> "dtc:${dtc.moduleLabel()}:${dtc.displayCode()}"
         is DtcListItem.Message -> "message:$key"
+        is DtcListItem.GoneHeader -> "gone-header"
     }
+
+// Marks the rows of the list on screen with what the vehicle's history says about them.
+fun List<DtcListItem>.markedWith(diff: DtcHistoryDiff): List<DtcListItem> =
+    map { item ->
+        if (item is DtcListItem.DtcRow && item.dtc.standardCode.isNotEmpty()) {
+            item.copy(isNew = diff.isNew(item.dtc), history = diff.history(item.dtc))
+        } else {
+            item
+        }
+    }
+
+// Appends the "no longer reported" section (header + rows when expanded); nothing when no code has gone.
+fun List<DtcListItem>.withGoneSection(
+    diff: DtcHistoryDiff,
+    expanded: Boolean
+): List<DtcListItem> {
+    if (diff.gone.isEmpty()) return this
+    val header = DtcListItem.GoneHeader(diff.gone.size, expanded)
+    val rows =
+        if (expanded) {
+            diff.gone.sortedForDisplay().map { DtcListItem.DtcRow(it, isGone = true, history = diff.history(it)) }
+        } else {
+            emptyList()
+        }
+    return this + header + rows
+}
+
+// The module a gone row came from, null for the default ECU: the gone section mixes modules.
+fun DiagnosticTroubleCode.moduleNameOrNull(): String? = moduleLabel().takeUnless { it == DTC_DEFAULT_MODULE_LABEL }
 
 // Always label results with a module header once a real (non-default) module is present, even if
 // only one module ended up reporting codes this scan (eg. you picked 2 modules but only one had

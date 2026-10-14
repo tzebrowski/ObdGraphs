@@ -338,6 +338,17 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   to ""). `vinFrom(metadata, vinLabels)` finds the VIN entry by the VIN PIDs' registry descriptions
   (`isVinRequest`), since keys are translated labels; null still means "no VIN reply". `NO_VIN` never counts as
   another vehicle and shows as "VIN not programmed".
+* **DTC history per vehicle** (`dtc/DtcHistory.kt`, `DtcHistoryDiff.kt`, `DtcHistoryStore.kt`; spec
+  `doc/specs/dtc-history.md`). Every `updateDTC` also appends a `DtcScan` to `files/dtc_history.json` (not prefs:
+  freeze frames), keyed by `historyKey(vin)` = upper-cased VIN or `UNKNOWN` — compare keys through `historyKey()`,
+  a raw lowercase constant once never matched. The list on screen is tied to its record by the read info's
+  timestamp: `DtcHistoryStore.diff(readInfo)` gives no markers unless that vehicle's newest scan has it.
+  Code identity is `itemKey()`. "New" / "gone" only count scans that *covered* the code (`DtcScan.covers`): a
+  module unchecked in the picker, a module scanned for the first time, or a default read vs a module scan must
+  not produce markers. `UNKNOWN` gets no markers, `NO_VIN` does (the 2.0 GME test car has no VIN programmed;
+  the user would never see the feature otherwise). AA gets "New" in the status line only, no gone section.
+  On the first device test the user saw "no difference": markers need a *change*, and the history lived in an
+  unmarked line of a row nobody knew expands. Hence the row chevron and the green "Code history" panel.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate
