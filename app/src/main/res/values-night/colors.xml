@@ -24,4 +24,5 @@
     <color name="dtc_state_history">#A1A1AA</color>
     <color name="dtc_state_mil">#FACC15</color>
     <color name="dtc_history_new">#34D399</color>
+    <color name="dtc_gone_header_fill">#1F4ADE80</color>
 </resources>

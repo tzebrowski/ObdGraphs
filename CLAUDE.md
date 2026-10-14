@@ -356,6 +356,12 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   the user would never see the feature otherwise). AA gets "New" in the status line only, no gone section.
   On the first device test the user saw "no difference": markers need a *change*, and the history lived in an
   unmarked line of a row nobody knew expands. Hence the row chevron and the green "Code history" panel.
+* **One DTC action at a time** (`dtc/DtcActionQueue.kt`). ObdMetrics' `scheduleDTCAction` clears its command buffer,
+  so an action scheduled while another runs cuts that one short, and both completions arrive. With per-action state
+  in single fields, Clear pressed during the connect scan stored the scan's result as the clear's and the clear's read
+  with no modules (list collapsed to "ECU"). Requests now wait in the queue; `onDTCCompleted` uses the finished
+  request's kind / modules and holds back `DATA_LOGGER_DTC_ACTION_COMPLETED` while another one waits. Logcat:
+  "DTC action completed: <kind>, ... next=<kind>". Any new DTC entry point must go through `submit()`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

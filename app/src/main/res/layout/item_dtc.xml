@@ -81,6 +81,20 @@
             style="@style/DtcBadge"
             android:text="@string/dtc.state.mil"
             android:visibility="gone" />
+
+        <!-- A "no longer reported" row: when its code was last reported, in place of the state chips. -->
+        <TextView
+            android:id="@+id/dtc_gone_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/dialog_text_secondary"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/dtc_state_history"
+            app:drawableTint="@color/dialog_text_secondary" />
     </LinearLayout>
 
     <LinearLayout

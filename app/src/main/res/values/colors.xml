@@ -32,4 +32,6 @@
     <color name="dtc_state_mil">#A16207</color>
     <!-- "New" chip: a code no earlier scan of the vehicle reported (DTC history). -->
     <color name="dtc_history_new">#047857</color>
+    <!-- "No longer reported" banner fill: philippine_green at ~12%. -->
+    <color name="dtc_gone_header_fill">#1F198843</color>
 </resources>

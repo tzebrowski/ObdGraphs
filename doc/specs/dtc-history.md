@@ -25,7 +25,8 @@ dialog markers and the "gone" section, EN/PL). `:automotive` ("new" marker in AA
 | Each DTC store (read, clear, connect scan) | Overwrites the one list | Also appends a scan record to the vehicle's history (capped) |
 | Clear | Freeze frames of cleared codes are lost | The scan before the clear stays in history, with its freeze frames |
 | Phone DTC list, code seen for the first time | No marker | "New" chip on the row (green, own icon), first in the chip line |
-| Phone DTC list, codes gone since the previous scan | Not shown | Collapsed section at the end: "No longer reported (N)"; tap expands. Rows greyed, module named, no state chips |
+| Phone DTC list, codes gone since the previous scan | Not shown | Collapsed section at the end behind a green banner (check icon, "No longer reported (N)", "Healed or cleared since the previous scan of their module", arrow); tap expands. Rows greyed, code struck through, module named, "Last reported <date>" in place of the state chips |
+| Clear / Refresh pressed while another DTC action runs (e.g. the connect scan) | ObdMetrics cut the running action short; its result was taken for the new one, whose read was then stored with no modules (list collapsed into one "ECU" group) | The new action waits and starts when the running one completes; each result is stored with its own kind and modules |
 | Phone expanded row | Code details | "Code history" panel on top: first / last reported, in N of M scans |
 | Phone code row | Expandable, nothing says so | Chevron at the row end, turned up while expanded |
 | AA DTC list | Codes only | Status line starts with a green "New" for new codes. No "gone" section: AA lists are short |
@@ -91,6 +92,22 @@ data class DtcScan(
 * **Saving before a clear needs no extra write.** The last scan before the clear is already the newest record.
   The roadmap's "save before clear" holds as long as the cap never drops the newest records.
 
+### B2. One DTC action at a time (`dtc/DtcActionQueue.kt`)
+
+Found on the car while testing: Clear pressed 6 s into the connect scan. ObdMetrics' `scheduleDTCAction` clears its
+command buffer, so the scan was cut short; its completion arrived first and was stored as the clear's result
+("codes left=12"), and the clear's own read then found the app's per-action fields reset and was stored with no
+scanned modules. `WorkflowOrchestrator` used single `pending*` fields for actions that can overlap.
+
+* `WorkflowOrchestrator` submits every request (`DtcRequest(kind, modules)`) to `DtcActionQueue`. Free → sent now;
+  busy → it waits. Only the newest waiting request is kept, but a read never replaces a waiting clear.
+* `onDTCCompleted` takes the finished request from the queue: its kind and module labels go to `updateDTC`. When a
+  request waited, it is sent (off the callback thread) and `DATA_LOGGER_DTC_ACTION_COMPLETED` is held back, so the
+  screen that asked for it keeps its overlay until its own result arrives.
+* An action with no completion stops blocking after `dtcActionTimeoutMs(modules)`; a refused schedule (not
+  `DTC_QUEUED`), a new connection and a disconnect reset the queue.
+* ObdMetrics should still not cancel a running DTC action silently; that guard belongs upstream (not done).
+
 ### C. Diff (`dtc/DtcHistoryDiff.kt`, pure)
 
 * Code identity = `DtcListItem.itemKey()` (module + display code), the same key the lists use.
@@ -136,6 +153,8 @@ data class DtcScan(
 * `DtcHistoryTest` (done): caps (per vehicle, vehicle eviction), identical connect scan replaced (and not replaced when
   state or kind differ), unknown key, round trip with freeze frames, corrupt file → empty, diff only for the newest
   scan, unknown vehicle without markers / `NO_VIN` with, unwritable file never throws.
+* `DtcActionQueueTest` (done): the logged sequence (connect scan, then clear) keeps each completion with its own
+  request and modules; a read does not replace a waiting clear; newest waiting read wins; timeout; reset.
 * `VehicleCapabilitiesManagerTest` (done): `updateDTC` appends with kind, modules, time and VIN key; the init read on
   connect is a `CONNECT` scan of the unknown vehicle.
 * `AdjustmentsStrategyTest` (done): properties off + DTC on → METADATA not requested, VIN reading requested; both off → neither.
@@ -146,7 +165,9 @@ data class DtcScan(
 * [ ] Uncheck a module, scan: its codes are not reported as gone.
 * [ ] Clear: the pre-clear scan, with its freeze frames, is still in `dtc_history.json` (`run-as`).
 * [ ] Ten connects without a code change: one connect record, not ten.
-* [ ] PL strings at phone width (chip and section header).
+* [ ] PL strings at phone width (chip and section header / banner).
+* [ ] Connect, press Clear within ~10 s (during the connect scan): the overlay stays until the clear's result, and
+  the list keeps its module groups.
 * [ ] Properties off: logcat init shows `22 F190` (or `09 02`) and no other metadata request; DTC read info shows the VIN.
 * Risk: a profile with neither 09 02 nor F190 gets no VIN; history then uses "unknown vehicle" (no markers).
 * Risk: a module that does not answer looks clean (see the roadmap's "To investigate"), so its codes show as gone.

@@ -782,6 +782,8 @@
     <string name="dtc.row.expand">Pokaż szczegóły</string>
     <string name="dtc.row.collapse">Ukryj szczegóły</string>
     <string name="dtc.history.gone_header">Już nie zgłaszane (%1$d)</string>
+    <string name="dtc.history.gone_subtitle">Naprawione lub skasowane od poprzedniego odczytu ich modułu</string>
+    <string name="dtc.history.last_reported">Ostatnio zgłoszony %1$s</string>
     <string name="dtc.share.state">Stan: %1$s</string>
     <string name="dtc.share.snapshot">Migawka (rekord %1$d):</string>
     <string name="dtc.share.unknown_did">Nieznany DID</string>
