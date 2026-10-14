@@ -277,7 +277,8 @@ internal class DiagnosticTroubleCodesScreen(
             DtcReadInfoLabels(
                 lastRead = stringProvider.getString(R.string.dtc_read_info),
                 vin = stringProvider.getString(R.string.dtc_read_info_vin),
-                otherVehicle = stringProvider.getString(R.string.dtc_read_info_other_vehicle)
+                otherVehicle = stringProvider.getString(R.string.dtc_read_info_other_vehicle),
+                noVin = stringProvider.getString(R.string.dtc_read_info_no_vin)
             )
         val time =
             DateUtils.formatDateTime(

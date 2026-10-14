@@ -263,7 +263,7 @@
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>
 
-    <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session.</string>
+    <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session. With trouble-code reading on, the VIN is read anyway.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will allow supported OBD2 PIDs/Sensors to be read during the session with the ECU.</string>
 
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
@@ -435,6 +435,7 @@
     <string name="pref.dtc.read_info">Last read: %1$s</string>
     <string name="pref.dtc.read_info_vin">VIN %1$s</string>
     <string name="pref.dtc.read_info_other_vehicle">another vehicle (VIN %1$s)</string>
+    <string name="pref.dtc.read_info_no_vin">VIN not programmed</string>
     <string name="pref.dtc.clear_outcome.cleared">Trouble codes cleared.</string>
     <string name="pref.dtc.clear_outcome.refused">The vehicle refused to clear the trouble codes. Turn the engine off, leave the ignition on and try again.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Trouble codes still reported after clearing: %1$s. The fault may still be present.</string>

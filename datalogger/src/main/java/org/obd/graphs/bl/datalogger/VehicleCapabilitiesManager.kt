@@ -23,11 +23,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfo
+import org.obd.graphs.bl.datalogger.dtc.isVinRequest
 import org.obd.graphs.bl.datalogger.dtc.vinFrom
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
+import org.obd.metrics.pid.PIDsGroup
 
 class VehicleMetadata(
     var name: String,
@@ -124,8 +126,25 @@ object VehicleCapabilitiesManager {
             null
         }
 
-    // The VIN of the vehicle from the last connection's metadata, if it reported one.
-    fun getCurrentVin(): String? = vinFrom(getVehicleMetadata().associate { it.name to it.value })
+    // The VIN of the vehicle from the last connection's metadata, if it reported one; NO_VIN when the
+    // VIN PID answered with an empty VIN.
+    fun getCurrentVin(): String? = vinFrom(getVehicleMetadata().associate { it.name to it.value }, vinMetadataLabels())
+
+    // Metadata is keyed by the PID description, so the VIN PIDs' descriptions tell which entry is the VIN
+    // even when its value is empty. VIN PIDs are matched by request (OBD-II 09 02, UDS 22 F190), as in
+    // ObdMetrics' VIN-only init read.
+    private fun vinMetadataLabels(): Set<String> =
+        try {
+            DataLoggerRepository
+                .getPidDefinitionRegistry()
+                .findBy(PIDsGroup.METADATA)
+                .filter { isVinRequest(it.mode, it.pid) }
+                .mapNotNull { it.description }
+                .toSet()
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to read VIN PID labels from the registry", e)
+            emptySet()
+        }
 
     fun getDtcScannedModules(): List<String> =
         try {

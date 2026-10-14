@@ -30,6 +30,7 @@
     <string name="dtc.read_info">Ostatni odczyt: %1$s</string>
     <string name="dtc.read_info_vin">VIN %1$s</string>
     <string name="dtc.read_info_other_vehicle">Inny pojazd (VIN %1$s)</string>
+    <string name="dtc.read_info_no_vin">VIN niezaprogramowany</string>
     <string name="dtc.clear_outcome.cleared">Kody błędów skasowane.</string>
     <string name="dtc.clear_outcome.refused">Pojazd odmówił skasowania. Wyłącz silnik, zostaw zapłon i ponów.</string>
     <string name="dtc.clear_outcome.codes_remain">Zgłaszane po skasowaniu: %1$d. Usterka może występować.</string>

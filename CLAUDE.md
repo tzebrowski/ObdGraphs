@@ -329,6 +329,15 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   document; the car sends 11. Trust a captured frame (logcat `TX: 19 04`), not the document.
 * A context reply that decodes to `null` is never published, so the DTC handler waits for it until its timeout (23 s
   for 30 codes; the scan looks hung). Snapshot and follow-up codecs return an error response instead.
+* **VIN for DTC stamping is read alone, not with the metadata group.** ObdMetrics
+  `Adjustments.vehicleMetadataVinReadingEnabled` (set from `dtcEnabled` in `AdjustmentsStrategy`) makes the init queue
+  only the VIN PIDs (`VinPids.isVin`, package-private in `api`, 09 02 / 22 F190, matched by request, never by label) while `fetchDeviceProperties` is off.
+  It must not add METADATA to `getRequestedGroups()` — that reads the whole group. Read on
+  every connect, so a change of car shows. Rejected by the user: enabling the whole group; reading it only until a VIN is stored.
+* **An empty VIN is `NO_VIN` (17 zeros), not null.** The 2.0 GME ECM can answer `22 F190` with 17 spaces (decoded
+  to ""). `vinFrom(metadata, vinLabels)` finds the VIN entry by the VIN PIDs' registry descriptions
+  (`isVinRequest`), since keys are translated labels; null still means "no VIN reply". `NO_VIN` never counts as
+  another vehicle and shows as "VIN not programmed".
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

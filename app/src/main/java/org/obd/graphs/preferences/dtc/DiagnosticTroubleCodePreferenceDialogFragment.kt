@@ -471,7 +471,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 DtcReadInfoLabels(
                     lastRead = getString(R.string.pref_dtc_read_info),
                     vin = getString(R.string.pref_dtc_read_info_vin),
-                    otherVehicle = getString(R.string.pref_dtc_read_info_other_vehicle)
+                    otherVehicle = getString(R.string.pref_dtc_read_info_other_vehicle),
+                    noVin = getString(R.string.pref_dtc_read_info_no_vin)
                 )
             )
         readInfo.visibility = View.VISIBLE

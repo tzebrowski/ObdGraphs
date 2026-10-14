@@ -51,7 +51,11 @@ class AdjustmentsStrategyTest : TestSetup() {
     @After
     fun tearDown() = unmockkAll()
 
-    private fun preferences(stnEnabled: Boolean = false) =
+    private fun preferences(
+        stnEnabled: Boolean = false,
+        metadataReadingEnabled: Boolean = true,
+        dtcEnabled: Boolean = true
+    ) =
         DataLoggerSettings(
             debugLogging = true,
             dragRacingCommandFrequency = 25,
@@ -72,9 +76,9 @@ class AdjustmentsStrategyTest : TestSetup() {
                 stnIgnorePIDsPriorities = true,
                 continueOnError = true,
                 connectionType = "bluetooth",
-                vehicleMetadataReadingEnabled = true,
+                vehicleMetadataReadingEnabled = metadataReadingEnabled,
                 vehicleCapabilitiesReadingEnabled = true,
-                dtcEnabled = true,
+                dtcEnabled = dtcEnabled,
                 dtcAutoCleanup = true,
                 resultsCacheEnabled = true
             )
@@ -102,6 +106,28 @@ class AdjustmentsStrategyTest : TestSetup() {
         assertTrue(adjustments.requestedGroups.contains(PIDsGroup.CAPABILITES))
         assertTrue(adjustments.requestedGroups.contains(PIDsGroup.DTC_READ))
         assertTrue(adjustments.requestedGroups.contains(PIDsGroup.DTC_CLEAR))
+    }
+
+    @Test
+    fun `DTC reading reads the VIN alone when metadata reading is off`() {
+        val preferences = preferences(metadataReadingEnabled = false, dtcEnabled = true)
+        every { dataLoggerSettings.instance() } returns preferences
+
+        val adjustments = strategy.findAdjustmentFor(QueryStrategyType.SHARED_QUERY, preferences)
+
+        assertFalse(adjustments.requestedGroups.contains(PIDsGroup.METADATA))
+        assertTrue(adjustments.isVehicleMetadataVinReadingEnabled)
+    }
+
+    @Test
+    fun `no metadata is read with metadata reading and DTC reading off`() {
+        val preferences = preferences(metadataReadingEnabled = false, dtcEnabled = false)
+        every { dataLoggerSettings.instance() } returns preferences
+
+        val adjustments = strategy.findAdjustmentFor(QueryStrategyType.SHARED_QUERY, preferences)
+
+        assertFalse(adjustments.requestedGroups.contains(PIDsGroup.METADATA))
+        assertFalse(adjustments.isVehicleMetadataVinReadingEnabled)
     }
 
     @Test

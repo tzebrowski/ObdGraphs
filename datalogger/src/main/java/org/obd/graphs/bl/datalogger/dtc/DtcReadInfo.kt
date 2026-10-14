@@ -26,17 +26,25 @@ data class DtcReadInfo(
     val vin: String? = null
 )
 
-// Only a known VIN on both sides counts - without one, "another vehicle" cannot be told apart
-// from "VIN not reported".
-fun DtcReadInfo.isFromOtherVehicle(currentVin: String?): Boolean =
-    vin != null && currentVin != null && !vin.equals(currentVin, ignoreCase = true)
+// Stands for "the vehicle answered the VIN request with an empty VIN" (an unprogrammed ECM sends 17
+// spaces), as opposed to null = no VIN reply at all. Not a valid VIN: it never names a vehicle.
+const val NO_VIN = "00000000000000000"
 
-// Localized format strings for summary(): "Last read: %1$s", "VIN %1$s", "another vehicle (VIN %1$s)".
+private fun String?.isKnownVin() = this != null && this != NO_VIN
+
+// Only a known VIN on both sides counts - without one, "another vehicle" cannot be told apart
+// from "VIN not reported" or "VIN not programmed".
+fun DtcReadInfo.isFromOtherVehicle(currentVin: String?): Boolean =
+    vin.isKnownVin() && currentVin.isKnownVin() && !vin.equals(currentVin, ignoreCase = true)
+
+// Localized format strings for summary(): "Last read: %1$s", "VIN %1$s", "another vehicle (VIN %1$s)",
+// and the plain text shown for NO_VIN ("VIN not programmed").
 // The parts are joined in code - string resources lose a leading space.
 data class DtcReadInfoLabels(
     val lastRead: String,
     val vin: String,
-    val otherVehicle: String
+    val otherVehicle: String,
+    val noVin: String
 )
 
 // One line for the top of the DTC list. formattedTime comes from the UI (locale-aware formatting).
@@ -54,6 +62,7 @@ fun DtcReadInfo.vehicleLine(
 ): String? =
     when {
         vin == null -> null
+        vin == NO_VIN -> labels.noVin
         isFromOtherVehicle(currentVin) -> labels.otherVehicle.format(vin)
         else -> labels.vin.format(vin)
     }
@@ -65,13 +74,32 @@ private val VIN_PATTERN = Regex("[A-HJ-NPR-Z0-9]{17}")
 // ("VIN", "Vehicle Identification Number", "Numer identyfikacyjny pojazdu", ...), so the label alone
 // cannot find it. A key mentioning VIN wins (its value may carry padding); otherwise any value that
 // is exactly a VIN - letters and digits mixed, so a numeric part number never qualifies.
-fun vinFrom(metadata: Map<String, String>): String? =
+// vinLabels are the labels of the profile's VIN PIDs (known from the registry): when one of them
+// answered but carries no VIN (blank or zero filled), the result is NO_VIN instead of null.
+fun vinFrom(
+    metadata: Map<String, String>,
+    vinLabels: Set<String> = emptySet()
+): String? =
     metadata.entries
         .filter { it.key.contains("vin", ignoreCase = true) }
-        .firstNotNullOfOrNull { VIN_PATTERN.find(it.value.uppercase())?.value }
+        .firstNotNullOfOrNull { VIN_PATTERN.find(it.value.uppercase())?.value?.takeIf { vin -> vin != NO_VIN } }
         ?: metadata.values
             .map { it.trim().uppercase() }
             .firstOrNull { VIN_PATTERN.matches(it) && it.any(Char::isLetter) && it.any(Char::isDigit) }
+        ?: NO_VIN.takeIf { vinLabels.any { label -> metadata[label]?.isEmptyVin() == true } }
+
+// The VIN request: OBD-II mode 09 PID 02 or UDS DID F190 (ISO 14229).
+fun isVinRequest(
+    mode: String?,
+    pid: String?
+): Boolean {
+    val m = mode?.trim()
+    val p = pid?.trim()
+    return (m == "09" && p == "02") || (m == "22" && p.equals("F190", ignoreCase = true))
+}
+
+// What an ECU without a programmed VIN sends: spaces (trimmed to nothing by the decoder), zeros or 0xFF.
+private fun String.isEmptyVin(): Boolean = all { it.isWhitespace() || it == '0' || it == '\u0000' || it == '\u00FF' }
 
 // What a clear achieved, judged from the clear reply and the read that follows it. The read is the
 // real verdict: an ECU can acknowledge the clear while an active fault sets the code again at once.

@@ -153,6 +153,9 @@ internal class AdjustmentsStrategy {
                     .enabled(preferences.adapter.stnExtensionsEnabled)
                     .build()
             ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)
+            // DTC reads are stamped and kept per vehicle by VIN; with metadata reading off the init still
+            // reads the VIN alone (one request), so a change of car is seen on every connect.
+            .vehicleMetadataVinReadingEnabled(preferences.adapter.dtcEnabled)
             .vehicleCapabilitiesReadingEnabled(preferences.adapter.vehicleCapabilitiesReadingEnabled)
             // With modules configured, the read on connect is a module scan scheduled by
             // WorkflowOrchestrator.onRunning; ObdMetrics' own read covers the default header only and
