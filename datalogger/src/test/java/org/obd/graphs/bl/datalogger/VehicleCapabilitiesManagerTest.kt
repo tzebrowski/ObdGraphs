@@ -40,6 +40,7 @@ import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
+import org.obd.metrics.command.dtc.DtcModuleStatus
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.robolectric.RobolectricTestRunner
@@ -297,5 +298,23 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
 
         assertEquals(DtcScanKind.CONNECT, DtcHistoryStore.scans(null).single().kind)
         assertEquals(DtcHistoryStore.scans(null), DtcHistoryStore.scans(UNKNOWN_VEHICLE))
+    }
+
+    @Test
+    fun `updateDTC stores how each module answered, in the pref and in the history scan`() {
+        val slot = slot<String>()
+        every { editor.putString(eq("pref.datalogger.dtc.module_status"), capture(slot)) } returns editor
+        val status = mapOf("Engine ECU" to DtcModuleStatus.RESPONDED, "ABS" to DtcModuleStatus.NO_RESPONSE)
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), listOf("Engine ECU", "ABS"), now = 3, moduleStatus = status)
+
+        every { sharedPrefs.getString(eq("pref.datalogger.dtc.module_status"), any()) } returns slot.captured
+        assertEquals(status, VehicleCapabilitiesManager.getDtcModuleStatus())
+        assertEquals(status, DtcHistoryStore.scans(null).single().moduleStatus)
+    }
+
+    @Test
+    fun `a list stored before module statuses were recorded has none`() {
+        assertTrue(VehicleCapabilitiesManager.getDtcModuleStatus().isEmpty())
     }
 }

@@ -360,6 +360,13 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   the user would never see the feature otherwise). AA gets "New" in the status line only, no gone section.
   On the first device test the user saw "no difference": markers need a *change*, and the history lived in an
   unmarked line of a row nobody knew expands. Hence the row chevron and the green "Code history" panel.
+* **A module that did not answer is not clean** (spec `doc/specs/dtc-module-response.md`). ObdMetrics reports
+  `DtcModuleStatus` per scanned module via the three-argument `Lifecycle.onDTCCompleted` (the app overrides only that
+  one). Inside ObdMetrics, NO DATA / adapter errors never reach the DTC handler (`ObdCommandHandler` drops them), so
+  "no reply" = `NO_RESPONSE`; a refusal (`7F 19`) is marked by the read codec returning `DtcReadReply` (a `List` with a
+  status). Wrong turn: classifying `reply.getRaw()` - raw is published only with `collectRawConnectorResponseEnabled`,
+  so every module read as `NO_RESPONSE`. App: stored in `pref.datalogger.dtc.module_status` and `DtcScan.moduleStatus`;
+  `DtcScan.covers` skips unanswered modules, so they never produce "no longer reported".
 * **One DTC action at a time** (`dtc/DtcActionQueue.kt`). ObdMetrics' `scheduleDTCAction` clears its command buffer,
   so an action scheduled while another runs cuts that one short, and both completions arrive. With per-action state
   in single fields, Clear pressed during the connect scan stored the scan's result as the clear's and the clear's read

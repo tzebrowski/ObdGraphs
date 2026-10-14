@@ -19,6 +19,7 @@ package org.obd.graphs.bl.datalogger.dtc
 import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.SnapshotPID
+import org.obd.metrics.command.dtc.DtcModuleStatus
 
 // Shared by the phone DTC dialog and the AA DTC screen - keep one copy of the grouping/ordering.
 
@@ -30,11 +31,13 @@ const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
 sealed class DtcListItem {
     // codeCount: the module's code rows, 0 for a module scanned clean. summary / expanded come from
     // withModuleSummaries / collapsedBy. None of them is part of the row identity.
+    // response: how the module answered the scan (RESPONDED for lists stored before it was recorded).
     data class ModuleHeader(
         val module: String,
         val codeCount: Int = 0,
         val summary: DtcModuleSummary = DtcModuleSummary(),
-        val expanded: Boolean = true
+        val expanded: Boolean = true,
+        val response: DtcModuleStatus = DtcModuleStatus.RESPONDED
     ) : DtcListItem()
 
     // isNew / isGone / history come from the vehicle's DTC history (DtcHistoryDiff); none of them is part
@@ -52,7 +55,12 @@ sealed class DtcListItem {
 
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
     // that reported nothing. Keyed so DiffUtil can tell per-module messages apart.
-    data class Message(val key: String, val text: String) : DtcListItem()
+    // status: RESPONDED for good news ("no codes"), otherwise why the module has no list.
+    data class Message(
+        val key: String,
+        val text: String,
+        val status: DtcModuleStatus = DtcModuleStatus.RESPONDED
+    ) : DtcListItem()
 
     // Every subclass is a data class; declared here so DiffUtil's areContentsTheSame (and lint's
     // DiffUtilEquals check, which cannot see subclasses across modules) rely on value equality.
@@ -182,8 +190,14 @@ fun List<DiagnosticTroubleCode>.toDtcListItems(
     scannedModules: List<String>,
     noCodesMessage: String,
     noCodesForModuleMessage: String,
-    unknownModuleLabel: String
+    unknownModuleLabel: String,
+    moduleStatus: Map<String, DtcModuleStatus> = emptyMap(),
+    noResponseMessage: String = noCodesForModuleMessage,
+    refusedMessage: String = noCodesForModuleMessage
 ): List<DtcListItem> {
+    // A module missing from moduleStatus answered (lists stored before statuses were recorded).
+    fun responseOf(label: String) = moduleStatus[label] ?: DtcModuleStatus.RESPONDED
+
     val realModules =
         (mapNotNull { it.module } + scannedModules)
             .filter { it.isNotBlank() && !it.equals(DTC_DEFAULT_MODULE, ignoreCase = true) }
@@ -219,17 +233,33 @@ fun List<DiagnosticTroubleCode>.toDtcListItems(
     val codesByModule =
         groupBy { it.groupLabel() }
             .mapValues { (_, codes) -> codes.distinctBy { it.standardCode to it.failureType?.code } }
-    // Modules reporting codes first - they are what the list is opened for - then the clean ones, each by name.
+    // Modules reporting codes first - they are what the list is opened for - then the ones that did not answer
+    // (their codes are unknown), then the clean ones, each by name.
     val labels =
         (codesByModule.keys + scannedModules.filter { it.isNotBlank() })
             .distinct()
-            .sortedWith(compareBy<String> { if (codesByModule[it].isNullOrEmpty()) 1 else 0 }.thenBy { it })
+            .sortedWith(
+                compareBy<String> {
+                    when {
+                        !codesByModule[it].isNullOrEmpty() -> 0
+                        responseOf(it) != DtcModuleStatus.RESPONDED -> 1
+                        else -> 2
+                    }
+                }.thenBy { it }
+            )
 
     return labels.flatMap { label ->
         val codes = codesByModule[label].orEmpty()
-        listOf(DtcListItem.ModuleHeader(label, codes.size)) +
+        val response = responseOf(label)
+        listOf(DtcListItem.ModuleHeader(label, codes.size, response = response)) +
             if (codes.isEmpty()) {
-                listOf(DtcListItem.Message(key = label, text = noCodesForModuleMessage))
+                val text =
+                    when (response) {
+                        DtcModuleStatus.RESPONDED -> noCodesForModuleMessage
+                        DtcModuleStatus.REFUSED -> refusedMessage
+                        DtcModuleStatus.NO_RESPONSE -> noResponseMessage
+                    }
+                listOf(DtcListItem.Message(key = label, text = text, status = response))
             } else {
                 codes.map { DtcListItem.DtcRow(it) }
             }
@@ -356,3 +386,7 @@ fun List<SnapshotPID>?.toDidLines(
         val units = did.definition?.units?.trim().orEmpty()
         listOf("$description:", value, units).filter { it.isNotEmpty() }.joinToString(" ")
     }
+
+// Modules of the stored read that did not answer it (no response or refused), in scan order: for the shared report.
+fun Map<String, DtcModuleStatus>.unansweredModules(): List<String> =
+    filterValues { it != DtcModuleStatus.RESPONDED }.keys.toList()

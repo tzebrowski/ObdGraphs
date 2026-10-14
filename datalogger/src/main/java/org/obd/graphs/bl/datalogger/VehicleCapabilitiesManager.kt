@@ -32,6 +32,7 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
+import org.obd.metrics.command.dtc.DtcModuleStatus
 import org.obd.metrics.pid.PIDsGroup
 
 class VehicleMetadata(
@@ -44,6 +45,7 @@ private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_DTC = "pref.datalogger.dtc"
 private const val PREF_DTC_SCANNED_MODULES = "pref.datalogger.dtc.scanned_modules"
 private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
+private const val PREF_DTC_MODULE_STATUS = "pref.datalogger.dtc.module_status"
 
 object VehicleCapabilitiesManager {
     private val mapper =
@@ -107,7 +109,8 @@ object VehicleCapabilitiesManager {
         dtc: Set<DiagnosticTroubleCode>,
         scannedModules: List<String> = emptyList(),
         now: Long = System.currentTimeMillis(),
-        kind: DtcScanKind = DtcScanKind.READ
+        kind: DtcScanKind = DtcScanKind.READ,
+        moduleStatus: Map<String, DtcModuleStatus> = emptyMap()
     ) {
         val readInfo = DtcReadInfo(timestamp = now, vin = getCurrentVin())
         Prefs.edit().apply {
@@ -118,9 +121,10 @@ object VehicleCapabilitiesManager {
             putString(PREF_DTC, mapper.writeValueAsString(dtc))
             putString(PREF_DTC_SCANNED_MODULES, mapper.writeValueAsString(scannedModules))
             putString(PREF_DTC_READ_INFO, mapper.writeValueAsString(readInfo))
+            putString(PREF_DTC_MODULE_STATUS, mapper.writeValueAsString(moduleStatus))
             commit()
         }
-        DtcHistoryStore.append(readInfo.vin, DtcScan(now, kind, scannedModules, dtc.toList()))
+        DtcHistoryStore.append(readInfo.vin, DtcScan(now, kind, scannedModules, dtc.toList(), moduleStatus))
     }
 
     // Null for codes stored before the read info existed: their age is unknown, not "now".
@@ -151,6 +155,16 @@ object VehicleCapabilitiesManager {
         } catch (e: Throwable) {
             Log.e(LOG_TAG, "Failed to read VIN PID labels from the registry", e)
             emptySet()
+        }
+
+    // How each scanned module answered the stored read; empty for lists stored before it was recorded (= all answered).
+    fun getDtcModuleStatus(): Map<String, DtcModuleStatus> =
+        try {
+            val preferences = Prefs.getString(PREF_DTC_MODULE_STATUS, "")!!
+            if (preferences.isEmpty()) emptyMap() else mapper.readValue<Map<String, DtcModuleStatus>>(preferences)
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to read DTC module status from preferences", e)
+            emptyMap()
         }
 
     fun getDtcScannedModules(): List<String> =

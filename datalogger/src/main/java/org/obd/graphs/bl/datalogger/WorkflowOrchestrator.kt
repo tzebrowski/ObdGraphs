@@ -44,6 +44,7 @@ import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.Command
 import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
+import org.obd.metrics.command.dtc.DtcModuleStatus
 import org.obd.metrics.command.group.CommandGroup
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.routine.RoutineCommand
@@ -97,9 +98,12 @@ internal class WorkflowOrchestrator internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
+        // moduleStatus: how each scanned module answered (ObdMetrics); a module that did not answer is shown as such
+        // instead of as clean, and is left out of the history comparison.
         override fun onDTCCompleted(
             dtc: Set<DiagnosticTroubleCode>,
-            status: DiagnosticTroubleCodeClearStatus?
+            status: DiagnosticTroubleCodeClearStatus?,
+            moduleStatus: Map<String, DtcModuleStatus>?
         ) {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                 Log.d(LOG_TAG, "Received onDTCCompleted event.")
@@ -109,8 +113,8 @@ internal class WorkflowOrchestrator internal constructor() {
             // for one nobody asked for, stored as a plain read like before.
             val (finished, next) = dtcActions.complete()
             val kind = finished?.kind ?: DtcScanKind.READ
-            Log.i(LOG_TAG, "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}")
-            VehicleCapabilitiesManager.updateDTC(dtc, finished?.moduleLabels.orEmpty(), kind = kind)
+            Log.i(LOG_TAG, "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}, modules=$moduleStatus")
+            VehicleCapabilitiesManager.updateDTC(dtc, finished?.moduleLabels.orEmpty(), kind = kind, moduleStatus = moduleStatus.orEmpty())
 
             if (kind == DtcScanKind.CONNECT && dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
 

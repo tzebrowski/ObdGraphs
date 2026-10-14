@@ -19,6 +19,8 @@
     <string name="dtc.no_codes">No diagnostic trouble codes found.</string>
     <string name="dtc.unknown_module">Unknown module</string>
     <string name="dtc.no_codes_for_module">No codes reported.</string>
+    <string name="dtc.no_response_for_module">No response from the module.</string>
+    <string name="dtc.refused_for_module">The module refused the read.</string>
     <string name="dtc.state.active">Active</string>
     <string name="dtc.state.stored">Stored</string>
     <string name="dtc.state.pending">Pending</string>
