@@ -41,7 +41,10 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
+import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_NEW_CODES
+import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.registerReceiver
@@ -109,6 +112,13 @@ internal class SurfaceRendererScreen(
                 intent: Intent?
             ) {
                 when (intent?.action) {
+                    // Only while this screen is shown; the phone notification covers the rest.
+                    DATA_LOGGER_DTC_NEW_CODES -> {
+                        intent.getSerializableCompat<ArrayList<String>>()?.takeIf { it.isNotEmpty() }?.let {
+                            toast.show(carContext, carContext.getString(R.string.aa_dtc_new_codes, it.size, it.joinToString(", ")))
+                        }
+                    }
+
                     AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> {
                         switchSurfaceRenderer(getSurfaceRendererType())
                     }
@@ -292,6 +302,7 @@ internal class SurfaceRendererScreen(
             it.addAction(GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             it.addAction(LANGUAGE_CHANGE_EVENT)
+            it.addAction(DATA_LOGGER_DTC_NEW_CODES)
         }
 
         val screenBehavior = screenBehaviorController.getScreenBehavior(screenId) ?: return

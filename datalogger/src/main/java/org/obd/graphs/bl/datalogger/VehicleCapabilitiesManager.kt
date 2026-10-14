@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
+import org.obd.graphs.bl.datalogger.dtc.DtcNewCodesAnnouncer
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfo
 import org.obd.graphs.bl.datalogger.dtc.DtcScan
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
@@ -104,7 +105,7 @@ object VehicleCapabilitiesManager {
     // Stamped with the time and the VIN of the vehicle connected now: metadata is rewritten on every
     // connect (updateCapabilities) before any DTC read of that connection completes.
     // Also appended to the vehicle's history (DtcHistoryStore) with the same timestamp, which ties the
-    // stored list to its history record.
+    // stored list to its history record. Codes new to the vehicle after a connect scan are announced (DtcNewCodes).
     internal fun updateDTC(
         dtc: Set<DiagnosticTroubleCode>,
         scannedModules: List<String> = emptyList(),
@@ -125,6 +126,7 @@ object VehicleCapabilitiesManager {
             commit()
         }
         DtcHistoryStore.append(readInfo.vin, DtcScan(now, kind, scannedModules, dtc.toList(), moduleStatus))
+        DtcNewCodesAnnouncer.announce(kind, dtc, DtcHistoryStore.diff(readInfo))
     }
 
     // Null for codes stored before the read info existed: their age is unknown, not "now".

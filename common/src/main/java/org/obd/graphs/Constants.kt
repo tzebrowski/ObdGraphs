@@ -73,3 +73,7 @@ const val GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE = "gdrive.authorization.no_creden
 const val REQUEST_NOTIFICATION_PERMISSIONS = "org.obd.graphs.logger.permissions.request_notifications"
 
 const val DATA_LOGGER_AUTO_CONNECT_EVENT = "data.logger.auto_connect.start"
+
+// MainActivity extra naming the screen to open (launcher shortcuts, notifications).
+const val EXTRA_NAVIGATE_TO = "org.obd.graphs.EXTRA_NAVIGATE_TO"
+const val NAVIGATE_TO_DTC = "dtc"

@@ -71,7 +71,6 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_BLE_NOT_REACHABLE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_AVAILABLE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
@@ -92,7 +91,6 @@ import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.integrations.gcp.gdrive.DriveSync
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.preferences.profile.PROFILE_NAME_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.registerReceiver
@@ -245,11 +243,6 @@ internal fun MainActivity.receive(intent: Intent?) {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_attached, usbDevice.productName!!)
         }
-
-        DATA_LOGGER_DTC_AVAILABLE ->
-            if (Prefs.isEnabled("pref.dtc.show_notification")) {
-                toast(R.string.pref_pids_group_dtc_available_message)
-            }
 
         REQUEST_PERMISSIONS_BT -> Permissions.requestBluetoothPermissions(this)
         TOOLBAR_HIDE -> Toolbar.hide(this, true)
@@ -412,7 +405,6 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(DATA_LOGGER_ERROR_EVENT)
         it.addAction(DATA_LOGGER_CONNECTED_EVENT)
         it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
-        it.addAction(DATA_LOGGER_DTC_AVAILABLE)
         it.addAction(Intent.ACTION_BATTERY_CHANGED)
         it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
         it.addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)

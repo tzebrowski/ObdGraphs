@@ -19,6 +19,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | Readiness monitors (initial #3): phone screen, clear warning, DTC list row | `readiness-monitors.md` |
 | Modules that do not answer: "no response" / "refused" instead of clean, left out of history markers | `dtc-module-response.md` |
 | History per vehicle (initial #4) with VIN on every connect (added later #8): new / gone markers | `dtc-history.md` |
+| New-code notification after the connect scan (initial #6): phone notification + AA toast | `dtc-new-code-notification.md` |
 
 ## Planned
 
@@ -59,6 +60,8 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
   know why. Show them as their own section with an explanation.
 
 ### 4. Tell the driver when the connect scan finds new codes (App, needs 1) — initial #6
+
+**Done** (2026-10-14), spec `dtc-new-code-notification.md`.
 
 * The connect scan already runs and raises `DATA_LOGGER_DTC_AVAILABLE`, but only the phone reacts, and it does not
   know which codes are new.

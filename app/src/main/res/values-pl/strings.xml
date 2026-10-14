@@ -266,7 +266,6 @@
     <string name="pref.pids.search_hint">Szukaj PIDów...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>
-    <string name="pref.pids.group.dtc.available_message">DTC są dostępne. Sprawdź sekcję DTC</string>
 
     <string name="pref.pids.group.enableMetadataReadings_summary">Po włączeniu metadane pojazdu będą pobierane podczas sesji z ECU. Gdy odczyt kodów błędów jest włączony, VIN jest odczytywany zawsze.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Włączenie tej opcji pozwoli na odczyt obsługiwanych OBD2 PID/Czujników podczas sesji z ECU.</string>
@@ -454,8 +453,8 @@
     <string name="pref.dtc.read_snapshots_summary">Odczytuje dodatkowe dane kontekstowe z momentu wystąpienia DTC.</string>
     <string name="pref.dtc.enable_dtc_reading">Włącz automatyczny odczyt DTC</string>
     <string name="pref.dtc.enable_dtc_reading_summary">Odczytuj kody błędów diagnostycznych (DTC) podczas połączenia z ECU.</string>
-    <string name="pref.dtc.show_notification">Włącz powiadomienia DTC</string>
-    <string name="pref.dtc.show_notification_summary">Wysyła alert po znalezieniu nowych kodów błędów diagnostycznych (DTC).</string>
+    <string name="pref.dtc.notify_new_codes">Powiadamiaj o nowych kodach błędów</string>
+    <string name="pref.dtc.notify_new_codes_summary">Po połączeniu pokazuje powiadomienie (i komunikat w Android Auto), gdy skanowanie znajdzie kody, których ten pojazd wcześniej nie zgłaszał. Wymaga uprawnienia do powiadomień.</string>
 
     <string name="pref.dtc.clean_dialog.confirm_message">Czy na pewno chcesz skasować wszystkie DTC z ECU?\n\nUpewnij się, że silnik jest WYŁĄCZONY, ale stacyjka jest WŁĄCZONA.\n\nKasowanie zeruje też monitory gotowości: samochód będzie niegotowy, dopóki nie wykonają się ponownie.</string>
     <string name="pref.dtc.clean_dialog.send_message">Komenda kasowania wysłana do ECU</string>

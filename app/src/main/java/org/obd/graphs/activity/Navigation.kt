@@ -28,6 +28,7 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_OPEN_DIALOG
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.preferences.updateInt
@@ -39,9 +40,16 @@ internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN = "pref.navigation.last_v
 internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED =
     "pref.views.navigation.navigate_last_visited_view"
 
-fun navigateToPreferencesScreen(navigateToPrefKey: String) {
+// openDialog: also open the screen's main dialog (PreferencesFragment.openScreenDialogFor), e.g. from a notification.
+fun navigateToPreferencesScreen(
+    navigateToPrefKey: String,
+    openDialog: Boolean = false
+) {
     (getContext() as MainActivity).navController {
-        it.navigate(R.id.nav_preferences, bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey))
+        it.navigate(
+            R.id.nav_preferences,
+            bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey, PREFERENCE_SCREEN_OPEN_DIALOG to openDialog)
+        )
     }
 }
 
