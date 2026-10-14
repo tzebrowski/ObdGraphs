@@ -34,6 +34,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.obd.graphs.Notifications
 import org.obd.graphs.bl.TestSetup
+import org.obd.graphs.bl.datalogger.dtc.DtcAnnouncement
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_NOTIFY_NEW_CODES
@@ -338,19 +339,19 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
 
         connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a"), dtc("P0200", "b")))
 
-        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, arrayListOf("P0200")) }
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0200"), firstScan = false)) }
         verify(exactly = 1) { Notifications.show(any(), any(), any(), any(), any(), any(), "P0200", any(), any(), any()) }
     }
 
     @Test
-    fun `codes seen before, a vehicle's first scan and a manual read announce nothing`() {
+    fun `the first scan announces its codes, the same codes on the next connect and a manual read do not`() {
         every { sharedPrefs.getBoolean(PREF_DTC_NOTIFY_NEW_CODES, true) } returns true
 
         connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a")))
         VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "a"), dtc("P0200", "b")), now = 10, kind = DtcScanKind.READ)
 
-        verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
-        verify(exactly = 0) { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0100"), firstScan = true)) }
     }
 
     @Test

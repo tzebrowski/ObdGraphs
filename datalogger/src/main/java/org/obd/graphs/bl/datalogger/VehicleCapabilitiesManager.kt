@@ -105,7 +105,7 @@ object VehicleCapabilitiesManager {
     // Stamped with the time and the VIN of the vehicle connected now: metadata is rewritten on every
     // connect (updateCapabilities) before any DTC read of that connection completes.
     // Also appended to the vehicle's history (DtcHistoryStore) with the same timestamp, which ties the
-    // stored list to its history record. Codes new to the vehicle after a connect scan are announced (DtcNewCodes).
+    // stored list to its history record. After a connect scan its codes are announced when new to the vehicle (DtcNewCodes).
     internal fun updateDTC(
         dtc: Set<DiagnosticTroubleCode>,
         scannedModules: List<String> = emptyList(),
@@ -125,8 +125,9 @@ object VehicleCapabilitiesManager {
             putString(PREF_DTC_MODULE_STATUS, mapper.writeValueAsString(moduleStatus))
             commit()
         }
+        val firstScan = DtcHistoryStore.scans(readInfo.vin).isEmpty()
         DtcHistoryStore.append(readInfo.vin, DtcScan(now, kind, scannedModules, dtc.toList(), moduleStatus))
-        DtcNewCodesAnnouncer.announce(kind, dtc, DtcHistoryStore.diff(readInfo))
+        DtcNewCodesAnnouncer.announce(kind, readInfo.vin, dtc, firstScan)
     }
 
     // Null for codes stored before the read info existed: their age is unknown, not "now".

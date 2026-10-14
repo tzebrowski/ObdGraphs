@@ -54,4 +54,6 @@
     <string name="aa_stat_avg">avg</string>
     <string name="aa_stat_max">max</string>
     <string name="aa_dtc_new_codes">New trouble codes (%1$d): %2$s</string>
+    <string name="aa_dtc_codes_found">Trouble codes found (%1$d): %2$s</string>
+    <string name="aa_dtc_codes_more">+%1$d more</string>
 </resources>

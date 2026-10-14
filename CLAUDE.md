@@ -374,7 +374,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   request's kind / modules and holds back `DATA_LOGGER_DTC_ACTION_COMPLETED` while another one waits. Logcat:
   "DTC action completed: <kind>, ... next=<kind>". Any new DTC entry point must go through `submit()`.
 * **New-code notification** (`dtc/DtcNewCodes.kt`, spec `doc/specs/dtc-new-code-notification.md`): `updateDTC` ends
-  with `DtcNewCodesAnnouncer.announce`, so every connect path is covered; only `CONNECT` scans, only `diff.isNew` codes.
+  with `DtcNewCodesAnnouncer.announce`, so every connect path is covered; only `CONNECT` scans with a VIN reply; all
+  codes on the vehicle's first scan, else only `diff.isNew` ones. "First scan" is read before `DtcHistoryStore.append`:
+  history replaces a connect scan equal to the previous one, so "one scan stored" re-announced unchanged codes forever.
   Posted from `:datalogger` (service), not from `MainActivity`'s receivers, which die with the activity. Gate
   `pref.dtc.notify_new_codes` (default on; the old `pref.dtc.show_notification` toast on *any* codes is gone). AA gets
   `DATA_LOGGER_DTC_NEW_CODES` as a CarToast on `SurfaceRendererScreen` only. A notification's `PendingIntent` needs its

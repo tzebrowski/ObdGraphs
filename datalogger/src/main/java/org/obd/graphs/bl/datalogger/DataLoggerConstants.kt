@@ -29,7 +29,7 @@ const val DATA_LOGGER_DTC_ACTION_COMPLETED = "data.logger.dtc.action.completed.e
 
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
 
-// Codes the connect scan found for the first time on this vehicle; extras: ArrayList<String>, one line per code.
+// The connect scan found codes to tell the driver about; extras: dtc.DtcAnnouncement.
 const val DATA_LOGGER_DTC_NEW_CODES = "data.logger.dtc.new_codes"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
 const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"

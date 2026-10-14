@@ -25,7 +25,9 @@ the DTC list from the notification, old toast removed), `:automotive` (car toast
 | Tap on the notification | — | Opens the app on the DTC settings screen with the DTC list dialog open |
 | Android Auto, main (surface) screen | Nothing | Car toast "New trouble codes (N): P0123-1A · Engine ECU, ..." |
 | Manual read / clear | Nothing | Nothing (the result is on screen) |
-| Vehicle's first scan, vehicle without a VIN reply | Toast (if on) | Nothing: no history to compare with |
+| Vehicle's first scan (e.g. after a fresh install) | Toast (if on) | Notification "Trouble codes found (N)" with every code; AA "Trouble codes found" |
+| Vehicle without a VIN reply | Toast (if on) | Nothing: its codes may come from any car (`NO_VIN`, a VIN not programmed, does announce) |
+| Many codes | — | Notification lists 8, then "+N more"; AA toast lists 3 |
 | Setting | "Enable DTC notifications", off | "Notify about new trouble codes", **on** by default |
 
 "New" is the history's definition (`DtcHistoryDiff.newCodes`): in this scan, in no earlier scan of the vehicle that
@@ -42,12 +44,16 @@ not count as having looked.
 ## Implementation
 
 * `dtc/DtcNewCodes.kt` (`:datalogger`):
-  * `dtcCodesToAnnounce(kind, dtc, diff)`: empty unless `kind == CONNECT`; otherwise the codes `diff.isNew`, in
-    display order (`sortedForDisplay`).
+  * `dtcAnnouncement(kind, vin, dtc, scans, firstScan)`: null unless `kind == CONNECT` and the vehicle has a history
+    key other than `UNKNOWN`; on the vehicle's first scan every code, otherwise the codes `diff.isNew`, in display
+    order (`sortedForDisplay`). Result `DtcAnnouncement(lines, firstScan)`, also the broadcast's extras.
+  * `firstScan` is read in `updateDTC` **before** the scan is appended. Wrong turn: "history holds one scan" after
+    appending. History replaces a connect scan equal to the previous one, so a vehicle whose codes never change keeps
+    one scan, and every connect announced all its codes again (caught by `VehicleCapabilitiesManagerTest`).
   * `announcementLine()`: display code + module name (none for the default module).
   * `DtcNewCodesAnnouncer.announce`: called at the end of `VehicleCapabilitiesManager.updateDTC` with
-    `DtcHistoryStore.diff(readInfo)`, so both connect paths (module scan, ObdMetrics init read) are covered. When the
-    setting is on: broadcast `DATA_LOGGER_DTC_NEW_CODES` (extras: `ArrayList<String>` of lines) and post the
+    the read's VIN, so both connect paths (module scan, ObdMetrics init read) are covered. When the
+    setting is on: broadcast `DATA_LOGGER_DTC_NEW_CODES` (extras: `DtcAnnouncement`) and post the
     notification. The notification is posted from the service process, not the activity's receiver: the activity's
     receivers are gone once it is destroyed, the service runs while driving. A failure to notify is logged and never
     breaks storing the scan.
@@ -70,11 +76,12 @@ not count as having looked.
 
 ## Tests
 
-* `DtcNewCodesTest` (done): connect scan announces only new codes; read / clear announce nothing; first scan,
-  repeated / intermittent codes and an empty diff announce nothing; display order; line format.
+* `DtcNewCodesTest` (done): connect scan announces only new codes; read / clear announce nothing; first scan announces
+  every code (none when empty); no VIN reply announces nothing, `NO_VIN` does; known codes are not announced again;
+  display order; line format; line cap.
 * `VehicleCapabilitiesManagerTest` (done), end to end through `updateDTC` and the history file: new code → broadcast
-  with its line + notification; known codes, first scan and a manual read → nothing; setting off → nothing; no VIN →
-  nothing.
+  with its line + notification; first scan → all codes, the same codes on the next connect (history replaces the
+  scan) and a manual read → nothing; setting off → nothing; no VIN → nothing.
 * [ ] Phone: connect with a new code on the car (or after deleting it from `files/dtc_history.json`): notification,
   tap opens the DTC list. Quick tap check without the car:
   `adb shell am start -n <pkg>/org.obd.graphs.activity.MainActivity --es org.obd.graphs.EXTRA_NAVIGATE_TO dtc`.
@@ -82,8 +89,6 @@ not count as having looked.
 
 ## Risks
 
-* A vehicle's first scan has no baseline, so codes already present then are never announced. They are in the list,
-  just not "new".
 * A CarToast is short and easy to miss; a heads-up AA notification (`CarAppExtender`) is the alternative if drivers
   miss it.
 

@@ -67,4 +67,6 @@ To provide full functionality, please allow the following in the next steps:<br/
     <string name="dtc_new_codes_channel">Trouble codes</string>
     <string name="dtc_new_codes_channel_description">New trouble codes found by the scan on connect</string>
     <string name="dtc_new_codes_title">New trouble codes (%1$d)</string>
+    <string name="dtc_codes_found_title">Trouble codes found (%1$d)</string>
+    <string name="dtc_codes_more">+%1$d more</string>
 </resources>
