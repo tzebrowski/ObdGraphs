@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.car.app.CarContext
@@ -60,6 +61,7 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
+import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.DtcState
@@ -69,6 +71,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
+import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
@@ -221,7 +224,8 @@ internal class DiagnosticTroubleCodesScreen(
                     noCodesMessage = stringProvider.getString(R.string.dtc_no_codes),
                     noCodesForModuleMessage = stringProvider.getString(R.string.dtc_no_codes_for_module),
                     unknownModuleLabel = stringProvider.getString(R.string.dtc_unknown_module)
-                ).toDtcSections()
+                ).markedWith(DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo()))
+                .toDtcSections()
 
         val builder =
             ListTemplate
@@ -277,7 +281,8 @@ internal class DiagnosticTroubleCodesScreen(
             DtcReadInfoLabels(
                 lastRead = stringProvider.getString(R.string.dtc_read_info),
                 vin = stringProvider.getString(R.string.dtc_read_info_vin),
-                otherVehicle = stringProvider.getString(R.string.dtc_read_info_other_vehicle)
+                otherVehicle = stringProvider.getString(R.string.dtc_read_info_other_vehicle),
+                noVin = stringProvider.getString(R.string.dtc_read_info_no_vin)
             )
         val time =
             DateUtils.formatDateTime(
@@ -302,14 +307,19 @@ internal class DiagnosticTroubleCodesScreen(
                 leadingRow?.let { addItem(it) }
                 items.forEach { item ->
                     when (item) {
-                        is DtcListItem.DtcRow -> addItem(row(item.dtc))
+                        is DtcListItem.DtcRow -> addItem(row(item.dtc, item.isNew))
                         is DtcListItem.Message -> addItem(Row.Builder().setTitle(item.text).setImage(icon(R.drawable.dtc_ok, CarColor.GREEN)).build())
-                        is DtcListItem.ModuleHeader -> Unit
+                        is DtcListItem.ModuleHeader, is DtcListItem.GoneHeader -> Unit
                     }
                 }
             }.build()
 
-    private fun row(dtc: DiagnosticTroubleCode): Row {
+    // isNew: no earlier scan of the vehicle reported the code (DTC history). AA has no chips and its lists are
+    // short, so "New" leads the status line and there is no "no longer reported" section.
+    private fun row(
+        dtc: DiagnosticTroubleCode,
+        isNew: Boolean = false
+    ): Row {
         val description = dtc.displayDescription()
         if (dtc.standardCode.isEmpty()) {
             return Row.Builder().setTitle(description).build()
@@ -331,7 +341,10 @@ internal class DiagnosticTroubleCodesScreen(
                 .setImage(icon(R.drawable.dtc_fault, color))
                 .addText(description)
 
-        status.statusLine(statusLabels())?.let { builder.addText(if (color == CarColor.DEFAULT) it else colored(it, color)) }
+        val statusLine = status.statusLine(statusLabels())?.let { if (color == CarColor.DEFAULT) it else colored(it, color) }
+        val newLabel = if (isNew) colored(stringProvider.getString(R.string.dtc_history_new), CarColor.GREEN) else null
+        val parts = listOfNotNull(newLabel, statusLine)
+        if (parts.isNotEmpty()) builder.addText(parts.reduce { line, part -> TextUtils.concat(line, " · ", part) })
 
         return builder.build()
     }

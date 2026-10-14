@@ -263,7 +263,7 @@
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>
 
-    <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session.</string>
+    <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session. With trouble-code reading on, the VIN is read anyway.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will allow supported OBD2 PIDs/Sensors to be read during the session with the ECU.</string>
 
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
@@ -435,6 +435,7 @@
     <string name="pref.dtc.read_info">Last read: %1$s</string>
     <string name="pref.dtc.read_info_vin">VIN %1$s</string>
     <string name="pref.dtc.read_info_other_vehicle">another vehicle (VIN %1$s)</string>
+    <string name="pref.dtc.read_info_no_vin">VIN not programmed</string>
     <string name="pref.dtc.clear_outcome.cleared">Trouble codes cleared.</string>
     <string name="pref.dtc.clear_outcome.refused">The vehicle refused to clear the trouble codes. Turn the engine off, leave the ignition on and try again.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Trouble codes still reported after clearing: %1$s. The fault may still be present.</string>
@@ -995,6 +996,20 @@
     <string name="dtc.state.pending.explanation">Pending: detected recently, not yet confirmed. It is confirmed if it happens again.</string>
     <string name="dtc.state.history.explanation">History: occurred since the last clear, no longer pending or stored.</string>
     <string name="dtc.state.mil.explanation">MIL: the module requests the check-engine lamp.</string>
+    <string name="dtc.history.new">New</string>
+    <string name="dtc.history.new.explanation">New: not reported by any earlier scan of this vehicle.</string>
+    <string name="dtc.history.title">Code history</string>
+    <string name="dtc.legend.toggle">What do the labels mean?</string>
+    <string name="dtc.legend.gone">No longer reported: codes the previous scan of their module had and this one has not (healed or cleared). Shown at the end of the list.</string>
+    <string name="dtc.history.first_seen">First reported: %1$s</string>
+    <string name="dtc.history.last_seen">Last reported: %1$s</string>
+    <string name="dtc.history.seen_in">Reported in %1$d of %2$d scans of this module</string>
+    <string name="dtc.row.expand">Show details</string>
+    <string name="dtc.row.collapse">Hide details</string>
+    <string name="dtc.history.gone_header">No longer reported (%1$d)</string>
+    <string name="dtc.module.clean">No trouble codes</string>
+    <string name="dtc.history.gone_title">No longer reported</string>
+    <string name="dtc.history.last_reported">Last reported %1$s</string>
     <string name="dtc.share.state">State: %1$s</string>
     <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
     <string name="dtc.share.unknown_did">Unknown DID</string>

@@ -38,6 +38,58 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dtc_read_info" />
 
+    <!-- Legend of the row chips (New, Active, Stored, Pending, History, MIL). Collapsed by default; the choice is kept. -->
+    <TextView
+        android:id="@+id/dtc_legend_toggle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:text="@string/dtc.legend.toggle"
+        android:textColor="?android:attr/textColorLink"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_readiness_link" />
+
+    <LinearLayout
+        android:id="@+id/dtc_legend"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/surface_variant"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_legend_toggle">
+
+        <!-- A table, so the chip column is as wide as its widest chip and every explanation starts in one column.
+             Measuring the chips in code does not work: their start icon is resolved only once attached. -->
+        <TableLayout
+            android:id="@+id/dtc_legend_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="1"
+            android:stretchColumns="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/dtc.legend.gone"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="13sp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/header_code"
         android:layout_width="wrap_content"
@@ -49,7 +101,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_readiness_link" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_legend" />
 
     <TextView
         android:id="@+id/header_description"
@@ -62,7 +114,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/header_code"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_readiness_link" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_legend" />
 
     <View
         android:id="@+id/header_divider"

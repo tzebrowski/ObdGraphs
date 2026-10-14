@@ -23,6 +23,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TableLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -41,16 +43,21 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
+import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
+import org.obd.graphs.bl.datalogger.dtc.collapsedBy
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
+import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
+import org.obd.graphs.bl.datalogger.dtc.withGoneSection
+import org.obd.graphs.bl.datalogger.dtc.withModuleSummaries
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
 import org.obd.graphs.bl.readiness.ReadinessSnapshot
 import org.obd.graphs.getSerializableCompat
@@ -60,12 +67,15 @@ import org.obd.graphs.preferences.dri.DiagnosticRequestIdFragment
 import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.readiness.ReadinessDialogFragment
+import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.toast
 import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+
+private const val PREF_DTC_LEGEND_EXPANDED = "pref.dtc.legend.expanded"
 
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
@@ -75,6 +85,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var recyclerView: RecyclerView
     private lateinit var readInfo: TextView
     private lateinit var readinessLink: TextView
+
+    // The "no longer reported" section starts collapsed each time the dialog opens.
+    private var goneExpanded = false
+
+    // Modules the user expanded / collapsed while the dialog is open; the others follow isExpandedByDefault().
+    private val moduleExpanded = mutableMapOf<String, Boolean>()
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -107,8 +123,20 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         readInfo = root.findViewById(R.id.dtc_read_info)
         readinessLink = root.findViewById(R.id.dtc_readiness_link)
         attachReadinessLink()
+        attachLegend(root)
 
-        adapter = DiagnosticTroubleCodeViewAdapter(context)
+        adapter =
+            DiagnosticTroubleCodeViewAdapter(
+                context,
+                onGoneHeaderClick = {
+                    goneExpanded = !goneExpanded
+                    refreshList()
+                },
+                onModuleHeaderClick = { header ->
+                    moduleExpanded[header.module] = !header.expanded
+                    refreshList()
+                }
+            )
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
@@ -436,13 +464,19 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
     private fun refreshList() {
         val codes = diagnosticTroubleCodes()
+        // New / gone markers from the vehicle's DTC history, for the list stored with this read info.
+        val history = DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo())
         adapter.submitList(
-            codes.toDtcListItems(
-                scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
-                noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
-                noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
-                unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
-            )
+            codes
+                .toDtcListItems(
+                    scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
+                    noCodesMessage = getString(R.string.pref_dtc_no_dtc_found),
+                    noCodesForModuleMessage = getString(R.string.pref_dtc_no_dtc_found_for_module),
+                    unknownModuleLabel = getString(R.string.pref_dtc_unknown_module)
+                ).markedWith(history)
+                .withModuleSummaries()
+                .collapsedBy { moduleExpanded[it] }
+                .withGoneSection(history, goneExpanded)
         )
 
         refreshReadInfo()
@@ -471,10 +505,40 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 DtcReadInfoLabels(
                     lastRead = getString(R.string.pref_dtc_read_info),
                     vin = getString(R.string.pref_dtc_read_info_vin),
-                    otherVehicle = getString(R.string.pref_dtc_read_info_other_vehicle)
+                    otherVehicle = getString(R.string.pref_dtc_read_info_other_vehicle),
+                    noVin = getString(R.string.pref_dtc_read_info_no_vin)
                 )
             )
         readInfo.visibility = View.VISIBLE
+    }
+
+    // What the row chips mean, from the explanations the expanded rows use. Collapsed by default; the choice is kept.
+    private fun attachLegend(root: View) {
+        val toggle = root.findViewById<TextView>(R.id.dtc_legend_toggle)
+        val legend = root.findViewById<LinearLayout>(R.id.dtc_legend)
+        val inflater = LayoutInflater.from(requireContext())
+
+        val table = root.findViewById<TableLayout>(R.id.dtc_legend_table)
+        DTC_LEGEND.forEach { (label, style) ->
+            val row = inflater.inflate(R.layout.item_dtc_legend_row, table, false)
+            row.findViewById<TextView>(R.id.dtc_legend_badge).showBadge(getString(label), style)
+            row.findViewById<TextView>(R.id.dtc_legend_text).text = legendExplanation(getString(style.explanation))
+            table.addView(row)
+        }
+
+        fun show(expanded: Boolean) {
+            legend.visibility = if (expanded) View.VISIBLE else View.GONE
+            toggle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (expanded) R.drawable.dtc_expand_less else R.drawable.dtc_expand_more, 0)
+            toggle.compoundDrawableTintList = toggle.textColors
+            toggle.contentDescription = getString(if (expanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)
+        }
+
+        show(Prefs.getBoolean(PREF_DTC_LEGEND_EXPANDED, false))
+        toggle.setOnClickListener {
+            val expanded = legend.visibility != View.VISIBLE
+            Prefs.updateBoolean(PREF_DTC_LEGEND_EXPANDED, expanded)
+            show(expanded)
+        }
     }
 
     // Monitors and codes come from the same self-tests (a failed monitor stores a code; a clear resets both), so the

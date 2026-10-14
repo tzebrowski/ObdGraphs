@@ -29,6 +29,8 @@
     <string name="dtc.read_info">Last read: %1$s</string>
     <string name="dtc.read_info_vin">VIN %1$s</string>
     <string name="dtc.read_info_other_vehicle">Another vehicle (VIN %1$s)</string>
+    <string name="dtc.read_info_no_vin">VIN not programmed</string>
+    <string name="dtc.history.new">New</string>
     <string name="dtc.clear_outcome.cleared">Trouble codes cleared.</string>
     <string name="dtc.clear_outcome.refused">Vehicle refused to clear codes. Engine off, ignition on, then retry.</string>
     <string name="dtc.clear_outcome.codes_remain">Still reported after clearing: %1$d. The fault may be present.</string>

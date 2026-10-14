@@ -268,7 +268,7 @@
     <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>
     <string name="pref.pids.group.dtc.available_message">DTC są dostępne. Sprawdź sekcję DTC</string>
 
-    <string name="pref.pids.group.enableMetadataReadings_summary">Po włączeniu metadane pojazdu będą pobierane podczas sesji z ECU.</string>
+    <string name="pref.pids.group.enableMetadataReadings_summary">Po włączeniu metadane pojazdu będą pobierane podczas sesji z ECU. Gdy odczyt kodów błędów jest włączony, VIN jest odczytywany zawsze.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Włączenie tej opcji pozwoli na odczyt obsługiwanych OBD2 PID/Czujników podczas sesji z ECU.</string>
 
     <string name="pref.screen.fps">Częstotliwość odświeżania ekranu (FPS)</string>
@@ -439,6 +439,7 @@
     <string name="pref.dtc.read_info">Ostatni odczyt: %1$s</string>
     <string name="pref.dtc.read_info_vin">VIN %1$s</string>
     <string name="pref.dtc.read_info_other_vehicle">inny pojazd (VIN %1$s)</string>
+    <string name="pref.dtc.read_info_no_vin">VIN niezaprogramowany</string>
     <string name="pref.dtc.clear_outcome.cleared">Kody błędów skasowane.</string>
     <string name="pref.dtc.clear_outcome.refused">Pojazd odmówił skasowania kodów błędów. Wyłącz silnik, pozostaw włączony zapłon i spróbuj ponownie.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Kody błędów zgłaszane po skasowaniu: %1$s. Usterka może nadal występować.</string>
@@ -770,6 +771,20 @@
     <string name="dtc.state.pending.explanation">Oczekujący: wykryty niedawno, jeszcze niepotwierdzony. Zostanie potwierdzony, jeśli się powtórzy.</string>
     <string name="dtc.state.history.explanation">Historyczny: wystąpił od ostatniego kasowania, już nie oczekuje ani nie jest zapisany.</string>
     <string name="dtc.state.mil.explanation">MIL: moduł żąda zapalenia kontrolki silnika.</string>
+    <string name="dtc.history.new">Nowy</string>
+    <string name="dtc.history.new.explanation">Nowy: nie wystąpił w żadnym wcześniejszym odczycie tego pojazdu.</string>
+    <string name="dtc.history.title">Historia kodu</string>
+    <string name="dtc.legend.toggle">Co oznaczają etykiety?</string>
+    <string name="dtc.legend.gone">Już nie zgłaszane: kody, które poprzedni odczyt ich modułu zawierał, a obecny już nie (naprawione lub skasowane). Na końcu listy.</string>
+    <string name="dtc.history.first_seen">Pierwsze wystąpienie: %1$s</string>
+    <string name="dtc.history.last_seen">Ostatnie wystąpienie: %1$s</string>
+    <string name="dtc.history.seen_in">Zgłoszony w %1$d z %2$d odczytów tego modułu</string>
+    <string name="dtc.row.expand">Pokaż szczegóły</string>
+    <string name="dtc.row.collapse">Ukryj szczegóły</string>
+    <string name="dtc.history.gone_header">Już nie zgłaszane (%1$d)</string>
+    <string name="dtc.module.clean">Brak kodów usterek</string>
+    <string name="dtc.history.gone_title">Już nie zgłaszane</string>
+    <string name="dtc.history.last_reported">Ostatnio zgłoszony %1$s</string>
     <string name="dtc.share.state">Stan: %1$s</string>
     <string name="dtc.share.snapshot">Migawka (rekord %1$d):</string>
     <string name="dtc.share.unknown_did">Nieznany DID</string>

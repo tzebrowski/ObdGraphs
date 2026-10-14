@@ -23,6 +23,9 @@ import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
+import org.obd.graphs.bl.datalogger.dtc.DtcActionQueue
+import org.obd.graphs.bl.datalogger.dtc.DtcRequest
+import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
@@ -102,23 +105,27 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.d(LOG_TAG, "Received onDTCCompleted event.")
             }
 
-            VehicleCapabilitiesManager.updateDTC(dtc, pendingDtcModules.orEmpty())
-            pendingDtcModules = null
+            // The completion belongs to the request in flight (one at a time, see DtcActionQueue); null
+            // for one nobody asked for, stored as a plain read like before.
+            val (finished, next) = dtcActions.complete()
+            val kind = finished?.kind ?: DtcScanKind.READ
+            Log.i(LOG_TAG, "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}")
+            VehicleCapabilitiesManager.updateDTC(dtc, finished?.moduleLabels.orEmpty(), kind = kind)
 
-            if (pendingConnectScan) {
-                pendingConnectScan = false
-                if (dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
-            }
+            if (kind == DtcScanKind.CONNECT && dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
 
-            // A clear is always followed by a read, so dtc are the codes left after it.
-            if (pendingDtcClear) {
-                pendingDtcClear = false
-                val outcome = dtcClearOutcome(status, dtc)
-                Log.i(LOG_TAG, "DTC clear completed. Status=$status, codes left=${dtc.size}, outcome=$outcome")
-                if (outcome.resetsReadiness()) Prefs.updateString(PREF_READINESS_LAST, null)
-                sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED, outcome)
-            } else {
-                sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
+            when {
+                // A request waited for this one: the screen that asked for it keeps waiting for its result.
+                // Sent off ObdMetrics' callback thread, which is the DTC handler finishing this action.
+                next != null -> runAsync(wait = false) { send(next) }
+                // A clear is always followed by a read, so dtc are the codes left after it.
+                kind == DtcScanKind.CLEAR -> {
+                    val outcome = dtcClearOutcome(status, dtc)
+                    Log.i(LOG_TAG, "DTC clear completed. Status=$status, codes left=${dtc.size}, outcome=$outcome")
+                    if (outcome.resetsReadiness()) Prefs.updateString(PREF_READINESS_LAST, null)
+                    sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED, outcome)
+                }
+                else -> sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
             }
         }
 
@@ -160,6 +167,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             status = WorkflowStatus.Connected
+            dtcActions.reset()
             val connectScanModules =
                 if (dataLoggerSettings.instance().adapter.dtcEnabled) {
                     dtcConnectScanModules(DiagnosticRequestIDManager.getMappings())
@@ -186,6 +194,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         override fun onStopped() {
             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+            dtcActions.reset()
 
             status = WorkflowStatus.Disconnected
 
@@ -281,19 +290,8 @@ internal class WorkflowOrchestrator internal constructor() {
 
     // selectedModules restricts the scan to the given Diagnostic Request ID entry names (their
     // requestKey, eg. "ABS") - empty means the plain default single-ECU scan, no module targeting.
-    // Module labels of the DTC action in flight, handed to onDTCCompleted so the list can show
-    // scanned modules that reported nothing. Stays null for automatic reads.
-    @Volatile
-    private var pendingDtcModules: List<String>? = null
-
-    // Whether the DTC action in flight is a clear: its completion carries a DtcClearOutcome extra.
-    @Volatile
-    private var pendingDtcClear = false
-
-    // Whether the DTC action in flight is the read on connect: it raises DATA_LOGGER_DTC_AVAILABLE,
-    // as ObdMetrics' own read on connect did (VehicleCapabilitiesManager.updateCapabilities).
-    @Volatile
-    private var pendingConnectScan = false
+    // DTC actions run one at a time: ObdMetrics cancels a running one when another is scheduled.
+    private val dtcActions = DtcActionQueue()
 
     // ObdMetrics counts the workflow as running only once all its threads are up, which is after
     // onRunning returns - scheduling from inside the callback would be refused as NOT_RUNNING.
@@ -312,29 +310,30 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) {
-        val readAction = getReadDtcAction()
-        val modules = getDtcModules(selectedModules)
-        pendingDtcModules = modules.map { it.mode }
-        pendingDtcClear = true
-        pendingConnectScan = false
-        Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction, modules=$modules")
-        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction), modules)
-        Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
-    }
+    fun scheduleDTCCleanup(selectedModules: Set<String> = emptySet()) =
+        submit(DtcRequest(DtcScanKind.CLEAR, getDtcModules(selectedModules)))
 
     fun scheduleDTCRead(
         selectedModules: Set<String> = emptySet(),
         connectScan: Boolean = false
-    ) {
+    ) = submit(DtcRequest(if (connectScan) DtcScanKind.CONNECT else DtcScanKind.READ, getDtcModules(selectedModules)))
+
+    private fun submit(request: DtcRequest) {
+        if (dtcActions.submit(request)) {
+            send(request)
+        } else {
+            Log.i(LOG_TAG, "DTC action ${request.kind} waits for the one in flight")
+        }
+    }
+
+    private fun send(request: DtcRequest) {
         val readAction = getReadDtcAction()
-        val modules = getDtcModules(selectedModules)
-        pendingDtcModules = modules.map { it.mode }
-        pendingDtcClear = false
-        pendingConnectScan = connectScan
-        Log.i(LOG_TAG,"Schedule DTC read action=$readAction, modules=$modules")
-        val result = workflow.scheduleDTCAction(setOf(readAction), modules)
-        Log.i(LOG_TAG,"DTC read is scheduled: $result")
+        val actions = if (request.kind == DtcScanKind.CLEAR) setOf(DtcAction.CLEAR, readAction) else setOf(readAction)
+        Log.i(LOG_TAG, "Schedule DTC ${request.kind}. Read action=$readAction, modules=${request.modules}")
+        val result = workflow.scheduleDTCAction(actions, request.modules)
+        Log.i(LOG_TAG, "DTC ${request.kind} is scheduled: $result")
+        // Refused (e.g. not connected): no completion will come, so nothing is in flight.
+        if (result != WorkflowExecutionStatus.DTC_QUEUED) dtcActions.reset()
     }
 
     // Reuses the Diagnostic Request ID table as the DTC scan target list, restricted to whichever

@@ -28,9 +28,27 @@ const val DTC_DEFAULT_MODULE = "ecu"
 const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
 
 sealed class DtcListItem {
-    // codeCount: the module's code rows, 0 for a module scanned clean. Not part of the row identity.
-    data class ModuleHeader(val module: String, val codeCount: Int = 0) : DtcListItem()
-    data class DtcRow(val dtc: DiagnosticTroubleCode) : DtcListItem()
+    // codeCount: the module's code rows, 0 for a module scanned clean. summary / expanded come from
+    // withModuleSummaries / collapsedBy. None of them is part of the row identity.
+    data class ModuleHeader(
+        val module: String,
+        val codeCount: Int = 0,
+        val summary: DtcModuleSummary = DtcModuleSummary(),
+        val expanded: Boolean = true
+    ) : DtcListItem()
+
+    // isNew / isGone / history come from the vehicle's DTC history (DtcHistoryDiff); none of them is part
+    // of the row identity. isGone: a row of the "no longer reported" section.
+    data class DtcRow(
+        val dtc: DiagnosticTroubleCode,
+        val isNew: Boolean = false,
+        val isGone: Boolean = false,
+        val history: DtcCodeHistory? = null
+    ) : DtcListItem()
+
+    // Header of the "no longer reported" section: codes the previous scan of their module had and this one
+    // has not (healed or cleared). Collapsed by default; expanded is part of the content, so a toggle rebinds it.
+    data class GoneHeader(val codeCount: Int, val expanded: Boolean = false) : DtcListItem()
 
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
     // that reported nothing. Keyed so DiffUtil can tell per-module messages apart.
@@ -58,7 +76,100 @@ fun DtcListItem.itemKey(): String =
         is DtcListItem.ModuleHeader -> "header:$module"
         is DtcListItem.DtcRow -> "dtc:${dtc.moduleLabel()}:${dtc.displayCode()}"
         is DtcListItem.Message -> "message:$key"
+        is DtcListItem.GoneHeader -> "gone-header"
     }
+
+// What a module header shows about its codes, so a collapsed module still says what it holds:
+// codes per state (no-state codes left out), how many request the MIL, how many are new.
+data class DtcModuleSummary(
+    val byState: Map<DtcState, Int> = emptyMap(),
+    val milCount: Int = 0,
+    val newCount: Int = 0
+)
+
+// Fills each module header's summary from the code rows below it (call after markedWith, for the new count).
+fun List<DtcListItem>.withModuleSummaries(): List<DtcListItem> {
+    val rowsByHeader = mutableMapOf<Int, MutableList<DtcListItem.DtcRow>>()
+    var header = -1
+    forEachIndexed { index, item ->
+        when (item) {
+            is DtcListItem.ModuleHeader -> header = index
+            is DtcListItem.GoneHeader -> header = -1
+            is DtcListItem.DtcRow ->
+                if (header >= 0 && item.dtc.standardCode.isNotEmpty()) rowsByHeader.getOrPut(header) { mutableListOf() }.add(item)
+            is DtcListItem.Message -> Unit
+        }
+    }
+    return mapIndexed { index, item ->
+        if (item is DtcListItem.ModuleHeader) {
+            val rows = rowsByHeader[index].orEmpty()
+            val statuses = rows.map { it.dtc.dtcStatus() }
+            item.copy(
+                summary =
+                DtcModuleSummary(
+                    byState = statuses.filter { it.state != DtcState.UNKNOWN }.groupingBy { it.state }.eachCount(),
+                    milCount = statuses.count { it.warningLamp },
+                    newCount = rows.count { it.isNew }
+                )
+            )
+        } else {
+            item
+        }
+    }
+}
+
+// Modules start expanded when they reported codes, collapsed when clean: a 13-module scan was mostly
+// "no trouble codes reported" lines. A collapsed module keeps its header (count + summary) and drops its rows.
+fun DtcListItem.ModuleHeader.isExpandedByDefault(): Boolean = codeCount > 0
+
+// expanded: the user's choice per module name, null where the user has not toggled it.
+fun List<DtcListItem>.collapsedBy(expanded: (String) -> Boolean?): List<DtcListItem> {
+    var hide = false
+    return mapNotNull { item ->
+        when (item) {
+            is DtcListItem.ModuleHeader -> {
+                val isExpanded = expanded(item.module) ?: item.isExpandedByDefault()
+                hide = !isExpanded
+                item.copy(expanded = isExpanded)
+            }
+            // The gone section has its own toggle.
+            is DtcListItem.GoneHeader -> {
+                hide = false
+                item
+            }
+            else -> item.takeUnless { hide }
+        }
+    }
+}
+
+// Marks the rows of the list on screen with what the vehicle's history says about them.
+fun List<DtcListItem>.markedWith(diff: DtcHistoryDiff): List<DtcListItem> =
+    map { item ->
+        if (item is DtcListItem.DtcRow && item.dtc.standardCode.isNotEmpty()) {
+            item.copy(isNew = diff.isNew(item.dtc), history = diff.history(item.dtc))
+        } else {
+            item
+        }
+    }
+
+// Appends the "no longer reported" section (header + rows when expanded); nothing when no code has gone.
+fun List<DtcListItem>.withGoneSection(
+    diff: DtcHistoryDiff,
+    expanded: Boolean
+): List<DtcListItem> {
+    if (diff.gone.isEmpty()) return this
+    val header = DtcListItem.GoneHeader(diff.gone.size, expanded)
+    val rows =
+        if (expanded) {
+            diff.gone.sortedForDisplay().map { DtcListItem.DtcRow(it, isGone = true, history = diff.history(it)) }
+        } else {
+            emptyList()
+        }
+    return this + header + rows
+}
+
+// The module a gone row came from, null for the default ECU: the gone section mixes modules.
+fun DiagnosticTroubleCode.moduleNameOrNull(): String? = moduleLabel().takeUnless { it == DTC_DEFAULT_MODULE_LABEL }
 
 // Always label results with a module header once a real (non-default) module is present, even if
 // only one module ended up reporting codes this scan (eg. you picked 2 modules but only one had

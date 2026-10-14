@@ -284,6 +284,17 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   wrongly once a row was expanded, pushing the chips ~850 px down. Space below a view is padding, not margin, if
   anything ever constrains to a barrier again (barriers ignore margins). Check bounds with
   `adb shell uiautomator dump`, not by eye.
+* Phone module sections collapse (`collapsedBy`, `withModuleSummaries` in `DtcListItem.kt`): clean modules start
+  collapsed, modules with codes expanded; the header's mini chips (state counts, MIL, new, check when clean) are what a
+  collapsed module shows. Every section header, "no longer reported" included, uses `item_dtc_module_header.xml` and
+  `addMiniBadge` (user wants them alike; a separate banner was rejected). Keep header-only data (`summary`, `expanded`) out of `itemKey()`, or a toggle reads as a new row.
+* The phone DTC dialog has a chip legend (`DTC_LEGEND` in the adapter, toggle under the readiness row). A new chip
+  must be added there too; `DtcLegendTest` fails if a state badge is missing. Legend texts are the `*.explanation`
+  strings with the "Label: " prefix cut, so keep that prefix format in every language.
+  Equal chip widths come from a `TableLayout`, not code: a chip measured before it is attached leaves out its start
+  icon (relative compound drawables resolve on attach), ~70 px short. Wrong turn: anchoring by text replace in
+  `dialog_dtc.xml` re-pointed the wrong view and made a constraint loop (toggle drawn behind the buttons) — check
+  every `toBottomOf` after editing a ConstraintLayout chain.
 * "Timeout waiting for response" on a DTC read/clear is the phone overlay (`ScreenLockManager`), not the car:
   `ScreenLock.timeoutMs` defaults to 10 s, a 13-module scan takes ~13 s. DTC actions pass `dtcActionTimeoutMs(modules)`;
   any other long action behind the overlay needs its own timeout too. The logcat shows the scan completing regardless.
@@ -329,6 +340,32 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   document; the car sends 11. Trust a captured frame (logcat `TX: 19 04`), not the document.
 * A context reply that decodes to `null` is never published, so the DTC handler waits for it until its timeout (23 s
   for 30 codes; the scan looks hung). Snapshot and follow-up codecs return an error response instead.
+* **VIN for DTC stamping is read alone, not with the metadata group.** ObdMetrics
+  `Adjustments.vehicleMetadataVinReadingEnabled` (set from `dtcEnabled` in `AdjustmentsStrategy`) makes the init queue
+  only the VIN PIDs (`VinPids.isVin`, package-private in `api`, 09 02 / 22 F190, matched by request, never by label) while `fetchDeviceProperties` is off.
+  It must not add METADATA to `getRequestedGroups()` — that reads the whole group. Read on
+  every connect, so a change of car shows. Rejected by the user: enabling the whole group; reading it only until a VIN is stored.
+* **An empty VIN is `NO_VIN` (17 zeros), not null.** The 2.0 GME ECM can answer `22 F190` with 17 spaces (decoded
+  to ""). `vinFrom(metadata, vinLabels)` finds the VIN entry by the VIN PIDs' registry descriptions
+  (`isVinRequest`), since keys are translated labels; null still means "no VIN reply". `NO_VIN` never counts as
+  another vehicle and shows as "VIN not programmed".
+* **DTC history per vehicle** (`dtc/DtcHistory.kt`, `DtcHistoryDiff.kt`, `DtcHistoryStore.kt`; spec
+  `doc/specs/dtc-history.md`). Every `updateDTC` also appends a `DtcScan` to `files/dtc_history.json` (not prefs:
+  freeze frames), keyed by `historyKey(vin)` = upper-cased VIN or `UNKNOWN` — compare keys through `historyKey()`,
+  a raw lowercase constant once never matched. The list on screen is tied to its record by the read info's
+  timestamp: `DtcHistoryStore.diff(readInfo)` gives no markers unless that vehicle's newest scan has it.
+  Code identity is `itemKey()`. "New" / "gone" only count scans that *covered* the code (`DtcScan.covers`): a
+  module unchecked in the picker, a module scanned for the first time, or a default read vs a module scan must
+  not produce markers. `UNKNOWN` gets no markers, `NO_VIN` does (the 2.0 GME test car has no VIN programmed;
+  the user would never see the feature otherwise). AA gets "New" in the status line only, no gone section.
+  On the first device test the user saw "no difference": markers need a *change*, and the history lived in an
+  unmarked line of a row nobody knew expands. Hence the row chevron and the green "Code history" panel.
+* **One DTC action at a time** (`dtc/DtcActionQueue.kt`). ObdMetrics' `scheduleDTCAction` clears its command buffer,
+  so an action scheduled while another runs cuts that one short, and both completions arrive. With per-action state
+  in single fields, Clear pressed during the connect scan stored the scan's result as the clear's and the clear's read
+  with no modules (list collapsed to "ECU"). Requests now wait in the queue; `onDTCCompleted` uses the finished
+  request's kind / modules and holds back `DATA_LOGGER_DTC_ACTION_COMPLETED` while another one waits. Logcat:
+  "DTC action completed: <kind>, ... next=<kind>". Any new DTC entry point must go through `submit()`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

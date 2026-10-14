@@ -22,12 +22,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfo
+import org.obd.graphs.bl.datalogger.dtc.DtcScan
+import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
+import org.obd.graphs.bl.datalogger.dtc.isVinRequest
 import org.obd.graphs.bl.datalogger.dtc.vinFrom
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
+import org.obd.metrics.pid.PIDsGroup
 
 class VehicleMetadata(
     var name: String,
@@ -84,7 +89,7 @@ object VehicleCapabilitiesManager {
             commit()
         }
         if (dataLoggerSettings.instance().adapter.dtcEnabled && !moduleScanOnConnect) {
-            updateDTC(vehicleCapabilities.dtc)
+            updateDTC(vehicleCapabilities.dtc, kind = DtcScanKind.CONNECT)
             if (vehicleCapabilities.dtc.isNotEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
             }
@@ -96,10 +101,13 @@ object VehicleCapabilitiesManager {
     // Empty for the default single-ECU scan and for automatic reads.
     // Stamped with the time and the VIN of the vehicle connected now: metadata is rewritten on every
     // connect (updateCapabilities) before any DTC read of that connection completes.
+    // Also appended to the vehicle's history (DtcHistoryStore) with the same timestamp, which ties the
+    // stored list to its history record.
     internal fun updateDTC(
         dtc: Set<DiagnosticTroubleCode>,
         scannedModules: List<String> = emptyList(),
-        now: Long = System.currentTimeMillis()
+        now: Long = System.currentTimeMillis(),
+        kind: DtcScanKind = DtcScanKind.READ
     ) {
         val readInfo = DtcReadInfo(timestamp = now, vin = getCurrentVin())
         Prefs.edit().apply {
@@ -112,6 +120,7 @@ object VehicleCapabilitiesManager {
             putString(PREF_DTC_READ_INFO, mapper.writeValueAsString(readInfo))
             commit()
         }
+        DtcHistoryStore.append(readInfo.vin, DtcScan(now, kind, scannedModules, dtc.toList()))
     }
 
     // Null for codes stored before the read info existed: their age is unknown, not "now".
@@ -124,8 +133,25 @@ object VehicleCapabilitiesManager {
             null
         }
 
-    // The VIN of the vehicle from the last connection's metadata, if it reported one.
-    fun getCurrentVin(): String? = vinFrom(getVehicleMetadata().associate { it.name to it.value })
+    // The VIN of the vehicle from the last connection's metadata, if it reported one; NO_VIN when the
+    // VIN PID answered with an empty VIN.
+    fun getCurrentVin(): String? = vinFrom(getVehicleMetadata().associate { it.name to it.value }, vinMetadataLabels())
+
+    // Metadata is keyed by the PID description, so the VIN PIDs' descriptions tell which entry is the VIN
+    // even when its value is empty. VIN PIDs are matched by request (OBD-II 09 02, UDS 22 F190), as in
+    // ObdMetrics' VIN-only init read.
+    private fun vinMetadataLabels(): Set<String> =
+        try {
+            DataLoggerRepository
+                .getPidDefinitionRegistry()
+                .findBy(PIDsGroup.METADATA)
+                .filter { isVinRequest(it.mode, it.pid) }
+                .mapNotNull { it.description }
+                .toSet()
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to read VIN PID labels from the registry", e)
+            emptySet()
+        }
 
     fun getDtcScannedModules(): List<String> =
         try {

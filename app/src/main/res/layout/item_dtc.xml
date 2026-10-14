@@ -31,8 +31,21 @@
         android:textAllCaps="false"
         android:textColor="@color/gray_light"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dtc_expand_indicator"
         app:layout_constraintStart_toEndOf="@+id/dtc_value"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Tells the row can be expanded; turned upside down while it is. -->
+    <ImageView
+        android:id="@+id/dtc_expand_indicator"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/dtc.row.expand"
+        android:src="@drawable/dtc_expand_more"
+        app:tint="@color/dialog_text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- State chips from the DTC status byte, in one line below the description (never shorter than the code: same
@@ -49,17 +62,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dtc_description">
 
+        <!-- Chips are spaced by their end margin, so any of them can be gone. "New" comes from the DTC history. -->
+        <TextView
+            android:id="@+id/dtc_new_badge"
+            style="@style/DtcBadge"
+            android:layout_marginEnd="8dp"
+            android:text="@string/dtc.history.new"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/dtc_state_badge"
             style="@style/DtcBadge"
+            android:layout_marginEnd="8dp"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/dtc_mil_badge"
             style="@style/DtcBadge"
-            android:layout_marginStart="8dp"
             android:text="@string/dtc.state.mil"
             android:visibility="gone" />
+
+        <!-- A "no longer reported" row: when its code was last reported, in place of the state chips. -->
+        <TextView
+            android:id="@+id/dtc_gone_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/dialog_text_secondary"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/dtc_state_history"
+            app:drawableTint="@color/dialog_text_secondary" />
     </LinearLayout>
 
     <LinearLayout
@@ -84,6 +119,41 @@
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="13sp"
             android:visibility="gone" />
+
+        <!-- DTC history (per vehicle): first / last reported and in how many scans of its module. A panel of its own
+             with a green edge (the "New" colour), above the decoded details, so it is not read as one more status line. -->
+        <LinearLayout
+            android:id="@+id/dtc_history_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/dtc_history_panel"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:text="@string/dtc.history.title"
+                android:textColor="@color/dtc_history_new"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/dtc_state_history"
+                app:drawableTint="@color/dtc_history_new" />
+
+            <TextView
+                android:id="@+id/dtc_detail_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="2dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="13sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/dtc_detail_system_info"

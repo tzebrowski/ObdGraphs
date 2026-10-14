@@ -28,7 +28,7 @@ private const val VIN = "ZARFAMAN0K7612345"
 private const val OTHER_VIN = "WVWZZZ1KZAW000001"
 
 class DtcReadInfoTest {
-    private val labels = DtcReadInfoLabels(lastRead = "Last read: %1\$s", vin = "VIN %1\$s", otherVehicle = "another vehicle (VIN %1\$s)")
+    private val labels = DtcReadInfoLabels(lastRead = "Last read: %1\$s", vin = "VIN %1\$s", otherVehicle = "another vehicle (VIN %1\$s)", noVin = "VIN not programmed")
 
     private fun dtc(code: String) = DiagnosticTroubleCode().apply { standardCode = code }
 
@@ -54,6 +54,41 @@ class DtcReadInfoTest {
         assertNull(vinFrom(mapOf("VIN" to "NO DATA")))
         // I, O and Q never appear in a VIN.
         assertNull(vinFrom(mapOf("VIN" to "ZARFAMAN0K761234O")))
+    }
+
+    @Test
+    fun `empty VIN reply from a VIN PID gives NO_VIN`() {
+        // Unprogrammed 2.0 GME ECM: 22 F190 answers 17 spaces, decoded to "".
+        val label = "Numer identyfikacyjny pojazdu"
+        assertEquals(NO_VIN, vinFrom(mapOf(label to ""), setOf(label)))
+        assertEquals(NO_VIN, vinFrom(mapOf(label to "   "), setOf(label)))
+        assertEquals(NO_VIN, vinFrom(mapOf("VIN" to NO_VIN), setOf("VIN")))
+    }
+
+    @Test
+    fun `NO_VIN only when the VIN PID answered`() {
+        // No reply at all, or an empty value under a label that is not a VIN PID: unknown, not empty.
+        assertNull(vinFrom(emptyMap(), setOf("VIN")))
+        assertNull(vinFrom(mapOf("Hardware version" to ""), setOf("VIN")))
+        assertNull(vinFrom(mapOf("VIN" to "")))
+        // A real VIN anywhere wins over an empty VIN PID.
+        assertEquals(VIN, vinFrom(mapOf("VIN" to "", "Vehicle Identification Number" to VIN), setOf("VIN")))
+    }
+
+    @Test
+    fun `VIN requests are matched by request, not label`() {
+        assertTrue(isVinRequest("09", "02"))
+        assertTrue(isVinRequest("22", "f190"))
+        assertFalse(isVinRequest("22", "F18C"))
+        assertFalse(isVinRequest("01", "02"))
+        assertFalse(isVinRequest(null, null))
+    }
+
+    @Test
+    fun `NO_VIN never names a vehicle`() {
+        assertFalse(DtcReadInfo(1, NO_VIN).isFromOtherVehicle(OTHER_VIN))
+        assertFalse(DtcReadInfo(1, VIN).isFromOtherVehicle(NO_VIN))
+        assertEquals("Last read: 12:00 · VIN not programmed", DtcReadInfo(1, NO_VIN).summary("12:00", VIN, labels))
     }
 
     @Test

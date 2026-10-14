@@ -10,6 +10,16 @@
         <item name="android:windowAnimationStyle">@null</item>
     </style>
     <!-- DTC state chip (item_dtc.xml); text and tint colour set per state in code. -->
+    <!-- Compact chip for module header summaries: icon + count. -->
+    <style name="DtcMiniBadge" parent="DtcBadge">
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:drawablePadding">3dp</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
     <style name="DtcBadge">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

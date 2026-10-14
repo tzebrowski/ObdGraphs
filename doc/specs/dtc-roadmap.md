@@ -16,6 +16,8 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | AA DTC screen | `aa-dtc-screen.md` |
 | Show what state each code is in (initial #1): chips for active / stored / pending / history + MIL, sort by state | `dtc-status-badges.md` |
 | Read/clear overlay no longer times out during a long scan | `dtc-status-badges.md` (fix in the same branch) |
+| Readiness monitors (initial #3): phone screen, clear warning, DTC list row | `readiness-monitors.md` |
+| History per vehicle (initial #4) with VIN on every connect (added later #8): new / gone markers | `dtc-history.md` |
 
 ## Planned
 
@@ -24,6 +26,9 @@ Ranked; dependencies noted. **App** = ObdGraphs only. **ObdMetrics** = needs com
 made while building the state chips: the overlay timeout, and the VIN missing from the logcat.
 
 ### 1. Keep a history per vehicle instead of overwriting one list (App) — initial #4
+
+**Done** (2026-10-14), spec `dtc-history.md` (together with 8). Kept here for item 4, which builds on it.
+
 
 * **Now:** `VehicleCapabilitiesManager.updateDTC` overwrites the single stored list (`pref.datalogger.dtc`).
 * **Plan:** keep scans keyed by VIN (time, modules, codes with status, freeze frames). Small local store, capped per
@@ -80,6 +85,9 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
 * Check whether `DiagnosticTroubleCode.failureType.description` is already filled; otherwise add the generic table.
 
 ### 8. VIN on every read (App) — added later
+
+**Done** (2026-10-14), spec `dtc-history.md` part A: the VIN is read alone on every connect while DTC reading is on.
+
 
 * Every read in the 2026-10-13 log stamped `vin=null`, because `pref.adapter.init.fetchDeviceProperties` is off.
   Read info then cannot spot another vehicle, and history (1) has no key.

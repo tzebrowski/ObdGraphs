@@ -20,6 +20,7 @@ so `DiagnosticTroubleCode.statusMask` is always the ISO 14229-1 status byte.
 | Phone code row, collapsed | Code + description | + a chip line below code and description: state chip (icon + label) and a separate MIL chip |
 | Phone code row, expanded | Hex, mask, bit list | + one line per chip explaining it ("Active: the fault is present right now."), raw detail stays |
 | AA code row | Red icon; bit list in yellow | Icon and status line tinted by state: active red, stored yellow, pending / history plain |
+| Phone dialog top (added 2026-10-14) | Chip meaning only in an expanded row | "What do the labels mean?" toggle under the readiness row opens a legend: each chip (New, Active, Stored, Pending, History, MIL) as rows show it, with its meaning, plus a "No longer reported" line. Collapsed by default; the choice is kept |
 | Order within a module (phone + AA) | Known descriptions first, then code | Active, stored, pending, history, no state; then known descriptions first, then code |
 | Shared report | Status bit list + hex | + "State: Active · MIL on" line |
 
@@ -56,7 +57,7 @@ placing the chips below code + description pushed them far down in an expanded r
 
 ## Settings / keys touched
 
-None. New strings `dtc.state.*` (app + automotive), `dtc.state.mil`, `dtc.state.*.explanation` and
+`pref.dtc.legend.expanded` (boolean, default false): legend open or closed. New strings `dtc.state.*` (app + automotive), `dtc.state.mil`, `dtc.state.*.explanation` and
 `dtc.share.state` (app), EN + PL.
 
 ## Implementation
@@ -69,6 +70,11 @@ None. New strings `dtc.state.*` (app + automotive), `dtc.state.mil`, `dtc.state.
   no barriers), gone when it holds no chip; `dtc_detail_state` in the expanded details. Per-state colour / icon / explanation is `STATE_BADGES`
   in the adapter. `dtcStatusLabels(context)` is shared by the adapter and the share report.
 * AA: `DiagnosticTroubleCodesScreen.row()` tints the icon and status line by state.
+* Legend (phone, added after users found the chips unclear): `dtc_legend_toggle` + `dtc_legend` in `dialog_dtc.xml`,
+  rows `item_dtc_legend_row.xml` (`TableRow`s in `dtc_legend_table`) built from `DTC_LEGEND` (label + `BadgeStyle`,
+  row order) with the adapter's `showBadge`, so a chip looks the same in the legend and the list. The table makes the
+  chip column as wide as the widest chip, so explanations start in one column. Texts reuse the `*.explanation` strings minus
+  their "Label: " prefix (`legendExplanation`) — one wording to maintain. Strings `dtc.legend.toggle`, `dtc.legend.gone`.
 
 ## Backward compatibility
 
@@ -79,6 +85,7 @@ A mask of 0 shows no line, as before.
 
 * `DtcStatusTest`: each state, priority between bits, lamp independence, status line.
 * `DtcListItemTest`: order by state within a module.
+* `DtcLegendTest` (app): the legend covers every chip once; the label prefix is dropped.
 
 ## Risks and verification checklist
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One row of the DTC legend table: the chip as the code rows show it (stretched to the column), then what it means. -->
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp">
+
+    <TextView
+        android:id="@+id/dtc_legend_badge"
+        style="@style/DtcBadge"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/dtc_legend_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="8dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="13sp" />
+</TableRow>
