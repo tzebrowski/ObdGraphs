@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences.dtc
 
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -90,21 +91,37 @@ internal val GONE_BADGE = BadgeStyle(R.color.philippine_green, R.drawable.dtc_hi
 
 internal val NEW_BADGE = BadgeStyle(R.color.dtc_history_new, R.drawable.dtc_history_new, R.string.dtc_history_new_explanation)
 
+// The "no longer reported" header's "How it works" chip: opens dtcHistoryHelp, not a state, so not in the legend table.
+internal val HELP_BADGE = BadgeStyle(R.color.dialog_text_secondary, R.drawable.dtc_help, R.string.dtc_history_help_body)
+
+// The workflow behind New / No longer reported (scan history, clear, healing, one-scan lifetime): the one-line legend
+// entry was not enough to understand why cleared codes show up after a clear.
+internal fun showDtcHistoryHelp(context: Context) {
+    AlertDialog.Builder(context)
+        .setTitle(R.string.dtc_history_help_title)
+        .setMessage(context.getText(R.string.dtc_history_help_body))
+        .setPositiveButton(R.string.dialog_close_window_action, null)
+        .show()
+}
+
 // A compact chip (icon + short label) in a section header's summary line.
 internal fun LinearLayout.addMiniBadge(
     label: String,
     style: BadgeStyle,
     description: String
-) {
-    addView(
+): TextView {
+    val badge =
         TextView(context, null, 0, R.style.DtcMiniBadge).apply {
             showBadge(label, style)
             contentDescription = description
-        },
+        }
+    addView(
+        badge,
         LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
             marginStart = context.resources.getDimensionPixelSize(R.dimen.dtc_mini_badge_gap)
         }
     )
+    return badge
 }
 
 // The chips the DTC legend explains, in the order a row shows them: label and style.
@@ -440,6 +457,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             name.setTextColor(ContextCompat.getColor(context, R.color.philippine_green))
             summary.removeAllViews()
             summary.addMiniBadge(header.codeCount.toString(), GONE_BADGE, name.text.toString())
+            // Its own click: the header itself expands / collapses the section.
+            summary.addMiniBadge(context.getString(R.string.dtc_history_help_chip), HELP_BADGE, context.getString(R.string.dtc_history_help_title))
+                .setOnClickListener { showDtcHistoryHelp(it.context) }
             arrow.rotation = if (header.expanded) 180f else 0f
             itemView.contentDescription =
                 "${context.getString(R.string.dtc_history_gone_header, header.codeCount)}. " +
