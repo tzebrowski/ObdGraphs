@@ -20,6 +20,8 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | Modules that do not answer: "no response" / "refused" instead of clean, left out of history markers | `dtc-module-response.md` |
 | History per vehicle (initial #4) with VIN on every connect (added later #8): new / gone markers | `dtc-history.md` |
 | New-code notification after the connect scan (initial #6): phone notification + AA toast | `dtc-new-code-notification.md` |
+| In-app explanation of New / No longer reported | `dtc-history-help.md` |
+| Clear one module, engine-running warning before a clear (initial #5) | `dtc-clear-module.md` |
 
 ## Planned
 
@@ -68,6 +70,8 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
 * **Plan:** a phone notification and an AA alert, only for codes not in the previous scan, opening the DTC list.
 
 ### 5. Clear safely, and clear one module at a time (App) — initial #5
+
+**Done** (2026-10-15), spec `dtc-clear-module.md`. The pre-check warns (does not block) on a recent running-engine reading.
 
 * **Clear one module:** "Clear this module" from a module header. `scheduleDTCCleanup(selectedModules)` already takes
   a set.

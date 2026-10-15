@@ -66,6 +66,7 @@ import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.DtcState
 import org.obd.graphs.bl.datalogger.dtc.DtcStatusLabels
+import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
@@ -326,7 +327,7 @@ internal class DiagnosticTroubleCodesScreen(
                                         }
                                     ).build()
                             )
-                        is DtcListItem.ModuleHeader, is DtcListItem.GoneHeader -> Unit
+                        is DtcListItem.ModuleHeader, is DtcListItem.GoneHeader, is DtcListItem.ModuleClear -> Unit
                     }
                 }
             }.build()
@@ -456,14 +457,20 @@ internal class DiagnosticTroubleCodesScreen(
     }
 }
 
-// Clearing erases the codes and their freeze frames for good, so it is never one tap away.
+// Clearing erases the codes and their freeze frames for good, so it is never one tap away. With the engine running
+// (likely on AA) the message leads with a warning: most modules refuse the clear then.
 private class DtcClearConfirmationScreen(
     carContext: CarContext,
     private val stringProvider: LocalizedStringProvider
 ) : Screen(carContext) {
     override fun onGetTemplate(): Template =
         MessageTemplate
-            .Builder(stringProvider.getString(R.string.dtc_clear_confirm_message))
+            .Builder(
+                listOfNotNull(
+                    stringProvider.getString(R.string.dtc_engine_running_warning).takeIf { EngineStateTracker.engineRunning() == true },
+                    stringProvider.getString(R.string.dtc_clear_confirm_message)
+                ).joinToString("\n\n")
+            )
             .setTitle(stringProvider.getString(R.string.dtc_clear_confirm_title))
             .setHeaderAction(Action.BACK)
             .addAction(

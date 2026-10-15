@@ -218,7 +218,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
                 android:backgroundTint="@color/rainbow_indigo"
-                android:text="@string/dialog_close_window_action"
+                android:text="@string/dtc.action_close"
                 android:textSize="12sp" />
         </LinearLayout>
 

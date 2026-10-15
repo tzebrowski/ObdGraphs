@@ -377,6 +377,16 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   with no modules (list collapsed to "ECU"). Requests now wait in the queue; `onDTCCompleted` uses the finished
   request's kind / modules and holds back `DATA_LOGGER_DTC_ACTION_COMPLETED` while another one waits. Logcat:
   "DTC action completed: <kind>, ... next=<kind>". Any new DTC entry point must go through `submit()`.
+* **A read / clear of some modules updates only those** (`dtc/DtcStoredList.kt`, spec `doc/specs/dtc-clear-module.md`).
+  The clear's follow-up read covers the cleared modules alone, so `updateDTC` replacing the list made the other modules'
+  codes vanish. `mergedOver` keeps the untargeted modules' codes / statuses for READ / CLEAR of the same known vehicle;
+  CONNECT replaces (a module removed from the table must not linger). History records the read alone. The phone's
+  "Clear this module" button (`DtcListItem.ModuleClear`, right under the header: the user wants it at the top, and shown
+  even for the only module with codes - hiding it there looked like the button was gone) needs `dtcModuleRequestKey`: codes carry the display
+  label, `scheduleDTCCleanup` takes table `requestKey`s.
+* Engine-running check before a clear: `EngineStateTracker` (registered on `MetricsObserver`) keeps the last RPM /
+  vehicle-status reading; `engineRunning()` is null when older than 10 s or never seen. It only warns — the running
+  query may have no engine PID, so null must never block.
 * **New-code notification** (`dtc/DtcNewCodes.kt`, spec `doc/specs/dtc-new-code-notification.md`): `updateDTC` ends
   with `DtcNewCodesAnnouncer.announce`, so every connect path is covered; only `CONNECT` scans with a VIN reply; all
   codes on the vehicle's first scan, else only `diff.isNew` ones. "First scan" is read before `DtcHistoryStore.append`:
@@ -391,6 +401,8 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   another code-0 launch intent replaces the extras. Open a screen from outside via `EXTRA_NAVIGATE_TO` (`:common`) +
   `navigateToPreferencesScreen(key, openDialog = true)`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
+* `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
+  to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate
   `ObdMetricsTest` repo and do not capture the clear status, so a test needs its own `Lifecycle`.

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Clear this module" right under an expanded module's header (DtcListItem.ModuleClear). A small outlined button
+     aligned with the header text, red only in its outline and icon: the codes are red text, and the action must not
+     look like one more of them. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="-6dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
+
+    <TextView
+        android:id="@+id/dtc_module_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:background="@drawable/dtc_module_clear_background"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="14dp"
+        android:text="@string/dtc.module.clear"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="13sp"
+        app:drawableStartCompat="@drawable/dtc_clear_module"
+        app:drawableTint="@color/cardinal" />
+</FrameLayout>

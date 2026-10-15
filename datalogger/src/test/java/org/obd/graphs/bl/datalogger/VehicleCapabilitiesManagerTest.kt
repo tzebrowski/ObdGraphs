@@ -373,4 +373,40 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
 
         verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
     }
+
+    // Stored DTC prefs read back what updateDTC wrote, like the real SharedPreferences.
+    private fun storeDtcPrefs() {
+        val store = mutableMapOf<String, String>()
+        listOf(PREF_DTC, PREF_DTC_READ_INFO, "pref.datalogger.dtc.scanned_modules", "pref.datalogger.dtc.module_status").forEach { key ->
+            val value = slot<String>()
+            every { editor.putString(eq(key), capture(value)) } answers {
+                store[key] = value.captured
+                editor
+            }
+            every { sharedPrefs.getString(eq(key), any()) } answers { store[key] ?: secondArg() }
+        }
+    }
+
+    @Test
+    fun `clearing one module keeps the other modules' codes on the list, history records the clear alone`() {
+        storeDtcPrefs()
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_METADATA), any()) } returns """{"VIN":"ZARFAMAN0K7612345"}"""
+        val engine = dtc("P0100", "Mass air flow circuit").apply { module = "Engine ECU" }
+        val abs = dtc("C0035", "Wheel speed sensor").apply { module = "ABS" }
+
+        VehicleCapabilitiesManager.updateDTC(setOf(engine, abs), listOf("Engine ECU", "ABS"), now = 1, kind = DtcScanKind.CONNECT)
+        VehicleCapabilitiesManager.updateDTC(emptySet(), listOf("Engine ECU"), now = 2, kind = DtcScanKind.CLEAR)
+
+        assertEquals(listOf("C0035"), VehicleCapabilitiesManager.getDiagnosticTroubleCodes().map { it.standardCode })
+        assertEquals(setOf("Engine ECU", "ABS"), VehicleCapabilitiesManager.getDtcScannedModules().toSet())
+        assertEquals(2L, VehicleCapabilitiesManager.getDtcReadInfo()!!.timestamp)
+        val clear = DtcHistoryStore.scans("ZARFAMAN0K7612345").last()
+        assertEquals(listOf("Engine ECU"), clear.scannedModules)
+        assertTrue(clear.codes.isEmpty())
+
+        // The next connect scan covers every module and replaces the list.
+        VehicleCapabilitiesManager.updateDTC(emptySet(), listOf("Engine ECU"), now = 3, kind = DtcScanKind.CONNECT)
+        assertTrue(VehicleCapabilitiesManager.getDiagnosticTroubleCodes().isEmpty())
+        assertEquals(listOf("Engine ECU"), VehicleCapabilitiesManager.getDtcScannedModules())
+    }
 }

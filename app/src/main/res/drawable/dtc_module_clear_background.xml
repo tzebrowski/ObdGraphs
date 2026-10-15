@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Outlined pill of the "Clear this module" button: red outline, no fill, so it reads as an action and not as a code
+     (codes are red text). Inset so the pill is ~32dp tall inside a 48dp touch target. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?android:attr/colorControlHighlight">
+    <item>
+        <inset
+            android:insetTop="8dp"
+            android:insetBottom="8dp">
+            <shape android:shape="rectangle">
+                <corners android:radius="16dp" />
+                <stroke
+                    android:width="1dp"
+                    android:color="@color/cardinal" />
+            </shape>
+        </inset>
+    </item>
+</ripple>
