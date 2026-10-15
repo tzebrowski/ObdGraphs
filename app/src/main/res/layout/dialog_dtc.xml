@@ -88,6 +88,22 @@
             android:text="@string/dtc.legend.gone"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="13sp" />
+
+        <!-- Opens the workflow explanation (showDtcHistoryHelp), as the "How it works" chip on the section header does. -->
+        <TextView
+            android:id="@+id/dtc_legend_help"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="?attr/selectableItemBackground"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:text="@string/dtc.history.help.link"
+            android:textColor="?android:attr/textColorLink"
+            android:textSize="13sp"
+            app:drawableStartCompat="@drawable/dtc_help"
+            app:drawableTint="?android:attr/textColorLink" />
     </LinearLayout>
 
     <TextView

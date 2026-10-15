@@ -533,6 +533,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             row.findViewById<TextView>(R.id.dtc_legend_text).text = legendExplanation(getString(style.explanation))
             table.addView(row)
         }
+        root.findViewById<TextView>(R.id.dtc_legend_help).setOnClickListener { showDtcHistoryHelp(requireContext()) }
 
         fun show(expanded: Boolean) {
             legend.visibility = if (expanded) View.VISIBLE else View.GONE

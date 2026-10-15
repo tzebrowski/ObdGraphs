@@ -1016,6 +1016,10 @@
     <string name="dtc.share.modules_no_response">Modules without an answer: %1$s</string>
     <string name="dtc.history.gone_title">No longer reported</string>
     <string name="dtc.history.last_reported">Last reported %1$s</string>
+    <string name="dtc.history.help.chip">How it works</string>
+    <string name="dtc.history.help.link">How do New and No longer reported work?</string>
+    <string name="dtc.history.help.title">How the code history works</string>
+    <string name="dtc.history.help.body">Every scan is saved on the phone, separately for each vehicle (by VIN). The list compares the latest scan with the earlier ones.\n\n<b>New</b>: the code appears on this vehicle for the first time.\n\n<b>No longer reported</b>: the previous scan had the code, the latest one does not. This happens after:\n\u2022 Clear: the read that follows a clear finds no codes, so every cleared code moves here.\n\u2022 Healing: the car drops a stored code by itself after enough drives without the fault.\n\n<b>Example</b>: a scan finds P0100 and P0200. You press Clear Codes. Both now show under No longer reported, with the date they were last reported.\n\nThe section lasts one scan. The next scan is compared with the scan after the clear, which had neither code, so the section empties. The codes stay in the history.\n\nA code that comes back returns to the list without the New label: the vehicle reported it before.\n\nModules that did not answer, or that you unchecked, are left out: a code is never marked as gone because its module was not asked.</string>
     <string name="dtc.share.state">State: %1$s</string>
     <string name="dtc.share.snapshot">Snapshot (Record %1$d):</string>
     <string name="dtc.share.unknown_did">Unknown DID</string>
