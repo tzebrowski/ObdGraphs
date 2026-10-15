@@ -22,6 +22,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | New-code notification after the connect scan (initial #6): phone notification + AA toast | `dtc-new-code-notification.md` |
 | In-app explanation of New / No longer reported | `dtc-history-help.md` |
 | Clear one module, engine-running warning before a clear (initial #5) | `dtc-clear-module.md` |
+| Failure type text (initial #7): meaning of the `-XX` byte in the expanded row and report | `dtc-failure-type.md` |
 
 ## Planned
 
@@ -87,6 +88,8 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
 * Optionally show the codes as each module finishes.
 
 ### 7. Better descriptions: failure type text (App / ObdMetrics) — initial #7
+
+**Done** (2026-10-15), spec `dtc-failure-type.md`. App-side table: ObdMetrics' is empty ("Unknown Subtype").
 
 * The suffix in `P0120-14` (failure type byte, SAE J2012 / ISO 15031-6) is shown raw.
 * Add its meaning ("14 = circuit short to ground or open") to the expanded row and the report.
