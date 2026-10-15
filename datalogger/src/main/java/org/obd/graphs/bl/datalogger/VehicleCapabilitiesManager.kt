@@ -27,7 +27,10 @@ import org.obd.graphs.bl.datalogger.dtc.DtcNewCodesAnnouncer
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfo
 import org.obd.graphs.bl.datalogger.dtc.DtcScan
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
+import org.obd.graphs.bl.datalogger.dtc.DtcStoredList
+import org.obd.graphs.bl.datalogger.dtc.isSameVehicle
 import org.obd.graphs.bl.datalogger.dtc.isVinRequest
+import org.obd.graphs.bl.datalogger.dtc.mergedOver
 import org.obd.graphs.bl.datalogger.dtc.vinFrom
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
@@ -114,15 +117,24 @@ object VehicleCapabilitiesManager {
         moduleStatus: Map<String, DtcModuleStatus> = emptyMap()
     ) {
         val readInfo = DtcReadInfo(timestamp = now, vin = getCurrentVin())
+        // The list on screen keeps the modules this read did not target; history records this read alone.
+        val previous = getDtcReadInfo()
+        val list =
+            DtcStoredList(dtc.toList(), scannedModules, moduleStatus).mergedOver(
+                previous = DtcStoredList(getDiagnosticTroubleCodes(), getDtcScannedModules(), getDtcModuleStatus()),
+                kind = kind,
+                sameVehicle = isSameVehicle(previous, readInfo.vin)
+            )
         Prefs.edit().apply {
             Log.i(
                 LOG_TAG,
-                "Updating DTC, size: ${dtc.size}, scanned modules: $scannedModules, read info: $readInfo"
+                "Updating DTC, size: ${dtc.size}, scanned modules: $scannedModules, read info: $readInfo, " +
+                    "kept from the previous list: ${list.scannedModules - scannedModules.toSet()}"
             )
-            putString(PREF_DTC, mapper.writeValueAsString(dtc))
-            putString(PREF_DTC_SCANNED_MODULES, mapper.writeValueAsString(scannedModules))
+            putString(PREF_DTC, mapper.writeValueAsString(list.codes))
+            putString(PREF_DTC_SCANNED_MODULES, mapper.writeValueAsString(list.scannedModules))
             putString(PREF_DTC_READ_INFO, mapper.writeValueAsString(readInfo))
-            putString(PREF_DTC_MODULE_STATUS, mapper.writeValueAsString(moduleStatus))
+            putString(PREF_DTC_MODULE_STATUS, mapper.writeValueAsString(list.moduleStatus))
             commit()
         }
         val firstScan = DtcHistoryStore.scans(readInfo.vin).isEmpty()

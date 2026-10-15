@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Clear codes in <module>" under the last code of an expanded module (DtcListItem.ModuleClear). End-aligned and
+     in the Clear button's red, so it reads as that module's action, not as another code. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/dtc_module_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/cardinal"
+        android:textSize="13sp"
+        app:drawableStartCompat="@drawable/dtc_clear_module"
+        app:drawableTint="@color/cardinal" />
+</FrameLayout>

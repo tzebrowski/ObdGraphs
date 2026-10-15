@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences.dtc
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateUtils
@@ -45,10 +46,12 @@ import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
+import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.collapsedBy
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
+import org.obd.graphs.bl.datalogger.dtc.dtcModuleRequestKey
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
@@ -58,6 +61,7 @@ import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.bl.datalogger.dtc.unansweredModules
 import org.obd.graphs.bl.datalogger.dtc.withGoneSection
+import org.obd.graphs.bl.datalogger.dtc.withModuleClearActions
 import org.obd.graphs.bl.datalogger.dtc.withModuleSummaries
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
 import org.obd.graphs.bl.readiness.ReadinessSnapshot
@@ -136,7 +140,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 onModuleHeaderClick = { header ->
                     moduleExpanded[header.module] = !header.expanded
                     refreshList()
-                }
+                },
+                onModuleClearClick = { module -> clearModule(module) }
             )
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -190,24 +195,65 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         clearButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
-                pickDtcModules(
-                    titleRes = R.string.pref_dtc_clean_dialog_title,
-                    confirmRes = R.string.pref_dtc_select_modules_confirm_clear,
-                    messageRes = R.string.pref_dtc_clean_dialog_confirm_message,
-                    confirmWhenEmpty = true
-                ) { selectedModules ->
-                    setLoadingState(true, selectedModules.size)
-                    withDataLogger {
-                        scheduleDTCCleanup(selectedModules)
-                    }
-
-                    toast(R.string.pref_dtc_clean_dialog_send_message)
-                    clearButton.setText(R.string.dtc_action_clearing)
+                confirmEngineOff {
+                    pickDtcModules(
+                        titleRes = R.string.pref_dtc_clean_dialog_title,
+                        confirmRes = R.string.pref_dtc_select_modules_confirm_clear,
+                        messageRes = R.string.pref_dtc_clean_dialog_confirm_message,
+                        confirmWhenEmpty = true
+                    ) { selectedModules -> startClear(selectedModules) }
                 }
             } else {
                 toast(R.string.pref_dtc_no_connection_established)
             }
         }
+    }
+
+    private fun startClear(modules: Set<String>) {
+        setLoadingState(true, modules.size)
+        withDataLogger {
+            scheduleDTCCleanup(modules)
+        }
+
+        toast(R.string.pref_dtc_clean_dialog_send_message)
+        clearButton.setText(R.string.dtc_action_clearing)
+    }
+
+    // A recent reading says the engine runs: most modules would refuse the clear (7F 14 22), so say so first and let
+    // the user go on anyway. Unknown (no engine PID in the running query) goes straight on.
+    private fun confirmEngineOff(onConfirmed: () -> Unit) {
+        if (EngineStateTracker.engineRunning() != true) {
+            onConfirmed()
+            return
+        }
+        AlertDialog
+            .Builder(requireContext())
+            .setTitle(R.string.dtc_engine_running_title)
+            .setMessage(R.string.dtc_engine_running_message)
+            .setPositiveButton(R.string.dtc_engine_running_clear_anyway) { _, _ -> onConfirmed() }
+            .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
+            .show()
+    }
+
+    // "Clear codes in <module>": one module, one confirmation (with the engine warning folded in), no picker.
+    private fun clearModule(module: String) {
+        if (!DataLoggerRepository.isRunning()) {
+            toast(R.string.pref_dtc_no_connection_established)
+            return
+        }
+        val requestKey = dtcModuleRequestKey(DiagnosticRequestIDManager.getMappings(), module) ?: return
+        val message =
+            listOfNotNull(
+                getString(R.string.dtc_engine_running_message).takeIf { EngineStateTracker.engineRunning() == true },
+                getString(R.string.dtc_module_clear_message)
+            ).joinToString("\n\n")
+        AlertDialog
+            .Builder(requireContext())
+            .setTitle(getString(R.string.dtc_module_clear_title, module))
+            .setMessage(message)
+            .setPositiveButton(R.string.dtc_module_clear_confirm) { _, _ -> startClear(setOf(requestKey)) }
+            .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
+            .show()
     }
 
     // Lets the user restrict a DTC read/clear to a subset of the configured Diagnostic Request ID
@@ -469,6 +515,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
     private fun refreshList() {
         val codes = diagnosticTroubleCodes()
+        val mappings = DiagnosticRequestIDManager.getMappings()
         // New / gone markers from the vehicle's DTC history, for the list stored with this read info.
         val history = DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo())
         adapter.submitList(
@@ -484,6 +531,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 ).markedWith(history)
                 .withModuleSummaries()
                 .collapsedBy { moduleExpanded[it] }
+                .withModuleClearActions { dtcModuleRequestKey(mappings, it) != null }
                 .withGoneSection(history, goneExpanded)
         )
 

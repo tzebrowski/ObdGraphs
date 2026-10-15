@@ -362,4 +362,48 @@ class DtcListItemTest {
 
         assertEquals(listOf("BCM", "ABS"), status.unansweredModules())
     }
+
+    @Test
+    fun `an expanded module with codes ends with its clear action, collapsed and clean modules do not`() {
+        val items =
+            listOf(dtc("P0100", module = "Engine"), dtc("P0200", module = "Engine"), dtc("C0035", module = "ABS"), dtc("B1000", module = "Unknown"))
+                .toDtcListItems(listOf("Engine", "ABS", "BCM"), "none", "none for module", "unknown")
+                .collapsedBy { mapOf("ABS" to false, "BCM" to true)[it] }
+                .withGoneSection(DtcHistoryDiff(gone = listOf(dtc("P0500", module = "Engine"))), expanded = true)
+                .withModuleClearActions { it != "Unknown" }
+
+        assertEquals(
+            listOf(
+                "header:ABS",
+                "header:Engine",
+                "dtc:Engine:P0100",
+                "dtc:Engine:P0200",
+                "clear:Engine",
+                "header:Unknown",
+                "dtc:Unknown:B1000",
+                "header:BCM",
+                "message:BCM",
+                "gone-header",
+                "dtc:Engine:P0500"
+            ),
+            items.map { it.itemKey() }
+        )
+    }
+
+    @Test
+    fun `a module label maps back to the table entry that scans it`() {
+        val mappings =
+            listOf(
+                DiagnosticMappingItem(1, "22", "DA10F1", "Engine ECU"),
+                DiagnosticMappingItem(2, "GME20", "da10f1", "Engine ECU (2.0 GME)"),
+                DiagnosticMappingItem(3, "ABS", "DA28F1", "ABS"),
+                DiagnosticMappingItem(4, "BCM", "", "BCM")
+            )
+        assertEquals("22", dtcModuleRequestKey(mappings, "Engine ECU"))
+        assertEquals("ABS", dtcModuleRequestKey(mappings, "ABS"))
+        // Never scanned under that name: a header shared with an earlier entry, no header, not in the table.
+        assertEquals(null, dtcModuleRequestKey(mappings, "Engine ECU (2.0 GME)"))
+        assertEquals(null, dtcModuleRequestKey(mappings, "BCM"))
+        assertEquals(null, dtcModuleRequestKey(mappings, "ECU"))
+    }
 }

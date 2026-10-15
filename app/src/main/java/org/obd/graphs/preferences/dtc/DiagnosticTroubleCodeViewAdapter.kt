@@ -62,6 +62,7 @@ private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DTC = 1
 private const val VIEW_TYPE_MESSAGE = 2
 private const val VIEW_TYPE_GONE_HEADER = 3
+private const val VIEW_TYPE_MODULE_CLEAR = 4
 private const val GONE_ROW_ALPHA = 0.6f
 private const val BADGE_FILL_ALPHA = 0x33
 
@@ -168,10 +169,12 @@ internal fun TextView.showBadge(
 }
 
 // onGoneHeaderClick / onModuleHeaderClick: a section header was tapped; the owner rebuilds the list expanded / collapsed.
+// onModuleClearClick: "Clear codes in <module>" was tapped; the owner confirms and clears.
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?,
     private val onGoneHeaderClick: () -> Unit = {},
-    private val onModuleHeaderClick: (DtcListItem.ModuleHeader) -> Unit = {}
+    private val onModuleHeaderClick: (DtcListItem.ModuleHeader) -> Unit = {},
+    private val onModuleClearClick: (String) -> Unit = {}
 ) : ListAdapter<DtcListItem, RecyclerView.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -185,6 +188,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             is DtcListItem.DtcRow -> VIEW_TYPE_DTC
             is DtcListItem.Message -> VIEW_TYPE_MESSAGE
             is DtcListItem.GoneHeader -> VIEW_TYPE_GONE_HEADER
+            is DtcListItem.ModuleClear -> VIEW_TYPE_MODULE_CLEAR
         }
 
     override fun onCreateViewHolder(
@@ -195,6 +199,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             VIEW_TYPE_HEADER -> HeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
             VIEW_TYPE_MESSAGE -> MessageViewHolder(mInflater.inflate(R.layout.item_dtc_message, parent, false))
             VIEW_TYPE_GONE_HEADER -> GoneHeaderViewHolder(mInflater.inflate(R.layout.item_dtc_module_header, parent, false))
+            VIEW_TYPE_MODULE_CLEAR -> ModuleClearViewHolder(mInflater.inflate(R.layout.item_dtc_module_clear, parent, false))
             else -> DtcViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
         }
 
@@ -207,6 +212,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             is DtcListItem.DtcRow -> bindDtc(holder as DtcViewHolder, item)
             is DtcListItem.Message -> (holder as MessageViewHolder).bind(item)
             is DtcListItem.GoneHeader -> (holder as GoneHeaderViewHolder).bind(item, onGoneHeaderClick)
+            is DtcListItem.ModuleClear -> (holder as ModuleClearViewHolder).bind(item, onModuleClearClick)
         }
     }
 
@@ -465,6 +471,18 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                 "${context.getString(R.string.dtc_history_gone_header, header.codeCount)}. " +
                 context.getString(if (header.expanded) R.string.dtc_row_collapse else R.string.dtc_row_expand)
             itemView.setOnClickListener { onClick() }
+        }
+    }
+
+    internal class ModuleClearViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val action: TextView = itemView.findViewById(R.id.dtc_module_clear)
+
+        fun bind(
+            item: DtcListItem.ModuleClear,
+            onClick: (String) -> Unit
+        ) {
+            action.text = itemView.context.getString(R.string.dtc_module_clear, item.module)
+            action.setOnClickListener { onClick(item.module) }
         }
     }
 

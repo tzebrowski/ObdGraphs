@@ -53,6 +53,9 @@ sealed class DtcListItem {
     // has not (healed or cleared). Collapsed by default; expanded is part of the content, so a toggle rebinds it.
     data class GoneHeader(val codeCount: Int, val expanded: Boolean = false) : DtcListItem()
 
+    // "Clear codes in <module>" under an expanded module's last code (phone only, withModuleClearActions).
+    data class ModuleClear(val module: String) : DtcListItem()
+
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
     // that reported nothing. Keyed so DiffUtil can tell per-module messages apart.
     // status: RESPONDED for good news ("no codes"), otherwise why the module has no list.
@@ -85,6 +88,7 @@ fun DtcListItem.itemKey(): String =
         is DtcListItem.DtcRow -> "dtc:${dtc.moduleLabel()}:${dtc.displayCode()}"
         is DtcListItem.Message -> "message:$key"
         is DtcListItem.GoneHeader -> "gone-header"
+        is DtcListItem.ModuleClear -> "clear:$module"
     }
 
 // What a module header shows about its codes, so a collapsed module still says what it holds:
@@ -105,7 +109,7 @@ fun List<DtcListItem>.withModuleSummaries(): List<DtcListItem> {
             is DtcListItem.GoneHeader -> header = -1
             is DtcListItem.DtcRow ->
                 if (header >= 0 && item.dtc.standardCode.isNotEmpty()) rowsByHeader.getOrPut(header) { mutableListOf() }.add(item)
-            is DtcListItem.Message -> Unit
+            is DtcListItem.Message, is DtcListItem.ModuleClear -> Unit
         }
     }
     return mapIndexed { index, item ->
@@ -148,6 +152,26 @@ fun List<DtcListItem>.collapsedBy(expanded: (String) -> Boolean?): List<DtcListI
             else -> item.takeUnless { hide }
         }
     }
+}
+
+// Adds "Clear codes in <module>" after the rows of every expanded module with codes that clearable accepts (a module
+// of the CAN header table; the default ECU and "Unknown module" cannot be targeted). Call after collapsedBy.
+fun List<DtcListItem>.withModuleClearActions(clearable: (String) -> Boolean): List<DtcListItem> {
+    val result = mutableListOf<DtcListItem>()
+    var pending: String? = null
+
+    fun flush() {
+        pending?.let { result.add(DtcListItem.ModuleClear(it)) }
+        pending = null
+    }
+
+    forEach { item ->
+        if (item is DtcListItem.ModuleHeader || item is DtcListItem.GoneHeader) flush()
+        result.add(item)
+        if (item is DtcListItem.ModuleHeader && item.expanded && item.codeCount > 0 && clearable(item.module)) pending = item.module
+    }
+    flush()
+    return result
 }
 
 // Marks the rows of the list on screen with what the vehicle's history says about them.
@@ -368,6 +392,13 @@ fun dtcScanTargets(
     mappings
         .filter { it.headerValue.isNotEmpty() && it.requestKey in selected }
         .distinctBy { it.headerValue.trim().uppercase() }
+
+// The table entry (requestKey) that scans the module codes are tagged with, as dtcScanTargets names it; null for a
+// label no entry scans (default ECU, "Unknown module", an entry removed since the read).
+fun dtcModuleRequestKey(
+    mappings: List<DiagnosticMappingItem>,
+    module: String
+): String? = dtcScanTargets(mappings, mappings.map { it.requestKey }.toSet()).firstOrNull { it.displayName == module }?.requestKey
 
 // "Engine Speed: 750 rpm" per decoded DID of a snapshot or of the extended data (DiagnosticTroubleCode.details).
 // PID labels are written for dashboard tiles ("Engine Coolant\nTemp"), so their line breaks are flattened.

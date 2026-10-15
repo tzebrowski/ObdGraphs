@@ -787,6 +787,13 @@
     <string name="dtc.module.no_response">Brak odpowiedzi</string>
     <string name="dtc.module.no_response.explanation">Brak odpowiedzi: moduł nie odpowiedział na odczyt. Jego kody są nieznane, więc nie wpływa na oznaczenia Nowy i Już nie zgłaszane.</string>
     <string name="dtc.module.refused">Odmowa</string>
+    <string name="dtc.module.clear">Skasuj kody modułu %1$s</string>
+    <string name="dtc.module.clear.title">Skasować kody modułu %1$s?</string>
+    <string name="dtc.module.clear.message">Z pojazdu zostaną skasowane tylko kody tego modułu i ich dane zamrożonej klatki; pozostałe moduły zachowają swoje. Aplikacja zachowuje kopię w historii kodów.\n\nUpewnij się, że silnik jest WYŁĄCZONY, ale stacyjka jest WŁĄCZONA.\n\nJeśli to moduł silnika, monitory gotowości również zostaną wyzerowane.</string>
+    <string name="dtc.module.clear.confirm">Skasuj</string>
+    <string name="dtc.engine_running.title">Silnik pracuje</string>
+    <string name="dtc.engine_running.message">Wygląda na to, że silnik pracuje. Większość modułów odmawia skasowania kodów przy pracującym silniku. Wyłącz silnik, zostaw włączoną stacyjkę i spróbuj ponownie.</string>
+    <string name="dtc.engine_running.clear_anyway">Skasuj mimo to</string>
     <string name="dtc.module.refused.explanation">Odmowa: moduł odpowiedział, ale nie przesłał kodów.</string>
     <string name="dtc.share.modules_no_response">Moduły bez odpowiedzi: %1$s</string>
     <string name="dtc.history.gone_title">Już nie zgłaszane</string>

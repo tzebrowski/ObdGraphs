@@ -377,6 +377,15 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   with no modules (list collapsed to "ECU"). Requests now wait in the queue; `onDTCCompleted` uses the finished
   request's kind / modules and holds back `DATA_LOGGER_DTC_ACTION_COMPLETED` while another one waits. Logcat:
   "DTC action completed: <kind>, ... next=<kind>". Any new DTC entry point must go through `submit()`.
+* **A read / clear of some modules updates only those** (`dtc/DtcStoredList.kt`, spec `doc/specs/dtc-clear-module.md`).
+  The clear's follow-up read covers the cleared modules alone, so `updateDTC` replacing the list made the other modules'
+  codes vanish. `mergedOver` keeps the untargeted modules' codes / statuses for READ / CLEAR of the same known vehicle;
+  CONNECT replaces (a module removed from the table must not linger). History records the read alone. The phone's
+  "Clear codes in <module>" row (`DtcListItem.ModuleClear`) needs `dtcModuleRequestKey`: codes carry the display
+  label, `scheduleDTCCleanup` takes table `requestKey`s.
+* Engine-running check before a clear: `EngineStateTracker` (registered on `MetricsObserver`) keeps the last RPM /
+  vehicle-status reading; `engineRunning()` is null when older than 10 s or never seen. It only warns — the running
+  query may have no engine PID, so null must never block.
 * **New-code notification** (`dtc/DtcNewCodes.kt`, spec `doc/specs/dtc-new-code-notification.md`): `updateDTC` ends
   with `DtcNewCodesAnnouncer.announce`, so every connect path is covered; only `CONNECT` scans with a VIN reply; all
   codes on the vehicle's first scan, else only `diff.isNew` ones. "First scan" is read before `DtcHistoryStore.append`:

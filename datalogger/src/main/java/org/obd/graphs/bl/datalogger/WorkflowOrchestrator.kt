@@ -26,6 +26,7 @@ import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.datalogger.dtc.DtcActionQueue
 import org.obd.graphs.bl.datalogger.dtc.DtcRequest
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
+import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
@@ -84,7 +85,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     internal val eventsReceiver = EventsReceiver()
-    private val metricsObserver = MetricsObserver()
+    private val metricsObserver = MetricsObserver().apply { observe(EngineStateTracker) }
 
     private var lifecycle = object : Lifecycle {
 
