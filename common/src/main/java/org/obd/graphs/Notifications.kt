@@ -46,7 +46,9 @@ object Notifications {
         text: String,
         pendingIntent: PendingIntent? = null,
         isOngoing: Boolean = false,
-        importance: Int = NotificationManager.IMPORTANCE_DEFAULT
+        importance: Int = NotificationManager.IMPORTANCE_DEFAULT,
+        // Shown when expanded; text is the collapsed (and pop-up) line. Null = text in both.
+        bigText: String? = null
     ) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -68,7 +70,7 @@ object Notifications {
             val builder = NotificationCompat.Builder(context, channelId)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                .setStyle(NotificationCompat.BigTextStyle().bigText(bigText ?: text))
                 .setSmallIcon(R.drawable.ic_mygiulia_logo)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setOngoing(isOngoing)

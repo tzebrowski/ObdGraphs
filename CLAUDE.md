@@ -377,6 +377,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   with `DtcNewCodesAnnouncer.announce`, so every connect path is covered; only `CONNECT` scans with a VIN reply; all
   codes on the vehicle's first scan, else only `diff.isNew` ones. "First scan" is read before `DtcHistoryStore.append`:
   history replaces a connect scan equal to the previous one, so "one scan stored" re-announced unchanged codes forever.
+  Channel `dtc_alerts` is IMPORTANCE_HIGH (pop-up); default importance only lists it in the shade. Importance is frozen
+  once a channel exists on a device: changing it means a new channel id.
+  A pop-up shows only the collapsed line: keep it short (`DtcAnnouncement.summary`), full list in `bigText`.
   Posted from `:datalogger` (service), not from `MainActivity`'s receivers, which die with the activity. Gate
   `pref.dtc.notify_new_codes` (default on; the old `pref.dtc.show_notification` toast on *any* codes is gone). AA gets
   `DATA_LOGGER_DTC_NEW_CODES` as a CarToast on `SurfaceRendererScreen` only. A notification's `PendingIntent` needs its

@@ -54,6 +54,7 @@ class DtcNewCodesTest {
         val announcement = announced(listOf(dtc("P0100"), dtc("P0200")), scan(1, dtc("P0100")))!!
 
         assertEquals(listOf("P0200"), announcement.lines)
+        assertEquals(listOf("P0200"), announcement.codes)
         assertFalse(announcement.firstScan)
     }
 
@@ -111,5 +112,13 @@ class DtcNewCodesTest {
 
         assertEquals(listOf("P01", "P02", "P03") to 7, announcement.shown(3))
         assertEquals(announcement.lines to 0, announcement.shown(20))
+    }
+
+    @Test
+    fun `the pop-up line lists the first codes alone and counts the rest`() {
+        val announcement = announced((1..5).map { dtc("P010$it", "Engine ECU") })!!
+
+        assertEquals("P0101, P0102, P0103 +2", announcement.summary(3))
+        assertEquals("P0101, P0102, P0103, P0104, P0105", announcement.summary(5))
     }
 }

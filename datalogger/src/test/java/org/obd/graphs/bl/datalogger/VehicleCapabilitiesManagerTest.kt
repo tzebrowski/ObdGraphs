@@ -84,7 +84,7 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         every { org.obd.graphs.sendBroadcastEvent(any<String>()) } returns Unit
         every { org.obd.graphs.sendBroadcastEvent(any<String>(), any<Serializable>()) } returns Unit
         mockkObject(Notifications)
-        every { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns Unit
+        every { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns Unit
         DtcHistoryStore.file = { File(folder.root, "dtc_history.json") }
         DtcHistoryStore.reset()
     }
@@ -339,8 +339,8 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
 
         connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a"), dtc("P0200", "b")))
 
-        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0200"), firstScan = false)) }
-        verify(exactly = 1) { Notifications.show(any(), any(), any(), any(), any(), any(), "P0200", any(), any(), any()) }
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0200"), firstScan = false, codes = listOf("P0200"))) }
+        verify(exactly = 1) { Notifications.show(any(), any(), any(), any(), any(), any(), "P0200", any(), any(), any(), "P0200") }
     }
 
     @Test
@@ -351,7 +351,7 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "a"), dtc("P0200", "b")), now = 10, kind = DtcScanKind.READ)
 
         verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
-        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0100"), firstScan = true)) }
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0100"), firstScan = true, codes = listOf("P0100"))) }
     }
 
     @Test
@@ -361,7 +361,7 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a"), dtc("P0200", "b")))
 
         verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
-        verify(exactly = 0) { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test

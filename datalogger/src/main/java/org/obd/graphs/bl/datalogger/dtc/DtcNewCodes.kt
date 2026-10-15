@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger.dtc
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.util.Log
@@ -34,18 +35,30 @@ const val PREF_DTC_NOTIFY_NEW_CODES = "pref.dtc.notify_new_codes"
 
 private const val LOG_TAG = "DtcNewCodes"
 private const val NOTIFICATION_ID = 12347
-private const val CHANNEL_ID = "dtc_new_codes"
+
+// High importance: a fault alert pops up (heads-up); default importance only lists it. A channel's importance is
+// fixed once created on a device, so changing it needs a new id ("dtc_new_codes" was the default-importance one).
+private const val CHANNEL_ID = "dtc_alerts"
 private const val MAX_NOTIFICATION_LINES = 8
+
+// Codes in the collapsed line, which is all a pop-up shows (one line): more get cut mid-code on a phone.
+private const val MAX_SUMMARY_CODES = 3
 
 // What the scan on connect tells the driver. firstScan: the vehicle had no earlier scan, so every code
 // counts ("Trouble codes found"); otherwise only the codes its history calls new ("New trouble codes").
-// lines: one per code, "P0123-1A · Engine ECU". Broadcast to AA as the DATA_LOGGER_DTC_NEW_CODES extras.
+// lines: one per code, "P0123-1A · Engine ECU"; codes: the same codes alone, "P0123-1A", for the one-line summary.
+// Broadcast to AA as the DATA_LOGGER_DTC_NEW_CODES extras.
 data class DtcAnnouncement(
     val lines: List<String>,
-    val firstScan: Boolean
+    val firstScan: Boolean,
+    val codes: List<String> = emptyList()
 ) : Serializable {
     // At most max lines, the rest as a count (the caller's "+N more" text).
     fun shown(max: Int): Pair<List<String>, Int> = lines.take(max) to (lines.size - max).coerceAtLeast(0)
+
+    // "P0123-1A, P0100, U1601 +27": the line a pop-up shows.
+    fun summary(max: Int): String =
+        codes.take(max).joinToString(", ") + if (codes.size > max) " +${codes.size - max}" else ""
 }
 
 // Only the automatic scan on connect (a read the user started is on screen anyway), and only for a vehicle
@@ -62,7 +75,7 @@ fun dtcAnnouncement(
     if (kind != DtcScanKind.CONNECT || historyKey(vin) == UNKNOWN_VEHICLE) return null
     val diff = dtcHistoryDiff(scans)
     val codes = dtc.filter { firstScan || diff.isNew(it) }.sortedForDisplay()
-    return if (codes.isEmpty()) null else DtcAnnouncement(codes.map { it.announcementLine() }, firstScan)
+    return if (codes.isEmpty()) null else DtcAnnouncement(codes.map { it.announcementLine() }, firstScan, codes.map { it.displayCode() })
 }
 
 // "P0123-1A · Engine ECU"; the bare code when the module is the default one.
@@ -113,8 +126,10 @@ internal object DtcNewCodesAnnouncer {
             channelName = context.getString(R.string.dtc_new_codes_channel),
             channelDescription = context.getString(R.string.dtc_new_codes_channel_description),
             title = context.getString(title, announcement.lines.size),
-            text = (lines + listOfNotNull(more.takeIf { it > 0 }?.let { context.getString(R.string.dtc_codes_more, it) })).joinToString("\n"),
-            pendingIntent = openDtcList(context)
+            text = announcement.summary(MAX_SUMMARY_CODES),
+            bigText = (lines + listOfNotNull(more.takeIf { it > 0 }?.let { context.getString(R.string.dtc_codes_more, it) })).joinToString("\n"),
+            pendingIntent = openDtcList(context),
+            importance = NotificationManager.IMPORTANCE_HIGH
         )
     }
 
