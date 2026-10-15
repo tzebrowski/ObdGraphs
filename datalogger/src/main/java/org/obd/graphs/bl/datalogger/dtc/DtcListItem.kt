@@ -53,7 +53,7 @@ sealed class DtcListItem {
     // has not (healed or cleared). Collapsed by default; expanded is part of the content, so a toggle rebinds it.
     data class GoneHeader(val codeCount: Int, val expanded: Boolean = false) : DtcListItem()
 
-    // "Clear codes in <module>" right under an expanded module's header (phone only, withModuleClearActions).
+    // "Clear this module" right under an expanded module's header (phone only, withModuleClearActions).
     data class ModuleClear(val module: String) : DtcListItem()
 
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
@@ -154,9 +154,10 @@ fun List<DtcListItem>.collapsedBy(expanded: (String) -> Boolean?): List<DtcListI
     }
 }
 
-// Adds "Clear codes in <module>" right under the header of every expanded module with codes that clearable accepts (a
+// Adds "Clear this module" right under the header of every expanded module with codes that clearable accepts (a
 // module of the CAN header table; the default ECU and "Unknown module" cannot be targeted). At the top, not after the
-// last code: a module with many codes pushed it off screen. Call after collapsedBy.
+// last code: a module with many codes pushed it off screen. Shown also when it is the only module with codes (the
+// user's choice: hiding it then made it look gone). Call after collapsedBy.
 fun List<DtcListItem>.withModuleClearActions(clearable: (String) -> Boolean): List<DtcListItem> =
     flatMap { item ->
         if (item is DtcListItem.ModuleHeader && item.expanded && item.codeCount > 0 && clearable(item.module)) {

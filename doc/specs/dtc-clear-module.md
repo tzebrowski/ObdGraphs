@@ -19,7 +19,9 @@ Roadmap item 5 (`dtc-roadmap.md`).
 
 | Area | Before | After |
 |---|---|---|
-| Expanded module with codes (phone) | Header + codes | Also a red "Clear codes in &lt;module&gt;" row right under its header, above the codes (at the bottom it went off screen with many codes) |
+| Expanded module with codes (phone) | Header + codes | Also a small outlined "Clear this module" button right under its header, above the codes (at the bottom it went off screen with many codes). Red only in its outline and icon: codes are red text |
+| Only one module has codes | — | The button shows too. Hiding it then (tried) made the user think it was gone |
+| DTC dialog Close button | Label one line higher than the other buttons (`dialog_close_window_action` is "Close\n ", two lines for the trip dialog) | Own one-line label `dtc.action_close`, also on the "How it works" dialog |
 | Tap on that row | — | Confirmation: only this module's codes and freeze frames are erased, the app keeps a copy in history, engine off / ignition on, readiness monitors reset if it is the engine module. "Clear" clears that module alone, no picker |
 | Clear / read of some modules | The list shows only those modules | Those modules are refreshed; the other modules keep their last codes and statuses |
 | Connect scan, default-ECU read, another vehicle, no VIN | List replaced | Unchanged: list replaced |
@@ -47,7 +49,9 @@ read / clear; `pref.datalogger.dtc.read_info` is the time of the latest read, al
 * `DtcListItem.ModuleClear(module)`, added by `withModuleClearActions(clearable)` after `collapsedBy` (phone only; AA
   ignores it). `dtcModuleRequestKey(mappings, module)` maps a code's module label back to the table entry
   `dtcScanTargets` scans it with; null means no row.
-* Phone: `item_dtc_module_clear.xml` (end-aligned, `cardinal`, bin icon, 48 dp), `ModuleClearViewHolder`;
+* Phone: `item_dtc_module_clear.xml` (start-aligned under the header name, outlined pill `dtc_module_clear_background.xml`
+  inset to ~32 dp inside a 48 dp touch target, red outline and bin icon, primary text colour; content description adds
+  the module name), `ModuleClearViewHolder`;
   `DiagnosticTroubleCodePreferenceDialogFragment.clearModule` (confirmation, then `scheduleDTCCleanup(setOf(key))`
   through the same `startClear` as the Clear button) and `confirmEngineOff` in front of the Clear picker.
 * AA: `DtcClearConfirmationScreen` puts `dtc.engine_running_warning` above the confirmation text.
@@ -65,7 +69,8 @@ read / clear; `pref.datalogger.dtc.read_info` is the time of the latest read, al
   stays, history records the clear alone; the next connect replaces the list. Fails without the merge (list empty).
 * `EngineStateTest`: reading age limit; RPM (both PIDs) and vehicle status set the state, other PIDs do not, stop
   resets it.
-* `DtcListItemTest`: clear row right under the header of expanded modules with codes that map to a table entry; `dtcModuleRequestKey` for shared headers, header-less and unknown labels.
+* `DtcListItemTest`: clear row right under the header of expanded modules with codes that map to a table entry; also
+  when it is the only module with codes; `dtcModuleRequestKey` for shared headers, header-less and unknown labels.
 
 ## Risks and verification checklist
 
@@ -73,7 +78,7 @@ read / clear; `pref.datalogger.dtc.read_info` is the time of the latest read, al
   refreshes everything on the next connect.
 * The warning trusts the running query: with no engine PID in it, there is no warning (the confirmation text still
   says engine off / ignition on).
-* [ ] Phone: the clear row under the header of an expanded module with codes; PL text at phone width.
+* [ ] Phone: the button under each expanded header with codes; Close label centred; PL text at phone width.
 * [ ] Clear one module on the car: only its codes go (to "No longer reported"), other modules keep theirs.
 * [ ] Engine running: warning dialog before the picker, and in the module confirmation; Clear anyway still clears.
 * [ ] AA (DHU): warning above the clear confirmation with the engine running.

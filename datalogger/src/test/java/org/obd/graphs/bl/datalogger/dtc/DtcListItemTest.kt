@@ -391,6 +391,17 @@ class DtcListItemTest {
     }
 
     @Test
+    fun `the only module with codes still has its clear action`() {
+        val items =
+            listOf(dtc("P0100", module = "Engine"), dtc("P0200", module = "Engine"))
+                .toDtcListItems(listOf("Engine", "ABS"), "none", "none for module", "unknown")
+                .collapsedBy { null }
+                .withModuleClearActions { true }
+
+        assertEquals(listOf("header:Engine", "clear:Engine", "dtc:Engine:P0100", "dtc:Engine:P0200", "header:ABS"), items.map { it.itemKey() })
+    }
+
+    @Test
     fun `a module label maps back to the table entry that scans it`() {
         val mappings =
             listOf(

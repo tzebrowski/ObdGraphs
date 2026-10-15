@@ -101,7 +101,7 @@ internal fun showDtcHistoryHelp(context: Context) {
     AlertDialog.Builder(context)
         .setTitle(R.string.dtc_history_help_title)
         .setMessage(context.getText(R.string.dtc_history_help_body))
-        .setPositiveButton(R.string.dialog_close_window_action, null)
+        .setPositiveButton(R.string.dtc_action_close, null)
         .show()
 }
 
@@ -481,7 +481,8 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             item: DtcListItem.ModuleClear,
             onClick: (String) -> Unit
         ) {
-            action.text = itemView.context.getString(R.string.dtc_module_clear, item.module)
+            // The header above names the module; a screen reader reads the row alone, so it gets the name too.
+            action.contentDescription = "${action.text} (${item.module})"
             action.setOnClickListener { onClick(item.module) }
         }
     }

@@ -976,6 +976,7 @@
     <string name="dtc.action_refresh">Refresh</string>
     <string name="dtc.action_clear_codes">Clear Codes</string>
     <string name="dtc.action_share">Share</string>
+    <string name="dtc.action_close">Close</string>
     <string name="dtc.action_clearing">Clearing…</string>
     <string name="dtc.share.chooser_title">Share Diagnostic Report</string>
     <string name="dtc.share.report_title">Vehicle Diagnostic Report</string>
@@ -1012,7 +1013,7 @@
     <string name="dtc.module.no_response">No response</string>
     <string name="dtc.module.no_response.explanation">No response: the module did not answer the scan. Its codes are unknown, so it is left out of New and No longer reported.</string>
     <string name="dtc.module.refused">Refused</string>
-    <string name="dtc.module.clear">Clear codes in %1$s</string>
+    <string name="dtc.module.clear">Clear this module</string>
     <string name="dtc.module.clear.title">Clear codes in %1$s?</string>
     <string name="dtc.module.clear.message">Only this module\'s trouble codes and their freeze frame data are erased from the vehicle; the other modules keep theirs. The app keeps a copy in its code history.\n\nMake sure the engine is OFF, but the ignition is ON.\n\nIf this is the engine module, the readiness monitors reset too.</string>
     <string name="dtc.module.clear.confirm">Clear</string>
