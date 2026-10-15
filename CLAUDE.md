@@ -400,6 +400,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   own request code: launch intents differing only in extras are one PendingIntent, and `FLAG_UPDATE_CURRENT` from
   another code-0 launch intent replaces the extras. Open a screen from outside via `EXTRA_NAVIGATE_TO` (`:common`) +
   `navigateToPreferencesScreen(key, openDialog = true)`.
+* Failure type text (`-14` in `P0120-14`) comes from the app's table (`dtc/DtcFailureType.kt`, strings in `:common`):
+  ObdMetrics' `failureType.description` is always "Unknown Subtype" (its map is empty). `DtcFailureTypeTest` checks
+  each entry's string name and EN / PL presence. Not on AA: its rows' two text lines are taken.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
   to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.

@@ -49,6 +49,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.displayName
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
+import org.obd.graphs.bl.datalogger.dtc.failureTypeLine
 import org.obd.graphs.bl.datalogger.dtc.isDescriptionUnknown
 import org.obd.graphs.bl.datalogger.dtc.itemKey
 import org.obd.graphs.bl.datalogger.dtc.moduleNameOrNull
@@ -306,7 +307,11 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
 
         val systemTxt = dtc.system?.description ?: notAvailable
         val categoryTxt = dtc.category?.description ?: notAvailable
-        holder.detailSystemInfo.text = context.getString(R.string.dtc_share_system_category, systemTxt, categoryTxt)
+        holder.detailSystemInfo.text =
+            listOfNotNull(
+                context.getString(R.string.dtc_share_system_category, systemTxt, categoryTxt),
+                dtc.failureTypeLine(context::getString)
+            ).joinToString("\n")
 
         val hex = dtc.rawHex ?: notAvailable
         val statusMask = String.format("0x%02X", dtc.statusMask)

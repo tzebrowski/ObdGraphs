@@ -53,6 +53,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
 import org.obd.graphs.bl.datalogger.dtc.dtcModuleRequestKey
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
+import org.obd.graphs.bl.datalogger.dtc.failureTypeLine
 import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
@@ -453,6 +454,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     .append(getString(R.string.dtc_share_system_category, systemTxt ?: notAvailable, categoryTxt ?: notAvailable))
                     .append("\n")
             }
+            code.failureTypeLine(::getString)?.let { reportBuilder.append(it).append("\n") }
 
             code.dtcStatus().statusLine(statusLabels)?.let { reportBuilder.append(getString(R.string.dtc_share_state, it)).append("\n") }
 
