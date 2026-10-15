@@ -20,7 +20,7 @@ the DTC list from the notification, old toast removed), `:automotive` (car toast
 
 | Area | Before | After |
 |---|---|---|
-| Connect scan finds a code the vehicle never reported | Toast "DTC are available" if the setting was on, app in foreground only | Phone notification "New trouble codes (N)", one line per code (`P0123-1A · Engine ECU`) |
+| Connect scan finds a code the vehicle never reported | Toast "DTC are available" if the setting was on, app in foreground only | Pop-up (heads-up) phone notification "New trouble codes (N)", one line per code (`P0123-1A · Engine ECU`) |
 | Connect scan, only known codes | Same toast, every connect | Nothing |
 | Tap on the notification | — | Opens the app on the DTC settings screen with the DTC list dialog open |
 | Android Auto, main (surface) screen | Nothing | Car toast "New trouble codes (N): P0123-1A · Engine ECU, ..." |
@@ -57,7 +57,9 @@ not count as having looked.
     notification. The notification is posted from the service process, not the activity's receiver: the activity's
     receivers are gone once it is destroyed, the service runs while driving. A failure to notify is logged and never
     breaks storing the scan.
-  * Notification: channel `dtc_new_codes` (default importance), id 12347, small icon as the other notifications.
+  * Notification: channel `dtc_alerts`, **high importance** so it pops up (heads-up); id 12347, small icon as the other
+  notifications. Wrong turn: default importance (first channel `dtc_new_codes`) only put it in the shade, no pop-up.
+  A channel's importance cannot be changed from code once created on a device, hence the new id.
     Its `PendingIntent` uses its own request code: launch intents differ only by extras, and the code-0 launch intent
     of the service / GPS notifications would otherwise replace the navigation extra.
 * Opening the list: the launch intent carries `EXTRA_NAVIGATE_TO = "dtc"` (constant moved to `:common`).

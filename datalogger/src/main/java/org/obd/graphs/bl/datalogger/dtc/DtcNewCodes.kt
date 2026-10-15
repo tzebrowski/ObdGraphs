@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger.dtc
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.util.Log
@@ -34,7 +35,10 @@ const val PREF_DTC_NOTIFY_NEW_CODES = "pref.dtc.notify_new_codes"
 
 private const val LOG_TAG = "DtcNewCodes"
 private const val NOTIFICATION_ID = 12347
-private const val CHANNEL_ID = "dtc_new_codes"
+
+// High importance: a fault alert pops up (heads-up); default importance only lists it. A channel's importance is
+// fixed once created on a device, so changing it needs a new id ("dtc_new_codes" was the default-importance one).
+private const val CHANNEL_ID = "dtc_alerts"
 private const val MAX_NOTIFICATION_LINES = 8
 
 // What the scan on connect tells the driver. firstScan: the vehicle had no earlier scan, so every code
@@ -114,7 +118,8 @@ internal object DtcNewCodesAnnouncer {
             channelDescription = context.getString(R.string.dtc_new_codes_channel_description),
             title = context.getString(title, announcement.lines.size),
             text = (lines + listOfNotNull(more.takeIf { it > 0 }?.let { context.getString(R.string.dtc_codes_more, it) })).joinToString("\n"),
-            pendingIntent = openDtcList(context)
+            pendingIntent = openDtcList(context),
+            importance = NotificationManager.IMPORTANCE_HIGH
         )
     }
 
