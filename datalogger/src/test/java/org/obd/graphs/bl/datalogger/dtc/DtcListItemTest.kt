@@ -364,7 +364,7 @@ class DtcListItemTest {
     }
 
     @Test
-    fun `an expanded module with codes ends with its clear action, collapsed and clean modules do not`() {
+    fun `an expanded module with codes has its clear action under the header, collapsed and clean modules do not`() {
         val items =
             listOf(dtc("P0100", module = "Engine"), dtc("P0200", module = "Engine"), dtc("C0035", module = "ABS"), dtc("B1000", module = "Unknown"))
                 .toDtcListItems(listOf("Engine", "ABS", "BCM"), "none", "none for module", "unknown")
@@ -376,9 +376,9 @@ class DtcListItemTest {
             listOf(
                 "header:ABS",
                 "header:Engine",
+                "clear:Engine",
                 "dtc:Engine:P0100",
                 "dtc:Engine:P0200",
-                "clear:Engine",
                 "header:Unknown",
                 "dtc:Unknown:B1000",
                 "header:BCM",

@@ -381,7 +381,7 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   The clear's follow-up read covers the cleared modules alone, so `updateDTC` replacing the list made the other modules'
   codes vanish. `mergedOver` keeps the untargeted modules' codes / statuses for READ / CLEAR of the same known vehicle;
   CONNECT replaces (a module removed from the table must not linger). History records the read alone. The phone's
-  "Clear codes in <module>" row (`DtcListItem.ModuleClear`) needs `dtcModuleRequestKey`: codes carry the display
+  "Clear codes in <module>" row (`DtcListItem.ModuleClear`, right under the header: the user wants it at the top) needs `dtcModuleRequestKey`: codes carry the display
   label, `scheduleDTCCleanup` takes table `requestKey`s.
 * Engine-running check before a clear: `EngineStateTracker` (registered on `MetricsObserver`) keeps the last RPM /
   vehicle-status reading; `engineRunning()` is null when older than 10 s or never seen. It only warns — the running

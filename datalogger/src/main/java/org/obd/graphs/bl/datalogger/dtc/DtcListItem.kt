@@ -53,7 +53,7 @@ sealed class DtcListItem {
     // has not (healed or cleared). Collapsed by default; expanded is part of the content, so a toggle rebinds it.
     data class GoneHeader(val codeCount: Int, val expanded: Boolean = false) : DtcListItem()
 
-    // "Clear codes in <module>" under an expanded module's last code (phone only, withModuleClearActions).
+    // "Clear codes in <module>" right under an expanded module's header (phone only, withModuleClearActions).
     data class ModuleClear(val module: String) : DtcListItem()
 
     // A plain informational line (no code) - the "no DTC found" empty state, or a scanned module
@@ -154,25 +154,17 @@ fun List<DtcListItem>.collapsedBy(expanded: (String) -> Boolean?): List<DtcListI
     }
 }
 
-// Adds "Clear codes in <module>" after the rows of every expanded module with codes that clearable accepts (a module
-// of the CAN header table; the default ECU and "Unknown module" cannot be targeted). Call after collapsedBy.
-fun List<DtcListItem>.withModuleClearActions(clearable: (String) -> Boolean): List<DtcListItem> {
-    val result = mutableListOf<DtcListItem>()
-    var pending: String? = null
-
-    fun flush() {
-        pending?.let { result.add(DtcListItem.ModuleClear(it)) }
-        pending = null
+// Adds "Clear codes in <module>" right under the header of every expanded module with codes that clearable accepts (a
+// module of the CAN header table; the default ECU and "Unknown module" cannot be targeted). At the top, not after the
+// last code: a module with many codes pushed it off screen. Call after collapsedBy.
+fun List<DtcListItem>.withModuleClearActions(clearable: (String) -> Boolean): List<DtcListItem> =
+    flatMap { item ->
+        if (item is DtcListItem.ModuleHeader && item.expanded && item.codeCount > 0 && clearable(item.module)) {
+            listOf(item, DtcListItem.ModuleClear(item.module))
+        } else {
+            listOf(item)
+        }
     }
-
-    forEach { item ->
-        if (item is DtcListItem.ModuleHeader || item is DtcListItem.GoneHeader) flush()
-        result.add(item)
-        if (item is DtcListItem.ModuleHeader && item.expanded && item.codeCount > 0 && clearable(item.module)) pending = item.module
-    }
-    flush()
-    return result
-}
 
 // Marks the rows of the list on screen with what the vehicle's history says about them.
 fun List<DtcListItem>.markedWith(diff: DtcHistoryDiff): List<DtcListItem> =

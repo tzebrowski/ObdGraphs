@@ -19,7 +19,7 @@ Roadmap item 5 (`dtc-roadmap.md`).
 
 | Area | Before | After |
 |---|---|---|
-| Expanded module with codes (phone) | Header + codes | Also a red "Clear codes in &lt;module&gt;" row under its last code |
+| Expanded module with codes (phone) | Header + codes | Also a red "Clear codes in &lt;module&gt;" row right under its header, above the codes (at the bottom it went off screen with many codes) |
 | Tap on that row | — | Confirmation: only this module's codes and freeze frames are erased, the app keeps a copy in history, engine off / ignition on, readiness monitors reset if it is the engine module. "Clear" clears that module alone, no picker |
 | Clear / read of some modules | The list shows only those modules | Those modules are refreshed; the other modules keep their last codes and statuses |
 | Connect scan, default-ECU read, another vehicle, no VIN | List replaced | Unchanged: list replaced |
@@ -65,8 +65,7 @@ read / clear; `pref.datalogger.dtc.read_info` is the time of the latest read, al
   stays, history records the clear alone; the next connect replaces the list. Fails without the merge (list empty).
 * `EngineStateTest`: reading age limit; RPM (both PIDs) and vehicle status set the state, other PIDs do not, stop
   resets it.
-* `DtcListItemTest`: clear row only under expanded modules with codes that map to a table entry, before the next
-  header and the gone section; `dtcModuleRequestKey` for shared headers, header-less and unknown labels.
+* `DtcListItemTest`: clear row right under the header of expanded modules with codes that map to a table entry; `dtcModuleRequestKey` for shared headers, header-less and unknown labels.
 
 ## Risks and verification checklist
 
@@ -74,7 +73,7 @@ read / clear; `pref.datalogger.dtc.read_info` is the time of the latest read, al
   refreshes everything on the next connect.
 * The warning trusts the running query: with no engine PID in it, there is no warning (the confirmation text still
   says engine off / ignition on).
-* [ ] Phone: the clear row under an expanded module with codes; PL text at phone width.
+* [ ] Phone: the clear row under the header of an expanded module with codes; PL text at phone width.
 * [ ] Clear one module on the car: only its codes go (to "No longer reported"), other modules keep theirs.
 * [ ] Engine running: warning dialog before the picker, and in the module confirmation; Clear anyway still clears.
 * [ ] AA (DHU): warning above the clear confirmation with the engine running.

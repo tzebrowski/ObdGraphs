@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- "Clear codes in <module>" under the last code of an expanded module (DtcListItem.ModuleClear). End-aligned and
+<!-- "Clear codes in <module>" right under an expanded module's header (DtcListItem.ModuleClear). End-aligned and
      in the Clear button's red, so it reads as that module's action, not as another code. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
