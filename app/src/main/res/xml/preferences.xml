@@ -696,11 +696,11 @@
 
                 <SwitchPreferenceCompat
                     app:dependency="pref.adapter.init.fetchDTC"
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.dtc.show_notification"
-                    android:key="pref.dtc.show_notification"
-                    android:summary="@string/pref.dtc.show_notification_summary"
-                    android:title="@string/pref.dtc.show_notification"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.dtc.notify_new_codes"
+                    android:key="pref.dtc.notify_new_codes"
+                    android:summary="@string/pref.dtc.notify_new_codes_summary"
+                    android:title="@string/pref.dtc.notify_new_codes"
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>

@@ -54,4 +54,7 @@
     <string name="aa_stat_min">min</string>
     <string name="aa_stat_avg">śr</string>
     <string name="aa_stat_max">maks</string>
+    <string name="aa_dtc_new_codes">Nowe kody błędów (%1$d): %2$s</string>
+    <string name="aa_dtc_codes_found">Wykryto kody błędów (%1$d): %2$s</string>
+    <string name="aa_dtc_codes_more">+%1$d więcej</string>
 </resources>

@@ -60,6 +60,7 @@ import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
 import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
+const val PREFERENCE_SCREEN_OPEN_DIALOG = "preferences.openDialog"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 const val PREF_GAUGE_TRIPS = "pref.gauge.recordings"
@@ -74,6 +75,7 @@ const val PREFERENCE_SCREEN_KEY_DASH = "pref.dash.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GAUGE = "pref.gauge.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GRAPH = "pref.graph.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_READINESS = "pref.readiness"
+const val PREFERENCE_SCREEN_KEY_DTC = "pref.dtc"
 const val PREFERENCE_SCREEN_KEY_GIULIA = "pref.giulia.displayed_parameter_ids"
 
 const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
@@ -182,6 +184,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     }
 
                     openPreferenceDialogFor(it)
+                    if (requireArguments().getBoolean(PREFERENCE_SCREEN_OPEN_DIALOG)) openScreenDialogFor(it)
                 }
             }
         }
@@ -247,6 +250,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 applyVisibility(newValue as? String)
                 true
             }
+    }
+
+    // Dialogs opened only on request (a notification), not whenever the screen is shown from the menu.
+    private fun openScreenDialogFor(preferenceKey: String) {
+        when (preferenceKey) {
+            PREFERENCE_SCREEN_KEY_DTC -> DiagnosticTroubleCodePreferenceDialogFragment().show(parentFragmentManager, null)
+        }
     }
 
     private fun openPreferenceDialogFor(preferenceKey: String) {

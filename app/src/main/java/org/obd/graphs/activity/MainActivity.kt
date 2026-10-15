@@ -38,9 +38,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import org.obd.graphs.BuildConfig
+import org.obd.graphs.EXTRA_NAVIGATE_TO
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.NAVIGATE_TO_DTC
 import org.obd.graphs.Network
 import org.obd.graphs.Permissions
 import org.obd.graphs.R
@@ -52,6 +54,7 @@ import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.integrations.gcp.gdrive.TripLogDriveManager
 import org.obd.graphs.language.LanguageManager
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_DTC
 import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.profile.profile
@@ -215,6 +218,7 @@ class MainActivity :
             "gauge" -> navigateToScreen(R.id.nav_gauge)
             "trip_logs" -> TripLogListDialogFragment().show(supportFragmentManager, null)
             "trip_upload" -> TripLogListDialogFragment(enableDeleteButtons = false).show(supportFragmentManager, null)
+            NAVIGATE_TO_DTC -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_DTC, openDialog = true)
         }
     }
 
@@ -390,9 +394,5 @@ class MainActivity :
                 it.visibility = View.GONE
             }
         }
-    }
-
-    companion object {
-        const val EXTRA_NAVIGATE_TO = "org.obd.graphs.EXTRA_NAVIGATE_TO"
     }
 }

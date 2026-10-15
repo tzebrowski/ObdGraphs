@@ -261,7 +261,6 @@
     <string name="pref.pids.search_hint">Search PIDs...</string>
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
-    <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>
 
     <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session. With trouble-code reading on, the VIN is read anyway.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will allow supported OBD2 PIDs/Sensors to be read during the session with the ECU.</string>
@@ -450,8 +449,8 @@
     <string name="pref.dtc.read_snapshots_summary">Reads additional context data when DTC was taken.</string>
     <string name="pref.dtc.enable_dtc_reading">Enable Automatic DTC readings</string>
     <string name="pref.dtc.enable_dtc_reading_summary">Read Diagnostic Trouble Codes (DTCs) while connected to the ECU.</string>
-    <string name="pref.dtc.show_notification">Enable DTC notifications</string>
-    <string name="pref.dtc.show_notification_summary">Sends an alert when new Diagnostic Trouble Codes (DTCs) are found.</string>
+    <string name="pref.dtc.notify_new_codes">Notify about new trouble codes</string>
+    <string name="pref.dtc.notify_new_codes_summary">After connecting, shows a notification (and a message in Android Auto) when the scan finds codes this vehicle has not reported before. Needs the notification permission.</string>
 
     <string name="pref.dtc.clean_dialog.confirm_message">Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.\n\nClearing also resets the readiness monitors: the car shows not-ready until they run again.</string>
     <string name="pref.dtc.clean_dialog.send_message">Clear command sent to ECU</string>

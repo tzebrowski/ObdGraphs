@@ -373,6 +373,16 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   with no modules (list collapsed to "ECU"). Requests now wait in the queue; `onDTCCompleted` uses the finished
   request's kind / modules and holds back `DATA_LOGGER_DTC_ACTION_COMPLETED` while another one waits. Logcat:
   "DTC action completed: <kind>, ... next=<kind>". Any new DTC entry point must go through `submit()`.
+* **New-code notification** (`dtc/DtcNewCodes.kt`, spec `doc/specs/dtc-new-code-notification.md`): `updateDTC` ends
+  with `DtcNewCodesAnnouncer.announce`, so every connect path is covered; only `CONNECT` scans with a VIN reply; all
+  codes on the vehicle's first scan, else only `diff.isNew` ones. "First scan" is read before `DtcHistoryStore.append`:
+  history replaces a connect scan equal to the previous one, so "one scan stored" re-announced unchanged codes forever.
+  Posted from `:datalogger` (service), not from `MainActivity`'s receivers, which die with the activity. Gate
+  `pref.dtc.notify_new_codes` (default on; the old `pref.dtc.show_notification` toast on *any* codes is gone). AA gets
+  `DATA_LOGGER_DTC_NEW_CODES` as a CarToast on `SurfaceRendererScreen` only. A notification's `PendingIntent` needs its
+  own request code: launch intents differing only in extras are one PendingIntent, and `FLAG_UPDATE_CURRENT` from
+  another code-0 launch intent replaces the extras. Open a screen from outside via `EXTRA_NAVIGATE_TO` (`:common`) +
+  `navigateToPreferencesScreen(key, openDialog = true)`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate

@@ -52,4 +52,9 @@ Aby zapewnić pełną funkcjonalność, zezwól na następujące uprawnienia:<br
     <string name="pref.language.title">Język</string>
     <string name="pref.language.summary">Wybierz język aplikacji</string>
 
+    <string name="dtc_new_codes_channel">Kody błędów</string>
+    <string name="dtc_new_codes_channel_description">Nowe kody błędów wykryte podczas skanowania po połączeniu</string>
+    <string name="dtc_new_codes_title">Nowe kody błędów (%1$d)</string>
+    <string name="dtc_codes_found_title">Wykryto kody błędów (%1$d)</string>
+    <string name="dtc_codes_more">+%1$d więcej</string>
 </resources>

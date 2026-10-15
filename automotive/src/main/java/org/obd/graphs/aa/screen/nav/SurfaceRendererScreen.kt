@@ -41,7 +41,11 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
+import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_NEW_CODES
+import org.obd.graphs.bl.datalogger.dtc.DtcAnnouncement
+import org.obd.graphs.getSerializableCompat
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.registerReceiver
@@ -49,6 +53,9 @@ import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.screen.behaviour.ScreenBehaviorController
+
+// Codes listed in the new-DTC car toast; the rest as "+N more".
+private const val AA_DTC_TOAST_LINES = 3
 
 const val GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_1.event.changed"
 const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_2.event.changed"
@@ -109,6 +116,16 @@ internal class SurfaceRendererScreen(
                 intent: Intent?
             ) {
                 when (intent?.action) {
+                    // Only while this screen is shown; the phone notification covers the rest.
+                    DATA_LOGGER_DTC_NEW_CODES -> {
+                        intent.getSerializableCompat<DtcAnnouncement>()?.let {
+                            val (lines, more) = it.shown(AA_DTC_TOAST_LINES)
+                            val codes = (lines + listOfNotNull(more.takeIf { n -> n > 0 }?.let { n -> carContext.getString(R.string.aa_dtc_codes_more, n) }))
+                            val text = if (it.firstScan) R.string.aa_dtc_codes_found else R.string.aa_dtc_new_codes
+                            toast.show(carContext, carContext.getString(text, it.lines.size, codes.joinToString(", ")))
+                        }
+                    }
+
                     AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> {
                         switchSurfaceRenderer(getSurfaceRendererType())
                     }
@@ -292,6 +309,7 @@ internal class SurfaceRendererScreen(
             it.addAction(GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             it.addAction(LANGUAGE_CHANGE_EVENT)
+            it.addAction(DATA_LOGGER_DTC_NEW_CODES)
         }
 
         val screenBehavior = screenBehaviorController.getScreenBehavior(screenId) ?: return

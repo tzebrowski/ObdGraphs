@@ -32,9 +32,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.obd.graphs.Notifications
 import org.obd.graphs.bl.TestSetup
+import org.obd.graphs.bl.datalogger.dtc.DtcAnnouncement
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
+import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_NOTIFY_NEW_CODES
 import org.obd.graphs.bl.datalogger.dtc.UNKNOWN_VEHICLE
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.SnapshotPID
@@ -46,6 +49,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
+import java.io.Serializable
 
 private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
@@ -78,6 +82,9 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         mockkObject(dataLoggerSettings)
         mockkStatic("org.obd.graphs.BroadcastKt")
         every { org.obd.graphs.sendBroadcastEvent(any<String>()) } returns Unit
+        every { org.obd.graphs.sendBroadcastEvent(any<String>(), any<Serializable>()) } returns Unit
+        mockkObject(Notifications)
+        every { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns Unit
         DtcHistoryStore.file = { File(folder.root, "dtc_history.json") }
         DtcHistoryStore.reset()
     }
@@ -316,5 +323,54 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
     @Test
     fun `a list stored before module statuses were recorded has none`() {
         assertTrue(VehicleCapabilitiesManager.getDtcModuleStatus().isEmpty())
+    }
+
+    private fun connectScans(vararg scans: Set<DiagnosticTroubleCode>) {
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_METADATA), any()) } returns """{"VIN":"ZARFAMAN0K7612345"}"""
+        scans.forEachIndexed { i, dtc -> VehicleCapabilitiesManager.updateDTC(dtc, now = i + 1L, kind = DtcScanKind.CONNECT) }
+    }
+
+    @Test
+    fun `a connect scan that finds codes new to the vehicle announces them`() {
+        every { sharedPrefs.getBoolean(PREF_DTC_NOTIFY_NEW_CODES, true) } returns true
+        every { context.getString(any()) } returns "channel"
+        every { context.getString(any(), any()) } returns "title"
+        every { context.packageManager } returns mockk { every { getLaunchIntentForPackage(any()) } returns null }
+
+        connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a"), dtc("P0200", "b")))
+
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0200"), firstScan = false)) }
+        verify(exactly = 1) { Notifications.show(any(), any(), any(), any(), any(), any(), "P0200", any(), any(), any()) }
+    }
+
+    @Test
+    fun `the first scan announces its codes, the same codes on the next connect and a manual read do not`() {
+        every { sharedPrefs.getBoolean(PREF_DTC_NOTIFY_NEW_CODES, true) } returns true
+
+        connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a")))
+        VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "a"), dtc("P0200", "b")), now = 10, kind = DtcScanKind.READ)
+
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
+        verify(exactly = 1) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, DtcAnnouncement(listOf("P0100"), firstScan = true)) }
+    }
+
+    @Test
+    fun `new codes are not announced when the setting is off`() {
+        every { sharedPrefs.getBoolean(PREF_DTC_NOTIFY_NEW_CODES, true) } returns false
+
+        connectScans(setOf(dtc("P0100", "a")), setOf(dtc("P0100", "a"), dtc("P0200", "b")))
+
+        verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
+        verify(exactly = 0) { Notifications.show(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `new codes of a vehicle without a VIN reply are not announced`() {
+        every { sharedPrefs.getBoolean(PREF_DTC_NOTIFY_NEW_CODES, true) } returns true
+
+        VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "a")), now = 1, kind = DtcScanKind.CONNECT)
+        VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "a"), dtc("P0200", "b")), now = 2, kind = DtcScanKind.CONNECT)
+
+        verify(exactly = 0) { org.obd.graphs.sendBroadcastEvent(DATA_LOGGER_DTC_NEW_CODES, any<Serializable>()) }
     }
 }

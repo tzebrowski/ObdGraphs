@@ -28,6 +28,9 @@ const val DATA_LOGGER_SCHEDULED_STOP_EVENT = "data.logger.scheduled.stop"
 const val DATA_LOGGER_DTC_ACTION_COMPLETED = "data.logger.dtc.action.completed.event"
 
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
+
+// The connect scan found codes to tell the driver about; extras: dtc.DtcAnnouncement.
+const val DATA_LOGGER_DTC_NEW_CODES = "data.logger.dtc.new_codes"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
 const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
