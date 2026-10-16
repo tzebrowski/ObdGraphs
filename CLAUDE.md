@@ -364,6 +364,8 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   a "How it works" chip and the legend a link, both `showDtcHistoryHelp` (spec `doc/specs/dtc-history-help.md`). The
   explanation quotes UI labels; `DtcHistoryHelpTest` fails if one is renamed in EN or PL. A chip with its own click
   inside a clickable header: `addMiniBadge` returns the chip.
+  A long `setMessage` on a platform `AlertDialog` pushed Close off a phone screen (help could not be closed): the help
+  text scrolls in a height-capped `ScrollView` (`helpMessageMaxHeight`). Do the same for any long dialog text.
 * **A module that did not answer is not clean** (spec `doc/specs/dtc-module-response.md`). ObdMetrics reports
   `DtcModuleStatus` per scanned module via the three-argument `Lifecycle.onDTCCompleted` (the app overrides only that
   one). Inside ObdMetrics, NO DATA / adapter errors never reach the DTC handler (`ObdCommandHandler` drops them), so
