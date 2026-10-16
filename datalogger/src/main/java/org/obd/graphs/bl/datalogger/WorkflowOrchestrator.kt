@@ -30,6 +30,7 @@ import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
+import org.obd.graphs.bl.datalogger.dtc.toScanProgress
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
 import org.obd.graphs.bl.readiness.resetsReadiness
@@ -46,6 +47,7 @@ import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.Command
 import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
 import org.obd.metrics.command.dtc.DtcModuleStatus
+import org.obd.metrics.command.dtc.DtcProgress
 import org.obd.metrics.command.group.CommandGroup
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.routine.RoutineCommand
@@ -97,6 +99,12 @@ internal class WorkflowOrchestrator internal constructor() {
             status = WorkflowStatus.Connecting
 
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
+        }
+
+        // Called on ObdMetrics' command thread as each module's requests start: only a broadcast here. The phone
+        // overlay and the AA loading title show it.
+        override fun onDTCProgress(progress: DtcProgress) {
+            sendBroadcastEvent(DATA_LOGGER_DTC_PROGRESS, progress.toScanProgress())
         }
 
         // moduleStatus: how each scanned module answered (ObdMetrics); a module that did not answer is shown as such

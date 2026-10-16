@@ -71,6 +71,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_BLE_NOT_REACHABLE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_PROGRESS
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
@@ -80,6 +81,9 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_NOT_CONNECTED
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.dtc.DTC_SCREEN_LOCK_CONTEXT
+import org.obd.graphs.bl.datalogger.dtc.DtcScanProgress
+import org.obd.graphs.bl.datalogger.dtc.text
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_IGNITION_OFF
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_IGNITION_ON
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING
@@ -216,6 +220,11 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
+
+        DATA_LOGGER_DTC_PROGRESS ->
+            intent.getSerializableCompat<DtcScanProgress>()?.let {
+                screenLockManager.updateProgress(DTC_SCREEN_LOCK_CONTEXT, it.text { id -> getString(id) })
+            }
 
         SCREEN_LOCK_PROGRESS_EVENT -> {
             var screenLock: ScreenLock? = intent.getSerializableCompat<ScreenLock>()
@@ -419,6 +428,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
         it.addAction(SCREEN_LOCK_PROGRESS_EVENT)
         it.addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
+        it.addAction(DATA_LOGGER_DTC_PROGRESS)
         it.addAction(USB_DEVICE_ATTACHED_EVENT)
         it.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
         it.addAction(AA_EDIT_PREF_SCREEN)

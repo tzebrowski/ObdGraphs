@@ -157,4 +157,6 @@ Aby zapewnić pełną funkcjonalność, zezwól na następujące uprawnienia:<br
     <string name="dtc_ftb_96">Wewnętrzna usterka podzespołu</string>
     <string name="dtc_ftb_97">Działanie podzespołu lub systemu zablokowane</string>
     <string name="dtc_ftb_98">Przegrzanie podzespołu lub systemu</string>
+    <string name="dtc_progress_module">%1$s · %2$d / %3$d</string>
+    <string name="dtc_progress_follow_ups">Odczyt szczegółów kodów · %1$d</string>
 </resources>

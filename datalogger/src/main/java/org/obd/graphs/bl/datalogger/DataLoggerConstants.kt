@@ -29,6 +29,9 @@ const val DATA_LOGGER_DTC_ACTION_COMPLETED = "data.logger.dtc.action.completed.e
 
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
 
+// A DTC read / clear moved on to the next module; extras: dtc.DtcScanProgress.
+const val DATA_LOGGER_DTC_PROGRESS = "data.logger.dtc.progress"
+
 // The connect scan found codes to tell the driver about; extras: dtc.DtcAnnouncement.
 const val DATA_LOGGER_DTC_NEW_CODES = "data.logger.dtc.new_codes"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
