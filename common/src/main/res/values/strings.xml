@@ -170,4 +170,8 @@ To provide full functionality, please allow the following in the next steps:<br/
     <string name="dtc_ftb_96">Component internal failure</string>
     <string name="dtc_ftb_97">Component or system operation obstructed or blocked</string>
     <string name="dtc_ftb_98">Component or system over temperature</string>
+    <!-- DTC read / clear progress: module · n / total, then the per-code requests -->
+    <string name="dtc_progress_module">%1$s · %2$d / %3$d</string>
+    <string name="dtc_progress_follow_ups">Reading code details · %1$d</string>
+    <string name="dtc_connect_scan_screen_lock">Reading trouble codes. Live data is paused until the scan finishes…</string>
 </resources>

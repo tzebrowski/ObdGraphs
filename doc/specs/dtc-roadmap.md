@@ -23,6 +23,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | In-app explanation of New / No longer reported | `dtc-history-help.md` |
 | Clear one module, engine-running warning before a clear (initial #5) | `dtc-clear-module.md` |
 | Failure type text (initial #7): meaning of the `-XX` byte in the expanded row and report | `dtc-failure-type.md` |
+| Scan progress (added later #6): "Engine ECU · 4 / 13" on the phone overlay | `dtc-scan-progress.md` |
 
 ## Planned
 
@@ -81,6 +82,8 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
 * **Confirmation:** mention that freeze frames are erased (saved in history per 1) and that readiness monitors reset.
 
 ### 6. Scan progress (ObdMetrics + App) — added later
+
+**Done** (2026-10-16), spec `dtc-scan-progress.md`. Phone only; AA and codes-per-module-as-they-arrive left out.
 
 * A 13-module scan with snapshots takes ~13 s behind an overlay that says only "please wait".
 * **Plan:** report per-module progress ("Reading Engine ECU · 4 / 13"), which needs a progress callback from

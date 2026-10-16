@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences.dtc
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -45,5 +46,12 @@ class DtcHistoryHelpTest {
                 assertTrue("$folder: $key missing", strings[key]?.isNotBlank() == true)
             }
         }
+    }
+
+    // The text scrolls inside a capped height, so the Close button always fits under it.
+    @Test
+    fun `the help text leaves room for the close button`() {
+        assertEquals(1152, helpMessageMaxHeight(1920))
+        assertTrue(helpMessageMaxHeight(720) < 720 - 200)
     }
 }

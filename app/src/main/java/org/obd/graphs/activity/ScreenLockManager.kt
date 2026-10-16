@@ -44,6 +44,8 @@ class ScreenLockManager(
 
     private var cancelButton: Button? = null
     private var messageTextView: TextView? = null
+    private var shownLock: ScreenLock? = null
+    private var shownMessage: String? = null
 
     fun setup() {
         if (lockScreenDialog != null) return
@@ -81,6 +83,8 @@ class ScreenLockManager(
         }
 
         messageTextView?.text = message
+        shownLock = screenLock
+        shownMessage = message
 
         lockScreenDialog?.let { dialog ->
             if (!dialog.isShowing && !activity.isFinishing) {
@@ -101,12 +105,24 @@ class ScreenLockManager(
         }
     }
 
+    // A second line under the message, e.g. the module a DTC read is at. Only for the overlay put up with that
+    // context: a late update must not land on another action's overlay.
+    fun updateProgress(
+        context: String,
+        progress: String
+    ) {
+        if (lockScreenDialog?.isShowing != true || shownLock?.context != context) return
+        messageTextView?.text = listOfNotNull(shownMessage, progress).joinToString("\n")
+    }
+
     fun dismiss() {
         timeoutRunnable?.let { handler.removeCallbacks(it) }
         if (lockScreenDialog?.isShowing == true) {
             lockScreenDialog?.dismiss()
         }
         onCancelAction = null
+        shownLock = null
+        shownMessage = null
     }
 
     override fun onDestroy(owner: LifecycleOwner) {

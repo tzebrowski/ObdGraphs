@@ -33,6 +33,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -98,11 +99,36 @@ internal val HELP_BADGE = BadgeStyle(R.color.dialog_text_secondary, R.drawable.d
 
 // The workflow behind New / No longer reported (scan history, clear, healing, one-scan lifetime): the one-line legend
 // entry was not enough to understand why cleared codes show up after a clear.
+// Share of the screen height the help text may take. Set as a plain message, the text taller than the screen pushed
+// the Close button off the bottom and the dialog could not be closed.
+internal const val HELP_MESSAGE_MAX_HEIGHT_RATIO = 0.6f
+
+internal fun helpMessageMaxHeight(screenHeight: Int): Int = (screenHeight * HELP_MESSAGE_MAX_HEIGHT_RATIO).toInt()
+
 internal fun showDtcHistoryHelp(context: Context) {
-    AlertDialog.Builder(context)
+    val padding = (24 * context.resources.displayMetrics.density).toInt()
+    val message =
+        TextView(context).apply {
+            text = context.getText(R.string.dtc_history_help_body)
+            setTextAppearance(android.R.style.TextAppearance_Material_Subhead)
+            setPadding(padding, padding / 3, padding, padding / 3)
+        }
+    val maxHeight = helpMessageMaxHeight(context.resources.displayMetrics.heightPixels)
+    val scroll =
+        object : ScrollView(context) {
+            override fun onMeasure(
+                widthMeasureSpec: Int,
+                heightMeasureSpec: Int
+            ) = super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST))
+        }.apply { addView(message) }
+
+    AlertDialog
+        .Builder(context)
         .setTitle(R.string.dtc_history_help_title)
-        .setMessage(context.getText(R.string.dtc_history_help_body))
+        .setView(scroll)
         .setPositiveButton(R.string.dtc_action_close, null)
+        .create()
+        .apply { setCanceledOnTouchOutside(true) }
         .show()
 }
 

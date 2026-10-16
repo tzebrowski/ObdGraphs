@@ -31,6 +31,9 @@ None. New strings: `dtc.history.help.chip`, `.link`, `.title`, `.body` (EN + PL)
   `getText` so its `<b>` spans stay). `addMiniBadge` now returns the chip, so a caller can give it its own click;
   `GoneHeaderViewHolder` does that for the help chip.
 * `HELP_BADGE` is not a row state, so it is not in `DTC_LEGEND`.
+* Fix (2026-10-16): the body is longer than a phone screen. As a plain `setMessage` it pushed the Close button off the
+  bottom and the dialog could not be closed. The body now scrolls in a `ScrollView` capped at 60 % of the screen height
+  (`helpMessageMaxHeight`), and a tap outside closes the dialog.
 * `dialog_dtc.xml`: `dtc_legend_help` under the legend's gone sentence; wired in `attachLegend`.
 
 ## Backward compatibility
@@ -42,7 +45,9 @@ UI only; nothing stored.
 * `DtcHistoryHelpTest` (done): in EN and PL the explanation contains the current "New", "No longer reported" and
   "Clear Codes" labels, and the chip / link / title strings exist. Checked to fail when the example names a button
   label that does not exist.
+* `DtcHistoryHelpTest`: the text's height cap leaves room for the Close button (720 px screen).
 * `DtcLegendTest` unchanged: the help chip is not a legend entry.
+* [ ] Phone: the help dialog shows Close at the bottom with the text scrolling above it; Close and a tap outside close it.
 * [ ] Phone: after a clear, the header shows the chip; the chip opens the dialog without toggling the section; the
   header still toggles; the legend link opens the dialog; PL header fits at phone width (title + count + chip + arrow).
 

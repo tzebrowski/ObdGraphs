@@ -43,6 +43,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.dtc.DTC_SCREEN_LOCK_CONTEXT
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
@@ -416,6 +417,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             ScreenLock(
                 message = R.string.pref_dtc_screen_lock,
                 showCancel = true,
+                context = DTC_SCREEN_LOCK_CONTEXT,
                 timeoutMs = dtcActionTimeoutMs(moduleCount)
             )
         )
