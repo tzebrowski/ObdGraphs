@@ -27,6 +27,7 @@ import org.obd.graphs.bl.datalogger.dtc.DtcActionQueue
 import org.obd.graphs.bl.datalogger.dtc.DtcRequest
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
 import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
+import org.obd.graphs.bl.datalogger.dtc.connectScanScreenLock
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
@@ -126,6 +127,8 @@ internal class WorkflowOrchestrator internal constructor() {
             VehicleCapabilitiesManager.updateDTC(dtc, finished?.moduleLabels.orEmpty(), kind = kind, moduleStatus = moduleStatus.orEmpty())
 
             if (kind == DtcScanKind.CONNECT && dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
+            // The connect scan's overlay; a request waiting behind it keeps its own.
+            if (kind == DtcScanKind.CONNECT && next == null) sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
 
             when {
                 // A request waited for this one: the screen that asked for it keeps waiting for its result.
@@ -346,7 +349,13 @@ internal class WorkflowOrchestrator internal constructor() {
         val result = workflow.scheduleDTCAction(actions, request.modules)
         Log.i(LOG_TAG, "DTC ${request.kind} is scheduled: $result")
         // Refused (e.g. not connected): no completion will come, so nothing is in flight.
-        if (result != WorkflowExecutionStatus.DTC_QUEUED) dtcActions.reset()
+        if (result != WorkflowExecutionStatus.DTC_QUEUED) {
+            dtcActions.reset()
+        } else if (request.kind == DtcScanKind.CONNECT) {
+            // Live data stops while ObdMetrics runs the scan: tell the driver why the gauges freeze. Same overlay
+            // as a manual read (context DTC_SCREEN_LOCK_CONTEXT), so the module counter shows on it too.
+            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, connectScanScreenLock(request.modules.size))
+        }
     }
 
     // Reuses the Diagnostic Request ID table as the DTC scan target list, restricted to whichever

@@ -47,6 +47,15 @@ class DtcScanProgressTest {
     }
 
     @Test
+    fun `the connect scan overlay takes the progress updates and waits like a manual read`() {
+        val lock = connectScanScreenLock(13)
+        assertEquals(DTC_SCREEN_LOCK_CONTEXT, lock.context)
+        assertEquals(R.string.dtc_connect_scan_screen_lock, lock.message)
+        assertEquals(dtcActionTimeoutMs(13), lock.timeoutMs)
+        assertTrue(lock.showCancel)
+    }
+
+    @Test
     fun `both texts exist in English and Polish with their arguments`() {
         listOf("values", "values-pl").forEach { folder ->
             val nodes =
@@ -60,6 +69,7 @@ class DtcScanProgressTest {
                     nodes.item(i).attributes.getNamedItem("name").nodeValue to nodes.item(i).textContent
                 }
             assertTrue("$folder: module", strings["dtc_progress_module"]?.contains("%3\$d") == true)
+            assertTrue("$folder: connect scan", strings["dtc_connect_scan_screen_lock"]?.isNotBlank() == true)
             assertTrue("$folder: follow-ups", strings["dtc_progress_follow_ups"]?.contains("%1\$d") == true)
         }
     }

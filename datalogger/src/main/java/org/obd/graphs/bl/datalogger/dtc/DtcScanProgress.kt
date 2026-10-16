@@ -16,12 +16,22 @@
  */
 package org.obd.graphs.bl.datalogger.dtc
 
+import org.obd.graphs.ScreenLock
 import org.obd.graphs.commons.R
 import org.obd.metrics.command.dtc.DtcProgress
 import java.io.Serializable
 
 // The DTC overlay context: progress updates only the overlay a DTC action put up.
 const val DTC_SCREEN_LOCK_CONTEXT = "datalogger.dtc"
+
+// The overlay over the scan on connect: live data is paused while it runs. Cancel only hides it, the scan goes on.
+fun connectScanScreenLock(moduleCount: Int): ScreenLock =
+    ScreenLock(
+        message = R.string.dtc_connect_scan_screen_lock,
+        showCancel = true,
+        context = DTC_SCREEN_LOCK_CONTEXT,
+        timeoutMs = dtcActionTimeoutMs(moduleCount)
+    )
 
 // Where the running DTC read / clear is, from ObdMetrics' DtcProgress. module null = per-code requests
 // (freeze frames, extended data) for total codes, after every module was read.

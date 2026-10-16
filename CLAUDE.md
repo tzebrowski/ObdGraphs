@@ -407,7 +407,8 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   command queued ahead of each module's `ATSH`, so it fires as the module *starts* and also for modules that never
   answer (no reply would). App broadcasts `DATA_LOGGER_DTC_PROGRESS`; `ScreenLockManager.updateProgress` touches only an
   overlay shown with `DTC_SCREEN_LOCK_CONTEXT`. Not on AA: retitling a loading `ListTemplate` per module may cost
-  template steps.
+  template steps. The connect scan shows that overlay too (`connectScanScreenLock`, user's choice): ObdMetrics queues
+  the whole scan ahead of live PIDs, so gauges freeze for its length. Its unlock is skipped while a request waits.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
   to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.
