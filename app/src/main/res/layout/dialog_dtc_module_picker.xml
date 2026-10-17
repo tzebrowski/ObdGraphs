@@ -42,6 +42,15 @@
             android:textColor="@color/rainbow_indigo" />
     </LinearLayout>
 
+    <!-- What the per-module OBD-II switch does. -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:text="@string/pref.dtc.select_modules.obd_hint"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp" />
+
     <!-- Bulk (de)selection sits with the list rather than in the button bar: three buttons sharing
          the bar's width broke "Odznacz wszystkie" mid-word in Polish. -->
     <Button

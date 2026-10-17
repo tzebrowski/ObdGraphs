@@ -30,7 +30,8 @@ import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.connectScanScreenLock
 import org.obd.graphs.bl.datalogger.dtc.dtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
-import org.obd.graphs.bl.datalogger.dtc.dtcScanTargets
+import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_OBD_MODULES
+import org.obd.graphs.bl.datalogger.dtc.dtcScanHeaders
 import org.obd.graphs.bl.datalogger.dtc.toScanProgress
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
@@ -363,8 +364,11 @@ internal class WorkflowOrchestrator internal constructor() {
     // module's displayName (description, falling back to requestKey) is what ends up on
     // Init.Header.mode - not a protocol mode, but the label shown in the DTC list/dialogs.
     private fun getDtcModules(selectedModules: Set<String>): List<Init.Header> =
-        dtcScanTargets(DiagnosticRequestIDManager.getMappings(), selectedModules)
-            .map { Init.Header.builder().mode(it.displayName).header(it.headerValue).build() }
+        dtcScanHeaders(
+            DiagnosticRequestIDManager.getMappings(),
+            selectedModules,
+            Prefs.getStringSet(PREF_DTC_OBD_MODULES, emptySet()).orEmpty()
+        )
 
     fun discoverModule(header: String) {
         val result = workflow.discoverModule(header)

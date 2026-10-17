@@ -436,6 +436,7 @@
     <string name="pref.dtc.read_info_other_vehicle">another vehicle (VIN %1$s)</string>
     <string name="pref.dtc.read_info_no_vin">VIN not programmed</string>
     <string name="pref.dtc.clear_outcome.cleared">Trouble codes cleared.</string>
+    <string name="pref.dtc.clear_outcome.permanent_remain">Trouble codes cleared. Permanent codes stay: %1$s. The ECU removes them itself once its test passes.</string>
     <string name="pref.dtc.clear_outcome.refused">The vehicle refused to clear the trouble codes. Turn the engine off, leave the ignition on and try again.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Trouble codes still reported after clearing: %1$s. The fault may still be present.</string>
     <string name="pref.dtc.no_dtc_found_for_module">No trouble codes reported.</string>
@@ -468,6 +469,9 @@
     <string name="pref.dtc.select_modules.deselect_all">Deselect All</string>
     <string name="pref.dtc.select_modules.can_headers">CAN Headers</string>
     <string name="pref.dtc.select_modules.can_headers_hint">Missing or incorrect ECU module? Configure header mappings here.</string>
+    <string name="pref.dtc.select_modules.uds">UDS</string>
+    <string name="pref.dtc.select_modules.obd">OBD-II</string>
+    <string name="pref.dtc.select_modules.obd_hint">UDS / OBD-II: how each module is asked for its codes. OBD-II reads modes 03, 07 and 0A (clears with 04), for modules without UDS, and includes permanent codes.</string>
 
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>
@@ -993,11 +997,13 @@
     <string name="dtc.state.history">History</string>
     <string name="dtc.state.warning_lamp">MIL on</string>
     <string name="dtc.state.mil">MIL</string>
+    <string name="dtc.state.permanent">Permanent</string>
     <string name="dtc.state.active.explanation">Active: the fault is present right now.</string>
     <string name="dtc.state.stored.explanation">Stored: confirmed and saved by the module, not failing at the moment.</string>
     <string name="dtc.state.pending.explanation">Pending: detected recently, not yet confirmed. It is confirmed if it happens again.</string>
     <string name="dtc.state.history.explanation">History: occurred since the last clear, no longer pending or stored.</string>
     <string name="dtc.state.mil.explanation">MIL: the module requests the check-engine lamp.</string>
+    <string name="dtc.state.permanent.explanation">Permanent: an emissions code the ECU keeps until its own test passes again, usually after a few drives. No tool can clear it.</string>
     <string name="dtc.history.new">New</string>
     <string name="dtc.history.new.explanation">New: not reported by any earlier scan of this vehicle.</string>
     <string name="dtc.history.title">Code history</string>

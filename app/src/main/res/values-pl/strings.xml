@@ -440,6 +440,7 @@
     <string name="pref.dtc.read_info_other_vehicle">inny pojazd (VIN %1$s)</string>
     <string name="pref.dtc.read_info_no_vin">VIN niezaprogramowany</string>
     <string name="pref.dtc.clear_outcome.cleared">Kody błędów skasowane.</string>
+    <string name="pref.dtc.clear_outcome.permanent_remain">Kody błędów skasowane. Kody trwałe pozostają: %1$s. Sterownik usunie je sam, gdy jego test się powiedzie.</string>
     <string name="pref.dtc.clear_outcome.refused">Pojazd odmówił skasowania kodów błędów. Wyłącz silnik, pozostaw włączony zapłon i spróbuj ponownie.</string>
     <string name="pref.dtc.clear_outcome.codes_remain">Kody błędów zgłaszane po skasowaniu: %1$s. Usterka może nadal występować.</string>
     <string name="pref.dtc.no_dtc_found_for_module">Brak zgłoszonych kodów błędów.</string>
@@ -472,6 +473,9 @@
     <string name="pref.dtc.select_modules.deselect_all">Odznacz wszystkie</string>
     <string name="pref.dtc.select_modules.can_headers">Nagłówki CAN</string>
     <string name="pref.dtc.select_modules.can_headers_hint">Brak lub błędny moduł ECU? Skonfiguruj tutaj mapowanie nagłówków.</string>
+    <string name="pref.dtc.select_modules.uds">UDS</string>
+    <string name="pref.dtc.select_modules.obd">OBD-II</string>
+    <string name="pref.dtc.select_modules.obd_hint">UDS / OBD-II: sposób odczytu kodów z modułu. OBD-II odczytuje trybami 03, 07 i 0A (kasuje trybem 04), dla modułów bez UDS, i obejmuje kody trwałe.</string>
 
     <string name="pref.vehicle.metadata_title">Metadane pojazdu</string>
     <string name="pref.vehicle.metadata.name">Nazwa</string>
@@ -768,11 +772,13 @@
     <string name="dtc.state.history">Historyczny</string>
     <string name="dtc.state.warning_lamp">MIL zapalona</string>
     <string name="dtc.state.mil">MIL</string>
+    <string name="dtc.state.permanent">Trwały</string>
     <string name="dtc.state.active.explanation">Aktywny: usterka występuje w tej chwili.</string>
     <string name="dtc.state.stored.explanation">Zapisany: potwierdzony i zapisany przez moduł, obecnie nie występuje.</string>
     <string name="dtc.state.pending.explanation">Oczekujący: wykryty niedawno, jeszcze niepotwierdzony. Zostanie potwierdzony, jeśli się powtórzy.</string>
     <string name="dtc.state.history.explanation">Historyczny: wystąpił od ostatniego kasowania, już nie oczekuje ani nie jest zapisany.</string>
     <string name="dtc.state.mil.explanation">MIL: moduł żąda zapalenia kontrolki silnika.</string>
+    <string name="dtc.state.permanent.explanation">Trwały: kod emisyjny, który sterownik przechowuje, dopóki jego własny test znów się nie powiedzie, zwykle po kilku jazdach. Żadne narzędzie go nie skasuje.</string>
     <string name="dtc.history.new">Nowy</string>
     <string name="dtc.history.new.explanation">Nowy: nie wystąpił w żadnym wcześniejszym odczycie tego pojazdu.</string>
     <string name="dtc.history.title">Historia kodu</string>

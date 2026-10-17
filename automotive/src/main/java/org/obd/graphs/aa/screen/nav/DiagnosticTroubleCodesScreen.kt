@@ -73,6 +73,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.markedWith
+import org.obd.graphs.bl.datalogger.dtc.remainingAfterClear
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
@@ -271,10 +272,15 @@ internal class DiagnosticTroubleCodesScreen(
         when (clearOutcome) {
             DtcClearOutcome.CLEARED -> stringProvider.getString(R.string.dtc_clear_outcome_cleared)
             DtcClearOutcome.REFUSED -> stringProvider.getString(R.string.dtc_clear_outcome_refused)
+            DtcClearOutcome.PERMANENT_REMAIN ->
+                stringProvider.getString(
+                    R.string.dtc_clear_outcome_permanent_remain,
+                    diagnosticTroubleCodes().remainingAfterClear(permanent = true)
+                )
             DtcClearOutcome.CODES_REMAIN ->
                 stringProvider.getString(
                     R.string.dtc_clear_outcome_codes_remain,
-                    diagnosticTroubleCodes().count { it.standardCode.isNotEmpty() }
+                    diagnosticTroubleCodes().remainingAfterClear(permanent = false)
                 )
             null -> stringProvider.getString(R.string.dtc_action_completed)
         }
@@ -373,7 +379,8 @@ internal class DiagnosticTroubleCodesScreen(
             stored = stringProvider.getString(R.string.dtc_state_stored),
             pending = stringProvider.getString(R.string.dtc_state_pending),
             history = stringProvider.getString(R.string.dtc_state_history),
-            warningLamp = stringProvider.getString(R.string.dtc_state_warning_lamp)
+            warningLamp = stringProvider.getString(R.string.dtc_state_warning_lamp),
+            permanent = stringProvider.getString(R.string.dtc_state_permanent)
         )
 
     private fun icon(

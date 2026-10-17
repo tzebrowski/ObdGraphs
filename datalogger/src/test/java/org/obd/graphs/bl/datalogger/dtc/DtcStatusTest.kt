@@ -21,9 +21,19 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.obd.metrics.api.model.DiagnosticTroubleCode
 
 class DtcStatusTest {
-    private val labels = DtcStatusLabels("Active", "Stored", "Pending", "History", "MIL on")
+    private val labels = DtcStatusLabels("Active", "Stored", "Pending", "History", "MIL on", "Permanent")
+
+    private fun obdCode(
+        statusMask: Int,
+        permanent: Boolean
+    ) = DiagnosticTroubleCode().apply {
+        standardCode = "P0420"
+        this.statusMask = statusMask
+        isPermanent = permanent
+    }
 
     @Test
     fun `test failed now is active, whatever else is set`() {
@@ -70,6 +80,25 @@ class DtcStatusTest {
         assertEquals("History", dtcStatus(0x20).statusLine(labels))
         assertEquals("MIL on", dtcStatus(0x80).statusLine(labels))
         assertNull(dtcStatus(0x00).statusLine(labels))
+    }
+
+    // OBD-II service 0A: permanent is a flag beside the state, as stored (03) and pending (07) can report the same code.
+    @Test
+    fun `permanent is independent of the state`() {
+        assertEquals(DtcStatus(DtcState.UNKNOWN, warningLamp = false, permanent = true), obdCode(0x00, true).dtcStatus())
+        assertEquals(DtcStatus(DtcState.STORED, warningLamp = false, permanent = true), obdCode(0x08, true).dtcStatus())
+        assertFalse(obdCode(0x08, false).dtcStatus().permanent)
+        assertEquals("Permanent", obdCode(0x00, true).dtcStatus().statusLine(labels))
+        assertEquals("Stored · Permanent", obdCode(0x08, true).dtcStatus().statusLine(labels))
+        assertNull(obdCode(0x00, true).dtcStatus().stateLabel(labels))
+    }
+
+    @Test
+    fun `only a code with no state besides permanent is permanent only`() {
+        assertTrue(obdCode(0x00, true).isPermanentOnly())
+        assertFalse(obdCode(0x08, true).isPermanentOnly())
+        assertFalse(obdCode(0x04, true).isPermanentOnly())
+        assertFalse(obdCode(0x00, false).isPermanentOnly())
     }
 
     @Test

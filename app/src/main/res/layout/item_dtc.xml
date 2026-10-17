@@ -79,7 +79,14 @@
         <TextView
             android:id="@+id/dtc_mil_badge"
             style="@style/DtcBadge"
+            android:layout_marginEnd="8dp"
             android:text="@string/dtc.state.mil"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/dtc_permanent_badge"
+            style="@style/DtcBadge"
+            android:text="@string/dtc.state.permanent"
             android:visibility="gone" />
 
         <!-- A "no longer reported" row: when its code was last reported, in place of the state chips. -->

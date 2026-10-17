@@ -27,6 +27,7 @@
     <string name="dtc.state.pending">Oczekujący</string>
     <string name="dtc.state.history">Historyczny</string>
     <string name="dtc.state.warning_lamp">MIL zapalona</string>
+    <string name="dtc.state.permanent">Trwały</string>
     <string name="dtc.action_completed">Kody błędów zaktualizowane.</string>
     <string name="dtc.read_info_section">Ostatni odczyt</string>
     <string name="dtc.read_info">Ostatni odczyt: %1$s</string>
@@ -35,6 +36,7 @@
     <string name="dtc.read_info_no_vin">VIN niezaprogramowany</string>
     <string name="dtc.history.new">Nowy</string>
     <string name="dtc.clear_outcome.cleared">Kody błędów skasowane.</string>
+    <string name="dtc.clear_outcome.permanent_remain">Kody skasowane. Kody trwałe pozostają: %1$d.</string>
     <string name="dtc.clear_outcome.refused">Pojazd odmówił skasowania. Wyłącz silnik, zostaw zapłon i ponów.</string>
     <string name="dtc.clear_outcome.codes_remain">Zgłaszane po skasowaniu: %1$d. Usterka może występować.</string>
     <string name="dtc.clear_confirm_title">Skasować kody błędów?</string>

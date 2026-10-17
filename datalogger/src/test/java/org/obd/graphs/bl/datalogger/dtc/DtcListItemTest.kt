@@ -23,6 +23,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.api.model.Init
 import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.command.dtc.DtcComponent
 import org.obd.metrics.command.dtc.DtcModuleStatus
@@ -192,6 +193,23 @@ class DtcListItemTest {
         )
     }
 
+    // The user marks which entries are OBD-II modules; the header plays no part (7E0 can answer OBD-II, DB33F1 UDS).
+    @Test
+    fun `entries marked as OBD-II modules are scanned with the OBD-II protocol`() {
+        val mappings =
+            listOf(
+                DiagnosticMappingItem(1, "ecm", "7E0", "Engine"),
+                DiagnosticMappingItem(2, "legacy", "DB33F1", "OBD-II"),
+                DiagnosticMappingItem(3, "abs", "7E1", "ABS")
+            )
+        val headers = dtcScanHeaders(mappings, setOf("ecm", "legacy", "abs"), obdModules = setOf("ecm"))
+
+        assertEquals(listOf("Engine", "OBD-II", "ABS"), headers.map { it.mode })
+        assertEquals(listOf("7E0", "DB33F1", "7E1"), headers.map { it.header })
+        assertEquals(listOf(Init.DtcProtocol.OBD, Init.DtcProtocol.UDS, Init.DtcProtocol.UDS), headers.map { it.dtcProtocol })
+        assertTrue(dtcScanHeaders(mappings, setOf("ecm"), emptySet()).all { it.dtcProtocol == Init.DtcProtocol.UDS })
+    }
+
     @Test
     fun `the same code from two modules is two rows`() {
         val abs = dtc("U0100", module = "ABS").apply { rawHex = "C10000" }
@@ -259,13 +277,14 @@ class DtcListItemTest {
     ) = dtc(code, module = module).apply { this.statusMask = statusMask }
 
     @Test
-    fun `module headers summarise their codes by state, MIL and new`() {
+    fun `module headers summarise their codes by state, MIL, permanent and new`() {
         val engine =
             listOf(
                 withStatus("P0100", "Engine", 0x09), // active, test failed + confirmed
                 withStatus("P0200", "Engine", 0x89), // active + MIL
                 withStatus("P0300", "Engine", 0x08), // stored
-                withStatus("P0400", "Engine", 0x10) // no state
+                withStatus("P0400", "Engine", 0x10), // no state
+                withStatus("P0420", "Engine", 0x00).apply { isPermanent = true } // permanent only (OBD-II 0A)
             )
         val items =
             engine
@@ -275,7 +294,7 @@ class DtcListItemTest {
 
         val headers = items.filterIsInstance<DtcListItem.ModuleHeader>().associateBy { it.module }
         assertEquals(
-            DtcModuleSummary(byState = mapOf(DtcState.ACTIVE to 2, DtcState.STORED to 1), milCount = 1, newCount = 1),
+            DtcModuleSummary(byState = mapOf(DtcState.ACTIVE to 2, DtcState.STORED to 1), milCount = 1, newCount = 1, permanentCount = 1),
             headers.getValue("Engine").summary
         )
         assertEquals(DtcModuleSummary(), headers.getValue("ABS").summary)
@@ -416,5 +435,16 @@ class DtcListItemTest {
         assertEquals(null, dtcModuleRequestKey(mappings, "Engine ECU (2.0 GME)"))
         assertEquals(null, dtcModuleRequestKey(mappings, "BCM"))
         assertEquals(null, dtcModuleRequestKey(mappings, "ECU"))
+    }
+
+    @Test
+    fun `the picker's OBD-II switches replace the marks of the listed entries only`() {
+        val stored = setOf("ecm", "legacy", "removed")
+
+        assertEquals(
+            setOf("legacy", "removed", "bcm"),
+            dtcObdModulesAfterPick(stored, listed = listOf("ecm", "legacy", "bcm"), marked = setOf("legacy", "bcm", "unknown"))
+        )
+        assertEquals(setOf("removed"), dtcObdModulesAfterPick(stored, listOf("ecm", "legacy"), emptySet()))
     }
 }

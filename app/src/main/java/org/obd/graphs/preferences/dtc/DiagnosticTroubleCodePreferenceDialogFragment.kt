@@ -49,13 +49,16 @@ import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
+import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_OBD_MODULES
 import org.obd.graphs.bl.datalogger.dtc.collapsedBy
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
 import org.obd.graphs.bl.datalogger.dtc.dtcModuleRequestKey
+import org.obd.graphs.bl.datalogger.dtc.dtcObdModulesAfterPick
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.failureTypeLine
 import org.obd.graphs.bl.datalogger.dtc.markedWith
+import org.obd.graphs.bl.datalogger.dtc.remainingAfterClear
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.summary
@@ -319,14 +322,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
         val deselected = Prefs.getStringSet(PREF_DTC_DESELECTED_MODULES)
+        val storedObdModules = Prefs.getStringSet(PREF_DTC_OBD_MODULES).orEmpty()
+        val pickerAdapter =
+            DtcModulePickerAdapter(context, labels.toList(), requestKeys, storedObdModules.intersect(requestKeys.toSet()).toMutableSet())
         val listView =
             content.findViewById<MaxHeightListView>(R.id.dtc_picker_modules).apply {
-                adapter =
-                    android.widget.ArrayAdapter(
-                        context,
-                        android.R.layout.simple_list_item_multiple_choice,
-                        labels
-                    )
+                adapter = pickerAdapter
                 requestKeys.forEachIndexed { index, key ->
                     setItemChecked(index, key !in deselected)
                 }
@@ -382,6 +383,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             dialog.dismiss()
             val selected = requestKeys.filterIndexed { index, _ -> listView.isItemChecked(index) }.toSet()
             Prefs.updateStringSet(PREF_DTC_DESELECTED_MODULES, requestKeys.filter { it !in selected })
+            Prefs.updateStringSet(PREF_DTC_OBD_MODULES, dtcObdModulesAfterPick(storedObdModules, requestKeys, pickerAdapter.obdMarked).toList())
             onPicked(selected)
         }
 
@@ -508,11 +510,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         when (clearOutcome) {
             DtcClearOutcome.CLEARED -> toast(R.string.pref_dtc_clear_outcome_cleared)
             DtcClearOutcome.REFUSED -> toast(R.string.pref_dtc_clear_outcome_refused)
+            DtcClearOutcome.PERMANENT_REMAIN ->
+                toast(R.string.pref_dtc_clear_outcome_permanent_remain, diagnosticTroubleCodes().remainingAfterClear(permanent = true).toString())
             DtcClearOutcome.CODES_REMAIN ->
-                toast(
-                    R.string.pref_dtc_clear_outcome_codes_remain,
-                    diagnosticTroubleCodes().count { it.standardCode.isNotEmpty() }.toString()
-                )
+                toast(R.string.pref_dtc_clear_outcome_codes_remain, diagnosticTroubleCodes().remainingAfterClear(permanent = false).toString())
             null -> Unit
         }
     }
