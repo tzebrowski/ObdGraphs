@@ -327,7 +327,16 @@ fun dtcScanModules(
 // Modules the automatic DTC read on connect scans: every configured module with a header - the
 // picker's deselection applies to manual scans only. Empty means no modules are configured and
 // ObdMetrics' own default-header read on connect stays in charge.
-fun dtcConnectScanModules(mappings: List<DiagnosticMappingItem>): Set<String> = dtcScanModules(mappings, emptySet())
+// OBD-II modules (obdModules) are skipped while any UDS module is left: an OBD-II entry usually reaches an ECU the table
+// already scans with UDS (2.0 GME: DB33F1 repeats the ECM's codes), and its codes came up as a second section of the
+// same ECU. A table of OBD-II modules alone is still scanned, so a car without UDS keeps its read on connect.
+fun dtcConnectScanModules(
+    mappings: List<DiagnosticMappingItem>,
+    obdModules: Set<String>
+): Set<String> {
+    val all = dtcScanModules(mappings, emptySet())
+    return (all - obdModules).ifEmpty { all }
+}
 
 // How long the phone's "please wait" overlay waits for a DTC read / clear. ScreenLock's 10 s default is shorter than
 // a real scan: 13 modules with freeze frames and extended data took ~13 s, and ObdMetrics alone may wait 23 s for

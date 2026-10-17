@@ -25,6 +25,8 @@ modules), `:app` (chip, setting), `:automotive` (status line, clear outcome), EN
 | Any other module, whatever its header | UDS | UDS (unchanged) |
 | Code from 0A | — | "Permanent" chip beside the state (phone), "Permanent" in the AA status line, counted in the module header |
 | Clear leaves only permanent codes | "Codes remain" | "Cleared. Permanent codes stay: N" (phone + AA) |
+| Read on connect (automatic scan) | Every configured module, OBD-II ones included: an OBD-II entry reaching the ECM listed its codes again as a second ECM section | OBD-II modules skipped while any UDS module is configured; a table of OBD-II modules only is still scanned |
+| Row switched to OBD-II in the picker | Check box unchanged | Check box cleared (user can tick it again for a manual read / clear) |
 | Bundled profiles | — | No module marked: unchanged. On the 2.0 GME, `DB33F1` answered 03 / 07 with the ECM's codes (each listed twice) and 0A with NO DATA (car test, 2026-10-16) |
 
 ## Settings / keys touched
@@ -51,6 +53,13 @@ modules), `:app` (chip, setting), `:automotive` (status line, clear outcome), EN
   (listed entries take their row's choice, unlisted keep theirs). `DtcStatus.permanent`, `isPermanentOnly()`,
   `DtcClearOutcome.PERMANENT_REMAIN`, `remainingAfterClear`, `DtcModuleSummary.permanentCount`; `PERMANENT_BADGE`
   chip, in the legend too.
+* **Read on connect.** `dtcConnectScanModules(mappings, obdModules)` drops the OBD-II entries unless nothing else is left
+  (user's choice: skip them rather than merge codes across sections; the app cannot tell two entries reach one ECU).
+  `AdjustmentsStrategy` decides ObdMetrics' own init read on "no module configured" (`dtcScanModules`), unaffected by
+  the protocol. A connect scan replaces the stored list, so OBD-II codes from a manual read are gone after the next
+  connect; they get no "no longer reported" marker (the scan did not cover them).
+* **Picker.** `DtcModulePickerAdapter.onObdMarked` fires when a row is switched to OBD-II; the dialog unticks it.
+  Switching back to UDS leaves the check box alone.
 
 ## Backward compatibility
 
@@ -63,7 +72,8 @@ modules), `:app` (chip, setting), `:automotive` (status line, clear outcome), EN
   any answered service, no follow-ups, clear with 04; `dtcProtocolOfTheModuleDecidesTheRequests` (UDS for an unmarked
   module on `DB33F1`, OBD-II for a marked one on `7E0`). `ObdDtcReadCodecTest` (decoding; requests come from
   `mode01.json`).
-* App: `DtcListItemTest` (`dtcScanHeaders`, `dtcObdModulesAfterPick`, permanent count), `DtcStatusTest`, `DtcReadInfoTest`
+* App: `DtcListItemTest` (`dtcScanHeaders`, `dtcObdModulesAfterPick`, permanent count, connect scan skips OBD-II
+  modules unless only OBD-II ones are configured), `DtcStatusTest`, `DtcReadInfoTest`
   (`PERMANENT_REMAIN`), `DtcLegendTest`.
 
 ## Risks and verification checklist
@@ -73,6 +83,8 @@ modules), `:app` (chip, setting), `:automotive` (status line, clear outcome), EN
 * [ ] A marked module on a non-UDS car: codes from 03 / 07 listed under it, states right.
 * [ ] A car with permanent codes: chip shown, clear reports "Permanent codes stay".
 * [ ] Unmarked modules: logcat shows `19020D` only.
+* [ ] Read on connect with the ECM on UDS and a second ECM entry on OBD-II: one ECM section, no 03 / 07 in the logcat.
+* [ ] Picker: switching a row to OBD-II unticks it; "Select all" / confirm state follows.
 * [ ] PL texts at phone width.
 * Not verified on any car that answers 0A.
 

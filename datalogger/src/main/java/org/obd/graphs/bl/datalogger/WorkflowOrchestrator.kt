@@ -187,7 +187,10 @@ internal class WorkflowOrchestrator internal constructor() {
             dtcActions.reset()
             val connectScanModules =
                 if (dataLoggerSettings.instance().adapter.dtcEnabled) {
-                    dtcConnectScanModules(DiagnosticRequestIDManager.getMappings())
+                    dtcConnectScanModules(
+                        DiagnosticRequestIDManager.getMappings(),
+                        Prefs.getStringSet(PREF_DTC_OBD_MODULES, emptySet()).orEmpty()
+                    )
                 } else {
                     emptySet()
                 }

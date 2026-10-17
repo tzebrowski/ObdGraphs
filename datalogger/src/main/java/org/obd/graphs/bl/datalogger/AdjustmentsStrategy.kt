@@ -17,7 +17,7 @@
 package org.obd.graphs.bl.datalogger
 
 import org.obd.graphs.DiagnosticRequestIDManager
-import org.obd.graphs.bl.datalogger.dtc.dtcConnectScanModules
+import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.getContext
 import org.obd.metrics.api.model.AdaptiveTimeoutPolicy
@@ -161,7 +161,7 @@ internal class AdjustmentsStrategy {
             // WorkflowOrchestrator.onRunning; ObdMetrics' own read covers the default header only and
             // left untagged codes behind (replacing the grouped list, leaking into the next scan).
             .vehicleDtcReadingEnabled(
-                preferences.adapter.dtcEnabled && dtcConnectScanModules(DiagnosticRequestIDManager.getMappings()).isEmpty()
+                preferences.adapter.dtcEnabled && dtcScanModules(DiagnosticRequestIDManager.getMappings(), emptySet()).isEmpty()
             ).vehicleDtcCleaningEnabled(preferences.adapter.dtcAutoCleanup)
             .cachePolicy(
                 CachePolicy
