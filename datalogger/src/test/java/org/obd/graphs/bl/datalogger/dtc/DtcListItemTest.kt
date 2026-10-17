@@ -250,8 +250,29 @@ class DtcListItemTest {
                 DiagnosticMappingItem(2, "ABS", "DA28F1", "ABS"),
                 DiagnosticMappingItem(3, "BCM", "", "BCM")
             )
-        assertEquals(setOf("22", "ABS"), dtcConnectScanModules(mappings))
-        assertTrue(dtcConnectScanModules(emptyList()).isEmpty())
+        assertEquals(setOf("22", "ABS"), dtcConnectScanModules(mappings, emptySet()))
+        assertTrue(dtcConnectScanModules(emptyList(), emptySet()).isEmpty())
+    }
+
+    @Test
+    fun `the read on connect skips OBD-II modules while a UDS module is scanned`() {
+        val mappings =
+            listOf(
+                DiagnosticMappingItem(1, "22", "DA10F1", "Engine ECU"),
+                DiagnosticMappingItem(2, "OBD", "DB33F1", "Engine ECU OBD-II"),
+                DiagnosticMappingItem(3, "ABS", "DA28F1", "ABS")
+            )
+        assertEquals(setOf("22", "ABS"), dtcConnectScanModules(mappings, setOf("OBD")))
+    }
+
+    @Test
+    fun `the read on connect keeps OBD-II modules when no UDS module is configured`() {
+        val mappings =
+            listOf(
+                DiagnosticMappingItem(1, "ECM", "7E0", "Engine ECU"),
+                DiagnosticMappingItem(2, "TCM", "7E1", "Transmission")
+            )
+        assertEquals(setOf("ECM", "TCM"), dtcConnectScanModules(mappings, setOf("ECM", "TCM")))
     }
 
     @Test

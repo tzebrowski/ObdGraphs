@@ -436,6 +436,8 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   answer OBD-II at `7E0`, a non-CAN car has no such header. On the 2.0 GME `DB33F1` only repeats the ECM's UDS codes and
   answers 0A with NO DATA, so no bundled profile marks a module. Permanent is a chip beside the state
   (`PERMANENT_BADGE`); a clear leaving only permanent codes is `PERMANENT_REMAIN`.
+  The read on connect skips OBD-II modules while a UDS one is configured (`dtcConnectScanModules(mappings, obdModules)`):
+  an OBD-II entry reaching the ECM made a second ECM section. Switching a picker row to OBD-II unticks it (`onObdMarked`).
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
   to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.

@@ -323,15 +323,23 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         val deselected = Prefs.getStringSet(PREF_DTC_DESELECTED_MODULES)
         val storedObdModules = Prefs.getStringSet(PREF_DTC_OBD_MODULES).orEmpty()
+        val listView = content.findViewById<MaxHeightListView>(R.id.dtc_picker_modules)
+        // Set below, once the buttons it updates exist; the adapter's callback only runs on a user tap.
+        lateinit var updateButtons: () -> Unit
         val pickerAdapter =
-            DtcModulePickerAdapter(context, labels.toList(), requestKeys, storedObdModules.intersect(requestKeys.toSet()).toMutableSet())
-        val listView =
-            content.findViewById<MaxHeightListView>(R.id.dtc_picker_modules).apply {
-                adapter = pickerAdapter
-                requestKeys.forEachIndexed { index, key ->
-                    setItemChecked(index, key !in deselected)
-                }
+            DtcModulePickerAdapter(
+                context,
+                labels.toList(),
+                requestKeys,
+                storedObdModules.intersect(requestKeys.toSet()).toMutableSet()
+            ) { position ->
+                listView.setItemChecked(position, false)
+                updateButtons()
             }
+        listView.adapter = pickerAdapter
+        requestKeys.forEachIndexed { index, key ->
+            listView.setItemChecked(index, key !in deselected)
+        }
 
         val headersButton = content.findViewById<Button>(R.id.dtc_picker_can_headers)
         val cancelButton = content.findViewById<Button>(R.id.dtc_picker_cancel)
@@ -349,7 +357,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
         fun noneChecked() = labels.indices.none { listView.isItemChecked(it) }
 
-        fun updateButtons() {
+        updateButtons = {
             toggleButton.setText(
                 if (allChecked()) {
                     R.string.pref_dtc_select_modules_deselect_all

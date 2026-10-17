@@ -51,12 +51,14 @@ constructor(
     }
 }
 
-// obdMarked: requestKeys set to OBD-II, changed in place by the protocol buttons.
+// obdMarked: requestKeys set to OBD-II, changed in place by the protocol buttons. onObdMarked: the row (position) the
+// user just switched to OBD-II - the picker unticks it, since an OBD-II entry usually repeats an ECU scanned with UDS.
 internal class DtcModulePickerAdapter(
     private val context: Context,
     private val labels: List<String>,
     private val requestKeys: List<String>,
-    val obdMarked: MutableSet<String>
+    val obdMarked: MutableSet<String>,
+    private val onObdMarked: (Int) -> Unit = {}
 ) : BaseAdapter() {
     override fun getCount() = labels.size
 
@@ -78,7 +80,11 @@ internal class DtcModulePickerAdapter(
             check(if (key in obdMarked) R.id.dtc_pick_obd else R.id.dtc_pick_uds)
             addOnButtonCheckedListener { _, id, checked ->
                 if (checked) {
-                    if (id == R.id.dtc_pick_obd) obdMarked.add(key) else obdMarked.remove(key)
+                    if (id == R.id.dtc_pick_obd) {
+                        if (obdMarked.add(key)) onObdMarked(position)
+                    } else {
+                        obdMarked.remove(key)
+                    }
                 }
             }
         }
