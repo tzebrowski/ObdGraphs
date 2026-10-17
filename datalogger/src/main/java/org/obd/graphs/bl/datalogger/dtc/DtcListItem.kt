@@ -18,6 +18,7 @@ package org.obd.graphs.bl.datalogger.dtc
 
 import org.obd.graphs.DiagnosticMappingItem
 import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.api.model.Init
 import org.obd.metrics.api.model.SnapshotPID
 import org.obd.metrics.command.dtc.DtcModuleStatus
 
@@ -27,6 +28,19 @@ const val DTC_DEFAULT_MODULE = "ecu"
 
 // Stores the *deselected* module keys so a module added later starts out checked.
 const val PREF_DTC_DESELECTED_MODULES = "pref.dtc.module_picker.deselected"
+
+// Module table entries (requestKeys) read with the OBD-II services 03 / 07 / 0A and cleared with 04 instead of UDS.
+// Per profile, set by the user with the UDS / OBD-II buttons in the module picker: neither the header nor the vehicle tells
+// which services an ECU answers.
+const val PREF_DTC_OBD_MODULES = "pref.dtc.obd_modules"
+
+// The OBD-II marks after the picker is confirmed: listed entries take their buttons' choice, entries the picker did not list keep
+// their mark.
+fun dtcObdModulesAfterPick(
+    stored: Set<String>,
+    listed: List<String>,
+    marked: Set<String>
+): Set<String> = (stored - listed.toSet()) + marked.intersect(listed.toSet())
 
 sealed class DtcListItem {
     // codeCount: the module's code rows, 0 for a module scanned clean. summary / expanded come from
@@ -92,11 +106,12 @@ fun DtcListItem.itemKey(): String =
     }
 
 // What a module header shows about its codes, so a collapsed module still says what it holds:
-// codes per state (no-state codes left out), how many request the MIL, how many are new.
+// codes per state (no-state codes left out), how many request the MIL, how many are permanent, how many are new.
 data class DtcModuleSummary(
     val byState: Map<DtcState, Int> = emptyMap(),
     val milCount: Int = 0,
-    val newCount: Int = 0
+    val newCount: Int = 0,
+    val permanentCount: Int = 0
 )
 
 // Fills each module header's summary from the code rows below it (call after markedWith, for the new count).
@@ -121,7 +136,8 @@ fun List<DtcListItem>.withModuleSummaries(): List<DtcListItem> {
                 DtcModuleSummary(
                     byState = statuses.filter { it.state != DtcState.UNKNOWN }.groupingBy { it.state }.eachCount(),
                     milCount = statuses.count { it.warningLamp },
-                    newCount = rows.count { it.isNew }
+                    newCount = rows.count { it.isNew },
+                    permanentCount = statuses.count { it.permanent }
                 )
             )
         } else {
@@ -385,6 +401,22 @@ fun dtcScanTargets(
     mappings
         .filter { it.headerValue.isNotEmpty() && it.requestKey in selected }
         .distinctBy { it.headerValue.trim().uppercase() }
+
+// The scan targets as ObdMetrics modules: label (Init.Header.mode, shown in the DTC list), header, and the OBD-II
+// protocol for the entries in obdModules.
+fun dtcScanHeaders(
+    mappings: List<DiagnosticMappingItem>,
+    selected: Set<String>,
+    obdModules: Set<String>
+): List<Init.Header> =
+    dtcScanTargets(mappings, selected).map {
+        Init.Header
+            .builder()
+            .mode(it.displayName)
+            .header(it.headerValue)
+            .dtcProtocol(if (it.requestKey in obdModules) Init.DtcProtocol.OBD else Init.DtcProtocol.UDS)
+            .build()
+    }
 
 // The table entry (requestKey) that scans the module codes are tagged with, as dtcScanTargets names it; null for a
 // label no entry scans (default ECU, "Unknown module", an entry removed since the read).

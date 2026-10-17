@@ -132,6 +132,27 @@ class DtcReadInfoTest {
         )
     }
 
+    // No tool clears a permanent code (OBD-II 0A): left alone after a clear, it is no sign of a failed clear.
+    @Test
+    fun `only permanent codes read back after a clear are their own outcome`() {
+        val permanent = dtc("P0420").apply { isPermanent = true }
+        val storedAndPermanent = dtc("P0300").apply {
+            isPermanent = true
+            statusMask = 0x08
+        }
+        assertEquals(DtcClearOutcome.PERMANENT_REMAIN, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.OK, listOf(permanent)))
+        assertEquals(DtcClearOutcome.PERMANENT_REMAIN, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.NO_DATA, listOf(permanent)))
+        assertEquals(
+            DtcClearOutcome.CODES_REMAIN,
+            dtcClearOutcome(DiagnosticTroubleCodeClearStatus.OK, listOf(permanent, storedAndPermanent))
+        )
+        assertEquals(DtcClearOutcome.REFUSED, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.ERR, listOf(permanent)))
+
+        val codes = listOf(permanent, storedAndPermanent, dtc("P0100").apply { statusMask = 0x09 }, dtc(""))
+        assertEquals(1, codes.remainingAfterClear(permanent = true))
+        assertEquals(2, codes.remainingAfterClear(permanent = false))
+    }
+
     @Test
     fun `nothing read back is a successful clear, a codeless placeholder does not count`() {
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.OK, emptyList()))

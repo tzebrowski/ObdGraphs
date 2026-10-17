@@ -26,6 +26,7 @@
     <string name="dtc.state.pending">Pending</string>
     <string name="dtc.state.history">History</string>
     <string name="dtc.state.warning_lamp">MIL on</string>
+    <string name="dtc.state.permanent">Permanent</string>
     <string name="dtc.action_completed">Trouble codes updated.</string>
     <string name="dtc.read_info_section">Last read</string>
     <string name="dtc.read_info">Last read: %1$s</string>
@@ -34,6 +35,7 @@
     <string name="dtc.read_info_no_vin">VIN not programmed</string>
     <string name="dtc.history.new">New</string>
     <string name="dtc.clear_outcome.cleared">Trouble codes cleared.</string>
+    <string name="dtc.clear_outcome.permanent_remain">Codes cleared. Permanent codes stay: %1$d.</string>
     <string name="dtc.clear_outcome.refused">Vehicle refused to clear codes. Engine off, ignition on, then retry.</string>
     <string name="dtc.clear_outcome.codes_remain">Still reported after clearing: %1$d. The fault may be present.</string>
     <string name="dtc.clear_confirm_title">Clear trouble codes?</string>

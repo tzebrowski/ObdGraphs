@@ -105,6 +105,9 @@ private fun String.isEmptyVin(): Boolean = all { it.isWhitespace() || it == '0' 
 // real verdict: an ECU can acknowledge the clear while an active fault sets the code again at once.
 enum class DtcClearOutcome {
     CLEARED,
+
+    // Cleared; what the read still reports are permanent codes only (OBD-II service 0A), which no clear removes.
+    PERMANENT_REMAIN,
     REFUSED,
     CODES_REMAIN
 }
@@ -115,6 +118,11 @@ fun dtcClearOutcome(
 ): DtcClearOutcome =
     when {
         status == DiagnosticTroubleCodeClearStatus.ERR -> DtcClearOutcome.REFUSED
-        codesAfterClear.any { it.standardCode.isNotEmpty() } -> DtcClearOutcome.CODES_REMAIN
+        codesAfterClear.any { it.standardCode.isNotEmpty() && !it.isPermanentOnly() } -> DtcClearOutcome.CODES_REMAIN
+        codesAfterClear.any { it.standardCode.isNotEmpty() } -> DtcClearOutcome.PERMANENT_REMAIN
         else -> DtcClearOutcome.CLEARED
     }
+
+// How many codes a clear outcome message counts: permanent-only ones are not "still reported" faults.
+fun Collection<DiagnosticTroubleCode>.remainingAfterClear(permanent: Boolean): Int =
+    count { it.standardCode.isNotEmpty() && it.isPermanentOnly() == permanent }

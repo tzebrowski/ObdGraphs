@@ -24,6 +24,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | Clear one module, engine-running warning before a clear (initial #5) | `dtc-clear-module.md` |
 | Failure type text (initial #7): meaning of the `-XX` byte in the expanded row and report | `dtc-failure-type.md` |
 | Scan progress (added later #6): "Engine ECU · 4 / 13" on the phone overlay | `dtc-scan-progress.md` |
+| Mode 03 / 07 / 0A for modules marked as OBD-II (initial #2), "Permanent" chip | `dtc-obd-modes.md` |
 
 ## Planned
 
@@ -56,6 +57,10 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
     an accepted clear drops it.
 
 ### 3. Read Mode 07 and Mode 0A codes (ObdMetrics) — initial #2
+
+**Done** (2026-10-17), spec `dtc-obd-modes.md`. For the modules the user sets to OBD-II in the module picker (none by default).
+The 2.0 GME answers 0A with NO DATA and 03 / 07 only with its ECM's UDS codes. Also from this work:
+ObdMetrics resets the CAN header after DTC actions, and the duplicate `19020D` read definition is gone.
 
 * UDS `19 02` with the status byte already covers pending for UDS modules (the "Pending" chip).
 * The generic OBD-II legacy header needs Mode 07 (pending) and Mode 0A (permanent). ObdMetrics has no Mode 07 / 0A
@@ -117,10 +122,15 @@ made while building the state chips: the overlay timeout, and the VIN missing fr
 * **Phone:** filter chips (All / Active / Stored / Pending), useful with 30+ codes.
 * **AA:** a state-specific icon per row. Today AA uses one fault icon, tinted, because rows allow no chips.
 
+### 11. VIN read with every DTC action (ObdMetrics + App) — added later
+
+Spec `dtc-vin-on-read.md` (proposed). The VIN is read only at connect, and only while automatic DTC reading is on, so
+a manual read or clear with it off is stamped `vin=null` and gets no history markers (seen after a fresh install).
+
 ## To investigate (added later)
 
-* **Legacy header scanned with UDS:** the scan includes "OBD-II (Legacy Mode 01)" (header `DB33F1`) and sends it the
-  UDS `19 02` read. A legacy/functional header may need Mode 03 instead, or should be skipped by the UDS scan.
+* **Legacy header scanned with UDS:** the scan sends UDS `19 02` to "OBD-II (Legacy Mode 01)" (`DB33F1`). Mode 03 / 07 /
+  0A go only to modules marked as OBD-II (item 3). Open: skip that entry in the scan, as its answer duplicates the Engine ECU.
 * ~~**Modules that do not answer**~~: done, `dtc-module-response.md`.
 
 ## Out of scope

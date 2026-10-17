@@ -84,6 +84,10 @@ internal val STATE_BADGES =
 
 internal val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
 
+// OBD-II service 0A: beside the state, like the MIL - a code can be stored and permanent at once.
+internal val PERMANENT_BADGE =
+    BadgeStyle(R.color.dtc_state_permanent, R.drawable.dtc_state_permanent, R.string.dtc_state_permanent_explanation)
+
 // A module header's chip when the module did not answer the scan / refused the read: its codes are unknown.
 internal val NO_RESPONSE_BADGE =
     BadgeStyle(R.color.dtc_state_history, R.drawable.dtc_module_no_response, R.string.dtc_module_no_response_explanation)
@@ -161,6 +165,7 @@ internal val DTC_LEGEND: List<Pair<Int, BadgeStyle>> =
         R.string.dtc_state_pending to STATE_BADGES.getValue(DtcState.PENDING),
         R.string.dtc_state_history to STATE_BADGES.getValue(DtcState.HISTORY),
         R.string.dtc_state_mil to MIL_BADGE,
+        R.string.dtc_state_permanent to PERMANENT_BADGE,
         R.string.dtc_module_no_response to NO_RESPONSE_BADGE,
         R.string.dtc_module_refused to REFUSED_BADGE
     )
@@ -174,7 +179,8 @@ internal fun dtcStatusLabels(context: Context) =
         stored = context.getString(R.string.dtc_state_stored),
         pending = context.getString(R.string.dtc_state_pending),
         history = context.getString(R.string.dtc_state_history),
-        warningLamp = context.getString(R.string.dtc_state_warning_lamp)
+        warningLamp = context.getString(R.string.dtc_state_warning_lamp),
+        permanent = context.getString(R.string.dtc_state_permanent)
     )
 
 // Icon + label; solid fill with white text on light backgrounds, faint fill with coloured text at night
@@ -292,9 +298,11 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val status = dtc.dtcStatus()
         val stateStyle = STATE_BADGES[status.state].takeUnless { item.isGone }
         val showMil = status.warningLamp && !item.isGone
+        val showPermanent = status.permanent && !item.isGone
         holder.newBadge.showBadge(context.getString(R.string.dtc_history_new).takeIf { item.isNew }, NEW_BADGE)
         holder.stateBadge.showBadge(status.stateLabel(dtcStatusLabels(context)), stateStyle)
         holder.milBadge.showBadge(context.getString(R.string.dtc_state_mil).takeIf { showMil }, MIL_BADGE)
+        holder.permanentBadge.showBadge(context.getString(R.string.dtc_state_permanent).takeIf { showPermanent }, PERMANENT_BADGE)
         // A gone row says when its code was last reported where the chips would be.
         val lastReported = item.history?.lastSeen?.takeIf { item.isGone }
         holder.goneInfo.visibility = if (lastReported != null) View.VISIBLE else View.GONE
@@ -307,13 +315,15 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         }
         // The row's chip line, padding included, only when it holds something.
         holder.badges.visibility =
-            if (listOf(holder.newBadge, holder.stateBadge, holder.milBadge, holder.goneInfo).any { it.visibility == View.VISIBLE }) {
+            if (listOf(holder.newBadge, holder.stateBadge, holder.milBadge, holder.permanentBadge, holder.goneInfo)
+                    .any { it.visibility == View.VISIBLE }
+            ) {
                 View.VISIBLE
             } else {
                 View.GONE
             }
         val explanations =
-            listOfNotNull(NEW_BADGE.takeIf { item.isNew }, stateStyle, MIL_BADGE.takeIf { showMil })
+            listOfNotNull(NEW_BADGE.takeIf { item.isNew }, stateStyle, MIL_BADGE.takeIf { showMil }, PERMANENT_BADGE.takeIf { showPermanent })
                 .map { context.getString(it.explanation) }
         holder.detailState.visibility = if (explanations.isNotEmpty()) View.VISIBLE else View.GONE
         holder.detailState.text = explanations.joinToString("\n")
@@ -440,6 +450,11 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                     listOfNotNull(
                         Triple(context.getString(R.string.dtc_state_mil), MIL_BADGE, context.getString(R.string.dtc_state_warning_lamp))
                             .takeIf { header.summary.milCount > 0 },
+                        Triple(
+                            header.summary.permanentCount.toString(),
+                            PERMANENT_BADGE,
+                            "${header.summary.permanentCount} ${context.getString(R.string.dtc_state_permanent)}"
+                        ).takeIf { header.summary.permanentCount > 0 },
                         Triple(header.summary.newCount.toString(), NEW_BADGE, "${header.summary.newCount} ${context.getString(R.string.dtc_history_new)}")
                             .takeIf { header.summary.newCount > 0 }
                     )
@@ -540,6 +555,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         var newBadge: TextView = itemView.findViewById(R.id.dtc_new_badge)
         var stateBadge: TextView = itemView.findViewById(R.id.dtc_state_badge)
         var milBadge: TextView = itemView.findViewById(R.id.dtc_mil_badge)
+        var permanentBadge: TextView = itemView.findViewById(R.id.dtc_permanent_badge)
         var goneInfo: TextView = itemView.findViewById(R.id.dtc_gone_info)
 
         var expandedContainer: LinearLayout =

@@ -268,14 +268,18 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
 * Phone dialog buttons: check the PL strings at phone width. Three equal-weight buttons in
   `dialog_dtc_module_picker.xml` broke "Odznacz wszystkie" mid-word, so select/deselect-all now sits
   above the list and the bar holds only Cancel + confirm.
+  The picker list's height cap (`MaxHeightListView`, `pickerListMaxHeight`) subtracts the views around it: a fixed 40 %
+  of the screen plus the Clear warning and the UDS / OBD-II hint pushed Cancel / Clear Codes off a phone screen.
+  Any text added to `dialog_dtc_module_picker.xml` is then accounted for; check the Clear flow on a phone anyway.
 * Module order: modules with codes first, then clean ones, each by name (`toDtcListItems`, shared). Headers carry the
   code count (`ModuleHeader.codeCount`, not part of `itemKey()`). AA templates allow colour spans only in row text
   lines: section headers and row titles are text-only and throw on a colour span, so AA marks codes with a tinted
   `CarIcon`. Phone colours come from night-aware resources; hard-coded `Color.DKGRAY` was unreadable on the dark
   dialog. Spec: `doc/specs/dtc-list-colors-order.md`.
 * Code state (Active / Stored / Pending / History + MIL) is decoded from `statusMask` in `dtc/DtcStatus.kt`,
-  shared by phone, AA, sort and share report. `statusMask` is always the UDS status byte: ObdMetrics builds every
-  code in `UdsMultiFrameDtcParser`. Its `activeStatuses` are translated strings — never parse them, use the mask.
+  shared by phone, AA, sort and share report. UDS modules send the real status byte; OBD-II codes (03 / 07 / 0A, below)
+  get the bit their service stands for, and permanent is the separate `isPermanent`. `activeStatuses` are translated
+  strings — never parse them, use the mask.
   Spec: `doc/specs/dtc-status-badges.md`. Phone shows it as chips under the code, each with its own icon + colour
   (`STATE_BADGES`) and a text explanation when expanded — the user rejected a coloured text line reusing the codes' red.
   `item_dtc.xml` is a plain top-down stack: description → chips → expanded details → divider (the code sits beside
@@ -345,6 +349,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   only the VIN PIDs (`VinPids.isVin`, package-private in `api`, 09 02 / 22 F190, matched by request, never by label) while `fetchDeviceProperties` is off.
   It must not add METADATA to `getRequestedGroups()` — that reads the whole group. Read on
   every connect, so a change of car shows. Rejected by the user: enabling the whole group; reading it only until a VIN is stored.
+  Known gap (spec `doc/specs/dtc-vin-on-read.md`, proposed): with automatic DTC reading off (the default) nothing reads
+  the VIN, manual reads / clears go under `UNKNOWN` and show no "New" / "No longer reported". "Markers gone after a
+  clear" = check `read info: ... vin=null` in logcat first; a fresh install resets `pref.adapter.init.fetchDTC`.
 * **An empty VIN is `NO_VIN` (17 zeros), not null.** The 2.0 GME ECM can answer `22 F190` with 17 spaces (decoded
   to ""). `vinFrom(metadata, vinLabels)` finds the VIN entry by the VIN PIDs' registry descriptions
   (`isVinRequest`), since keys are translated labels; null still means "no VIN reply". `NO_VIN` never counts as
@@ -411,6 +418,24 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   overlay shown with `DTC_SCREEN_LOCK_CONTEXT`. Not on AA: retitling a loading `ListTemplate` per module may cost
   template steps. The connect scan shows that overlay too (`connectScanScreenLock`, user's choice): ObdMetrics queues
   the whole scan ahead of live PIDs, so gauges freeze for its length. Its unlock is skipped while a request waits.
+* **Commands queued straight into the buffer must reset the header multiplexer** (ObdMetrics
+  `CommandProducer.resetHeader()`). `CANMessageHeaderMultiplexer` sees only producer commands; after a DTC action's own
+  `ATSH` it still believed the live header was set, and with a single-mode query (header injected once) live data
+  stayed on the last scanned module. DTC actions, follow-ups, routines and discovery reset it. A test must wait for
+  live data *before* the scan, or the one-time injection happens after it and hides the bug.
+* **One DTC read PID per query, like the clear.** ObdMetrics' `giulia_2.0_gme.json` and GiuliaQV's `2.0_gme_ext.json`
+  both defined `19020D`: the decoder ran both codecs, each code arrived twice (different descriptions, so not equal) and
+  its snapshot / extended data were requested twice (30 follow-ups instead of 17 on the car). The app's `distinctBy`
+  hid it on screen. The core read was removed (ObdMetrics tests load `dtc_read.json`); every app profile with
+  `giulia_2.0_gme.json` also loads `2.0_gme_ext.json`. Count the `19 04` requests in a logcat to spot a repeat.
+* **OBD-II services (03 / 07 / 0A, clear 04) go to the modules the user marks, never to a header guessed from a list**
+  (spec `doc/specs/dtc-obd-modes.md`). ObdMetrics `Init.Header.dtcProtocol` picks `DTC_OBD_READ` / `DTC_OBD_CLEAR`
+  (data in `mode01.json`) or the UDS groups; the app sets it from `pref.dtc.obd_modules` (`dtcScanHeaders`), set by the UDS / OBD-II buttons on each module picker row
+  (`DtcModulePickerAdapter`); a separate settings list was rejected as a second module list in another place. Wrong
+  turn, rejected by the user: hard-coded functional headers (`7DF` / `DB33F1`) plus Java-built requests. An ECU may
+  answer OBD-II at `7E0`, a non-CAN car has no such header. On the 2.0 GME `DB33F1` only repeats the ECM's UDS codes and
+  answers 0A with NO DATA, so no bundled profile marks a module. Permanent is a chip beside the state
+  (`PERMANENT_BADGE`); a clear leaving only permanent codes is `PERMANENT_REMAIN`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
   to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.

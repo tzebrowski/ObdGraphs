@@ -29,10 +29,11 @@ class DtcLegendTest {
         assertTrue(styles.containsAll(STATE_BADGES.values))
         assertTrue(NEW_BADGE in styles)
         assertTrue(MIL_BADGE in styles)
+        assertTrue(PERMANENT_BADGE in styles)
         assertTrue(NO_RESPONSE_BADGE in styles)
         assertTrue(REFUSED_BADGE in styles)
         assertEquals(styles.size, styles.distinct().size)
-        assertEquals(DtcState.values().count { it in STATE_BADGES } + 4, styles.size)
+        assertEquals(DtcState.values().count { it in STATE_BADGES } + 5, styles.size)
     }
 
     @Test

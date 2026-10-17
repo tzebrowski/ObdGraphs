@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Module picker row: scan check box, module name, protocol (UDS / OBD-II). The check box only mirrors the ListView's
+     choice (not clickable); blocksDescendants keeps the row clickable as a list item while the buttons take their own
+     taps. -->
+<org.obd.graphs.preferences.dtc.CheckableModuleRow xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:descendantFocusability="blocksDescendants"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:orientation="horizontal"
+    android:paddingEnd="14dp">
+
+    <CheckBox
+        android:id="@+id/dtc_pick_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false" />
+
+    <TextView
+        android:id="@+id/dtc_pick_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/dtc_pick_protocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dtc_pick_uds"
+            style="@style/DtcProtocolButton"
+            android:text="@string/pref.dtc.select_modules.uds" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dtc_pick_obd"
+            style="@style/DtcProtocolButton"
+            android:text="@string/pref.dtc.select_modules.obd" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+</org.obd.graphs.preferences.dtc.CheckableModuleRow>

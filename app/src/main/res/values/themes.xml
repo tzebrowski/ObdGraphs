@@ -27,8 +27,8 @@
     <style name="CompactActionButton" parent="Widget.AppCompat.ActionButton">
         <item name="android:minWidth">32dp</item>
         <item name="android:minHeight">32dp</item>
-        <item name="android:paddingStart">10dp</item>
-        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
         <item name="android:translationY">8dp</item>
     </style>
 
@@ -37,5 +37,20 @@
         <item name="windowSplashScreenBackground">@color/rainbow_indigo</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.DefaultTheme</item>
+    </style>
+
+    <!-- UDS / OBD-II choice on a DTC module picker row: compact, so long module names keep their room. -->
+    <style name="DtcProtocolButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">26dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
     </style>
 </resources>
