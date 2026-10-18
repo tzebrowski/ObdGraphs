@@ -46,6 +46,15 @@ class DtcReadInfoTest {
         assertEquals(VIN, vinFrom(mapOf("Numer identyfikacyjny pojazdu" to " $VIN ")))
     }
 
+    // mode01.json 09 02 and giulia_2.0_gme.json 22 F190 are both "Vehicle Identification Number": no key mentions "vin",
+    // and a VIN-shaped value of another metadata PID was taken for the VIN.
+    @Test
+    fun `the VIN PIDs' entry wins over a VIN-shaped value of another PID`() {
+        val label = "Vehicle Identification Number"
+        assertEquals(VIN, vinFrom(mapOf("Calibration ID" to "ABCDEFGH1JKLMN234", label to " $VIN "), setOf(label)))
+        assertEquals(VIN, vinFrom(mapOf("ECU VIN code" to OTHER_VIN, label to VIN), setOf(label)))
+    }
+
     @Test
     fun `no vin without a VIN key or a valid 17 character value`() {
         assertNull(vinFrom(emptyMap()))

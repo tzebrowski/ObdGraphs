@@ -54,6 +54,7 @@ import java.io.Serializable
 
 private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
+private const val PREF_VEHICLE_VIN = "pref.datalogger.vehicle.vin"
 private const val PREF_DTC = "pref.datalogger.dtc"
 private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
 
@@ -446,5 +447,33 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
 
         val diff = DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo())
         assertEquals(listOf("P0100"), diff.gone.map { it.standardCode })
+    }
+
+    // Automatic DTC reading off: the connect reads no VIN, so the "another vehicle" line had no current VIN to compare
+    // with. The VIN a DTC action read (onDTCCompleted) is the connected car's until the next connect.
+    @Test
+    fun `the VIN read by a DTC action becomes the connected car's VIN until the next connect`() {
+        storeDtcPrefs()
+        every { dataLoggerSettings.instance() } returns
+            DataLoggerSettings(adapter = Adapter(vehicleCapabilitiesReadingEnabled = false, dtcEnabled = false))
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), now = 1, vin = "ZAREAEBN9K7617289")
+        verify { editor.putString(PREF_VEHICLE_VIN, "ZAREAEBN9K7617289") }
+
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_VIN), any()) } returns "ZAREAEBN9K7617289"
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_METADATA), any()) } returns """{"VIN":"ZARFAMAN0K7612345"}"""
+        assertEquals("ZAREAEBN9K7617289", VehicleCapabilitiesManager.getCurrentVin())
+
+        VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities())
+        verify { editor.remove(PREF_VEHICLE_VIN) }
+    }
+
+    @Test
+    fun `an action without a VIN reply keeps the connected car's VIN`() {
+        storeDtcPrefs()
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), now = 1, vin = null)
+
+        verify(exactly = 0) { editor.putString(eq(PREF_VEHICLE_VIN), any()) }
     }
 }

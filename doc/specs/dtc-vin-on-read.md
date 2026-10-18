@@ -32,7 +32,9 @@ history use it). No UI change.
 
 ## Settings / keys touched
 
-None. `pref.adapter.init.fetchDTC` keeps controlling the automatic read only; its summary needs no change.
+No user-facing setting. `pref.adapter.init.fetchDTC` keeps controlling the automatic read only; its summary needs no
+change. New internal key `pref.datalogger.vehicle.vin`: the VIN the last DTC action of this connection read, removed
+on connect.
 
 ## Implementation
 
@@ -60,6 +62,14 @@ None. `pref.adapter.init.fetchDTC` keeps controlling the automatic read only; it
   * `updateDTC(..., vin)` stamps `DtcReadInfo` and the history scan with `vinFromReply(vin) ?: getCurrentVin()`, for
     every kind of action. `vinFromReply` (`DtcReadInfo.kt`) shares `isEmptyVin` and the VIN pattern with `vinFrom`:
     null → null, blank / zero filled → `NO_VIN`, a value holding no VIN → null (falls back).
+  * The action's VIN is also the connected car's (`pref.datalogger.vehicle.vin`, removed by `updateCapabilities` on
+    every connect). `getCurrentVin()` returns it, else the connect metadata's. With automatic DTC reading off the
+    connect reads no VIN, so the "another vehicle" line had nothing to compare with until now. The VIN stays out of
+    `VehicleCapabilities` (user's choice): `onDTCCompleted` already carries it.
+  * The metadata fallback stays for the init's own DTC read (profiles without modules), which has no `vin`.
+    `vinFrom` checks the VIN PIDs' labels (`vinLabels`) first: after the 09 02 rename both VIN PIDs are labelled
+    "Vehicle Identification Number", no key mentioned "vin" any more, and a VIN-shaped value of another metadata PID
+    could be taken for the VIN.
   * The connect-init VIN read (`vehicleMetadataVinReadingEnabled`) stays as it is.
 
 ## Backward compatibility
@@ -78,7 +88,8 @@ None. `pref.adapter.init.fetchDTC` keeps controlling the automatic read only; it
   VIN PIDs; 22 F18C and the unmarked 09 02 of `mode09.json` are not.
 * App `VehicleCapabilitiesManagerTest`: `updateDTC` with a VIN and no connect metadata stamps read info and history
   with it; null falls back to the connect VIN; empty → `NO_VIN`; a read then a clear without the connect VIN lists the
-  cleared code as gone. `DtcReadInfoTest`: `vinFromReply`.
+  cleared code as gone; the action's VIN becomes the current VIN until the next connect, an action without a VIN
+  reply keeps it. `DtcReadInfoTest`: `vinFromReply`; the VIN PIDs' entry wins over a VIN-shaped value.
 
 ## Risks and verification checklist
 

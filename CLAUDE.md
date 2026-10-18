@@ -318,7 +318,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
 * Stored codes are stamped (`pref.datalogger.dtc.read_info`: time + VIN) in `updateDTC`. Vehicle
   metadata is keyed by the metadata PID's *label*, which varies by profile **and is translated**
   (Giulia 22F190: "Vehicle Identification Number" / PL "Numer identyfikacyjny pojazdu"). So `vinFrom`
-  falls back to recognising the value. Wrong turn: matching keys on "vin" missed the Giulia VIN.
+  looks up the VIN PIDs' labels (`vinLabels`, by category) first, then keys mentioning "vin", then a VIN-shaped value.
+  09 02 and 22 F190 share the label "Vehicle Identification Number", so one reply overwrites the other in the map.
+  The VIN a DTC action read (`onDTCCompleted`) is the current car's (`pref.datalogger.vehicle.vin`, cleared on connect)
+  and wins over the metadata. Rejected by the user: a `vin` field on ObdMetrics' `VehicleCapabilities` (Lifecycle
+  already carries it).
   No VIN at all usually means `pref.adapter.init.fetchDeviceProperties` is off (metadata `{}`).
   Check on device: `adb shell "run-as <pkg> cat shared_prefs/<pkg>_preferences.xml"` (debug builds only).
 * **Automatic DTC read on connect = a module scan when modules are configured.** ObdMetrics' own

@@ -71,17 +71,17 @@ fun DtcReadInfo.vehicleLine(
 private val VIN_PATTERN = Regex("[A-HJ-NPR-Z0-9]{17}")
 
 // Vehicle metadata is keyed by the metadata PID's label, which differs per profile and is translated
-// ("VIN", "Vehicle Identification Number", "Numer identyfikacyjny pojazdu", ...), so the label alone
-// cannot find it. A key mentioning VIN wins (its value may carry padding); otherwise any value that
-// is exactly a VIN - letters and digits mixed, so a numeric part number never qualifies.
-// vinLabels are the labels of the profile's VIN PIDs (known from the registry): when one of them
-// answered but carries no VIN (blank or zero filled), the result is NO_VIN instead of null.
+// ("VIN", "Vehicle Identification Number", "Numer identyfikacyjny pojazdu", ...). vinLabels are the labels of the
+// profile's VIN PIDs (known from the registry): their entries win (a value may carry padding), then a key mentioning
+// VIN, then any value that is exactly a VIN - letters and digits mixed, so a numeric part number never qualifies.
+// When a VIN PID answered but carries no VIN (blank or zero filled), the result is NO_VIN instead of null.
 fun vinFrom(
     metadata: Map<String, String>,
     vinLabels: Set<String> = emptySet()
 ): String? =
     metadata.entries
-        .filter { it.key.contains("vin", ignoreCase = true) }
+        .filter { it.key in vinLabels || it.key.contains("vin", ignoreCase = true) }
+        .sortedByDescending { it.key in vinLabels }
         .firstNotNullOfOrNull { vinIn(it.value) }
         ?: metadata.values
             .map { it.trim().uppercase() }
