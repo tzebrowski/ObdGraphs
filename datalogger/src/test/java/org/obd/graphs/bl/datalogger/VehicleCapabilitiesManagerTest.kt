@@ -37,6 +37,7 @@ import org.obd.graphs.bl.TestSetup
 import org.obd.graphs.bl.datalogger.dtc.DtcAnnouncement
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
+import org.obd.graphs.bl.datalogger.dtc.NO_VIN
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_NOTIFY_NEW_CODES
 import org.obd.graphs.bl.datalogger.dtc.UNKNOWN_VEHICLE
 import org.obd.metrics.api.model.DiagnosticTroubleCode
@@ -408,5 +409,42 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         VehicleCapabilitiesManager.updateDTC(emptySet(), listOf("Engine ECU"), now = 3, kind = DtcScanKind.CONNECT)
         assertTrue(VehicleCapabilitiesManager.getDiagnosticTroubleCodes().isEmpty())
         assertEquals(listOf("Engine ECU"), VehicleCapabilitiesManager.getDtcScannedModules())
+    }
+
+    @Test
+    fun `updateDTC stamps the read and its history with the VIN read by the action`() {
+        storeDtcPrefs()
+
+        VehicleCapabilitiesManager.updateDTC(setOf(dtc("P0100", "a")), now = 7, vin = "ZAREAEBN9K7617289")
+
+        assertEquals("ZAREAEBN9K7617289", VehicleCapabilitiesManager.getDtcReadInfo()!!.vin)
+        assertEquals(7L, DtcHistoryStore.scans("ZAREAEBN9K7617289").single().timestamp)
+    }
+
+    @Test
+    fun `without a VIN reply the read falls back to the connect VIN, an empty reply is NO_VIN`() {
+        storeDtcPrefs()
+        every { sharedPrefs.getString(eq(PREF_VEHICLE_METADATA), any()) } returns """{"VIN":"ZARFAMAN0K7612345"}"""
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), now = 1, vin = null)
+        assertEquals("ZARFAMAN0K7612345", VehicleCapabilitiesManager.getDtcReadInfo()!!.vin)
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), now = 2, vin = "")
+        assertEquals(NO_VIN, VehicleCapabilitiesManager.getDtcReadInfo()!!.vin)
+    }
+
+    // Automatic DTC reading off: no VIN in the connect metadata. Before the action read the VIN, both scans went
+    // under UNKNOWN and the cleared codes never showed as "No longer reported".
+    @Test
+    fun `a read then a clear without the connect VIN reports the cleared codes as gone`() {
+        storeDtcPrefs()
+        val engine = dtc("P0100", "Mass air flow circuit").apply { module = "Engine ECU" }
+        val other = dtc("P0200", "Injector circuit").apply { module = "Engine ECU" }
+
+        VehicleCapabilitiesManager.updateDTC(setOf(engine, other), listOf("Engine ECU"), now = 1, kind = DtcScanKind.READ, vin = "ZAREAEBN9K7617289")
+        VehicleCapabilitiesManager.updateDTC(setOf(other), listOf("Engine ECU"), now = 2, kind = DtcScanKind.CLEAR, vin = "ZAREAEBN9K7617289")
+
+        val diff = DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo())
+        assertEquals(listOf("P0100"), diff.gone.map { it.standardCode })
     }
 }

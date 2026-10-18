@@ -76,15 +76,6 @@ class DtcReadInfoTest {
     }
 
     @Test
-    fun `VIN requests are matched by request, not label`() {
-        assertTrue(isVinRequest("09", "02"))
-        assertTrue(isVinRequest("22", "f190"))
-        assertFalse(isVinRequest("22", "F18C"))
-        assertFalse(isVinRequest("01", "02"))
-        assertFalse(isVinRequest(null, null))
-    }
-
-    @Test
     fun `NO_VIN never names a vehicle`() {
         assertFalse(DtcReadInfo(1, NO_VIN).isFromOtherVehicle(OTHER_VIN))
         assertFalse(DtcReadInfo(1, VIN).isFromOtherVehicle(NO_VIN))
@@ -158,5 +149,15 @@ class DtcReadInfoTest {
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.OK, emptyList()))
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.NO_DATA, listOf(dtc(""))))
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(null, emptyList()))
+    }
+
+    @Test
+    fun `the VIN reply of a DTC action gives the VIN, NO_VIN when empty, null without a reply`() {
+        assertEquals("ZAREAEBN9K7617289", vinFromReply("ZAREAEBN9K7617289"))
+        assertEquals("ZAREAEBN9K7617289", vinFromReply(" zareaebn9k7617289 "))
+        assertEquals(NO_VIN, vinFromReply(""))
+        assertEquals(NO_VIN, vinFromReply("00000000000000000"))
+        assertNull(vinFromReply(null))
+        assertNull(vinFromReply("not a vin"))
     }
 }

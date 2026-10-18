@@ -110,11 +110,13 @@ internal class WorkflowOrchestrator internal constructor() {
         }
 
         // moduleStatus: how each scanned module answered (ObdMetrics); a module that did not answer is shown as such
-        // instead of as clean, and is left out of the history comparison.
+        // instead of as clean, and is left out of the history comparison. vin: the reply to the VIN request that
+        // opens the action, null when none answered.
         override fun onDTCCompleted(
             dtc: Set<DiagnosticTroubleCode>,
             status: DiagnosticTroubleCodeClearStatus?,
-            moduleStatus: Map<String, DtcModuleStatus>?
+            moduleStatus: Map<String, DtcModuleStatus>?,
+            vin: String?
         ) {
             if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
                 Log.d(LOG_TAG, "Received onDTCCompleted event.")
@@ -124,8 +126,14 @@ internal class WorkflowOrchestrator internal constructor() {
             // for one nobody asked for, stored as a plain read like before.
             val (finished, next) = dtcActions.complete()
             val kind = finished?.kind ?: DtcScanKind.READ
-            Log.i(LOG_TAG, "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}, modules=$moduleStatus")
-            VehicleCapabilitiesManager.updateDTC(dtc, finished?.moduleLabels.orEmpty(), kind = kind, moduleStatus = moduleStatus.orEmpty())
+            Log.i(LOG_TAG, "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}, modules=$moduleStatus, vin=$vin")
+            VehicleCapabilitiesManager.updateDTC(
+                dtc,
+                finished?.moduleLabels.orEmpty(),
+                kind = kind,
+                moduleStatus = moduleStatus.orEmpty(),
+                vin = vin
+            )
 
             if (kind == DtcScanKind.CONNECT && dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
             // The connect scan's overlay; a request waiting behind it keeps its own.

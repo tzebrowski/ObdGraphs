@@ -66,7 +66,7 @@ dialog markers and the "gone" section, EN/PL). `:automotive` ("new" marker in AA
 **Empty VIN (`NO_VIN`).** An unprogrammed ECM answers `22 F190` with 17 spaces (seen on a 2.0 GME; `09 02` is
 refused with `7F 09 11`). `vinFrom` returns `NO_VIN` (`"00000000000000000"`) when a VIN PID answered with an empty
 value (blank, zeros, 0x00 / 0xFF), and still null when no VIN PID answered. The VIN PIDs' labels come from the
-registry (`isVinRequest`: 09 02 / 22 F190), because metadata is keyed by translated labels. `NO_VIN` shows as
+registry (ObdMetrics `VinPids.isVin`: PIDs marked `"category": "vin"`, see `dtc-vin-on-read.md`), because metadata is keyed by translated labels. `NO_VIN` shows as
 "VIN not programmed" (EN/PL, phone + AA) and never counts as "another vehicle". In history it is one shared key:
 all cars with an empty ECM VIN share a bucket. Unlike "unknown vehicle" it gets markers (see D).
 

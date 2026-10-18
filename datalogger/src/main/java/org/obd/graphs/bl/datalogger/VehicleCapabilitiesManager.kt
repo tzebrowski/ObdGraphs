@@ -29,11 +29,12 @@ import org.obd.graphs.bl.datalogger.dtc.DtcScan
 import org.obd.graphs.bl.datalogger.dtc.DtcScanKind
 import org.obd.graphs.bl.datalogger.dtc.DtcStoredList
 import org.obd.graphs.bl.datalogger.dtc.isSameVehicle
-import org.obd.graphs.bl.datalogger.dtc.isVinRequest
 import org.obd.graphs.bl.datalogger.dtc.mergedOver
 import org.obd.graphs.bl.datalogger.dtc.vinFrom
+import org.obd.graphs.bl.datalogger.dtc.vinFromReply
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
+import org.obd.metrics.api.VinPids
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.dtc.DtcModuleStatus
@@ -105,8 +106,10 @@ object VehicleCapabilitiesManager {
     // scannedModules are the module labels (DiagnosticTroubleCode.module) a user-triggered scan
     // targeted, kept so the DTC list can tell "scanned, nothing reported" apart from "not scanned".
     // Empty for the default single-ECU scan and for automatic reads.
-    // Stamped with the time and the VIN of the vehicle connected now: metadata is rewritten on every
-    // connect (updateCapabilities) before any DTC read of that connection completes.
+    // Stamped with the time and the VIN: vin is the reply to the VIN request that opens every DTC action
+    // (ObdMetrics), so a read works without the connect init's VIN read. Without a reply, the VIN of the vehicle
+    // connected now: metadata is rewritten on every connect (updateCapabilities) before any DTC read of that
+    // connection completes.
     // Also appended to the vehicle's history (DtcHistoryStore) with the same timestamp, which ties the
     // stored list to its history record. After a connect scan its codes are announced when new to the vehicle (DtcNewCodes).
     internal fun updateDTC(
@@ -114,9 +117,10 @@ object VehicleCapabilitiesManager {
         scannedModules: List<String> = emptyList(),
         now: Long = System.currentTimeMillis(),
         kind: DtcScanKind = DtcScanKind.READ,
-        moduleStatus: Map<String, DtcModuleStatus> = emptyMap()
+        moduleStatus: Map<String, DtcModuleStatus> = emptyMap(),
+        vin: String? = null
     ) {
-        val readInfo = DtcReadInfo(timestamp = now, vin = getCurrentVin())
+        val readInfo = DtcReadInfo(timestamp = now, vin = vinFromReply(vin) ?: getCurrentVin())
         // The list on screen keeps the modules this read did not target; history records this read alone.
         val previous = getDtcReadInfo()
         val list =
@@ -157,14 +161,14 @@ object VehicleCapabilitiesManager {
     fun getCurrentVin(): String? = vinFrom(getVehicleMetadata().associate { it.name to it.value }, vinMetadataLabels())
 
     // Metadata is keyed by the PID description, so the VIN PIDs' descriptions tell which entry is the VIN
-    // even when its value is empty. VIN PIDs are matched by request (OBD-II 09 02, UDS 22 F190), as in
-    // ObdMetrics' VIN-only init read.
+    // even when its value is empty. VIN PIDs are the ones marked "category": "vin" in the PID resource files
+    // (ObdMetrics' VinPids, also used by its VIN reads).
     private fun vinMetadataLabels(): Set<String> =
         try {
             DataLoggerRepository
                 .getPidDefinitionRegistry()
                 .findBy(PIDsGroup.METADATA)
-                .filter { isVinRequest(it.mode, it.pid) }
+                .filter { VinPids.isVin(it) }
                 .mapNotNull { it.description }
                 .toSet()
         } catch (e: Throwable) {
