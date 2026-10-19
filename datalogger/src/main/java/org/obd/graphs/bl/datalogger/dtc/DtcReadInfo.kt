@@ -20,10 +20,12 @@ import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
 
 // When the stored codes were read, and from which vehicle. Stored next to the codes, so both the
-// phone dialog and the AA screen can tell the driver how old the list is.
+// phone dialog and the AA screen can tell the driver how old the list is. durationMs: how long the DTC action took,
+// null when unknown (a list stored before it was recorded, or a completion nobody asked for).
 data class DtcReadInfo(
     val timestamp: Long = 0,
-    val vin: String? = null
+    val vin: String? = null,
+    val durationMs: Long? = null
 )
 
 // Stands for "the vehicle answered the VIN request with an empty VIN" (an unprogrammed ECM sends 17

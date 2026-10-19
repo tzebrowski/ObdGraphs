@@ -26,6 +26,8 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | Scan progress (added later #6): "Engine ECU · 4 / 13" on the phone overlay | `dtc-scan-progress.md` |
 | Mode 03 / 07 / 0A for modules marked as OBD-II (initial #2), "Permanent" chip | `dtc-obd-modes.md` |
 | VIN read with every DTC action (added later #11): markers without automatic DTC reading | `dtc-vin-on-read.md` |
+| DTC settings screen: grouped settings, live list summary, one-row dialog buttons | `dtc-settings-screen.md` |
+| Shared report header (initial #8, part): read time, VIN, scan duration, modules without an answer | `dtc-report-header.md` |
 
 ## Planned
 
@@ -115,7 +117,8 @@ ObdMetrics resets the CAN header after DTC actions, and the duplicate `19020D` r
 
 ### 9. A better shared report (App) — initial #8
 
-* Add to the shared report: the state line (done), odometer at read time, scan duration, modules that did not answer.
+* Shared report: state line, read time / VIN, scan duration, modules that did not answer - done (`dtc-report-header.md`).
+  Odometer at read time left out for now: the 2.0 GME's snapshot and extended data carry none.
 * Export history as JSON / CSV.
 
 ### 10. Filters and AA polish (App) — added later

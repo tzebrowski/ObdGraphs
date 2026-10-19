@@ -124,15 +124,20 @@ internal class WorkflowOrchestrator internal constructor() {
 
             // The completion belongs to the request in flight (one at a time, see DtcActionQueue); null
             // for one nobody asked for, stored as a plain read like before.
-            val (finished, next) = dtcActions.complete()
+            val (finished, next, durationMs) = dtcActions.complete()
             val kind = finished?.kind ?: DtcScanKind.READ
-            Log.i(LOG_TAG, "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}, modules=$moduleStatus, vin=$vin")
+            Log.i(
+                LOG_TAG,
+                "DTC action completed: $kind, codes=${dtc.size}, next=${next?.kind}, modules=$moduleStatus, vin=$vin, " +
+                    "duration=${durationMs}ms"
+            )
             VehicleCapabilitiesManager.updateDTC(
                 dtc,
                 finished?.moduleLabels.orEmpty(),
                 kind = kind,
                 moduleStatus = moduleStatus.orEmpty(),
-                vin = vin
+                vin = vin,
+                durationMs = durationMs
             )
 
             if (kind == DtcScanKind.CONNECT && dtc.isNotEmpty()) sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
