@@ -46,7 +46,6 @@ import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DTC_SCREEN_LOCK_CONTEXT
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
-import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_OBD_MODULES
@@ -61,7 +60,6 @@ import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.remainingAfterClear
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
-import org.obd.graphs.bl.datalogger.dtc.summary
 import org.obd.graphs.bl.datalogger.dtc.toDidLines
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
 import org.obd.graphs.bl.datalogger.dtc.unansweredModules
@@ -86,6 +84,9 @@ import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 
 private const val PREF_DTC_LEGEND_EXPANDED = "pref.dtc.legend.expanded"
+
+// Material's disabled emphasis.
+private const val DISABLED_BUTTON_ALPHA = 0.38f
 
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
@@ -551,8 +552,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         refreshReadInfo()
 
         // Nothing to share or clear without codes.
-        shareButton.isEnabled = codes.isNotEmpty()
-        clearButton.isEnabled = codes.isNotEmpty()
+        shareButton.setEnabledDimmed(codes.isNotEmpty())
+        clearButton.setEnabledDimmed(codes.isNotEmpty())
+    }
+
+    // Share's icon and Clear's text have fixed colours, which the disabled state does not grey out.
+    private fun Button.setEnabledDimmed(enabled: Boolean) {
+        isEnabled = enabled
+        alpha = if (enabled) 1f else DISABLED_BUTTON_ALPHA
     }
 
     private fun refreshReadInfo() {
@@ -561,23 +568,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             readInfo.visibility = View.GONE
             return
         }
-        readInfo.text =
-            info.summary(
-                formattedTime =
-                DateUtils.formatDateTime(
-                    requireContext(),
-                    info.timestamp,
-                    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_YEAR
-                ),
-                currentVin = VehicleCapabilitiesManager.getCurrentVin(),
-                labels =
-                DtcReadInfoLabels(
-                    lastRead = getString(R.string.pref_dtc_read_info),
-                    vin = getString(R.string.pref_dtc_read_info_vin),
-                    otherVehicle = getString(R.string.pref_dtc_read_info_other_vehicle),
-                    noVin = getString(R.string.pref_dtc_read_info_no_vin)
-                )
-            )
+        readInfo.text = readInfoSummary(requireContext(), info)
         readInfo.visibility = View.VISIBLE
     }
 

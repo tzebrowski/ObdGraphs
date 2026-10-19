@@ -52,7 +52,9 @@ private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_VEHICLE_VIN = "pref.datalogger.vehicle.vin"
 private const val PREF_DTC = "pref.datalogger.dtc"
 private const val PREF_DTC_SCANNED_MODULES = "pref.datalogger.dtc.scanned_modules"
-private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
+
+// Public: the DTC list row refreshes its summary when it changes.
+const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
 private const val PREF_DTC_MODULE_STATUS = "pref.datalogger.dtc.module_status"
 
 object VehicleCapabilitiesManager {

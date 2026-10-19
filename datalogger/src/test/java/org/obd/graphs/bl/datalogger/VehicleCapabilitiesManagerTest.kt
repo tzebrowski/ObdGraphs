@@ -56,7 +56,6 @@ private const val PREF_VEHICLE_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_VEHICLE_VIN = "pref.datalogger.vehicle.vin"
 private const val PREF_DTC = "pref.datalogger.dtc"
-private const val PREF_DTC_READ_INFO = "pref.datalogger.dtc.read_info"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)

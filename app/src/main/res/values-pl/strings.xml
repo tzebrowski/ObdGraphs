@@ -446,16 +446,27 @@
     <string name="pref.dtc.no_dtc_found_for_module">Brak zgłoszonych kodów błędów.</string>
     <string name="pref.dtc.module_no_response">Moduł nie odpowiedział. Jego kody są nieznane.</string>
     <string name="pref.dtc.module_refused">Moduł odmówił odczytu.</string>
-    <string name="pref.dtc.enable_automatic_cleanup">Włącz automatyczne czyszczenie DTC</string>
-    <string name="pref.dtc.enable_automatic_cleanup_summary">Automatycznie kasuje kody błędów diagnostycznych (DTC) z pamięci ECU.</string>
-    <string name="pref.dtc.settings_summary"><b>Dotknij</b>, aby wyświetlić aktywne kody błędów diagnostycznych (DTC) pobrane z ECU.</string>
-    <string name="pref.dtc.settings">Wyświetl bieżące DTC</string>
-    <string name="pref.dtc.read_snapshots">Odczytaj migawki DTC</string>
-    <string name="pref.dtc.read_snapshots_summary">Odczytuje dodatkowe dane kontekstowe z momentu wystąpienia DTC.</string>
-    <string name="pref.dtc.enable_dtc_reading">Włącz automatyczny odczyt DTC</string>
-    <string name="pref.dtc.enable_dtc_reading_summary">Odczytuj kody błędów diagnostycznych (DTC) podczas połączenia z ECU.</string>
-    <string name="pref.dtc.notify_new_codes">Powiadamiaj o nowych kodach błędów</string>
-    <string name="pref.dtc.notify_new_codes_summary">Po połączeniu pokazuje powiadomienie (i komunikat w Android Auto), gdy skanowanie znajdzie kody, których ten pojazd wcześniej nie zgłaszał. Wymaga uprawnienia do powiadomień.</string>
+    <string name="pref.dtc.enable_automatic_cleanup">Kasuj kody po połączeniu</string>
+    <string name="pref.dtc.enable_automatic_cleanup_summary">⚠ Przy każdym połączeniu, bez pytania, kasuje kody błędów sterownika silnika i dane zamrożonej klatki. Zeruje też monitory gotowości, przez co pojazd może nie przejść przeglądu. Aby skasować kody jednorazowo, użyj „Skasuj kody” na liście.</string>
+    <string name="pref.dtc.settings_summary">Odczyt, przegląd i kasowanie kodów błędów zapisanych w modułach pojazdu.</string>
+    <string name="pref.dtc.settings">Kody błędów</string>
+    <string name="pref.dtc.read_snapshots">Odczytuj dane zamrożonej klatki</string>
+    <string name="pref.dtc.read_snapshots_summary">Odczytuje też warunki zapisane razem z każdym kodem. Odczyt trwa dłużej.</string>
+    <string name="pref.dtc.enable_dtc_reading">Odczytuj kody po połączeniu</string>
+    <string name="pref.dtc.enable_dtc_reading_summary">Skanuje skonfigurowane moduły zaraz po połączeniu adaptera.</string>
+    <string name="pref.dtc.notify_new_codes">Powiadamiaj o nowych kodach</string>
+    <string name="pref.dtc.notify_new_codes_summary">Gdy skan po połączeniu znajdzie kody, których ten pojazd wcześniej nie zgłaszał (także w Android Auto). Wymaga uprawnienia do powiadomień.</string>
+    <string name="pref.dtc.list_not_read">Jeszcze nie odczytano. Dotknij, aby otworzyć listę i odczytać kody.</string>
+    <string name="pref.dtc.list_no_codes">Brak kodów</string>
+    <plurals name="pref.dtc.list_codes">
+        <item quantity="one">%d kod</item>
+        <item quantity="few">%d kody</item>
+        <item quantity="many">%d kodów</item>
+        <item quantity="other">%d kodu</item>
+    </plurals>
+    <string name="pref.dtc.category.on_connect">Po połączeniu</string>
+    <string name="pref.dtc.category.reading">Odczyt</string>
+    <string name="pref.dtc.category.clearing">Kasowanie</string>
 
     <string name="pref.dtc.clean_dialog.confirm_message">Czy na pewno chcesz skasować wszystkie DTC z ECU?\n\nUpewnij się, że silnik jest WYŁĄCZONY, ale stacyjka jest WŁĄCZONA.\n\nKasowanie zeruje też monitory gotowości: samochód będzie niegotowy, dopóki nie wykonają się ponownie.</string>
     <string name="pref.dtc.clean_dialog.send_message">Komenda kasowania wysłana do ECU</string>
