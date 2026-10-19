@@ -46,6 +46,15 @@ class DtcReadInfoTest {
         assertEquals(VIN, vinFrom(mapOf("Numer identyfikacyjny pojazdu" to " $VIN ")))
     }
 
+    // mode01.json 09 02 and giulia_2.0_gme.json 22 F190 are both "Vehicle Identification Number": no key mentions "vin",
+    // and a VIN-shaped value of another metadata PID was taken for the VIN.
+    @Test
+    fun `the VIN PIDs' entry wins over a VIN-shaped value of another PID`() {
+        val label = "Vehicle Identification Number"
+        assertEquals(VIN, vinFrom(mapOf("Calibration ID" to "ABCDEFGH1JKLMN234", label to " $VIN "), setOf(label)))
+        assertEquals(VIN, vinFrom(mapOf("ECU VIN code" to OTHER_VIN, label to VIN), setOf(label)))
+    }
+
     @Test
     fun `no vin without a VIN key or a valid 17 character value`() {
         assertNull(vinFrom(emptyMap()))
@@ -73,15 +82,6 @@ class DtcReadInfoTest {
         assertNull(vinFrom(mapOf("VIN" to "")))
         // A real VIN anywhere wins over an empty VIN PID.
         assertEquals(VIN, vinFrom(mapOf("VIN" to "", "Vehicle Identification Number" to VIN), setOf("VIN")))
-    }
-
-    @Test
-    fun `VIN requests are matched by request, not label`() {
-        assertTrue(isVinRequest("09", "02"))
-        assertTrue(isVinRequest("22", "f190"))
-        assertFalse(isVinRequest("22", "F18C"))
-        assertFalse(isVinRequest("01", "02"))
-        assertFalse(isVinRequest(null, null))
     }
 
     @Test
@@ -158,5 +158,15 @@ class DtcReadInfoTest {
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.OK, emptyList()))
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(DiagnosticTroubleCodeClearStatus.NO_DATA, listOf(dtc(""))))
         assertEquals(DtcClearOutcome.CLEARED, dtcClearOutcome(null, emptyList()))
+    }
+
+    @Test
+    fun `the VIN reply of a DTC action gives the VIN, NO_VIN when empty, null without a reply`() {
+        assertEquals("ZAREAEBN9K7617289", vinFromReply("ZAREAEBN9K7617289"))
+        assertEquals("ZAREAEBN9K7617289", vinFromReply(" zareaebn9k7617289 "))
+        assertEquals(NO_VIN, vinFromReply(""))
+        assertEquals(NO_VIN, vinFromReply("00000000000000000"))
+        assertNull(vinFromReply(null))
+        assertNull(vinFromReply("not a vin"))
     }
 }

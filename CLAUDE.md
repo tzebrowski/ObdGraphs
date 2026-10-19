@@ -318,7 +318,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
 * Stored codes are stamped (`pref.datalogger.dtc.read_info`: time + VIN) in `updateDTC`. Vehicle
   metadata is keyed by the metadata PID's *label*, which varies by profile **and is translated**
   (Giulia 22F190: "Vehicle Identification Number" / PL "Numer identyfikacyjny pojazdu"). So `vinFrom`
-  falls back to recognising the value. Wrong turn: matching keys on "vin" missed the Giulia VIN.
+  looks up the VIN PIDs' labels (`vinLabels`, by category) first, then keys mentioning "vin", then a VIN-shaped value.
+  09 02 and 22 F190 share the label "Vehicle Identification Number", so one reply overwrites the other in the map.
+  The VIN a DTC action read (`onDTCCompleted`) is the current car's (`pref.datalogger.vehicle.vin`, cleared on connect)
+  and wins over the metadata. Rejected by the user: a `vin` field on ObdMetrics' `VehicleCapabilities` (Lifecycle
+  already carries it).
   No VIN at all usually means `pref.adapter.init.fetchDeviceProperties` is off (metadata `{}`).
   Check on device: `adb shell "run-as <pkg> cat shared_prefs/<pkg>_preferences.xml"` (debug builds only).
 * **Automatic DTC read on connect = a module scan when modules are configured.** ObdMetrics' own
@@ -346,15 +350,21 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   for 30 codes; the scan looks hung). Snapshot and follow-up codecs return an error response instead.
 * **VIN for DTC stamping is read alone, not with the metadata group.** ObdMetrics
   `Adjustments.vehicleMetadataVinReadingEnabled` (set from `dtcEnabled` in `AdjustmentsStrategy`) makes the init queue
-  only the VIN PIDs (`VinPids.isVin`, package-private in `api`, 09 02 / 22 F190, matched by request, never by label) while `fetchDeviceProperties` is off.
+  only the VIN PIDs while `fetchDeviceProperties` is off. **A VIN PID is one marked `"category": "vin"` in its resource
+  file** (`VinPids.isVin`, public in ObdMetrics `api`, used by the app too): no request values in code, by the user's
+  choice, and never the description (translated). Marked: `mode01.json` 11000 (09 02), `giulia_2.0_gme.json` 17001
+  (22 F190). A profile adding its own VIN PID must mark it, or DTC reads go unstamped (`UNKNOWN`).
   It must not add METADATA to `getRequestedGroups()` — that reads the whole group. Read on
   every connect, so a change of car shows. Rejected by the user: enabling the whole group; reading it only until a VIN is stored.
-  Known gap (spec `doc/specs/dtc-vin-on-read.md`, proposed): with automatic DTC reading off (the default) nothing reads
-  the VIN, manual reads / clears go under `UNKNOWN` and show no "New" / "No longer reported". "Markers gone after a
-  clear" = check `read info: ... vin=null` in logcat first; a fresh install resets `pref.adapter.init.fetchDTC`.
+  **Every DTC action also reads the VIN itself** (spec `doc/specs/dtc-vin-on-read.md`): ObdMetrics queues the VIN PIDs
+  after the start marker and passes the reply as `vin` in the four-argument `onDTCCompleted`; `updateDTC` stamps
+  `vinFromReply(vin) ?: getCurrentVin()`. Without it, with automatic DTC reading off (the default) manual reads /
+  clears went under `UNKNOWN` with no markers. Commands queued straight into the buffer take their `ATSH` from
+  `CommandProducer.headerFor`, never `switchHeader` (it skips a header it thinks is set; single-header mode sends one once).
+  "Markers gone after a clear" = check `DTC action completed: ... vin=` and `read info: ... vin=null` in logcat first.
 * **An empty VIN is `NO_VIN` (17 zeros), not null.** The 2.0 GME ECM can answer `22 F190` with 17 spaces (decoded
   to ""). `vinFrom(metadata, vinLabels)` finds the VIN entry by the VIN PIDs' registry descriptions
-  (`isVinRequest`), since keys are translated labels; null still means "no VIN reply". `NO_VIN` never counts as
+  (`VinPids.isVin`), since keys are translated labels; null still means "no VIN reply". `NO_VIN` never counts as
   another vehicle and shows as "VIN not programmed".
 * **DTC history per vehicle** (`dtc/DtcHistory.kt`, `DtcHistoryDiff.kt`, `DtcHistoryStore.kt`; spec
   `doc/specs/dtc-history.md`). Every `updateDTC` also appends a `DtcScan` to `files/dtc_history.json` (not prefs:

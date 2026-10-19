@@ -25,6 +25,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | Failure type text (initial #7): meaning of the `-XX` byte in the expanded row and report | `dtc-failure-type.md` |
 | Scan progress (added later #6): "Engine ECU · 4 / 13" on the phone overlay | `dtc-scan-progress.md` |
 | Mode 03 / 07 / 0A for modules marked as OBD-II (initial #2), "Permanent" chip | `dtc-obd-modes.md` |
+| VIN read with every DTC action (added later #11): markers without automatic DTC reading | `dtc-vin-on-read.md` |
 
 ## Planned
 
@@ -124,7 +125,7 @@ ObdMetrics resets the CAN header after DTC actions, and the duplicate `19020D` r
 
 ### 11. VIN read with every DTC action (ObdMetrics + App) — added later
 
-Spec `dtc-vin-on-read.md` (proposed). The VIN is read only at connect, and only while automatic DTC reading is on, so
+**Done** (2026-10-18), spec `dtc-vin-on-read.md`. The VIN is read only at connect, and only while automatic DTC reading is on, so
 a manual read or clear with it off is stamped `vin=null` and gets no history markers (seen after a fresh install).
 
 ## To investigate (added later)

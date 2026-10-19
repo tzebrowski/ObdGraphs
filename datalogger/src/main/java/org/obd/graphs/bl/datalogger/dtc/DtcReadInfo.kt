@@ -71,32 +71,34 @@ fun DtcReadInfo.vehicleLine(
 private val VIN_PATTERN = Regex("[A-HJ-NPR-Z0-9]{17}")
 
 // Vehicle metadata is keyed by the metadata PID's label, which differs per profile and is translated
-// ("VIN", "Vehicle Identification Number", "Numer identyfikacyjny pojazdu", ...), so the label alone
-// cannot find it. A key mentioning VIN wins (its value may carry padding); otherwise any value that
-// is exactly a VIN - letters and digits mixed, so a numeric part number never qualifies.
-// vinLabels are the labels of the profile's VIN PIDs (known from the registry): when one of them
-// answered but carries no VIN (blank or zero filled), the result is NO_VIN instead of null.
+// ("VIN", "Vehicle Identification Number", "Numer identyfikacyjny pojazdu", ...). vinLabels are the labels of the
+// profile's VIN PIDs (known from the registry): their entries win (a value may carry padding), then a key mentioning
+// VIN, then any value that is exactly a VIN - letters and digits mixed, so a numeric part number never qualifies.
+// When a VIN PID answered but carries no VIN (blank or zero filled), the result is NO_VIN instead of null.
 fun vinFrom(
     metadata: Map<String, String>,
     vinLabels: Set<String> = emptySet()
 ): String? =
     metadata.entries
-        .filter { it.key.contains("vin", ignoreCase = true) }
-        .firstNotNullOfOrNull { VIN_PATTERN.find(it.value.uppercase())?.value?.takeIf { vin -> vin != NO_VIN } }
+        .filter { it.key in vinLabels || it.key.contains("vin", ignoreCase = true) }
+        .sortedByDescending { it.key in vinLabels }
+        .firstNotNullOfOrNull { vinIn(it.value) }
         ?: metadata.values
             .map { it.trim().uppercase() }
             .firstOrNull { VIN_PATTERN.matches(it) && it.any(Char::isLetter) && it.any(Char::isDigit) }
         ?: NO_VIN.takeIf { vinLabels.any { label -> metadata[label]?.isEmptyVin() == true } }
 
-// The VIN request: OBD-II mode 09 PID 02 or UDS DID F190 (ISO 14229).
-fun isVinRequest(
-    mode: String?,
-    pid: String?
-): Boolean {
-    val m = mode?.trim()
-    val p = pid?.trim()
-    return (m == "09" && p == "02") || (m == "22" && p.equals("F190", ignoreCase = true))
-}
+// The VIN ObdMetrics read at the start of a DTC action: null when no VIN PID answered, NO_VIN for an ECU without a
+// programmed VIN (blank or zero filled), null as well for a reply that holds no VIN.
+fun vinFromReply(reply: String?): String? =
+    when {
+        reply == null -> null
+        reply.isEmptyVin() -> NO_VIN
+        else -> vinIn(reply)
+    }
+
+// A VIN inside a value that may carry padding; NO_VIN does not count.
+private fun vinIn(value: String): String? = VIN_PATTERN.find(value.uppercase())?.value?.takeIf { it != NO_VIN }
 
 // What an ECU without a programmed VIN sends: spaces (trimmed to nothing by the decoder), zeros or 0xFF.
 private fun String.isEmptyVin(): Boolean = all { it.isWhitespace() || it == '0' || it == '\u0000' || it == '\u00FF' }
