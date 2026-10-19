@@ -449,6 +449,12 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   The read on connect skips OBD-II modules while a UDS one is configured (`dtcConnectScanModules(mappings, obdModules)`):
   an OBD-II entry reaching the ECM made a second ECM section. Switching a picker row to OBD-II unticks it (`onObdMarked`).
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
+* DTC settings screen (`pref.dtc`, spec `doc/specs/dtc-settings-screen.md`): the list row's summary is live
+  (`DiagnosticTroubleCodeListPreferences`, refreshed on `PREF_DTC_READ_INFO` changes - every read / clear rewrites it).
+  "Clear codes on connect" (`pref.adapter.init.cleanDTC`) is ObdMetrics' init clear on the default header only, kept
+  with a warning by the user's choice; its text names `dtc.action_clear_codes`, pinned by `DtcListSummaryTest`.
+* DTC dialog buttons are one row (`DtcDialogButtonsTest`): Refresh filled, Clear Codes outlined red, Share icon-only,
+  Close text, no caps (PL must fit). Fixed-colour buttons need `setEnabledDimmed`: `isEnabled` alone does not grey them.
 * `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
   to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the

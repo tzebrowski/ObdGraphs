@@ -660,38 +660,22 @@
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
             <PreferenceCategory android:title="@string/pref.dtc.title">
+                <!-- Summary set in code: code count and last read (DiagnosticTroubleCodeListPreferences). -->
                 <org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
                     app:icon="@drawable/ic_action_execute"
                     android:dialogTitle="@string/pref.dtc.title"
                     android:key="pref.dtc.list"
-                    android:summary="@string/pref.dtc.settings_summary"
                     android:title="@string/pref.dtc.settings"
                     app:singleLineTitle="false" />
+            </PreferenceCategory>
 
-                <SwitchPreferenceCompat
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.dtc.read_snapshots"
-                    android:key="pref.dtc.read_snapshots"
-                    android:summary="@string/pref.dtc.read_snapshots_summary"
-                    android:title="@string/pref.dtc.read_snapshots"
-                    app:singleLineTitle="false" />
-
+            <PreferenceCategory android:title="@string/pref.dtc.category.on_connect">
                 <SwitchPreferenceCompat
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.dtc.enable_dtc_reading"
                     android:key="pref.adapter.init.fetchDTC"
                     android:summary="@string/pref.dtc.enable_dtc_reading_summary"
                     android:title="@string/pref.dtc.enable_dtc_reading"
-                    app:singleLineTitle="false" />
-
-
-                <SwitchPreferenceCompat
-                    app:dependency="pref.adapter.init.fetchDTC"
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.dtc.enable_automatic_cleanup"
-                    android:key="pref.adapter.init.cleanDTC"
-                    android:summary="@string/pref.dtc.enable_automatic_cleanup_summary"
-                    android:title="@string/pref.dtc.enable_automatic_cleanup"
                     app:singleLineTitle="false" />
 
                 <SwitchPreferenceCompat
@@ -702,7 +686,29 @@
                     android:summary="@string/pref.dtc.notify_new_codes_summary"
                     android:title="@string/pref.dtc.notify_new_codes"
                     app:singleLineTitle="false" />
+            </PreferenceCategory>
 
+            <!-- Applies to every read, manual ones included. -->
+            <PreferenceCategory android:title="@string/pref.dtc.category.reading">
+                <SwitchPreferenceCompat
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.dtc.read_snapshots"
+                    android:key="pref.dtc.read_snapshots"
+                    android:summary="@string/pref.dtc.read_snapshots_summary"
+                    android:title="@string/pref.dtc.read_snapshots"
+                    app:singleLineTitle="false" />
+            </PreferenceCategory>
+
+            <!-- Last and on its own: it erases codes on every connect (ObdMetrics' init clear, default header only). -->
+            <PreferenceCategory android:title="@string/pref.dtc.category.clearing">
+                <SwitchPreferenceCompat
+                    app:dependency="pref.adapter.init.fetchDTC"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.dtc.enable_automatic_cleanup"
+                    android:key="pref.adapter.init.cleanDTC"
+                    android:summary="@string/pref.dtc.enable_automatic_cleanup_summary"
+                    android:title="@string/pref.dtc.enable_automatic_cleanup"
+                    app:singleLineTitle="false" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
