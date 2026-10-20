@@ -77,6 +77,38 @@
         android:scrollbarThumbVertical="@drawable/dtc_module_list_scrollbar_thumb"
         android:scrollbars="vertical" />
 
+    <!-- Freeze frames for this read only (Read flow), ticked as the "Read freeze frame data" setting is. Gone in the
+         Clear flow. The divider keeps it from reading as one more module row under a cut-off list. -->
+    <LinearLayout
+        android:id="@+id/dtc_picker_snapshots_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/divider_color" />
+
+        <CheckBox
+            android:id="@+id/dtc_picker_snapshots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref.dtc.read_snapshots" />
+
+        <!-- What it costs, the setting's own summary. Indented to the checkbox label. -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="32dp"
+            android:text="@string/pref.dtc.read_snapshots_summary"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+    </LinearLayout>
+
     <!-- Own button bar (not the AlertDialog's) so the buttons never auto-stack vertically. -->
     <LinearLayout
         android:layout_width="match_parent"

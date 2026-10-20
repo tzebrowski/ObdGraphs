@@ -25,6 +25,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TableLayout
 import android.widget.TextView
@@ -200,11 +201,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     titleRes = R.string.pref_dtc_select_modules_title,
                     confirmRes = R.string.pref_dtc_select_modules_confirm,
                     messageRes = R.string.pref_dtc_select_modules_description,
-                    confirmWhenEmpty = false
-                ) { selectedModules ->
+                    confirmWhenEmpty = false,
+                    snapshotsOption = true
+                ) { selectedModules, snapshots ->
                     setLoadingState(true, selectedModules.size)
                     withDataLogger {
-                        scheduleDTCRead(selectedModules)
+                        scheduleDTCRead(selectedModules, snapshots)
                     }
                 }
             } else {
@@ -220,7 +222,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         confirmRes = R.string.pref_dtc_select_modules_confirm_clear,
                         messageRes = R.string.pref_dtc_clean_dialog_confirm_message,
                         confirmWhenEmpty = true
-                    ) { selectedModules -> startClear(selectedModules) }
+                    ) { selectedModules, _ -> startClear(selectedModules) }
                 }
             } else {
                 toast(R.string.pref_dtc_no_connection_established)
@@ -283,12 +285,15 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     // single-ECU behavior from before this feature - unless confirmWhenEmpty is set, in which case
     // the message is still shown on its own (used by Clear, since that warning must not be skipped
     // just because there's no module list to attach it to).
+    // snapshotsOption shows a "Read freeze frame data" checkbox for this action only, ticked as the setting is;
+    // onPicked gets its state (null without the checkbox: the setting decides).
     private fun pickDtcModules(
         titleRes: Int,
         confirmRes: Int,
         messageRes: Int? = null,
         confirmWhenEmpty: Boolean = false,
-        onPicked: (Set<String>) -> Unit
+        snapshotsOption: Boolean = false,
+        onPicked: (Set<String>, Boolean?) -> Unit
     ) {
         val mappings = DiagnosticRequestIDManager.getMappings().filter { it.headerValue.isNotEmpty() }
 
@@ -303,7 +308,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     )
                     .setPositiveButton(confirmRes) { d, _ ->
                         d.dismiss()
-                        onPicked(emptySet())
+                        onPicked(emptySet(), null)
                     }
                     .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
                     .setNeutralButton(R.string.pref_dtc_select_modules_can_headers) { d, _ ->
@@ -312,7 +317,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     }
                     .show()
             } else {
-                onPicked(emptySet())
+                onPicked(emptySet(), null)
             }
             return
         }
@@ -354,6 +359,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         requestKeys.forEachIndexed { index, key ->
             listView.setItemChecked(index, key !in deselected)
         }
+
+        content.findViewById<View>(R.id.dtc_picker_snapshots_group).visibility = if (snapshotsOption) View.VISIBLE else View.GONE
+        val snapshotsBox =
+            content.findViewById<CheckBox>(R.id.dtc_picker_snapshots).apply {
+                isChecked = dataLoggerSettings.instance().adapter.dtcReadSnapshots
+            }
 
         val headersButton = content.findViewById<Button>(R.id.dtc_picker_can_headers)
         val cancelButton = content.findViewById<Button>(R.id.dtc_picker_cancel)
@@ -406,7 +417,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             val selected = requestKeys.filterIndexed { index, _ -> listView.isItemChecked(index) }.toSet()
             Prefs.updateStringSet(PREF_DTC_DESELECTED_MODULES, requestKeys.filter { it !in selected })
             Prefs.updateStringSet(PREF_DTC_OBD_MODULES, dtcObdModulesAfterPick(storedObdModules, requestKeys, pickerAdapter.obdMarked).toList())
-            onPicked(selected)
+            onPicked(selected, snapshotsBox.isChecked.takeIf { snapshotsOption })
         }
 
         dialog.show()
@@ -498,7 +509,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
             val unknownDid = getString(R.string.dtc_share_unknown_did)
             val snapshotLines = code.snapshot.toDidLines(unknownDid, notAvailable)
-            if (snapshotLines.isNotEmpty() && dataLoggerSettings.instance().adapter.dtcReadSnapshots) {
+            if (snapshotLines.isNotEmpty()) {
                 reportBuilder.append(getString(R.string.dtc_share_snapshot, snapshotLines.size)).append("\n")
                 snapshotLines.forEach { reportBuilder.append("  - $it\n") }
             }
