@@ -96,3 +96,16 @@ fun DtcStatus.statusLine(labels: DtcStatusLabels): String? =
     listOfNotNull(stateLabel(labels), labels.warningLamp.takeIf { warningLamp }, labels.permanent.takeIf { permanent })
         .takeIf { it.isNotEmpty() }
         ?.joinToString(" · ")
+
+// The AA row's icon (rows take no chips): the state's glyph, the permanent one for a code reported only as permanent,
+// the plain fault triangle when there is no state. A state wins over permanent; the status line still says both.
+enum class DtcRowIcon { ACTIVE, STORED, PENDING, HISTORY, PERMANENT, FAULT }
+
+fun DtcStatus.rowIcon(): DtcRowIcon =
+    when (state) {
+        DtcState.ACTIVE -> DtcRowIcon.ACTIVE
+        DtcState.STORED -> DtcRowIcon.STORED
+        DtcState.PENDING -> DtcRowIcon.PENDING
+        DtcState.HISTORY -> DtcRowIcon.HISTORY
+        DtcState.UNKNOWN -> if (permanent) DtcRowIcon.PERMANENT else DtcRowIcon.FAULT
+    }

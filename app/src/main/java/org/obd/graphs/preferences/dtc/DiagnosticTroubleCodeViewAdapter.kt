@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.datalogger.dtc.DtcFilter
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcState
 import org.obd.graphs.bl.datalogger.dtc.DtcStatusLabels
@@ -81,6 +82,15 @@ internal val STATE_BADGES =
         DtcState.PENDING to BadgeStyle(R.color.dtc_state_pending, R.drawable.dtc_state_pending, R.string.dtc_state_pending_explanation),
         DtcState.HISTORY to BadgeStyle(R.color.dtc_state_history, R.drawable.dtc_state_history, R.string.dtc_state_history_explanation)
     )
+
+// A filter chip's label: its state chip's name, "All" for no state.
+internal fun DtcFilter.labelRes(): Int =
+    when (this) {
+        DtcFilter.ALL -> R.string.dtc_filter_all
+        DtcFilter.ACTIVE -> R.string.dtc_state_active
+        DtcFilter.STORED -> R.string.dtc_state_stored
+        DtcFilter.PENDING -> R.string.dtc_state_pending
+    }
 
 internal val MIL_BADGE = BadgeStyle(R.color.dtc_state_mil, R.drawable.dtc_state_mil, R.string.dtc_state_mil_explanation)
 

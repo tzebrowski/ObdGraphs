@@ -107,4 +107,15 @@ class DtcStatusTest {
         assertEquals("Pending", dtcStatus(0x84).stateLabel(labels))
         assertNull(dtcStatus(0x80).stateLabel(labels))
     }
+
+    @Test
+    fun `AA row icon follows the state, permanent only without one`() {
+        assertEquals(DtcRowIcon.ACTIVE, dtcStatus(0x09).rowIcon())
+        assertEquals(DtcRowIcon.STORED, dtcStatus(0x08).rowIcon())
+        assertEquals(DtcRowIcon.PENDING, dtcStatus(0x04).rowIcon())
+        assertEquals(DtcRowIcon.HISTORY, dtcStatus(0x20).rowIcon())
+        assertEquals(DtcRowIcon.FAULT, dtcStatus(0x00).rowIcon())
+        assertEquals(DtcRowIcon.PERMANENT, dtcStatus(0x00).copy(permanent = true).rowIcon())
+        assertEquals(DtcRowIcon.STORED, dtcStatus(0x08).copy(permanent = true).rowIcon())
+    }
 }

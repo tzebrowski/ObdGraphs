@@ -106,6 +106,25 @@
             app:drawableTint="?android:attr/textColorLink" />
     </LinearLayout>
 
+    <!-- Filter chips (All / Active / Stored / Pending, with counts), added by the fragment; gone while there are no
+         codes. They wrap to a second line: four chips do not fit one line at phone width, and a sideways-scrolling row
+         cut the last chip off with nothing showing that more was there. -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/dtc_filter_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        app:chipSpacingHorizontal="4dp"
+        app:chipSpacingVertical="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_legend"
+        app:selectionRequired="true"
+        app:singleLine="false"
+        app:singleSelection="true" />
+
     <TextView
         android:id="@+id/header_code"
         android:layout_width="wrap_content"
@@ -117,7 +136,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_legend" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_filter_group" />
 
     <TextView
         android:id="@+id/header_description"
@@ -130,7 +149,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/header_code"
-        app:layout_constraintTop_toBottomOf="@+id/dtc_legend" />
+        app:layout_constraintTop_toBottomOf="@+id/dtc_filter_group" />
 
     <View
         android:id="@+id/header_divider"

@@ -18,6 +18,7 @@ package org.obd.graphs.preferences.dtc
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
@@ -27,10 +28,13 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TableLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import org.obd.graphs.DiagnosticRequestIDManager
 import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
@@ -45,6 +49,7 @@ import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DTC_SCREEN_LOCK_CONTEXT
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
+import org.obd.graphs.bl.datalogger.dtc.DtcFilter
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
@@ -52,10 +57,12 @@ import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_OBD_MODULES
 import org.obd.graphs.bl.datalogger.dtc.collapsedBy
 import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
+import org.obd.graphs.bl.datalogger.dtc.dtcFilterCounts
 import org.obd.graphs.bl.datalogger.dtc.dtcModuleRequestKey
 import org.obd.graphs.bl.datalogger.dtc.dtcObdModulesAfterPick
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.failureTypeLine
+import org.obd.graphs.bl.datalogger.dtc.filteredBy
 import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.remainingAfterClear
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
@@ -96,6 +103,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var recyclerView: RecyclerView
     private lateinit var readInfo: TextView
     private lateinit var readinessLink: TextView
+    private lateinit var filterGroup: ChipGroup
+    private val filterChips = mutableMapOf<DtcFilter, Chip>()
+
+    // The filter chip picked; back to All each time the dialog opens.
+    private var filter = DtcFilter.ALL
 
     // The "no longer reported" section starts collapsed each time the dialog opens.
     private var goneExpanded = false
@@ -135,6 +147,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         readinessLink = root.findViewById(R.id.dtc_readiness_link)
         attachReadinessLink()
         attachLegend(root)
+        attachFilter(root)
 
         adapter =
             DiagnosticTroubleCodeViewAdapter(
@@ -540,7 +553,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         val mappings = DiagnosticRequestIDManager.getMappings()
         // New / gone markers from the vehicle's DTC history, for the list stored with this read info.
         val history = DtcHistoryStore.diff(VehicleCapabilitiesManager.getDtcReadInfo())
-        adapter.submitList(
+        val items =
             codes
                 .toDtcListItems(
                     scannedModules = VehicleCapabilitiesManager.getDtcScannedModules(),
@@ -551,10 +564,15 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     noResponseMessage = getString(R.string.pref_dtc_module_no_response),
                     refusedMessage = getString(R.string.pref_dtc_module_refused)
                 ).markedWith(history)
+        refreshFilterChips(items.dtcFilterCounts())
+        adapter.submitList(
+            items
+                .filteredBy(filter, getString(R.string.dtc_filter_empty))
                 .withModuleSummaries()
                 .collapsedBy { moduleExpanded[it] }
                 .withModuleClearActions { dtcModuleRequestKey(mappings, it) != null }
-                .withGoneSection(history, goneExpanded)
+                // Gone codes have no current state: the section belongs to the unfiltered list only.
+                .let { if (filter == DtcFilter.ALL) it.withGoneSection(history, goneExpanded) else it }
         )
 
         refreshReadInfo()
@@ -578,6 +596,45 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
         readInfo.text = readInfoSummary(requireContext(), info)
         readInfo.visibility = View.VISIBLE
+    }
+
+    // All / Active / Stored / Pending, each with its state chip's icon and colour. Filters what is on screen only; the
+    // shared report and Clear Codes still cover every code.
+    private fun attachFilter(root: View) {
+        filterGroup = root.findViewById(R.id.dtc_filter_group)
+        val inflater = LayoutInflater.from(requireContext())
+        DtcFilter.entries.forEach { entry ->
+            val chip = inflater.inflate(R.layout.item_dtc_filter_chip, filterGroup, false) as Chip
+            chip.id = View.generateViewId()
+            STATE_BADGES[entry.state]?.let { style ->
+                chip.setChipIconResource(style.icon)
+                chip.chipIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), style.color))
+                chip.isChipIconVisible = true
+            }
+            chip.isChecked = entry == filter
+            chip.setOnCheckedChangeListener { _, checked ->
+                if (checked && filter != entry) {
+                    filter = entry
+                    refreshList()
+                }
+            }
+            filterGroup.addView(chip)
+            filterChips[entry] = chip
+        }
+    }
+
+    // Chip labels carry the counts; a state with no code is greyed unless picked. Hidden without codes, and the filter
+    // falls back to All, so a refresh that empties the list does not leave an invisible filter applied.
+    private fun refreshFilterChips(counts: Map<DtcFilter, Int>) {
+        val total = counts[DtcFilter.ALL] ?: 0
+        if (total == 0) filter = DtcFilter.ALL
+        filterGroup.visibility = if (total == 0) View.GONE else View.VISIBLE
+        filterChips.forEach { (entry, chip) ->
+            val count = counts[entry] ?: 0
+            chip.text = getString(R.string.dtc_filter_chip, getString(entry.labelRes()), count)
+            chip.isChecked = entry == filter
+            chip.isEnabled = count > 0 || entry == filter
+        }
     }
 
     // What the row chips mean, from the explanations the expanded rows use. Collapsed by default; the choice is kept.

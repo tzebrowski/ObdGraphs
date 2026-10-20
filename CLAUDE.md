@@ -452,6 +452,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
 * Shared report header (`preferences/dtc/DtcReport.kt`, spec `doc/specs/dtc-report-header.md`): scan duration comes from
   `DtcCompletion.durationMs` (from send, not submit) stored in `DtcReadInfo`. No odometer: the 2.0 GME snapshot's `1008`
   looks like distance (grows between records) but is operating time; neither snapshot nor `19 06` has DID `2001`.
+* Phone filter chips (`dtc/DtcFilter.kt`, spec `doc/specs/dtc-filters-aa-icons.md`): `filteredBy` runs before
+  `withModuleSummaries` so headers count what is shown; the gone section only under All. View-only: share and clears
+  still cover every code. AA rows pick a glyph by `DtcStatus.rowIcon()`; `dtc_row_*` are `:automotive` copies of the
+  phone's `dtc_state_*` (AA cannot see `:app` resources) - change both together.
+  The chips wrap (`ChipGroup`, not single-line): a sideways-scrolling row hid "Pending" off screen with no scroll cue.
 * DTC settings screen (`pref.dtc`, spec `doc/specs/dtc-settings-screen.md`): the list row's summary is live
   (`DiagnosticTroubleCodeListPreferences`, refreshed on `PREF_DTC_READ_INFO` changes - every read / clear rewrites it).
   "Clear codes on connect" (`pref.adapter.init.cleanDTC`) is ObdMetrics' init clear on the default header only, kept

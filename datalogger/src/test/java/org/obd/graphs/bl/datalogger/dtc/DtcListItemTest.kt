@@ -468,4 +468,57 @@ class DtcListItemTest {
         )
         assertEquals(setOf("removed"), dtcObdModulesAfterPick(stored, listOf("ecm", "legacy"), emptySet()))
     }
+
+    // statusMask: 0x09 active (test failed + confirmed), 0x08 stored, 0x04 pending.
+    private fun coded(
+        code: String,
+        module: String,
+        mask: Int
+    ) = dtc(code, module = module).apply { statusMask = mask }
+
+    private fun filterList() =
+        listOf(
+            coded("P0100", "Engine", 0x09),
+            coded("P0200", "Engine", 0x08),
+            coded("U0100", "Body", 0x04)
+        ).toDtcListItems(listOf("Engine", "Body", "Brakes"), "none", "clean", "unknown")
+
+    @Test
+    fun `filter keeps matching codes under their module with the shown count`() {
+        val filtered = filterList().filteredBy(DtcFilter.STORED, "empty")
+        assertEquals(DtcListItem.ModuleHeader("Engine", 1), filtered[0])
+        assertEquals(listOf("P0200"), filtered.drop(1).map { (it as DtcListItem.DtcRow).dtc.standardCode })
+    }
+
+    @Test
+    fun `filter drops modules without a match, clean ones included`() {
+        val modules = filterList().filteredBy(DtcFilter.PENDING, "empty").filterIsInstance<DtcListItem.ModuleHeader>().map { it.module }
+        assertEquals(listOf("Body"), modules)
+    }
+
+    @Test
+    fun `filter with no match shows the empty message`() {
+        val list = listOf(coded("P0100", "Engine", 0x08)).toDtcListItems(listOf("Engine"), "none", "clean", "unknown")
+        assertEquals(listOf(DtcListItem.Message(key = "filter", text = "empty")), list.filteredBy(DtcFilter.ACTIVE, "empty"))
+    }
+
+    @Test
+    fun `all filter leaves the list unchanged`() {
+        assertEquals(filterList(), filterList().filteredBy(DtcFilter.ALL, "empty"))
+    }
+
+    @Test
+    fun `filter works on the flat default ECU list`() {
+        val list = listOf(dtc("P0100").apply { statusMask = 0x09 }, dtc("P0200").apply { statusMask = 0x04 }).toDtcListItems(emptyList(), "none", "clean", "unknown")
+        assertEquals(listOf("P0100"), list.filteredBy(DtcFilter.ACTIVE, "empty").map { (it as DtcListItem.DtcRow).dtc.standardCode })
+    }
+
+    @Test
+    fun `filter counts per state, gone rows left out`() {
+        val list = filterList() + DtcListItem.GoneHeader(1, true) + DtcListItem.DtcRow(coded("P0300", "Engine", 0x09), isGone = true)
+        assertEquals(
+            mapOf(DtcFilter.ALL to 3, DtcFilter.ACTIVE to 1, DtcFilter.STORED to 1, DtcFilter.PENDING to 1),
+            list.dtcFilterCounts()
+        )
+    }
 }
