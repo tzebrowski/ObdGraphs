@@ -47,6 +47,35 @@ class DtcScanProgressTest {
     }
 
     @Test
+    fun `the AA loading title waits until the first step, then shows it`() {
+        val noStep: DtcScanProgress? = null
+        assertEquals("Reading, please wait", noStep.loadingTitle("Reading, please wait", "Reading · %1\$s", getString))
+        assertEquals(
+            "Reading · Engine ECU · 4 / 13",
+            DtcScanProgress("Engine ECU", 4, 13).loadingTitle("Reading, please wait", "Reading · %1\$s", getString)
+        )
+        assertEquals("Clearing · details · 12", DtcScanProgress(null, 0, 12).loadingTitle("wait", "Clearing · %1\$s", getString))
+    }
+
+    @Test
+    fun `the AA step titles exist in English and Polish with their argument`() {
+        listOf("values", "values-pl").forEach { folder ->
+            val nodes =
+                DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(File("../automotive/src/main/res/$folder/strings.xml"))
+                    .getElementsByTagName("string")
+            val strings =
+                (0 until nodes.length).associate { i ->
+                    nodes.item(i).attributes.getNamedItem("name").nodeValue to nodes.item(i).textContent
+                }
+            assertTrue("$folder: reading", strings["dtc.reading_progress"]?.contains("%1\$s") == true)
+            assertTrue("$folder: clearing", strings["dtc.clearing_progress"]?.contains("%1\$s") == true)
+        }
+    }
+
+    @Test
     fun `the connect scan overlay takes the progress updates and waits like a manual read`() {
         val lock = connectScanScreenLock(13)
         assertEquals(DTC_SCREEN_LOCK_CONTEXT, lock.context)

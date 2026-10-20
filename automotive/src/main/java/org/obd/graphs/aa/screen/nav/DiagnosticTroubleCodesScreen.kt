@@ -54,6 +54,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_ACTION_COMPLETED
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_PROGRESS
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
@@ -65,6 +66,7 @@ import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
 import org.obd.graphs.bl.datalogger.dtc.DtcRowIcon
+import org.obd.graphs.bl.datalogger.dtc.DtcScanProgress
 import org.obd.graphs.bl.datalogger.dtc.DtcStatusLabels
 import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
@@ -72,6 +74,7 @@ import org.obd.graphs.bl.datalogger.dtc.displayCode
 import org.obd.graphs.bl.datalogger.dtc.displayDescription
 import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
+import org.obd.graphs.bl.datalogger.dtc.loadingTitle
 import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.remainingAfterClear
 import org.obd.graphs.bl.datalogger.dtc.rowIcon
@@ -117,6 +120,10 @@ internal class DiagnosticTroubleCodesScreen(
     private val stringProvider = LocalizedStringProvider(carContext)
     private var actionInProgress: DtcAction? = null
 
+    // Last step of the running action, shown in the loading title. Retitling a loading ListTemplate is a refresh,
+    // not a new template step, so it costs nothing against the host's quota.
+    private var progress: DtcScanProgress? = null
+
     private val broadcastReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
@@ -132,14 +139,23 @@ internal class DiagnosticTroubleCodesScreen(
                                 toast.show(carContext, completionMessage(intent.getSerializableCompat()))
                             }
                             actionInProgress = null
+                            progress = null
                             invalidate()
                         }
+
+                        // The connect scan reports progress too; only an action started here shows it.
+                        DATA_LOGGER_DTC_PROGRESS ->
+                            if (actionInProgress != null) {
+                                progress = intent.getSerializableCompat()
+                                invalidate()
+                            }
 
                         // The DTC action never reports back once the connection is gone.
                         DATA_LOGGER_ERROR_EVENT,
                         DATA_LOGGER_STOPPED_EVENT,
                         DATA_LOGGER_ERROR_CONNECT_EVENT -> {
                             actionInProgress = null
+                            progress = null
                             invalidate()
                         }
 
@@ -171,6 +187,7 @@ internal class DiagnosticTroubleCodesScreen(
         super.onCreate(owner)
         registerReceiver(carContext, broadcastReceiver) {
             it.addAction(DATA_LOGGER_DTC_ACTION_COMPLETED)
+            it.addAction(DATA_LOGGER_DTC_PROGRESS)
             it.addAction(DATA_LOGGER_ERROR_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
@@ -193,12 +210,10 @@ internal class DiagnosticTroubleCodesScreen(
     override fun onGetTemplate(): Template =
         try {
             when {
-                actionInProgress != null ->
-                    loadingTemplate(
-                        if (actionInProgress == DtcAction.CLEAR) R.string.dtc_clearing else R.string.dtc_reading
-                    )
+                actionInProgress != null -> loadingTemplate(actionTitle())
 
-                DataLoggerRepository.status() == WorkflowStatus.Connecting -> loadingTemplate(R.string.routine_page_connecting)
+                DataLoggerRepository.status() == WorkflowStatus.Connecting ->
+                    loadingTemplate(stringProvider.getString(R.string.routine_page_connecting))
 
                 else -> listTemplate()
             }
@@ -211,13 +226,23 @@ internal class DiagnosticTroubleCodesScreen(
                 .build()
         }
 
-    private fun loadingTemplate(titleId: Int): Template =
+    private fun loadingTemplate(title: String): Template =
         ListTemplate
             .Builder()
             .setLoading(true)
             .setHeaderAction(Action.BACK)
-            .setTitle(stringProvider.getString(titleId))
+            .setTitle(title)
             .build()
+
+    // "Reading · Engine ECU · 4 / 13" once the scan reports a step, the action's waiting text before.
+    private fun actionTitle(): String {
+        val clear = actionInProgress == DtcAction.CLEAR
+        return progress.loadingTitle(
+            waiting = stringProvider.getString(if (clear) R.string.dtc_clearing else R.string.dtc_reading),
+            stepFormat = stringProvider.getString(if (clear) R.string.dtc_clearing_progress else R.string.dtc_reading_progress),
+            getString = stringProvider::getString
+        )
+    }
 
     private fun listTemplate(): Template {
         val codes = diagnosticTroubleCodes()
@@ -450,6 +475,7 @@ internal class DiagnosticTroubleCodesScreen(
         val modules = dtcScanModules(DiagnosticRequestIDManager.getMappings(), Prefs.getStringSet(PREF_DTC_DESELECTED_MODULES))
         Log.i(LOG_TAG, "Scheduling DTC $action, modules=$modules")
         actionInProgress = action
+        progress = null
         invalidate()
 
         withDataLogger {
