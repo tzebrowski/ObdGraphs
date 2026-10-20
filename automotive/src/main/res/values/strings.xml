@@ -16,6 +16,8 @@
     <string name="dtc.page_title">Diagnostic Trouble Codes</string>
     <string name="dtc.reading">Reading trouble codes, please wait…</string>
     <string name="dtc.clearing">Clearing trouble codes, please wait…</string>
+    <string name="dtc.reading_progress">Reading · %1$s</string>
+    <string name="dtc.clearing_progress">Clearing · %1$s</string>
     <string name="dtc.no_codes">No diagnostic trouble codes found.</string>
     <string name="dtc.unknown_module">Unknown module</string>
     <string name="dtc.no_codes_for_module">No codes reported.</string>

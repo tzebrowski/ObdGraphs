@@ -51,3 +51,11 @@ fun DtcScanProgress.text(getString: (Int) -> String): String =
     } else {
         getString(R.string.dtc_progress_module).format(module, index, total)
     }
+
+// AA loading title: the action's waiting text until the first step, then the step in stepFormat
+// ("Reading · %1$s" -> "Reading · Engine ECU · 4 / 13"). AA has no second line under a loading list.
+fun DtcScanProgress?.loadingTitle(
+    waiting: String,
+    stepFormat: String,
+    getString: (Int) -> String
+): String = this?.let { stepFormat.format(it.text(getString)) } ?: waiting

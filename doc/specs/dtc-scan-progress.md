@@ -1,6 +1,7 @@
 # Spec: DTC scan progress
 
-2026-10-16 · branches `feat/dtc-scan-progress` (ObdGraphs + ObdMetrics) · Status: implemented, on-device checks pending
+2026-10-16 · branches `feat/dtc-scan-progress` (ObdGraphs + ObdMetrics), AA: `feat/aa-dtc-scan-progress` (2026-10-20) ·
+Status: implemented, on-device checks pending
 
 Roadmap item 6 (`dtc-roadmap.md`).
 
@@ -23,7 +24,8 @@ went stale after 10 s) with no explanation.
 | Manual read pressed during the connect scan | — | The connect scan's completion leaves the overlay up: the waiting read's own overlay continues |
 | Default-ECU read (no modules configured) | Overlay text | Unchanged: no per-module step to report |
 | Any other overlay (connect, trips) | — | Unchanged: updates apply only to a DTC overlay (DTC dialog or scan on connect) |
-| AA | "Reading trouble codes, please wait…" | Unchanged (see Out of scope) |
+| AA read / clear from the DTC screen | Loading title "Reading trouble codes, please wait…" | Same until the first step, then "Reading · Engine ECU · 4 / 13" / "Clearing · …", then "Reading · Reading code details · 12" |
+| AA, connect scan | No progress | Unchanged: the DTC screen shows progress only for an action it started |
 
 ## Settings / keys touched
 
@@ -43,6 +45,11 @@ None.
   `DTC_SCREEN_LOCK_CONTEXT`; `ScreenLockManager.updateProgress(context, text)` sets the second line only while an
   overlay with that context is showing. `MainActivity`'s receiver handles the event.
 * The overlay timeout (`dtcActionTimeoutMs`) is unchanged.
+* **AA.** `DiagnosticTroubleCodesScreen` listens for `DATA_LOGGER_DTC_PROGRESS` while its own action runs and puts
+  `DtcScanProgress.loadingTitle(waiting, stepFormat)` in the loading `ListTemplate`'s title (strings
+  `dtc.reading_progress` / `dtc.clearing_progress`, `:automotive`). A template that replaces one in the loading state
+  counts as a refresh (Car App Library `ListTemplate` docs), so retitling per module adds no template step. The
+  progress is reset when an action starts, completes or the connection fails.
 * Scan on connect: `WorkflowOrchestrator.send` broadcasts `SCREEN_LOCK_PROGRESS_EVENT` with `connectScanScreenLock`
   (same context and timeout as a manual read, cancel shown) once a `CONNECT` request is queued; `onDTCCompleted`
   sends `SCREEN_UNLOCK_PROGRESS_EVENT` for a finished `CONNECT` when no request waits behind it. Error / stop paths
@@ -60,7 +67,7 @@ None.
   that never answers (NO DATA); `FOLLOW_UPS` with the code count after the modules when snapshots are read; no
   progress for a default-header read.
 * App `DtcScanProgressTest`: conversion from `DtcProgress`, the texts, the connect-scan overlay (context, timeout,
-  cancel), EN / PL strings with their arguments.
+  cancel), EN / PL strings with their arguments; AA loading title before / after the first step, AA EN / PL strings.
 
 ## Risks and verification checklist
 
@@ -75,11 +82,12 @@ None.
 * [ ] Clear: same counter.
 * [ ] PL text.
 * [ ] A module that does not answer still advances the counter (the next module shows after its timeout).
+* [ ] AA (DHU and car): read and clear count up in the title; no template-quota crash after a 13-module scan;
+  long module names are cut by the host, the counter may go with them.
 
 ## Out of scope
 
 * Keeping live data flowing between modules (ObdMetrics queues the whole scan ahead of live PIDs).
-* AA: the loading `ListTemplate` has only its title for text; changing the title on every module may count as a new
-  template step against the host's quota. Needs a DHU check first.
+* AA progress for the connect scan (the DTC screen is rarely open then, and it would need its own loading state).
 * Showing codes as each module finishes.
 * A progress bar (the overlay keeps its spinner).

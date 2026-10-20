@@ -425,8 +425,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
 * Scan progress (spec `doc/specs/dtc-scan-progress.md`): ObdMetrics `Lifecycle.onDTCProgress` comes from a marker
   command queued ahead of each module's `ATSH`, so it fires as the module *starts* and also for modules that never
   answer (no reply would). App broadcasts `DATA_LOGGER_DTC_PROGRESS`; `ScreenLockManager.updateProgress` touches only an
-  overlay shown with `DTC_SCREEN_LOCK_CONTEXT`. Not on AA: retitling a loading `ListTemplate` per module may cost
-  template steps. The connect scan shows that overlay too (`connectScanScreenLock`, user's choice): ObdMetrics queues
+  overlay shown with `DTC_SCREEN_LOCK_CONTEXT`. AA puts it in the loading `ListTemplate`'s title
+  (`loadingTitle`): replacing a template in the loading state is a refresh, not a quota step - keep it loading while
+  retitling. AA shows only progress of actions started on its screen, not the connect scan's. The connect scan shows that overlay too (`connectScanScreenLock`, user's choice): ObdMetrics queues
   the whole scan ahead of live PIDs, so gauges freeze for its length. Its unlock is skipped while a request waits.
 * **Commands queued straight into the buffer must reset the header multiplexer** (ObdMetrics
   `CommandProducer.resetHeader()`). `CANMessageHeaderMultiplexer` sees only producer commands; after a DTC action's own

@@ -17,6 +17,8 @@
     <string name="dtc.page_title">Kody błędów diagnostycznych</string>
     <string name="dtc.reading">Odczyt kodów błędów, proszę czekać…</string>
     <string name="dtc.clearing">Kasowanie kodów błędów, proszę czekać…</string>
+    <string name="dtc.reading_progress">Odczyt · %1$s</string>
+    <string name="dtc.clearing_progress">Kasowanie · %1$s</string>
     <string name="dtc.no_codes">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
     <string name="dtc.unknown_module">Nieznany moduł</string>
     <string name="dtc.no_codes_for_module">Brak zgłoszonych kodów błędów.</string>
