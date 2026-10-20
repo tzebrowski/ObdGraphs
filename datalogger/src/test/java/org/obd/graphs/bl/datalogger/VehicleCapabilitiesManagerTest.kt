@@ -243,6 +243,20 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
     }
 
     @Test
+    fun `updateDTC stamps the read with how long the action took, null when unknown`() {
+        val slot = slot<String>()
+        every { editor.putString(eq(PREF_DTC_READ_INFO), capture(slot)) } returns editor
+
+        VehicleCapabilitiesManager.updateDTC(emptySet(), now = 5, durationMs = 13_420)
+        every { sharedPrefs.getString(eq(PREF_DTC_READ_INFO), any()) } returns slot.captured
+        assertEquals(13_420L, VehicleCapabilitiesManager.getDtcReadInfo()!!.durationMs)
+
+        // Read info stored before the duration was recorded.
+        every { sharedPrefs.getString(eq(PREF_DTC_READ_INFO), any()) } returns """{"timestamp":5,"vin":null}"""
+        assertNull(VehicleCapabilitiesManager.getDtcReadInfo()!!.durationMs)
+    }
+
+    @Test
     fun `getDtcReadInfo is null for codes stored before reads were stamped, and on malformed json`() {
         assertNull(VehicleCapabilitiesManager.getDtcReadInfo())
 

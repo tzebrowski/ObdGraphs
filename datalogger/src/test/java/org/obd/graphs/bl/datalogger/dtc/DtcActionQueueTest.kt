@@ -51,6 +51,20 @@ class DtcActionQueueTest {
         assertNull(second.next)
     }
 
+    // For the shared report: from when the request was sent to its completion, not from when it was submitted.
+    @Test
+    fun `a completion carries how long its request ran, a waiting request's time starts when it is sent`() {
+        time = 1_000
+        queue.submit(connectScan)
+        time = 3_000
+        queue.submit(clear)
+        time = 14_500
+        assertEquals(13_500L, queue.complete().durationMs)
+        time = 20_000
+        assertEquals(5_500L, queue.complete().durationMs)
+        assertNull(queue.complete().durationMs)
+    }
+
     @Test
     fun `a read does not replace a waiting clear, a newer clear does`() {
         queue.submit(connectScan)
@@ -94,6 +108,6 @@ class DtcActionQueueTest {
         queue.reset()
 
         assertTrue(queue.submit(read))
-        assertEquals(DtcCompletion(read, null), queue.complete())
+        assertEquals(DtcCompletion(read, null, durationMs = 0), queue.complete())
     }
 }

@@ -125,10 +125,11 @@ object VehicleCapabilitiesManager {
         now: Long = System.currentTimeMillis(),
         kind: DtcScanKind = DtcScanKind.READ,
         moduleStatus: Map<String, DtcModuleStatus> = emptyMap(),
-        vin: String? = null
+        vin: String? = null,
+        durationMs: Long? = null
     ) {
         val actionVin = vinFromReply(vin)
-        val readInfo = DtcReadInfo(timestamp = now, vin = actionVin ?: getCurrentVin())
+        val readInfo = DtcReadInfo(timestamp = now, vin = actionVin ?: getCurrentVin(), durationMs = durationMs)
         // The list on screen keeps the modules this read did not target; history records this read alone.
         val previous = getDtcReadInfo()
         val list =

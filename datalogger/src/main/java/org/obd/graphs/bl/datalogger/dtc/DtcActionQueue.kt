@@ -28,10 +28,12 @@ data class DtcRequest(
     val moduleLabels: List<String> get() = modules.map { it.mode }
 }
 
-// What a completion belonged to, and the request to start next (if one waited).
+// What a completion belonged to, and the request to start next (if one waited). durationMs: how long the finished
+// request ran (from when it was sent, not when it was submitted), null for a completion nobody asked for.
 data class DtcCompletion(
     val finished: DtcRequest?,
-    val next: DtcRequest?
+    val next: DtcRequest?,
+    val durationMs: Long? = null
 )
 
 // One DTC action at a time. ObdMetrics' scheduleDTCAction clears its command buffer, so a second action
@@ -66,11 +68,12 @@ class DtcActionQueue(
     @Synchronized
     fun complete(): DtcCompletion {
         val finished = inFlight
+        val durationMs = finished?.let { now() - inFlightSince }
         val next = waiting
         waiting = null
         inFlight = null
         next?.let { start(it) }
-        return DtcCompletion(finished, next)
+        return DtcCompletion(finished, next, durationMs)
     }
 
     // A new or closed connection: nothing in flight any more.

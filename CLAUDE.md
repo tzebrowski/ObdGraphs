@@ -449,6 +449,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   The read on connect skips OBD-II modules while a UDS one is configured (`dtcConnectScanModules(mappings, obdModules)`):
   an OBD-II entry reaching the ECM made a second ECM section. Switching a picker row to OBD-II unticks it (`onObdMarked`).
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
+* Shared report header (`preferences/dtc/DtcReport.kt`, spec `doc/specs/dtc-report-header.md`): scan duration comes from
+  `DtcCompletion.durationMs` (from send, not submit) stored in `DtcReadInfo`. No odometer: the 2.0 GME snapshot's `1008`
+  looks like distance (grows between records) but is operating time; neither snapshot nor `19 06` has DID `2001`.
 * DTC settings screen (`pref.dtc`, spec `doc/specs/dtc-settings-screen.md`): the list row's summary is live
   (`DiagnosticTroubleCodeListPreferences`, refreshed on `PREF_DTC_READ_INFO` changes - every read / clear rewrites it).
   "Clear codes on connect" (`pref.adapter.init.cleanDTC`) is ObdMetrics' init clear on the default header only, kept

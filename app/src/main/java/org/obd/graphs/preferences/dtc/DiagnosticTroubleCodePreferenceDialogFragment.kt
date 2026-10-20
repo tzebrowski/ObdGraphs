@@ -445,9 +445,17 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         reportBuilder.append("$reportTitle\n")
         reportBuilder.append("-".repeat(reportTitle.length)).append("\n\n")
 
-        VehicleCapabilitiesManager.getDtcModuleStatus().unansweredModules().takeIf { it.isNotEmpty() }?.let {
-            reportBuilder.append(getString(R.string.dtc_share_modules_no_response, it.joinToString(", "))).append("\n\n")
-        }
+        val readInfo = VehicleCapabilitiesManager.getDtcReadInfo()
+        dtcReportHeader(
+            readInfo = readInfo?.let { readInfoSummary(requireContext(), it) },
+            durationMs = readInfo?.durationMs,
+            unansweredModules = VehicleCapabilitiesManager.getDtcModuleStatus().unansweredModules(),
+            labels =
+            DtcReportHeaderLabels(
+                duration = getString(R.string.dtc_share_duration),
+                noResponse = getString(R.string.dtc_share_modules_no_response)
+            )
+        ).takeIf { it.isNotEmpty() }?.let { reportBuilder.append(it.joinToString("\n")).append("\n\n") }
 
         val statusLabels = dtcStatusLabels(requireContext())
         for (code in dtcList) {

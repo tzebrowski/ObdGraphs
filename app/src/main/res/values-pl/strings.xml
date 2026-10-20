@@ -814,6 +814,7 @@
     <string name="dtc.engine_running.clear_anyway">Skasuj mimo to</string>
     <string name="dtc.module.refused.explanation">Odmowa: moduł odpowiedział, ale nie przesłał kodów.</string>
     <string name="dtc.share.modules_no_response">Moduły bez odpowiedzi: %1$s</string>
+    <string name="dtc.share.duration">Czas skanowania: %1$.1f s</string>
     <string name="dtc.history.gone_title">Już nie zgłaszane</string>
     <string name="dtc.history.last_reported">Ostatnio zgłoszony %1$s</string>
     <string name="dtc.history.help.chip">Jak to działa</string>

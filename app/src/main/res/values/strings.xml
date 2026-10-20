@@ -1037,6 +1037,7 @@
     <string name="dtc.engine_running.clear_anyway">Clear anyway</string>
     <string name="dtc.module.refused.explanation">Refused: the module answered but declined to send its codes.</string>
     <string name="dtc.share.modules_no_response">Modules without an answer: %1$s</string>
+    <string name="dtc.share.duration">Scan duration: %1$.1f s</string>
     <string name="dtc.history.gone_title">No longer reported</string>
     <string name="dtc.history.last_reported">Last reported %1$s</string>
     <string name="dtc.history.help.chip">How it works</string>
