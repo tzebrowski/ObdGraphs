@@ -28,6 +28,7 @@ its own `doc/specs/<feature>.md` and this list links to it.
 | VIN read with every DTC action (added later #11): markers without automatic DTC reading | `dtc-vin-on-read.md` |
 | DTC settings screen: grouped settings, live list summary, one-row dialog buttons | `dtc-settings-screen.md` |
 | Shared report header (initial #8, part): read time, VIN, scan duration, modules without an answer | `dtc-report-header.md` |
+| Filters and AA polish (added later #10): All / Active / Stored / Pending chips, a state icon per AA row | `dtc-filters-aa-icons.md` |
 
 ## Planned
 
@@ -122,6 +123,8 @@ ObdMetrics resets the CAN header after DTC actions, and the duplicate `19020D` r
 * Export history as JSON / CSV.
 
 ### 10. Filters and AA polish (App) — added later
+
+**Done** (2026-10-20), spec `dtc-filters-aa-icons.md`.
 
 * **Phone:** filter chips (All / Active / Stored / Pending), useful with 30+ codes.
 * **AA:** a state-specific icon per row. Today AA uses one fault icon, tinted, because rows allow no chips.

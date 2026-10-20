@@ -64,7 +64,7 @@ import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
 import org.obd.graphs.bl.datalogger.dtc.DtcHistoryStore
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcReadInfoLabels
-import org.obd.graphs.bl.datalogger.dtc.DtcState
+import org.obd.graphs.bl.datalogger.dtc.DtcRowIcon
 import org.obd.graphs.bl.datalogger.dtc.DtcStatusLabels
 import org.obd.graphs.bl.datalogger.dtc.EngineStateTracker
 import org.obd.graphs.bl.datalogger.dtc.PREF_DTC_DESELECTED_MODULES
@@ -74,6 +74,7 @@ import org.obd.graphs.bl.datalogger.dtc.dtcScanModules
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.markedWith
 import org.obd.graphs.bl.datalogger.dtc.remainingAfterClear
+import org.obd.graphs.bl.datalogger.dtc.rowIcon
 import org.obd.graphs.bl.datalogger.dtc.sortedForDisplay
 import org.obd.graphs.bl.datalogger.dtc.statusLine
 import org.obd.graphs.bl.datalogger.dtc.toDtcListItems
@@ -349,20 +350,23 @@ internal class DiagnosticTroubleCodesScreen(
             return Row.Builder().setTitle(description).build()
         }
 
-        // Row titles take no colour spans, so the state colours the icon and the status line:
-        // failing now red, stored yellow, pending / history plain.
+        // Row titles take no colour spans and rows no chips, so the state picks the icon's glyph (the phone chip's) and
+        // colours it and the status line: failing now red, stored yellow, pending blue, history / permanent plain.
         val status = dtc.dtcStatus()
-        val color =
-            when (status.state) {
-                DtcState.ACTIVE -> CarColor.RED
-                DtcState.STORED -> CarColor.YELLOW
-                else -> CarColor.DEFAULT
+        val (drawable, color) =
+            when (status.rowIcon()) {
+                DtcRowIcon.ACTIVE -> R.drawable.dtc_row_active to CarColor.RED
+                DtcRowIcon.STORED -> R.drawable.dtc_row_stored to CarColor.YELLOW
+                DtcRowIcon.PENDING -> R.drawable.dtc_row_pending to CarColor.BLUE
+                DtcRowIcon.HISTORY -> R.drawable.dtc_row_history to CarColor.DEFAULT
+                DtcRowIcon.PERMANENT -> R.drawable.dtc_row_permanent to CarColor.DEFAULT
+                DtcRowIcon.FAULT -> R.drawable.dtc_fault to CarColor.DEFAULT
             }
         val builder =
             Row
                 .Builder()
                 .setTitle(dtc.displayCode())
-                .setImage(icon(R.drawable.dtc_fault, color))
+                .setImage(icon(drawable, color))
                 .addText(description)
 
         val statusLine = status.statusLine(statusLabels())?.let { if (color == CarColor.DEFAULT) it else colored(it, color) }

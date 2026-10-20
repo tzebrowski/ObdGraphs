@@ -1017,6 +1017,9 @@
     <string name="dtc.history.new.explanation">New: not reported by any earlier scan of this vehicle.</string>
     <string name="dtc.history.title">Code history</string>
     <string name="dtc.legend.toggle">What do the labels mean?</string>
+    <string name="dtc.filter.all">All</string>
+    <string name="dtc.filter.chip">%1$s (%2$d)</string>
+    <string name="dtc.filter.empty">No codes in this state.</string>
     <string name="dtc.legend.gone">No longer reported: codes the previous scan of their module had and this one has not (healed or cleared). Shown at the end of the list.</string>
     <string name="dtc.history.first_seen">First reported: %1$s</string>
     <string name="dtc.history.last_seen">Last reported: %1$s</string>
