@@ -123,4 +123,16 @@ class DtcActionQueueTest {
         assertEquals(DtcAction.READ_SNAPSHPOTS, DtcRequest(DtcScanKind.CONNECT).readAction(snapshotsSetting = true))
         assertEquals(DtcAction.READ, DtcRequest(DtcScanKind.CLEAR).readAction(snapshotsSetting = false))
     }
+
+    @Test
+    fun `after a connect from the dialog a read runs only if the connect did not read`() {
+        assertTrue(dtcRunsAfterConnect(isRead = true, readsOnConnect = false))
+        assertFalse(dtcRunsAfterConnect(isRead = true, readsOnConnect = true))
+    }
+
+    @Test
+    fun `after a connect from the dialog a clear always runs`() {
+        assertTrue(dtcRunsAfterConnect(isRead = false, readsOnConnect = true))
+        assertTrue(dtcRunsAfterConnect(isRead = false, readsOnConnect = false))
+    }
 }

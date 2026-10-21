@@ -34,6 +34,13 @@ data class DtcRequest(
         if (snapshots ?: snapshotsSetting) DtcAction.READ_SNAPSHPOTS else DtcAction.READ
 }
 
+// The phone's DTC dialog connects when Refresh / Clear is tapped with no connection, then goes on with the action.
+// Not a read when the connect reads the codes itself (automatic reading on): the modules would be scanned twice.
+fun dtcRunsAfterConnect(
+    isRead: Boolean,
+    readsOnConnect: Boolean
+): Boolean = !isRead || !readsOnConnect
+
 // What a completion belonged to, and the request to start next (if one waited). durationMs: how long the finished
 // request ran (from when it was sent, not when it was submitted), null for a completion nobody asked for.
 data class DtcCompletion(

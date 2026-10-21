@@ -136,8 +136,8 @@ a manual read or clear with it off is stamped `vin=null` and gets no history mar
 
 ## To investigate (added later)
 
-* **Legacy header scanned with UDS:** the scan sends UDS `19 02` to "OBD-II (Legacy Mode 01)" (`DB33F1`). Mode 03 / 07 /
-  0A go only to modules marked as OBD-II (item 3). Open: skip that entry in the scan, as its answer duplicates the Engine ECU.
+* ~~**Legacy header scanned with UDS**~~: the bundled profiles start with "OBD-II (Legacy Mode 01)" unticked in the picker,
+  `dtc-connect-from-dialog.md`.
 * ~~**Modules that do not answer**~~: done, `dtc-module-response.md`.
 
 ## Out of scope
