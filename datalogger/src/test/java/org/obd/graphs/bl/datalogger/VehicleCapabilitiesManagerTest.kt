@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger
 
+import android.util.Log
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -182,6 +183,15 @@ class VehicleCapabilitiesManagerTest : TestSetup() {
         every { sharedPrefs.getString(eq(PREF_DTC), any()) } returns "not-json"
 
         assertTrue(VehicleCapabilitiesManager.getDiagnosticTroubleCodes().isEmpty())
+    }
+
+    // Nothing stored yet (fresh install, first read): an empty list, not a parse error with a stack trace in the logcat.
+    @Test
+    fun `getDiagnosticTroubleCodes returns an empty list without an error when nothing is stored`() {
+        every { sharedPrefs.getString(eq(PREF_DTC), any()) } returns ""
+
+        assertTrue(VehicleCapabilitiesManager.getDiagnosticTroubleCodes().isEmpty())
+        verify(exactly = 0) { Log.e(any(), any(), any()) }
     }
 
     @Test

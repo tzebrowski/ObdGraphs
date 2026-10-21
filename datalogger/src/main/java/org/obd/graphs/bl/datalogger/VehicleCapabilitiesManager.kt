@@ -225,7 +225,8 @@ object VehicleCapabilitiesManager {
             if (preferences.startsWith("\"") && preferences.endsWith("\"")) {
                 preferences = mapper.readValue<String>(preferences)
             }
-            mapper.readValue<List<DiagnosticTroubleCode>>(preferences).toMutableList()
+            // Nothing stored yet (fresh install, first read): Jackson throws on "" and the catch logged a false error.
+            if (preferences.isEmpty()) mutableListOf() else mapper.readValue<List<DiagnosticTroubleCode>>(preferences).toMutableList()
         } catch (e: Throwable) {
             Log.e(LOG_TAG, "Failed to read Diagnostic Trouble Code from preferences", e)
             mutableListOf()
