@@ -42,11 +42,17 @@ import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.ScreenLock
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_BLE_NOT_REACHABLE
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_ACTION_COMPLETED
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
+import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DTC_SCREEN_LOCK_CONTEXT
 import org.obd.graphs.bl.datalogger.dtc.DtcClearOutcome
@@ -61,6 +67,7 @@ import org.obd.graphs.bl.datalogger.dtc.dtcActionTimeoutMs
 import org.obd.graphs.bl.datalogger.dtc.dtcFilterCounts
 import org.obd.graphs.bl.datalogger.dtc.dtcModuleRequestKey
 import org.obd.graphs.bl.datalogger.dtc.dtcObdModulesAfterPick
+import org.obd.graphs.bl.datalogger.dtc.dtcRunsAfterConnect
 import org.obd.graphs.bl.datalogger.dtc.dtcStatus
 import org.obd.graphs.bl.datalogger.dtc.failureTypeLine
 import org.obd.graphs.bl.datalogger.dtc.filteredBy
@@ -74,6 +81,8 @@ import org.obd.graphs.bl.datalogger.dtc.unansweredModules
 import org.obd.graphs.bl.datalogger.dtc.withGoneSection
 import org.obd.graphs.bl.datalogger.dtc.withModuleClearActions
 import org.obd.graphs.bl.datalogger.dtc.withModuleSummaries
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.readiness.PREF_READINESS_LAST
 import org.obd.graphs.bl.readiness.ReadinessSnapshot
 import org.obd.graphs.getSerializableCompat
@@ -116,6 +125,9 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     // Modules the user expanded / collapsed while the dialog is open; the others follow isExpandedByDefault().
     private val moduleExpanded = mutableMapOf<String, Boolean>()
 
+    // The Refresh / Clear tapped with no connection, run once the connection the dialog started is up.
+    private var afterConnect: (() -> Unit)? = null
+
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
             override fun onReceive(
@@ -127,9 +139,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     // The read/clear will never report back after the user cancels the progress
                     // overlay or the connection drops, so restore the idle state here instead of
                     // leaving the Clear button stuck on "Clearing...".
+                    DATA_LOGGER_CONNECTED_EVENT -> onConnected()
                     SCREEN_LOCK_DIALOG_CANCELLED_EVENT,
                     DATA_LOGGER_ERROR_EVENT,
-                    DATA_LOGGER_STOPPED_EVENT -> resetActionState()
+                    DATA_LOGGER_STOPPED_EVENT,
+                    DATA_LOGGER_ERROR_CONNECT_EVENT,
+                    DATA_LOGGER_BLE_NOT_REACHABLE,
+                    DATA_LOGGER_NO_NETWORK_EVENT,
+                    DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> resetActionState()
                 }
             }
         }
@@ -178,6 +195,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             it.addAction(SCREEN_LOCK_DIALOG_CANCELLED_EVENT)
             it.addAction(DATA_LOGGER_ERROR_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
+            it.addAction(DATA_LOGGER_BLE_NOT_REACHABLE)
+            it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+            it.addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
         }
 
         return root
@@ -196,7 +218,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
         refreshButton.setOnClickListener {
-            if (DataLoggerRepository.isRunning()) {
+            whenConnected(isRead = true) {
                 pickDtcModules(
                     titleRes = R.string.pref_dtc_select_modules_title,
                     confirmRes = R.string.pref_dtc_select_modules_confirm,
@@ -209,13 +231,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         scheduleDTCRead(selectedModules, snapshots)
                     }
                 }
-            } else {
-                toast(R.string.pref_dtc_no_connection_established)
             }
         }
 
         clearButton.setOnClickListener {
-            if (DataLoggerRepository.isRunning()) {
+            whenConnected(isRead = false) {
                 confirmEngineOff {
                     pickDtcModules(
                         titleRes = R.string.pref_dtc_clean_dialog_title,
@@ -224,10 +244,43 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         confirmWhenEmpty = true
                     ) { selectedModules, _ -> startClear(selectedModules) }
                 }
-            } else {
-                toast(R.string.pref_dtc_no_connection_established)
             }
         }
+    }
+
+    // No connection: connect from here (the idle query AA's DTC screen uses; a live screen switches the query back when
+    // it opens) and run the action once connected. A read is skipped when the connect reads the codes itself.
+    private fun whenConnected(
+        isRead: Boolean,
+        action: () -> Unit
+    ) {
+        if (DataLoggerRepository.isRunning()) {
+            action()
+            return
+        }
+        afterConnect = {
+            if (dtcRunsAfterConnect(isRead, dataLoggerSettings.instance().adapter.dtcEnabled)) action()
+        }
+        refreshButton.setText(R.string.dtc_action_connecting)
+        refreshButton.setEnabledDimmed(false)
+        if (DataLoggerRepository.status() != WorkflowStatus.Connecting) {
+            withDataLogger { start(Query.instance(QueryStrategyType.ROUTINES_QUERY)) }
+        }
+    }
+
+    // The codes a connect read itself (ObdMetrics' default-ECU read) are stored before this event; a module scan reports
+    // later through DATA_LOGGER_DTC_ACTION_COMPLETED.
+    private fun onConnected() {
+        refreshList()
+        val action = afterConnect ?: return
+        afterConnect = null
+        restoreRefreshButton()
+        action()
+    }
+
+    private fun restoreRefreshButton() {
+        refreshButton.setText(R.string.dtc_action_refresh)
+        refreshButton.setEnabledDimmed(true)
     }
 
     private fun startClear(modules: Set<String>) {
@@ -258,23 +311,21 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
 
     // "Clear codes in <module>": one module, one confirmation (with the engine warning folded in), no picker.
     private fun clearModule(module: String) {
-        if (!DataLoggerRepository.isRunning()) {
-            toast(R.string.pref_dtc_no_connection_established)
-            return
-        }
         val requestKey = dtcModuleRequestKey(DiagnosticRequestIDManager.getMappings(), module) ?: return
-        val message =
-            listOfNotNull(
-                getString(R.string.dtc_engine_running_message).takeIf { EngineStateTracker.engineRunning() == true },
-                getString(R.string.dtc_module_clear_message)
-            ).joinToString("\n\n")
-        AlertDialog
-            .Builder(requireContext())
-            .setTitle(getString(R.string.dtc_module_clear_title, module))
-            .setMessage(message)
-            .setPositiveButton(R.string.dtc_module_clear_confirm) { _, _ -> startClear(setOf(requestKey)) }
-            .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
-            .show()
+        whenConnected(isRead = false) {
+            val message =
+                listOfNotNull(
+                    getString(R.string.dtc_engine_running_message).takeIf { EngineStateTracker.engineRunning() == true },
+                    getString(R.string.dtc_module_clear_message)
+                ).joinToString("\n\n")
+            AlertDialog
+                .Builder(requireContext())
+                .setTitle(getString(R.string.dtc_module_clear_title, module))
+                .setMessage(message)
+                .setPositiveButton(R.string.dtc_module_clear_confirm) { _, _ -> startClear(setOf(requestKey)) }
+                .setNegativeButton(R.string.pref_dtc_select_modules_cancel, null)
+                .show()
+        }
     }
 
     // Lets the user restrict a DTC read/clear to a subset of the configured Diagnostic Request ID
@@ -719,5 +770,9 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private fun resetActionState() {
         setLoadingState(false)
         clearButton.setText(R.string.dtc_action_clear_codes)
+        if (afterConnect != null) {
+            afterConnect = null
+            restoreRefreshButton()
+        }
     }
 }

@@ -454,6 +454,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   `doc/specs/dtc-picker-snapshots.md`). Build on these before designing anything new: a request for "snapshots during
   the scan" was first answered with a cross-repo rework of ObdMetrics' DTC handler, discarded as re-engineering.
   Display shows a snapshot whenever the code has one; gating it on the setting hid snapshots the picker asked for.
+* **Picker defaults are profile data**: bundled profiles preset `pref.dtc.module_picker.deselected` (Legacy Mode 01
+  unticked, `DtcProfileDefaultsTest`), no code. A profile adding that entry must preset it too.
+  The phone dialog connects itself when Refresh / Clear is tapped offline (`whenConnected`, `ROUTINES_QUERY` like AA) and
+  runs the action on `DATA_LOGGER_CONNECTED_EVENT`; a read is skipped if the connect reads codes (`dtcRunsAfterConnect`).
+  Spec `doc/specs/dtc-connect-from-dialog.md`.
 * Stored-JSON getters in `VehicleCapabilitiesManager` must return empty for `""` before parsing: Jackson throws on
   empty input, and `getDiagnosticTroubleCodes` logged a false "Failed to read" error on every first read (fresh install,
   mock adapter). Tests mock `Log` (`TestSetup.mockLog`), so assert with `verify`, not `ShadowLog`.
