@@ -459,6 +459,9 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   The phone dialog connects itself when Refresh / Clear is tapped offline (`whenConnected`, `ROUTINES_QUERY` like AA) and
   runs the action on `DATA_LOGGER_CONNECTED_EVENT`; a read is skipped if the connect reads codes (`dtcRunsAfterConnect`).
   Spec `doc/specs/dtc-connect-from-dialog.md`.
+* Stored-JSON getters in `VehicleCapabilitiesManager` must return empty for `""` before parsing: Jackson throws on
+  empty input, and `getDiagnosticTroubleCodes` logged a false "Failed to read" error on every first read (fresh install,
+  mock adapter). Tests mock `Log` (`TestSetup.mockLog`), so assert with `verify`, not `ShadowLog`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Shared report header (`preferences/dtc/DtcReport.kt`, spec `doc/specs/dtc-report-header.md`): scan duration comes from
   `DtcCompletion.durationMs` (from send, not submit) stored in `DtcReadInfo`. No odometer: the 2.0 GME snapshot's `1008`
