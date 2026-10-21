@@ -21,6 +21,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.obd.metrics.api.model.DtcAction
 import org.obd.metrics.api.model.Init
 
 class DtcActionQueueTest {
@@ -109,5 +110,17 @@ class DtcActionQueueTest {
 
         assertTrue(queue.submit(read))
         assertEquals(DtcCompletion(read, null, durationMs = 0), queue.complete())
+    }
+
+    @Test
+    fun `the picker's freeze frame choice beats the setting`() {
+        assertEquals(DtcAction.READ_SNAPSHPOTS, DtcRequest(DtcScanKind.READ, snapshots = true).readAction(snapshotsSetting = false))
+        assertEquals(DtcAction.READ, DtcRequest(DtcScanKind.READ, snapshots = false).readAction(snapshotsSetting = true))
+    }
+
+    @Test
+    fun `without a choice the setting decides`() {
+        assertEquals(DtcAction.READ_SNAPSHPOTS, DtcRequest(DtcScanKind.CONNECT).readAction(snapshotsSetting = true))
+        assertEquals(DtcAction.READ, DtcRequest(DtcScanKind.CLEAR).readAction(snapshotsSetting = false))
     }
 }

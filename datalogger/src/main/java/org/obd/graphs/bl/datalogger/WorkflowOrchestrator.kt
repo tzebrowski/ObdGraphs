@@ -348,8 +348,9 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun scheduleDTCRead(
         selectedModules: Set<String> = emptySet(),
-        connectScan: Boolean = false
-    ) = submit(DtcRequest(if (connectScan) DtcScanKind.CONNECT else DtcScanKind.READ, getDtcModules(selectedModules)))
+        connectScan: Boolean = false,
+        snapshots: Boolean? = null
+    ) = submit(DtcRequest(if (connectScan) DtcScanKind.CONNECT else DtcScanKind.READ, getDtcModules(selectedModules), snapshots))
 
     private fun submit(request: DtcRequest) {
         if (dtcActions.submit(request)) {
@@ -360,7 +361,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     private fun send(request: DtcRequest) {
-        val readAction = getReadDtcAction()
+        val readAction = request.readAction(dataLoggerSettings.instance().adapter.dtcReadSnapshots)
         val actions = if (request.kind == DtcScanKind.CLEAR) setOf(DtcAction.CLEAR, readAction) else setOf(readAction)
         Log.i(LOG_TAG, "Schedule DTC ${request.kind}. Read action=$readAction, modules=${request.modules}")
         val result = workflow.scheduleDTCAction(actions, request.modules)
@@ -594,8 +595,6 @@ internal class WorkflowOrchestrator internal constructor() {
             }
         }
     }
-
-    private fun getReadDtcAction(): DtcAction  = if (dataLoggerSettings.instance().adapter.dtcReadSnapshots) DtcAction.READ_SNAPSHPOTS else DtcAction.READ
 
     private fun pids(): Pids? {
         val resourceUrls = dataLoggerSettings.instance().resources.map {

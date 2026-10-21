@@ -42,7 +42,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.dtc.DtcFilter
 import org.obd.graphs.bl.datalogger.dtc.DtcListItem
 import org.obd.graphs.bl.datalogger.dtc.DtcState
@@ -364,10 +363,11 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val activeStatuses = dtc.activeStatuses?.joinToString(", ") ?: context.getString(R.string.dtc_share_none)
         holder.detailHexStatus.text = context.getString(R.string.dtc_detail_hex_status, hex, statusMask, activeStatuses)
 
-        // Both are read only with "Read DTC snapshots" on; an empty list means the ECU sent nothing usable.
+        // Both are read only with freeze frames on (setting or the picker's checkbox); an empty list means the ECU
+        // sent nothing usable.
         val unknownDid = context.getString(R.string.dtc_share_unknown_did)
         val snapshotLines = dtc.snapshot.toDidLines(unknownDid, notAvailable)
-        val showSnapshot = dataLoggerSettings.instance().adapter.dtcReadSnapshots && snapshotLines.isNotEmpty()
+        val showSnapshot = snapshotLines.isNotEmpty()
         holder.snapshotContainer.visibility = if (showSnapshot) View.VISIBLE else View.GONE
         holder.detailSnapshotInfo.text = snapshotLines.joinToString("\n") { "• $it" }
 

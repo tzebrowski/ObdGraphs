@@ -16,16 +16,22 @@
  */
 package org.obd.graphs.bl.datalogger.dtc
 
+import org.obd.metrics.api.model.DtcAction
 import org.obd.metrics.api.model.Init
 
 // A DTC action the app asked ObdMetrics for: what it is (READ, CLEAR, CONNECT) and the modules it targets
-// (empty = the default single-ECU read).
+// (empty = the default single-ECU read). snapshots: freeze frames chosen for this read in the module picker,
+// null = the "Read freeze frame data" setting decides.
 data class DtcRequest(
     val kind: DtcScanKind,
-    val modules: List<Init.Header> = emptyList()
+    val modules: List<Init.Header> = emptyList(),
+    val snapshots: Boolean? = null
 ) {
     // The labels the codes are tagged with (DiagnosticTroubleCode.module), stored as the scanned modules.
     val moduleLabels: List<String> get() = modules.map { it.mode }
+
+    fun readAction(snapshotsSetting: Boolean): DtcAction =
+        if (snapshots ?: snapshotsSetting) DtcAction.READ_SNAPSHPOTS else DtcAction.READ
 }
 
 // What a completion belonged to, and the request to start next (if one waited). durationMs: how long the finished

@@ -449,6 +449,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   (`PERMANENT_BADGE`); a clear leaving only permanent codes is `PERMANENT_REMAIN`.
   The read on connect skips OBD-II modules while a UDS one is configured (`dtcConnectScanModules(mappings, obdModules)`):
   an OBD-II entry reaching the ECM made a second ECM section. Switching a picker row to OBD-II unticks it (`onObdMarked`).
+* **Freeze frames are already a setting** (`pref.dtc.read_snapshots` → ObdMetrics `DtcAction.READ_SNAPSHPOTS`); the
+  phone's Refresh picker can override it for one read (`DtcRequest.snapshots`, null = setting; spec
+  `doc/specs/dtc-picker-snapshots.md`). Build on these before designing anything new: a request for "snapshots during
+  the scan" was first answered with a cross-repo rework of ObdMetrics' DTC handler, discarded as re-engineering.
+  Display shows a snapshot whenever the code has one; gating it on the setting hid snapshots the picker asked for.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Shared report header (`preferences/dtc/DtcReport.kt`, spec `doc/specs/dtc-report-header.md`): scan duration comes from
   `DtcCompletion.durationMs` (from send, not submit) stored in `DtcReadInfo`. No odometer: the 2.0 GME snapshot's `1008`

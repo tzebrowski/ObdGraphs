@@ -41,6 +41,7 @@ import org.obd.graphs.sendBroadcastEvent
 private const val ACTION_DTC_CLEANUP = "org.obd.graphs.logger.DTC.cleanup"
 private const val ACTION_DTC_READ = "org.obd.graphs.logger.DTC.read"
 private const val DTC_SELECTED_MODULES = "org.obd.graphs.logger.DTC.selected_modules"
+private const val DTC_READ_SNAPSHOTS = "org.obd.graphs.logger.DTC.read_snapshots"
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
@@ -107,7 +108,8 @@ class DataLoggerService : Service() {
 
             ACTION_DTC_READ -> {
                 val selectedModules = intent.getStringArrayListExtra(DTC_SELECTED_MODULES)?.toSet() ?: emptySet()
-                DataLoggerRepository.workflowOrchestrator.scheduleDTCRead(selectedModules)
+                val snapshots = if (intent.hasExtra(DTC_READ_SNAPSHOTS)) intent.getBooleanExtra(DTC_READ_SNAPSHOTS, false) else null
+                DataLoggerRepository.workflowOrchestrator.scheduleDTCRead(selectedModules, snapshots = snapshots)
             }
 
             EXECUTE_ROUTINE -> {
@@ -165,8 +167,15 @@ class DataLoggerService : Service() {
         enqueueWork(ACTION_DTC_CLEANUP) { it.putStringArrayListExtra(DTC_SELECTED_MODULES, ArrayList(selectedModules)) }
     }
 
-    fun scheduleDTCRead(selectedModules: Set<String> = emptySet()) {
-        enqueueWork(ACTION_DTC_READ) { it.putStringArrayListExtra(DTC_SELECTED_MODULES, ArrayList(selectedModules)) }
+    // snapshots: freeze frames chosen for this read only; null = the setting decides.
+    fun scheduleDTCRead(
+        selectedModules: Set<String> = emptySet(),
+        snapshots: Boolean? = null
+    ) {
+        enqueueWork(ACTION_DTC_READ) {
+            it.putStringArrayListExtra(DTC_SELECTED_MODULES, ArrayList(selectedModules))
+            snapshots?.let { value -> it.putExtra(DTC_READ_SNAPSHOTS, value) }
+        }
     }
 
     fun discoverModule(header: String) {
