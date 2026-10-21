@@ -768,6 +768,7 @@
     <string name="dtc.action_share">Udostępnij</string>
     <string name="dtc.action_close">Zamknij</string>
     <string name="dtc.action_clearing">Kasowanie…</string>
+    <string name="dtc.action_connecting">Łączenie…</string>
     <string name="dtc.share.chooser_title">Udostępnij raport diagnostyczny</string>
     <string name="dtc.share.report_title">Raport diagnostyczny pojazdu</string>
     <string name="dtc.share.dtc">DTC: %1$s</string>

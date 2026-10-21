@@ -454,6 +454,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   `doc/specs/dtc-picker-snapshots.md`). Build on these before designing anything new: a request for "snapshots during
   the scan" was first answered with a cross-repo rework of ObdMetrics' DTC handler, discarded as re-engineering.
   Display shows a snapshot whenever the code has one; gating it on the setting hid snapshots the picker asked for.
+* **Picker defaults are profile data**: bundled profiles preset `pref.dtc.module_picker.deselected` (Legacy Mode 01
+  unticked, `DtcProfileDefaultsTest`), no code. A profile adding that entry must preset it too.
+  The phone dialog connects itself when Refresh / Clear is tapped offline (`whenConnected`, `ROUTINES_QUERY` like AA) and
+  runs the action on `DATA_LOGGER_CONNECTED_EVENT`; a read is skipped if the connect reads codes (`dtcRunsAfterConnect`).
+  Spec `doc/specs/dtc-connect-from-dialog.md`.
 * String resources drop a leading space: join text parts in code (`DtcReadInfo.summary`).
 * Shared report header (`preferences/dtc/DtcReport.kt`, spec `doc/specs/dtc-report-header.md`): scan duration comes from
   `DtcCompletion.durationMs` (from send, not submit) stored in `DtcReadInfo`. No odometer: the 2.0 GME snapshot's `1008`

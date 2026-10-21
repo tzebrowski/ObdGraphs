@@ -991,6 +991,7 @@
     <string name="dtc.action_share">Share</string>
     <string name="dtc.action_close">Close</string>
     <string name="dtc.action_clearing">Clearing…</string>
+    <string name="dtc.action_connecting">Connecting…</string>
     <string name="dtc.share.chooser_title">Share Diagnostic Report</string>
     <string name="dtc.share.report_title">Vehicle Diagnostic Report</string>
     <string name="dtc.share.dtc">DTC: %1$s</string>
