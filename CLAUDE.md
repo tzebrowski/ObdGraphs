@@ -620,6 +620,10 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   `ForegroundServiceStartNotAllowedException` (an `IllegalStateException`, not a
   `SecurityException`), which crashed production. Commands always arrive as explicit intents, so
   the service returns `START_NOT_STICKY`; `START_STICKY` only ever bought those null restarts.
+* **"Task already scheduled or cancelled" from `AdaptiveTimeout.schedule` is ObdMetrics, not the app.** Every DTC action,
+  routine and module discovery pauses and resumes `CommandProducer`; with `adaptiveConnectionEnabled` on, the resume
+  rescheduled the one `TimerTask` already scheduled at start and crashed the coroutine (Firebase, AA). Fixed in ObdMetrics
+  `fix/adaptive-timeout-reschedule` (a new task per `schedule()`). Catching it in the app would leave the producer paused.
 
 * **PID registry reloads are serialized (`PidRegistryReload`).** `updateModulesRegistry` (profile / modules broadcasts,
   `runAsync`) and `updateTranslations` (UI thread) each rebuild the registry, then iterate it (`applySavedOverrides`)
