@@ -245,6 +245,11 @@ internal class WorkflowOrchestrator internal constructor() {
         registerGPSPids(this.pidRegistry)
     }
 
+    private val registryReload = PidRegistryReload({ workflow.pidRegistry }) {
+        applySavedOverrides(it)
+        registerGPSPids(it)
+    }
+
     private var status = WorkflowStatus.Disconnected
     private val metricsProcessorsRegistry = mutableSetOf<MetricsProcessor>()
     private val adjustmentsStrategy = AdjustmentsStrategy()
@@ -535,22 +540,20 @@ internal class WorkflowOrchestrator internal constructor() {
     fun updateTranslations(locale: String) {
         Log.i(LOG_TAG, "Updating PID translations for locale: $locale")
         val provider = if (locale.isNotEmpty()) TranslationProvider.instance(locale) else TranslationProvider.instance("en")
-        workflow.updatePidRegistry(
-            pids(),
-            provider
-        )
-
-        applySavedOverrides(workflow.pidRegistry)
-        registerGPSPids(workflow.pidRegistry)
+        registryReload.reload {
+            workflow.updatePidRegistry(
+                pids(),
+                provider
+            )
+        }
     }
 
     private fun updateModulesRegistry() = runAsync {
-        workflow.updatePidRegistry(
-            pids()
-        )
-
-        applySavedOverrides(workflow.pidRegistry)
-        registerGPSPids(workflow.pidRegistry)
+        registryReload.reload {
+            workflow.updatePidRegistry(
+                pids()
+            )
+        }
     }
 
     private fun registerGPSPids(pidRegistry: PidDefinitionRegistry) {

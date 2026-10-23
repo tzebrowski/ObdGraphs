@@ -621,6 +621,13 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   `SecurityException`), which crashed production. Commands always arrive as explicit intents, so
   the service returns `START_NOT_STICKY`; `START_STICKY` only ever bought those null restarts.
 
+* **PID registry reloads are serialized (`PidRegistryReload`).** `updateModulesRegistry` (profile / modules broadcasts,
+  `runAsync`) and `updateTranslations` (UI thread) each rebuild the registry, then iterate it (`applySavedOverrides`)
+  and register into it (`registerGPSPids`). ObdMetrics' `DefaultPIDsRegistry` is plain `HashMap`s, so two reloads at
+  once threw `ConcurrentModificationException` from `findAll()` (Firebase). Any new reload path goes through
+  `registryReload.reload {}`. Not covered: `PidDefinitionViewModel`'s direct `register()` of a custom PID.
+  A race test needs both threads on the *same* registry: with each building its own it passed unlocked.
+
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.
 * `preferences.xml` references custom preference classes by **fully-qualified name**, so renaming
