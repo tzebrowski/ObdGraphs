@@ -378,4 +378,22 @@ internal class SetupProfilesTest : TestSetup() {
 
     private fun mockInstallationKey(keyPresent: Boolean = false) =
         every { Prefs.getBoolean("prefs.installed.profiles.1", false) } returns keyPresent
+
+    // An activity restored after process death skipped init(); a profile reset then crashed on the unset versionName.
+    @Test
+    fun `reset before init does not crash`() {
+        profileService.reset()
+
+        verify(exactly = 0) { editor.putString("pref.about.build_time", any()) }
+    }
+
+    @Test
+    fun `reset after init updates build settings`() {
+        profileService.init(7, "profile_1", "20251218.1055")
+
+        profileService.reset()
+
+        verify(atLeast = 1) { editor.putString("pref.about.build_time", any()) }
+        verify(atLeast = 1) { editor.putString("pref.about.build_version", "7") }
+    }
 }

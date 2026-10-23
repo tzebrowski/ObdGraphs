@@ -632,6 +632,13 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   `registryReload.reload {}`. Not covered: `PidDefinitionViewModel`'s direct `register()` of a custom PID.
   A race test needs both threads on the *same* registry: with each building its own it passed unlocked.
 
+### MainActivity startup
+* **`savedInstanceState != null` does not mean the process is warm.** After process death Android restores the activity
+  with a saved state, so anything gated on `savedInstanceState == null` in `MainActivity.onCreate` never runs in that
+  process. `profile.init` (version info, profile auto-save listener) sat behind it: a profile reset then crashed on
+  `lateinit versionName` (Firebase). It now runs unconditionally (`initProfile()`); `init` must stay idempotent.
+  Still behind the gate: exception handler, metrics processors, auto-connect - check them before relying on them.
+
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.
 * `preferences.xml` references custom preference classes by **fully-qualified name**, so renaming
