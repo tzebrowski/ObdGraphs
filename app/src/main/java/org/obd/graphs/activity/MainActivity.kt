@@ -144,6 +144,9 @@ class MainActivity :
 
         setupFabButtons()
 
+        // Process-wide state: an activity restored after process death has a savedInstanceState too.
+        initProfile()
+
         if (savedInstanceState == null) {
             setupExceptionHandler()
             setupVehicleProfiles()
@@ -317,13 +320,15 @@ class MainActivity :
         }
     }
 
-    private fun setupVehicleProfiles() {
+    private fun initProfile() {
         profile.init(
             versionCode = BuildConfig.VERSION_CODE,
             defaultProfile = resources.getString(R.string.DEFAULT_PROFILE),
             versionName = BuildConfig.VERSION_NAME
         )
+    }
 
+    private fun setupVehicleProfiles() {
         profile.setupProfiles(forceOverrideRecommendation = false)
     }
 

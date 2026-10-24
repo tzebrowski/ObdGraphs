@@ -53,7 +53,7 @@ internal class DefaultProfileService :
     SharedPreferences.OnSharedPreferenceChangeListener {
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
-    private lateinit var versionName: String
+    private var versionName: String? = null
 
     @Volatile
     private var bulkActionEnabled = false
@@ -513,6 +513,8 @@ internal class DefaultProfileService :
     }
 
     private fun updateBuildSettings() {
+        // Unset until init(): a reset reached before it (activity restored after process death) crashed here.
+        val versionName = versionName ?: return
         runAsync {
             val buildTime =
                 "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(versionName)}"
