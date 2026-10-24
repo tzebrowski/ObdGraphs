@@ -81,7 +81,7 @@ android {
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             resValue "string", "applicationId", "org.obd.graphs.my.giulia.aa"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 259
+            versionCode 260
         }
 
         giuliaPerformanceMonitor {
@@ -89,7 +89,7 @@ android {
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             resValue "string", "applicationId", "org.obd.graphs.my.giulia.performance_monitor"
             applicationId "org.obd.graphs.my.giulia.performance_monitor"
-            versionCode 137
+            versionCode 138
         }
 
         giulia {
@@ -228,6 +228,7 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.mockk:mockk:1.12.8'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation 'androidx.test:core-ktx:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

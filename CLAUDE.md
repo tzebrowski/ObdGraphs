@@ -59,7 +59,8 @@ When writing new tests, use the natively provided libraries within the `androidT
 * **Kotlin Extensions:** AndroidX Core KTX (v1.5.0) and JUnit KTX (v1.1.5)
 
 > **Note on Unit Tests:** `:app` has a plain JUnit suite for Android-free logic (e.g.
-> `PidDefinitionDialogModeTest`, `./gradlew :app:testGiuliaDebugUnitTest`). `:datalogger` does have a local JVM suite under `src/test` running on
+> `PidDefinitionDialogModeTest`, `./gradlew :app:testGiuliaDebugUnitTest`). It has mockk **1.12.8**:
+> `:app` targets JVM 1.8, and mockk 1.13 inline functions need 11. `:datalogger` does have a local JVM suite under `src/test` running on
 > Robolectric (`./gradlew :datalogger:testDebugUnitTest`). `:screen_renderer` has plain JUnit
 > tests for pure layout logic (`./gradlew :screen_renderer:testDebugUnitTest`) — keep Canvas-free
 > logic in testable functions such as `TripInfoMetrics`. Other modules define only
@@ -638,6 +639,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   process. `profile.init` (version info, profile auto-save listener) sat behind it: a profile reset then crashed on
   `lateinit versionName` (Firebase). It now runs unconditionally (`initProfile()`); `init` must stay idempotent.
   Still behind the gate: exception handler, metrics processors, auto-connect - check them before relying on them.
+
+* **The connect FAB is the activity's; its click listener outlives the fragment that set it.** `configureActionButton`
+  is called by the Giulia / Graph / Dashboard screens only, so on any other screen the last one's listener stays. It
+  called the fragment's `requireContext()` and crashed once that fragment was gone (Firebase). Use the clicked view's
+  context in such listeners, never the fragment's.
 
 ### Preferences & localization
 * Preference UI: `app/src/main/res/xml/preferences.xml` (AA sections under `pref.aa.*`). Code defaults in `Prefs.getBoolean(key, default)` should match the XML `android:defaultValue` — the XML value gets persisted once the settings screen is opened.

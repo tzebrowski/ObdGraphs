@@ -45,14 +45,16 @@ fun Fragment.configureActionButton(query: Query) {
     activity?.let {
         val connectBtn = FabButtons.view(it).connectFab
 
-        connectBtn.setOnClickListener {
+        // The button is the activity's and keeps this listener after the fragment is gone (on a screen
+        // that does not configure it): take the context from the button, not from the fragment.
+        connectBtn.setOnClickListener { button ->
             if (DataLoggerRepository.isRunning()) {
-                withDataLogger {
+                org.obd.graphs.bl.datalogger.withDataLogger(button.context) {
                     Log.i("Fragment", "Stop data logging")
                     stop()
                 }
             } else {
-                withDataLogger {
+                org.obd.graphs.bl.datalogger.withDataLogger(button.context) {
                     Log.i("Fragment", "Start data logging")
                     start(query)
                 }
