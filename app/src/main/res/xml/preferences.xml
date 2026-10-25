@@ -541,6 +541,31 @@
             android:title="@string/pref.settings"
             android:summary="@string/pref.vehicle_settings.category_summary"
             app:key="pref.vehicle.settings">
+            <PreferenceCategory
+                android:summary="@string/pref.vehicle_settings.description_summary"
+                android:title="@string/pref.vehicle_settings.vehicle">
+                <EditTextPreference
+                    android:dialogTitle="@string/pref.vehicle_settings.make"
+                    android:key="pref.vehicle_settings.make"
+                    android:title="@string/pref.vehicle_settings.make"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
+
+                <EditTextPreference
+                    android:dialogTitle="@string/pref.vehicle_settings.model"
+                    android:key="pref.vehicle_settings.model"
+                    android:title="@string/pref.vehicle_settings.model"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
+
+                <EditTextPreference
+                    android:dialogTitle="@string/pref.vehicle_settings.engine"
+                    android:key="pref.vehicle_settings.engine"
+                    android:title="@string/pref.vehicle_settings.engine"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+
             <org.obd.graphs.preferences.components.ExtendedSeekBar
                 android:defaultValue="58"
                 android:dialogTitle="@string/pref.vehicle_settings.fuel_tank_size"
