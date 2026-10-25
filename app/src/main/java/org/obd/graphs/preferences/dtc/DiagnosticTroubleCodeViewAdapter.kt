@@ -192,6 +192,16 @@ internal fun dtcStatusLabels(context: Context) =
         permanent = context.getString(R.string.dtc_state_permanent)
     )
 
+internal fun dtcPromptLabels(context: Context) =
+    DtcPromptLabels(
+        code = context.getString(R.string.dtc_ai_prompt_code),
+        codeWithDescription = context.getString(R.string.dtc_ai_prompt_code_description),
+        vehicle = context.getString(R.string.dtc_ai_prompt_vehicle),
+        module = context.getString(R.string.dtc_ai_prompt_module),
+        status = context.getString(R.string.dtc_ai_prompt_status),
+        question = context.getString(R.string.dtc_ai_prompt_question)
+    )
+
 // Icon + label; solid fill with white text on light backgrounds, faint fill with coloured text at night
 // (dtc_badge_solid). Gone without a label.
 internal fun TextView.showBadge(
@@ -392,9 +402,17 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         }
 
         holder.actionSearchWeb.setOnClickListener {
-            val query = "OBD2 DTC $formattedCode ${dtc.description ?: ""}".trim()
-            val url = "https://www.google.com/search?q=${Uri.encode(query)}"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val prompt =
+                dtcAiPrompt(
+                    labels = dtcPromptLabels(context),
+                    code = formattedCode,
+                    description = dtc.description?.takeUnless { isUnknown },
+                    failureType = dtc.failureTypeLine(context::getString),
+                    vehicle = configuredVehicle(),
+                    module = dtc.moduleNameOrNull(),
+                    status = status.stateLabel(dtcStatusLabels(context)).takeUnless { item.isGone }
+                )
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(dtcAiSearchUrl(prompt)))
             context.startActivity(intent)
         }
 

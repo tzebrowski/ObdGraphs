@@ -984,7 +984,7 @@
     <!-- Extracted from layouts -->
     <string name="dtc.freeze_frame_data">UDS Freeze Frame Data</string>
     <string name="dtc.extended_data">Extended data</string>
-    <string name="dtc.action_google_issue">Google Issue</string>
+    <string name="dtc.action_google_issue">Ask Google AI</string>
     <string name="dtc.action_copy">Copy</string>
     <string name="dtc.action_refresh">Refresh</string>
     <string name="dtc.action_clear_codes">Clear Codes</string>
@@ -1195,4 +1195,15 @@
     <string name="readiness.monitor.exhaust_gas_sensor">Exhaust gas sensor</string>
     <string name="readiness.monitor.pm_filter">Particulate filter</string>
     <string name="readiness.monitor.egr_vvt">EGR / VVT</string>
+    <string name="dtc_ai_prompt_code">Diagnostic trouble code %1$s</string>
+    <string name="dtc_ai_prompt_code_description">Diagnostic trouble code %1$s (%2$s)</string>
+    <string name="dtc_ai_prompt_vehicle">Vehicle: %1$s</string>
+    <string name="dtc_ai_prompt_module">Reported by: %1$s</string>
+    <string name="dtc_ai_prompt_status">Status: %1$s</string>
+    <string name="dtc_ai_prompt_question">Explain what this code means for this vehicle and engine, the most likely causes, how to diagnose it and how to fix it</string>
+    <string name="pref.vehicle_settings.vehicle">Vehicle</string>
+    <string name="pref.vehicle_settings.make">Make</string>
+    <string name="pref.vehicle_settings.model">Model</string>
+    <string name="pref.vehicle_settings.engine">Engine</string>
+    <string name="pref.vehicle_settings.description_summary">Used in the DTC question sent to Google AI. Leave empty if not wanted</string>
 </resources>

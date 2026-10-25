@@ -480,6 +480,11 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   Close text, no caps (PL must fit). Fixed-colour buttons need `setEnabledDimmed`: `isEnabled` alone does not grey them.
 * `dialog_close_window_action` is "Close\n " on purpose (two lines, to match the trip dialog's two-line buttons); next
   to one-line buttons its label sits a line high. The DTC dialog uses its own `dtc.action_close`.
+* The row's "Ask Google AI" button opens AI Mode (`udm=50`) with a question built by `dtcAiPrompt`
+  (`preferences/dtc/DtcSearch.kt`, spec `doc/specs/dtc-ai-search.md`); the vehicle comes from
+  `pref.vehicle_settings.make` / `.model` / `.engine`, preset per bundled profile (`DtcSearchTest` checks it). New
+  profile keys reach existing installs only as `<profile>.<key>` until that profile is reloaded, so `configuredVehicle()`
+  falls back to them. Any new per-profile preset read outside a profile load needs the same fallback.
 * Building ObdMetrics: `mvn` needs JDK 11 (`JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64`); the
   delombok plugin fails on JDK 21. Its test helpers (`SimpleLifecycle`, ...) live in the separate
   `ObdMetricsTest` repo and do not capture the clear status, so a test needs its own `Lifecycle`.

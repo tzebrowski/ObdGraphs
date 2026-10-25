@@ -761,7 +761,7 @@
     <!-- Extracted from layouts -->
     <string name="dtc.freeze_frame_data">Dane zamrożonej klatki UDS</string>
     <string name="dtc.extended_data">Dane rozszerzone</string>
-    <string name="dtc.action_google_issue">Szukaj w Google</string>
+    <string name="dtc.action_google_issue">Zapytaj AI Google</string>
     <string name="dtc.action_copy">Kopiuj</string>
     <string name="dtc.action_refresh">Odśwież</string>
     <string name="dtc.action_clear_codes">Skasuj kody</string>
@@ -955,4 +955,15 @@
     <string name="readiness.monitor.exhaust_gas_sensor">Czujnik spalin</string>
     <string name="readiness.monitor.pm_filter">Filtr cząstek stałych</string>
     <string name="readiness.monitor.egr_vvt">EGR / VVT</string>
+    <string name="dtc_ai_prompt_code">Kod błędu %1$s</string>
+    <string name="dtc_ai_prompt_code_description">Kod błędu %1$s (%2$s)</string>
+    <string name="dtc_ai_prompt_vehicle">Pojazd: %1$s</string>
+    <string name="dtc_ai_prompt_module">Zgłoszony przez: %1$s</string>
+    <string name="dtc_ai_prompt_status">Stan: %1$s</string>
+    <string name="dtc_ai_prompt_question">Wyjaśnij, co oznacza ten kod w tym pojeździe i silniku, jakie są najczęstsze przyczyny, jak go zdiagnozować i jak naprawić</string>
+    <string name="pref.vehicle_settings.vehicle">Pojazd</string>
+    <string name="pref.vehicle_settings.make">Marka</string>
+    <string name="pref.vehicle_settings.model">Model</string>
+    <string name="pref.vehicle_settings.engine">Silnik</string>
+    <string name="pref.vehicle_settings.description_summary">Używane w pytaniu o kod błędu wysyłanym do AI Google. Zostaw puste, jeśli niepotrzebne</string>
 </resources>
