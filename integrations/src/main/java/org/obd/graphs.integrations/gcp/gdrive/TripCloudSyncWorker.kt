@@ -102,10 +102,13 @@ internal class TripCloudSyncWorker(
         try {
             Log.i(LOG_TAG, "Received sync request")
 
+            val recovered = tripManager.recoverUnfinishedTrips()
+            if (recovered.isNotEmpty()) {
+                Log.i(LOG_TAG, "Recovered unfinished trips: $recovered")
+            }
+
             val directory = File(tripManager.getTripsDirectory(context))
-            val unsyncedFiles = directory.listFiles()?.filter {
-                it.name.startsWith("trip-") && !it.name.endsWith(".synced")
-            } ?: emptyList()
+            val unsyncedFiles = directory.listFiles()?.filter { TripUpload.isReadyForSync(it.name) } ?: emptyList()
 
             Log.i(LOG_TAG, "Number of files to sync: ${unsyncedFiles.size}")
 

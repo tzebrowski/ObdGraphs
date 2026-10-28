@@ -18,6 +18,8 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class TripUploadTest {
 
@@ -35,5 +37,17 @@ class TripUploadTest {
             "device123-some-other-name.json.gz",
             TripUpload.driveTripFileName("device123", "some-other-name")
         )
+    }
+
+    @Test
+    fun `isReadyForSync takes finished trips that are not uploaded yet`() {
+        assertTrue(TripUpload.isReadyForSync("trip-profile_5-1793209935762-743.jsonl"))
+        assertFalse(TripUpload.isReadyForSync("trip-profile_5-1793209935762-743.jsonl.synced"))
+        assertFalse(TripUpload.isReadyForSync("obd_graphs.backup"))
+    }
+
+    @Test
+    fun `isReadyForSync skips a trip whose name has no length yet, the one being recorded`() {
+        assertFalse(TripUpload.isReadyForSync("trip-profile_5-1793209935762.jsonl"))
     }
 }

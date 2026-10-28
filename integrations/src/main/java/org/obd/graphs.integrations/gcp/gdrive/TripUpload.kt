@@ -48,6 +48,19 @@ internal object TripUpload {
     }
 
     /**
+     * Whether a local trip file is due for auto-sync: a finished trip (its name carries the length)
+     * not uploaded yet. The trip being recorded has no length in its name yet and is skipped; one
+     * that was cut off gets it from tripManager.recoverUnfinishedTrips().
+     */
+    fun isReadyForSync(
+        fileName: String,
+        tripDescParser: TripDescParser = TripDescParser()
+    ): Boolean =
+        fileName.startsWith("trip-") &&
+            !fileName.endsWith(".synced") &&
+            tripDescParser.decodeTripName(fileName).size > 3
+
+    /**
      * The Drive file name a local trip file is uploaded under.
      */
     fun driveTripFileName(

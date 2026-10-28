@@ -45,14 +45,17 @@ private const val TRIP_FILE_PREFIX = "trip"
 
 private const val MAX_CACHED_METRICS_PER_SENSOR = 18000
 
-internal class DefaultTripManager : TripManager {
+internal class DefaultTripManager(
+    repositoryFactory: () -> TripRepository = { FileTripRepository(getContext()!!) }
+) : TripManager {
 
     private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
     private val tripCache = TripCache()
     private val tripDescParser = TripDescParser()
 
-    private val repository: TripRepository by lazy { FileTripRepository(getContext()!!) }
+    private val repository: TripRepository by lazy(repositoryFactory)
 
+    @Volatile
     private var activeTripId: String? = null
 
     override fun getTripsDirectory(context: Context) = "${context.getExternalFilesDir("trips")?.absolutePath}"
@@ -102,6 +105,12 @@ internal class DefaultTripManager : TripManager {
 
     override fun startNewTrip(newTs: Long) {
         Log.i(LOG_TAG, "Starting new trip, timestamp: '${formatTimestamp(newTs)}'")
+        // A trip still open here was never saved; finish it before its id and cache entry are replaced.
+        activeTripId?.let { previousTripId ->
+            Log.w(LOG_TAG, "Trip '$previousTripId' was not saved before a new one started, saving it now.")
+            tripCache.getTrip()?.let { finishTrip(previousTripId, it) }
+        }
+        repository.recoverUnfinishedTrips()
         updateCache(newTs)
 
         activeTripId = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$newTs.jsonl"
@@ -179,29 +188,16 @@ internal class DefaultTripManager : TripManager {
             ScreenLock(message = R.string.dialog_screen_lock_trip_save_message)
         )
 
+        // Taken now, not in the async block: a reconnect may start the next trip before that block runs,
+        // which then saved the new trip's id and left this trip's file unfinished.
+        val currentTripId = activeTripId
+        val trip = tripCache.getTrip()
+        activeTripId = null
+
         runAsync(wait = false) {
             try {
-                tripCache.getTrip { trip ->
-                    var ts = System.currentTimeMillis()
-                    val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
-                    val tripLength = getTripLength(trip)
-                    val currentTripId = activeTripId ?: return@getTrip
-
-                    Log.i(LOG_TAG, "Stopping current trip: $currentTripId, length: ${tripLength}s")
-
-                    repository.releaseStorage(currentTripId)
-
-                    if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
-                        repository.updateTripMetadata(currentTripId, trip.startTs, tripLength, profile.getCurrentProfile())
-                    } else {
-                        Log.w(LOG_TAG, "Trip time is less than ${MIN_TRIP_LENGTH}s. Discarding.")
-                        repository.deleteTrip(currentTripId)
-                    }
-
-                    activeTripId = null
-                    ts = System.currentTimeMillis() - ts
-                    sendBroadcastEvent(TRIP_LOG_WRITE_COMPLETED)
-                    Log.i(LOG_TAG, "Trip: $currentTripId is saved. It took $ts ms")
+                if (currentTripId != null && trip != null) {
+                    finishTrip(currentTripId, trip)
                 }
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
@@ -209,7 +205,31 @@ internal class DefaultTripManager : TripManager {
         }
     }
 
+    private fun finishTrip(tripId: String, trip: Trip) {
+        var ts = System.currentTimeMillis()
+        val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
+        val tripLength = getTripLength(trip)
+
+        Log.i(LOG_TAG, "Stopping current trip: $tripId, length: ${tripLength}s")
+
+        repository.releaseStorage(tripId)
+
+        if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
+            repository.updateTripMetadata(tripId, trip.startTs, tripLength, profile.getCurrentProfile())
+        } else {
+            Log.w(LOG_TAG, "Trip time is less than ${MIN_TRIP_LENGTH}s. Discarding.")
+            repository.deleteTrip(tripId)
+        }
+
+        ts = System.currentTimeMillis() - ts
+        sendBroadcastEvent(TRIP_LOG_WRITE_COMPLETED)
+        Log.i(LOG_TAG, "Trip: $tripId is saved. It took $ts ms")
+    }
+
+    override fun recoverUnfinishedTrips(): List<String> = repository.recoverUnfinishedTrips()
+
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
+        repository.recoverUnfinishedTrips()
         return repository.findAllTripsBy(filter, profile.getCurrentProfile())
     }
 
