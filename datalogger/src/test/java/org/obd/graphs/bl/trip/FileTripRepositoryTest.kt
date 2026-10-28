@@ -20,11 +20,13 @@ import io.mockk.every
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.bl.TestSetup
+import org.obd.metrics.transport.message.ConnectorResponseFactory
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
@@ -109,5 +111,83 @@ class FileTripRepositoryTest : TestSetup() {
         val result = repository.findAllTripsBy(filter = "trip-profileA-1750000000", profile = "profileA")
 
         assertEquals(listOf("trip-profileA-1750000000-60.jsonl"), result.map { it.fileName })
+    }
+
+    private fun metricLine(x: Float, pid: Long = 6004L): String =
+        TripModelSerializer().serializer.writeValueAsString(
+            Metric(entry = Entry(x = x, y = 100f, data = pid), ts = 1700000000L + x.toLong(), rawAnswer = ConnectorResponseFactory.wrap(byteArrayOf()))
+        ) + "\n"
+
+    private fun writeTrip(name: String, content: String): File = File(tripsDir, name).apply { writeText(content) }
+
+    @Test
+    fun `recoverUnfinishedTrips names a cut-off trip by its last metric and drops a half-written line`() {
+        val complete = metricLine(1_000f) + metricLine(61_500f)
+        writeTrip("trip-profileA-1700000000.jsonl", complete + "{\"entry\":{\"x\":62")
+
+        val recovered = repository.recoverUnfinishedTrips()
+
+        assertEquals(listOf("trip-profileA-1700000000-61.jsonl"), recovered)
+        assertFalse(File(tripsDir, "trip-profileA-1700000000.jsonl").exists())
+        assertEquals(complete, File(tripsDir, "trip-profileA-1700000000-61.jsonl").readText())
+
+        val loaded = mutableListOf<Metric>()
+        repository.loadTrip("trip-profileA-1700000000-61.jsonl") { loaded.add(it) }
+        assertEquals(2, loaded.size)
+        assertEquals(
+            listOf("trip-profileA-1700000000-61.jsonl"),
+            repository.findAllTripsBy(filter = "", profile = "profileA").map { it.fileName }
+        )
+    }
+
+    @Test
+    fun `recoverUnfinishedTrips keeps a trip whose last line is complete without a newline`() {
+        val content = metricLine(1_000f) + metricLine(30_000f).trimEnd()
+        writeTrip("trip-profileA-1700000000.jsonl", content)
+
+        assertEquals(listOf("trip-profileA-1700000000-30.jsonl"), repository.recoverUnfinishedTrips())
+        assertEquals(content, File(tripsDir, "trip-profileA-1700000000-30.jsonl").readText())
+    }
+
+    @Test
+    fun `recoverUnfinishedTrips never touches the trip being recorded`() {
+        writeTrip("trip-profileA-1700000000.jsonl", metricLine(1_000f))
+        repository.initStorage("trip-profileA-1700000000.jsonl")
+
+        assertTrue(repository.recoverUnfinishedTrips().isEmpty())
+        assertTrue(File(tripsDir, "trip-profileA-1700000000.jsonl").exists())
+    }
+
+    @Test
+    fun `finishing an earlier trip does not expose the one being recorded to recovery`() {
+        writeTrip("trip-profileA-1700000000.jsonl", metricLine(1_000f))
+        writeTrip("trip-profileA-1700000100.jsonl", metricLine(1_000f))
+        repository.initStorage("trip-profileA-1700000000.jsonl")
+        // A reconnect starts the next trip before the earlier one's rename has run.
+        repository.initStorage("trip-profileA-1700000100.jsonl")
+        repository.updateTripMetadata("trip-profileA-1700000000.jsonl", 1700000000L, 60, "profileA")
+
+        assertTrue(repository.recoverUnfinishedTrips().isEmpty())
+        assertTrue(File(tripsDir, "trip-profileA-1700000000-60.jsonl").exists())
+        assertTrue(File(tripsDir, "trip-profileA-1700000100.jsonl").exists())
+    }
+
+    @Test
+    fun `recoverUnfinishedTrips leaves files it cannot read a metric from and finished trips alone`() {
+        writeTrip("trip-profileA-1700000000.jsonl", "{\"entry\":{\"x\":1")
+        writeTrip("trip-profileA-1700000200.jsonl", "")
+        writeTrip("trip-profileA-1700000100-60.jsonl", metricLine(1_000f))
+        writeTrip("trip-profileA-1700000300-60.jsonl.synced", metricLine(1_000f))
+
+        assertTrue(repository.recoverUnfinishedTrips().isEmpty())
+        assertEquals(
+            setOf(
+                "trip-profileA-1700000000.jsonl",
+                "trip-profileA-1700000200.jsonl",
+                "trip-profileA-1700000100-60.jsonl",
+                "trip-profileA-1700000300-60.jsonl.synced"
+            ),
+            tripsDir.list()!!.toSet()
+        )
     }
 }

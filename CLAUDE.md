@@ -620,6 +620,18 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   shows "connecting" forever. `BleConnection` sends `DATA_LOGGER_BLE_NOT_REACHABLE` (no adapter
   answered) or `DATA_LOGGER_ERROR_CONNECT_EVENT` (discovery/profile failure) itself.
 
+### Trip files (`:datalogger/.../bl/trip/`)
+* A trip records to `trip-<profile>-<startTs>.jsonl` and is renamed with its length
+  (`finalTripName()`) only on save. A name with 3 segments is either the trip being recorded or one
+  cut off (process killed — `START_NOT_STICKY`, no `onStopped`): `recoverUnfinishedTrips()` renames
+  the latter from its last complete metric (`entry.x` = ms since start), never touching
+  `activeTripId`. Auto-sync uploads only `TripUpload.isReadyForSync()` names (with a length); the
+  old "any non-.synced `trip-*`" filter uploaded the open file. Spec `doc/specs/trip-log-recovery.md`.
+* Take trip state at the call, not inside `runAsync`: a reconnect's `startNewTrip()` can run first.
+  Repository code clearing `activeTripId` must check it is still its trip.
+* Stored `entry.y` is chart-scaled (`ObdMetric.scaleToRange()`, 0–3500); readers map it back with
+  `PidDefinition.scaleToRange()` (upload transformer, trip summary).
+
 ### DataLoggerService (`:datalogger/.../DataLoggerService.kt`)
 * **A null intent in `onStartCommand` is a system restart, not a command — stop, don't go
   foreground.** From the background Android 12+ refuses `startForeground()` with

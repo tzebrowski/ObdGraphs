@@ -27,6 +27,10 @@ interface TripManager : MetricsProcessor {
     fun saveCurrentTrip()
 
     fun findAllTripsBy(filter: String = ""): MutableCollection<TripFileDesc>
+
+    // Gives trips cut off before they were saved (app killed, crash) their final name, so they are
+    // listed and uploaded. Also run by findAllTripsBy() and by startNewTrip().
+    fun recoverUnfinishedTrips(): List<String>
     fun deleteTrip(trip: TripFileDesc)
     fun loadTrip(tripName: String)
 
