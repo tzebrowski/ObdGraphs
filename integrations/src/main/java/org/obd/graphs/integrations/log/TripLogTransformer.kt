@@ -124,12 +124,7 @@ private class DefaultJSONOutput(
                         reader.endObject()
 
                         if (isFlatMetric) {
-                            val signalKey = signal.toString()
-                            val mappedResult = valueMapper(signal, value)
-
-                            val series = seriesMap.getOrPut(signalKey) { SeriesData() }
-                            series.timestamps.add(ts)
-                            series.values.add(mappedResult)
+                            addSample(seriesMap, signal, ts, value)
                         }
                     } else {
                         reader.skipValue()
@@ -275,10 +270,21 @@ private class DefaultJSONOutput(
         }
         reader.endObject()
 
-        val signalKey = signal.toString() // Group purely by ID
-        val mappedResult = valueMapper(signal, value)
+        addSample(seriesMap, signal, ts, value)
+    }
 
-        val series = seriesMap.getOrPut(signalKey) { SeriesData() }
+    // A NaN/Infinity reading (Jackson stores it as "NaN") can't be written as JSON: JsonWriter throws
+    // and the whole trip failed to export. Such samples are dropped.
+    private fun addSample(
+        seriesMap: MutableMap<String, SeriesData>,
+        signal: Int,
+        ts: Long,
+        value: Any
+    ) {
+        val mappedResult = valueMapper(signal, value)
+        if (mappedResult is Number && !mappedResult.toDouble().isFinite()) return
+
+        val series = seriesMap.getOrPut(signal.toString()) { SeriesData() } // Group purely by ID
         series.timestamps.add(ts)
         series.values.add(mappedResult)
     }
