@@ -327,4 +327,37 @@ class TripLogTransformerTest {
 
         Assertions.assertThat(result).isEqualTo(expectedJson)
     }
+
+    @Test
+    fun `jsonl export skips non-finite values instead of failing the whole trip`() {
+        // Jackson writes a NaN reading (e.g. a short reply to a multi-byte DID) as "NaN".
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 1500, "entry": {"data": 17160, "y": "NaN"}}
+            {"ts": 1600, "entry": {"data": 17160, "y": 12.5}}
+            {"ts": 1700, "entry": {"data": 17161, "y": "Infinity"}}
+            {"ts": 2000, "entry": {"data": 12, "y": 70.5}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        val expectedJson =
+            """{"signal_dictionary":{"12":"12","17160":"17160"},"series":{"12":{"t":[1000,2000],"v":[50.5,70.5]},"17160":{"t":[1600],"v":[12.5]}}}"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
+    }
+
+    @Test
+    fun `export skips values the mapper turns non-finite`() {
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 2000, "entry": {"data": 12, "y": 0.0}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { _, v -> if (v == 0.0) Float.NaN else v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        Assertions.assertThat(result).isEqualTo("""{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000],"v":[50.5]}}}""")
+    }
 }
