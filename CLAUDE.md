@@ -639,7 +639,10 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   uploader's `nextDouble()` threw `NumberFormatException: For input string: "<VIN>"`, failing the whole
   upload. `DefaultTripManager.postValue` now skips `PIDsGroup.METADATA`; other text readings are still
   stored as text, so `TripLogTransformer` reads `y` through `readValue()` (number, numeric string,
-  text or map). Any new reader of trip files must accept text `y` too.
+  text or map). Any new reader of trip files must accept text `y` too. Trips recorded before the skip
+  still hold the VIN: `TripUpload.buildTransformer()` (the one transformer, also used by
+  `TripCloudSyncWorker`) leaves metadata signals out (`skippedSignals`), since the log viewer reads
+  `v` as numbers.
 
 ### DataLoggerService (`:datalogger/.../DataLoggerService.kt`)
 * **A null intent in `onStartCommand` is a system restart, not a command — stop, don't go

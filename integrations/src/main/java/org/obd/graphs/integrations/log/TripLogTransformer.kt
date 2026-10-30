@@ -36,10 +36,12 @@ object TripLog {
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
+        // Signals left out of the output, e.g. vehicle metadata (VIN) recorded by older versions.
+        skippedSignals: Set<Int> = emptySet(),
         valueMapper: (signal: Int, value: Any) -> Any
     ): TripLogTransformer =
         when (outputType) {
-            else -> DefaultJSONOutput(signalMapper, valueMapper)
+            else -> DefaultJSONOutput(signalMapper, skippedSignals, valueMapper)
         }
 }
 
@@ -47,6 +49,7 @@ private const val LOG_TAG = "DefaultJSONOutput"
 
 private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
+    private val skippedSignals: Set<Int> = emptySet(),
     private val valueMapper: (signal: Int, value: Any) -> Any
 ) : TripLogTransformer {
 
@@ -269,6 +272,7 @@ private class DefaultJSONOutput(
         ts: Long,
         value: Any
     ) {
+        if (skippedSignals.contains(signal)) return
         val mappedResult = valueMapper(signal, value)
         if (mappedResult is Number && !mappedResult.toDouble().isFinite()) return
 

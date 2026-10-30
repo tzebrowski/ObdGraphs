@@ -380,6 +380,19 @@ class TripLogTransformerTest {
     }
 
     @Test
+    fun `export leaves out skipped signals such as metadata in older trips`() {
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 1200, "entry": {"data": 17001, "y": "ZARPAHDN1N7D49921"}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer(skippedSignals = setOf(17001)) { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        Assertions.assertThat(result).isEqualTo("""{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000],"v":[50.5]}}}""")
+    }
+
+    @Test
     fun `export skips values the mapper turns non-finite`() {
         val rawJsonl = """
             {"ts": 1000, "entry": {"data": 12, "y": 50.5}}

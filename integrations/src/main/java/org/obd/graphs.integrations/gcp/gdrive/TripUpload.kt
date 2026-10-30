@@ -24,6 +24,7 @@ import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.uploadFile
 import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.integrations.log.TripLogTransformer
+import org.obd.metrics.pid.PIDsGroup
 import java.io.File
 import java.util.zip.GZIPOutputStream
 
@@ -37,8 +38,10 @@ internal object TripUpload {
         val definitions = DataLoggerRepository.getPidDefinitionRegistry().findAll()
         val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n", " ") }
         val pidMap = definitions.associateBy { it.id.toInt() }
+        // Trips recorded before metadata was skipped may hold the VIN as text; the log viewer expects numbers.
+        val metadata = definitions.filter { it.group == PIDsGroup.METADATA }.map { it.id.toInt() }.toSet()
 
-        return TripLog.transformer(OutputType.JSON, signalsMapper) { s, v ->
+        return TripLog.transformer(OutputType.JSON, signalsMapper, metadata) { s, v ->
             if (v is Number) {
                 (pidMap[s]?.scaleToRange(v.toFloat())) ?: v
             } else {
