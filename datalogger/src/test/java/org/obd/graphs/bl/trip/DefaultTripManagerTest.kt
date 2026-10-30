@@ -32,6 +32,11 @@ import org.obd.graphs.profile.Profile
 import org.obd.graphs.profile.profile
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
+import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.pid.PIDsGroup
+import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.transport.message.ConnectorResponseFactory
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.Serializable
@@ -53,7 +58,9 @@ class DefaultTripManagerTest : TestSetup() {
             calls.add("release $tripId")
         }
 
-        override fun saveMetric(metric: Metric) {}
+        override fun saveMetric(metric: Metric) {
+            calls.add("save ${metric.entry.data}")
+        }
 
         override fun updateTripMetadata(tripId: String, tripStartTs: Long, tripLength: Long, profile: String) {
             calls.add("finish $tripId $tripStartTs")
@@ -104,6 +111,26 @@ class DefaultTripManagerTest : TestSetup() {
     }
 
     private fun tripId(startTs: Long) = "trip-$PROFILE-$startTs.jsonl"
+
+    private fun metric(
+        id: Long,
+        group: PIDsGroup,
+        value: Any
+    ): ObdMetric {
+        val pid = PidDefinition(id, "F190", "atsh7e0", "PID $id", "22", "Codec").apply { this.group = group }
+        return ObdMetric.builder().command(ObdCommand(pid)).value(value).raw(ConnectorResponseFactory.wrap(byteArrayOf())).build()
+    }
+
+    @Test
+    fun `vehicle metadata such as the VIN is not recorded in the trip`() {
+        val manager = DefaultTripManager { repository }
+        manager.startNewTrip(System.currentTimeMillis())
+
+        manager.postValue(metric(17001, PIDsGroup.METADATA, "ZARPAHDN1N7D49921"))
+        manager.postValue(metric(7005, PIDsGroup.LIVEDATA, 42))
+
+        assertEquals(listOf("save 7005"), repository.calls.filter { it.startsWith("save") })
+    }
 
     @Test
     fun `a trip stopped and at once followed by the next one is saved under its own id`() {

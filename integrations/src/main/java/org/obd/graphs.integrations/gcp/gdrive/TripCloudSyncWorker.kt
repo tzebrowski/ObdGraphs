@@ -34,14 +34,10 @@ import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.obd.graphs.TRIPS_UPLOAD_FAILED_NO_TOKEN
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.trip.TripDescParser
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.integrations.gcp.authorization.SilentAuthorization
 import org.obd.graphs.integrations.gcp.gdrive.DriveHelper.findFolderIdRecursive
-import org.obd.graphs.integrations.log.OutputType
-import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.sendBroadcastEvent
@@ -124,17 +120,7 @@ internal class TripCloudSyncWorker(
 
             val folderId = driveService.findFolderIdRecursive("mygiulia/trips")
 
-            val definitions = DataLoggerRepository.getPidDefinitionRegistry().findAll()
-            val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n", " ") }
-            val pidMap = definitions.associateBy { it.id.toInt() }
-
-            val transformer = TripLog.transformer(OutputType.JSON, signalsMapper) { s, v ->
-                if (v is Number) {
-                    (pidMap[s]?.scaleToRange(v.toFloat())) ?: v
-                } else {
-                    v
-                }
-            }
+            val transformer = TripUpload.buildTransformer()
 
             val deviceId = Device.id()
             val tripDescParser = TripDescParser()

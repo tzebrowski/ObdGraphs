@@ -36,10 +36,12 @@ object TripLog {
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
+        // Signals left out of the output, e.g. vehicle metadata (VIN) recorded by older versions.
+        skippedSignals: Set<Int> = emptySet(),
         valueMapper: (signal: Int, value: Any) -> Any
     ): TripLogTransformer =
         when (outputType) {
-            else -> DefaultJSONOutput(signalMapper, valueMapper)
+            else -> DefaultJSONOutput(signalMapper, skippedSignals, valueMapper)
         }
 }
 
@@ -47,6 +49,7 @@ private const val LOG_TAG = "DefaultJSONOutput"
 
 private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
+    private val skippedSignals: Set<Int> = emptySet(),
     private val valueMapper: (signal: Int, value: Any) -> Any
 ) : TripLogTransformer {
 
@@ -106,13 +109,7 @@ private class DefaultJSONOutput(
                                     while (reader.hasNext()) {
                                         when (reader.nextName()) {
                                             "data" -> signal = reader.nextInt()
-                                            "y" -> {
-                                                value = if (reader.peek() == JsonToken.BEGIN_OBJECT) {
-                                                    reader.readMap()
-                                                } else {
-                                                    reader.nextDouble()
-                                                }
-                                            }
+                                            "y" -> value = reader.readValue()
                                             else -> reader.skipValue()
                                         }
                                     }
@@ -253,13 +250,7 @@ private class DefaultJSONOutput(
                     while (reader.hasNext()) {
                         when (reader.nextName()) {
                             "data" -> signal = reader.nextInt()
-                            "y" -> {
-                                value = if (reader.peek() == JsonToken.BEGIN_OBJECT) {
-                                    reader.readMap()
-                                } else {
-                                    reader.nextDouble()
-                                }
-                            }
+                            "y" -> value = reader.readValue()
                             else -> reader.skipValue()
                         }
                     }
@@ -281,6 +272,7 @@ private class DefaultJSONOutput(
         ts: Long,
         value: Any
     ) {
+        if (skippedSignals.contains(signal)) return
         val mappedResult = valueMapper(signal, value)
         if (mappedResult is Number && !mappedResult.toDouble().isFinite()) return
 
@@ -288,6 +280,15 @@ private class DefaultJSONOutput(
         series.timestamps.add(ts)
         series.values.add(mappedResult)
     }
+
+    // A text PID (e.g. the VIN) is stored with its text as "y"; nextDouble() threw on it and the
+    // whole trip failed to export. A numeric string ("NaN", "70.5") is still read as a number.
+    private fun JsonReader.readValue(): Any =
+        when (peek()) {
+            JsonToken.BEGIN_OBJECT -> readMap()
+            JsonToken.STRING -> nextString().let { it.toDoubleOrNull() ?: it }
+            else -> nextDouble()
+        }
 
     private fun JsonReader.readMap(): Map<String, Any?> {
         val map = mutableMapOf<String, Any?>()
