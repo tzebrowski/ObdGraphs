@@ -628,7 +628,10 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   `activeTripId`. Auto-sync uploads only `TripUpload.isReadyForSync()` names (with a length); the
   old "any non-.synced `trip-*`" filter uploaded the open file. Spec `doc/specs/trip-log-recovery.md`.
 * Take trip state at the call, not inside `runAsync`: a reconnect's `startNewTrip()` can run first.
-  Repository code clearing `activeTripId` must check it is still its trip.
+  Repository code clearing `activeTripId` must check it is still its trip. Same for the file stream:
+  the stopped trip's `releaseStorage` ran after the next trip's `initStorage` and closed *its* stream,
+  so the next trip recorded 0 bytes yet was saved with its length (uploads of ~158 bytes = empty
+  series). `releaseStorage(tripId)` closes only the stream of that trip (`activeFileTripId`).
 * Stored `entry.y` is chart-scaled (`ObdMetric.scaleToRange()`, 0–3500); readers map it back with
   `PidDefinition.scaleToRange()` (upload transformer, trip summary).
 * One NaN/Infinity reading (a formula over bytes a short reply lacks, e.g. the 8-byte VVA DIDs)
@@ -642,7 +645,8 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
   text or map). Any new reader of trip files must accept text `y` too. Trips recorded before the skip
   still hold the VIN: `TripUpload.buildTransformer()` (the one transformer, also used by
   `TripCloudSyncWorker`) leaves metadata signals out (`skippedSignals`), since the log viewer reads
-  `v` as numbers.
+  `v` as numbers. ObdMetrics' `findAll()` returns **live data only**: look metadata up with
+  `findBy(PIDsGroup.METADATA)` (filtering `findAll()` by group silently matched nothing).
 
 ### DataLoggerService (`:datalogger/.../DataLoggerService.kt`)
 * **A null intent in `onStartCommand` is a system restart, not a command — stop, don't go

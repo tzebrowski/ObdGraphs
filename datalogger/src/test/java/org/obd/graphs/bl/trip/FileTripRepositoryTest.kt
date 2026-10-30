@@ -121,6 +121,22 @@ class FileTripRepositoryTest : TestSetup() {
     private fun writeTrip(name: String, content: String): File = File(tripsDir, name).apply { writeText(content) }
 
     @Test
+    fun `releasing a stopped trip after the next one started does not close the next trip's file`() {
+        val metric = Metric(entry = Entry(x = 1f, y = 100f, data = 6004L), ts = 1700000001L, rawAnswer = ConnectorResponseFactory.wrap(byteArrayOf()))
+
+        // A quick reconnect: the next trip opens its file before the stopped trip's async save releases it.
+        repository.initStorage("trip-profileA-1700000000.jsonl")
+        repository.initStorage("trip-profileA-1700000100.jsonl")
+        repository.releaseStorage("trip-profileA-1700000000.jsonl")
+        repository.saveMetric(metric)
+        repository.releaseStorage("trip-profileA-1700000100.jsonl")
+        // Runs on the repository's thread, so every write queued above has finished.
+        repository.recoverUnfinishedTrips()
+
+        assertEquals(1, File(tripsDir, "trip-profileA-1700000100.jsonl").readLines().size)
+    }
+
+    @Test
     fun `recoverUnfinishedTrips names a cut-off trip by its last metric and drops a half-written line`() {
         val complete = metricLine(1_000f) + metricLine(61_500f)
         writeTrip("trip-profileA-1700000000.jsonl", complete + "{\"entry\":{\"x\":62")

@@ -35,11 +35,13 @@ internal object TripUpload {
      * This is heavy, so it should only be called once per upload batch.
      */
     fun buildTransformer(): TripLogTransformer {
-        val definitions = DataLoggerRepository.getPidDefinitionRegistry().findAll()
+        val registry = DataLoggerRepository.getPidDefinitionRegistry()
+        val definitions = registry.findAll()
         val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n", " ") }
         val pidMap = definitions.associateBy { it.id.toInt() }
         // Trips recorded before metadata was skipped may hold the VIN as text; the log viewer expects numbers.
-        val metadata = definitions.filter { it.group == PIDsGroup.METADATA }.map { it.id.toInt() }.toSet()
+        // findAll() lists live data only.
+        val metadata = registry.findBy(PIDsGroup.METADATA).map { it.id.toInt() }.toSet()
 
         return TripLog.transformer(OutputType.JSON, signalsMapper, metadata) { s, v ->
             if (v is Number) {

@@ -16,7 +16,16 @@
  */
 package org.obd.graphs.integrations.gcp.gdrive
 
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkAll
 import org.junit.Test
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.metrics.pid.PIDsGroup
+import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.PidDefinitionRegistry
+import org.obd.metrics.pid.ValueType
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -49,5 +58,29 @@ class TripUploadTest {
     @Test
     fun `isReadyForSync skips a trip whose name has no length yet, the one being recorded`() {
         assertFalse(TripUpload.isReadyForSync("trip-profile_5-1793209935762.jsonl"))
+    }
+
+    @Test
+    fun `buildTransformer leaves metadata such as the VIN out of the upload`() {
+        val live = PidDefinition(7005L, 2, "A", "22", "195A", "mbar", "Boost", 0, 3000, ValueType.DOUBLE).apply { group = PIDsGroup.LIVEDATA }
+        val vin = PidDefinition(17001L, 17, "", "22", "F190", "", "VIN", 0, 0, ValueType.INT).apply { group = PIDsGroup.METADATA }
+        val registry = mockk<PidDefinitionRegistry>()
+        // findAll() returns live data only, so metadata must be looked up by its group.
+        every { registry.findAll() } returns listOf(live)
+        every { registry.findBy(PIDsGroup.METADATA) } returns listOf(vin)
+        mockkObject(DataLoggerRepository)
+        every { DataLoggerRepository.getPidDefinitionRegistry() } returns registry
+
+        try {
+            val result = TripUpload.buildTransformer().transform(
+                """
+                {"entry":{"x":1.0,"y":"ZARPAHDN1N7D49921","data":17001},"ts":1000,"rawAnswer":""}
+                """.trimIndent()
+            ).readText()
+
+            assertFalse(result.contains("17001"))
+        } finally {
+            unmockkAll()
+        }
     }
 }

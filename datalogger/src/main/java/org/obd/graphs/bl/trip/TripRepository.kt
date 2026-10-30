@@ -65,6 +65,9 @@ internal class FileTripRepository(
 
     private var activeFileOutputStream: FileOutputStream? = null
 
+    // The trip the open stream writes to; touched on the repository's thread only.
+    private var activeFileTripId: String? = null
+
     @Volatile
     private var activeTripId: String? = null
     private val totalMetricsSaved = AtomicLong(0)
@@ -85,6 +88,7 @@ internal class FileTripRepository(
                 activeFileOutputStream?.close()
                 val file = getTripFile(tripId)
                 activeFileOutputStream = FileOutputStream(file, true)
+                activeFileTripId = tripId
                 Log.i(LOG_TAG, "Started saving trip to: $activeTripId")
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Failed to initialize storage for trip", e)
@@ -95,9 +99,16 @@ internal class FileTripRepository(
     override fun releaseStorage(tripId: String) {
         ioScope.launch {
             try {
+                // A stopped trip is released asynchronously; on a quick reconnect the next trip has opened
+                // its file by then, and closing that stream left the next trip empty (0 bytes).
+                if (activeFileTripId != tripId) {
+                    Log.i(LOG_TAG, "Trip '$tripId' is no longer written, not closing the stream of '$activeFileTripId'")
+                    return@launch
+                }
                 activeFileOutputStream?.flush()
                 activeFileOutputStream?.close()
                 activeFileOutputStream = null
+                activeFileTripId = null
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Failed to release storage", e)
             }
