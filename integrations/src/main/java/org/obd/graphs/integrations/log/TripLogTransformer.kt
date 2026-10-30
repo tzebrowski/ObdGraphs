@@ -89,7 +89,7 @@ private class DefaultJSONOutput(
 
                         var ts: Long = 0
                         var signal = 0
-                        var value: Any = 0.0
+                        var value: Any? = 0.0
                         var isFlatMetric = false
 
                         while (reader.hasNext()) {
@@ -239,7 +239,7 @@ private class DefaultJSONOutput(
     ) {
         var ts: Long = 0
         var signal = 0
-        var value: Any = 0.0
+        var value: Any? = 0.0
 
         reader.beginObject()
         while (reader.hasNext()) {
@@ -270,9 +270,9 @@ private class DefaultJSONOutput(
         seriesMap: MutableMap<String, SeriesData>,
         signal: Int,
         ts: Long,
-        value: Any
+        value: Any?
     ) {
-        if (skippedSignals.contains(signal)) return
+        if (value == null || skippedSignals.contains(signal)) return
         val mappedResult = valueMapper(signal, value)
         if (mappedResult is Number && !mappedResult.toDouble().isFinite()) return
 
@@ -283,11 +283,16 @@ private class DefaultJSONOutput(
 
     // A text PID (e.g. the VIN) is stored with its text as "y"; nextDouble() threw on it and the
     // whole trip failed to export. A numeric string ("NaN", "70.5") is still read as a number.
-    private fun JsonReader.readValue(): Any =
+    // A list (a DTC read's codes) or any other value is no sample: null, left out of the export.
+    private fun JsonReader.readValue(): Any? =
         when (peek()) {
             JsonToken.BEGIN_OBJECT -> readMap()
             JsonToken.STRING -> nextString().let { it.toDoubleOrNull() ?: it }
-            else -> nextDouble()
+            JsonToken.NUMBER -> nextDouble()
+            else -> {
+                skipValue()
+                null
+            }
         }
 
     private fun JsonReader.readMap(): Map<String, Any?> {

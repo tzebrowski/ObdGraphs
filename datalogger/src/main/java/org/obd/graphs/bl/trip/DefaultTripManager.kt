@@ -62,9 +62,11 @@ internal class DefaultTripManager(
     override fun getTripsDirectory(context: Context) = "${context.getExternalFilesDir("trips")?.absolutePath}"
 
     override fun postValue(obdMetric: ObdMetric) {
-        // Vehicle metadata (VIN, ECU part numbers, read on connect and by every DTC action) is no
-        // trip signal: a text VIN in the log failed the whole trip upload.
-        if (obdMetric.command.pid.group == PIDsGroup.METADATA) return
+        // Only live data is a trip signal. Vehicle metadata (the VIN, read by every DTC action) and DTC
+        // replies (the connect scan's code list) arrive here too and each failed the whole trip upload.
+        // The app's own PIDs (GPS) have no group.
+        val group = obdMetric.command.pid.group
+        if (group != null && group != PIDsGroup.LIVEDATA) return
 
         try {
             tripCache.getTrip { trip ->

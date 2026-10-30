@@ -28,6 +28,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.bl.TestSetup
+import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.profile.Profile
 import org.obd.graphs.profile.profile
 import org.obd.graphs.runAsync
@@ -114,7 +115,7 @@ class DefaultTripManagerTest : TestSetup() {
 
     private fun metric(
         id: Long,
-        group: PIDsGroup,
+        group: PIDsGroup?,
         value: Any
     ): ObdMetric {
         val pid = PidDefinition(id, "F190", "atsh7e0", "PID $id", "22", "Codec").apply { this.group = group }
@@ -130,6 +131,50 @@ class DefaultTripManagerTest : TestSetup() {
         manager.postValue(metric(7005, PIDsGroup.LIVEDATA, 42))
 
         assertEquals(listOf("save 7005"), repository.calls.filter { it.startsWith("save") })
+    }
+
+    @Test
+    fun `DTC replies such as the connect scan's code list are not recorded in the trip`() {
+        val manager = DefaultTripManager { repository }
+        manager.startNewTrip(System.currentTimeMillis())
+
+        manager.postValue(metric(26000, PIDsGroup.DTC_READ, emptyList<Any>()))
+        manager.postValue(metric(7005, PIDsGroup.LIVEDATA, 42))
+
+        assertEquals(listOf("save 7005"), repository.calls.filter { it.startsWith("save") })
+    }
+
+    @Test
+    fun `no PID group other than live data is recorded in the trip`() {
+        val manager = DefaultTripManager { repository }
+        manager.startNewTrip(System.currentTimeMillis())
+
+        val others = PIDsGroup.values().filter { it != PIDsGroup.LIVEDATA }
+        others.forEachIndexed { i, group -> manager.postValue(metric(30000L + i, group, 1)) }
+        manager.postValue(metric(7005, PIDsGroup.LIVEDATA, 42))
+
+        assertEquals(listOf("save 7005"), repository.calls.filter { it.startsWith("save") })
+    }
+
+    @Test
+    fun `a PID with no group such as the app's GPS PID is still recorded`() {
+        val manager = DefaultTripManager { repository }
+        manager.startNewTrip(System.currentTimeMillis())
+
+        manager.postValue(metric(Pid.GPS_LOCATION_PID_ID.id, null, 120.5))
+
+        assertEquals(listOf("save ${Pid.GPS_LOCATION_PID_ID.id}"), repository.calls.filter { it.startsWith("save") })
+    }
+
+    @Test
+    fun `a live data PID is recorded whatever its value type`() {
+        val manager = DefaultTripManager { repository }
+        manager.startNewTrip(System.currentTimeMillis())
+
+        manager.postValue(metric(7005, PIDsGroup.LIVEDATA, 42))
+        manager.postValue(metric(7006, PIDsGroup.LIVEDATA, "N"))
+
+        assertEquals(listOf("save 7005", "save 7006"), repository.calls.filter { it.startsWith("save") })
     }
 
     @Test

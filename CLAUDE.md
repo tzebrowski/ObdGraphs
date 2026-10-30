@@ -640,9 +640,12 @@ gives the timestamped jar name; a CI run started before that timestamp cannot se
 * **Every decoded reply reaches the trip** (`MetricsObserver` → metrics processors), not only the
   running query: the VIN re-read by every DTC action (#246) landed in trips as `"y": "<VIN>"`, and the
   uploader's `nextDouble()` threw `NumberFormatException: For input string: "<VIN>"`, failing the whole
-  upload. `DefaultTripManager.postValue` now skips `PIDsGroup.METADATA`; other text readings are still
-  stored as text, so `TripLogTransformer` reads `y` through `readValue()` (number, numeric string,
-  text or map). Any new reader of trip files must accept text `y` too. Trips recorded before the skip
+  upload. Then the connect scan's DTC reply (`DTC_READ`, 26000 on 1.75 TBI) landed as `"y": []`
+  ("Expected a double but was BEGIN_ARRAY"). `DefaultTripManager.postValue` records only `LIVEDATA`
+  and group-less PIDs (the app's GPS PID has no group) - a denylist missed the next group. Other text
+  readings are still stored as text, so `TripLogTransformer` reads `y` through `readValue()` (number,
+  numeric string, text or map; a list or anything else drops the sample). Any new reader of trip
+  files must accept text `y` too. Trips recorded before the skip
   still hold the VIN: `TripUpload.buildTransformer()` (the one transformer, also used by
   `TripCloudSyncWorker`) leaves metadata signals out (`skippedSignals`), since the log viewer reads
   `v` as numbers. ObdMetrics' `findAll()` returns **live data only**: look metadata up with

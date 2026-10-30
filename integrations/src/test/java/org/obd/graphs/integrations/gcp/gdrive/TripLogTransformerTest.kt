@@ -393,6 +393,64 @@ class TripLogTransformerTest {
     }
 
     @Test
+    fun `export leaves out list readings such as a DTC read in older trips`() {
+        // The connect scan's DTC reply (a code list) was recorded as "y": [] and failed the whole upload.
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 1200, "entry": {"data": 26000, "y": []}}
+            {"ts": 1300, "entry": {"data": 26000, "y": [{"code": "P0120"}]}}
+            {"ts": 2000, "entry": {"data": 12, "y": 70.5}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        Assertions.assertThat(result).isEqualTo("""{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000,2000],"v":[50.5,70.5]}}}""")
+    }
+
+    @Test
+    fun `export leaves out null and boolean readings`() {
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 1100, "entry": {"data": 13, "y": null}}
+            {"ts": 1200, "entry": {"data": 14, "y": true}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        Assertions.assertThat(result).isEqualTo("""{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000],"v":[50.5]}}}""")
+    }
+
+    @Test
+    fun `legacy export leaves out list readings`() {
+        val rawJson = """
+            {"startTs": 1, "entries": {
+              "26000": {"metrics": [{"ts": 1200, "entry": {"data": 26000, "y": []}}]},
+              "12": {"metrics": [{"ts": 1000, "entry": {"data": 12, "y": 50.5}}]}
+            }}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJson).readText()
+
+        Assertions.assertThat(result).isEqualTo("""{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[1000],"v":[50.5]}}}""")
+    }
+
+    @Test
+    fun `a signal keeps its number samples when some of its readings are lists`() {
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": [1, 2]}}
+            {"ts": 2000, "entry": {"data": 12, "y": 70.5}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        Assertions.assertThat(result).isEqualTo("""{"signal_dictionary":{"12":"12"},"series":{"12":{"t":[2000],"v":[70.5]}}}""")
+    }
+
+    @Test
     fun `export skips values the mapper turns non-finite`() {
         val rawJsonl = """
             {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
