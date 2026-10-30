@@ -106,13 +106,7 @@ private class DefaultJSONOutput(
                                     while (reader.hasNext()) {
                                         when (reader.nextName()) {
                                             "data" -> signal = reader.nextInt()
-                                            "y" -> {
-                                                value = if (reader.peek() == JsonToken.BEGIN_OBJECT) {
-                                                    reader.readMap()
-                                                } else {
-                                                    reader.nextDouble()
-                                                }
-                                            }
+                                            "y" -> value = reader.readValue()
                                             else -> reader.skipValue()
                                         }
                                     }
@@ -253,13 +247,7 @@ private class DefaultJSONOutput(
                     while (reader.hasNext()) {
                         when (reader.nextName()) {
                             "data" -> signal = reader.nextInt()
-                            "y" -> {
-                                value = if (reader.peek() == JsonToken.BEGIN_OBJECT) {
-                                    reader.readMap()
-                                } else {
-                                    reader.nextDouble()
-                                }
-                            }
+                            "y" -> value = reader.readValue()
                             else -> reader.skipValue()
                         }
                     }
@@ -288,6 +276,15 @@ private class DefaultJSONOutput(
         series.timestamps.add(ts)
         series.values.add(mappedResult)
     }
+
+    // A text PID (e.g. the VIN) is stored with its text as "y"; nextDouble() threw on it and the
+    // whole trip failed to export. A numeric string ("NaN", "70.5") is still read as a number.
+    private fun JsonReader.readValue(): Any =
+        when (peek()) {
+            JsonToken.BEGIN_OBJECT -> readMap()
+            JsonToken.STRING -> nextString().let { it.toDoubleOrNull() ?: it }
+            else -> nextDouble()
+        }
 
     private fun JsonReader.readMap(): Map<String, Any?> {
         val map = mutableMapOf<String, Any?>()

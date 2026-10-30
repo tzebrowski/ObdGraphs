@@ -33,6 +33,7 @@ import org.obd.graphs.profile.profile
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.pid.PIDsGroup
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -61,6 +62,10 @@ internal class DefaultTripManager(
     override fun getTripsDirectory(context: Context) = "${context.getExternalFilesDir("trips")?.absolutePath}"
 
     override fun postValue(obdMetric: ObdMetric) {
+        // Vehicle metadata (VIN, ECU part numbers, read on connect and by every DTC action) is no
+        // trip signal: a text VIN in the log failed the whole trip upload.
+        if (obdMetric.command.pid.group == PIDsGroup.METADATA) return
+
         try {
             tripCache.getTrip { trip ->
                 val ts = (System.currentTimeMillis() - trip.startTs).toFloat()

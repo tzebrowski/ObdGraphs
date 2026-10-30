@@ -349,6 +349,37 @@ class TripLogTransformerTest {
     }
 
     @Test
+    fun `jsonl export keeps text readings instead of failing the whole trip`() {
+        // A text PID (the VIN read on connect) is stored with its text as "y".
+        val rawJsonl = """
+            {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
+            {"ts": 1200, "entry": {"data": 17001, "y": "ZARPAHDN1N7D49921"}}
+            {"ts": 2000, "entry": {"data": 12, "y": "70.5"}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJsonl).readText()
+
+        val expectedJson =
+            """{"signal_dictionary":{"12":"12","17001":"17001"},"series":{"12":{"t":[1000,2000],"v":[50.5,70.5]},"17001":{"t":[1200],"v":["ZARPAHDN1N7D49921"]}}}"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
+    }
+
+    @Test
+    fun `legacy export keeps text readings instead of failing the whole trip`() {
+        val rawJson = """
+            {"startTs": 1, "entries": {"17001": {"metrics": [{"ts": 1200, "entry": {"data": 17001, "y": "ZARPAHDN1N7D49921"}}]}}}
+        """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJson).readText()
+
+        Assertions.assertThat(result)
+            .isEqualTo("""{"signal_dictionary":{"17001":"17001"},"series":{"17001":{"t":[1200],"v":["ZARPAHDN1N7D49921"]}}}""")
+    }
+
+    @Test
     fun `export skips values the mapper turns non-finite`() {
         val rawJsonl = """
             {"ts": 1000, "entry": {"data": 12, "y": 50.5}}
